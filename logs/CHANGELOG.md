@@ -80,4 +80,4 @@
 
 **Not done**: no real search run; no publications collected; no live API test (hosts blocked).
 
-**Commit**: see `logs/session_logs/2026-10-14_LIT-002.md`.
+**Commit**: `eee92c1`
