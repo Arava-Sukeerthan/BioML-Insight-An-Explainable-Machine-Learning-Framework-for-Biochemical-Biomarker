@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Source record (one retrieved hit from one search)",
+  "description": "LIT-002. Built by scripts/literature/pubrecords.py from registered raw exports. The 'original' field holds the source's own metadata object (or XML string) unmodified.",
+  "type": "object",
+  "required": [
+    "source_record_id",
+    "source",
+    "route",
+    "query_id",
+    "search_timestamp",
+    "rank",
+    "raw_file",
+    "raw_sha256",
+    "transcribed",
+    "transcription_check",
+    "metadata_missing",
+    "original",
+    "title",
+    "authors",
+    "year",
+    "journal",
+    "doi",
+    "pmid",
+    "pmcid",
+    "arxiv_id",
+    "source_url",
+    "abstract",
+    "publication_types",
+    "language"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "source_record_id": {
+      "type": "string",
+      "pattern": "^SR-.+-\\d{5}$"
+    },
+    "source": {
+      "enum": [
+        "pubmed",
+        "europepmc",
+        "crossref",
+        "arxiv",
+        "semantic_scholar",
+        "consensus",
+        "publisher_site",
+        "repository",
+        "google_scholar",
+        "citation_chasing",
+        "web",
+        "manual"
+      ]
+    },
+    "route": {
+      "enum": [
+        "eutils_api",
+        "pubmed_connector",
+        "structured_transcription"
+      ]
+    },
+    "query_id": {
+      "type": "string"
+    },
+    "query_string": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "search_timestamp": {
+      "type": "string",
+      "minLength": 10
+    },
+    "rank": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "raw_file": {
+      "type": "string"
+    },
+    "raw_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "metadata_raw_file": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "transcribed": {
+      "type": "boolean"
+    },
+    "transcription_check": {
+      "enum": [
+        "not_applicable",
+        "not_done",
+        "passed",
+        "failed"
+      ]
+    },
+    "metadata_missing": {
+      "type": "boolean"
+    },
+    "original": {
+      "type": [
+        "object",
+        "string",
+        "null"
+      ]
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "authors": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "last_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fore_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "initials": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "collective_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "year": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1800,
+      "maximum": 2100
+    },
+    "journal": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "doi": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^10\\.\\d{4,9}/\\S+$",
+      "description": "lower-case, no resolver prefix"
+    },
+    "pmid": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[1-9]\\d{0,9}$"
+    },
+    "pmcid": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^PMC\\d+$"
+    },
+    "arxiv_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "without version suffix"
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "abstract": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "publication_types": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "language": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

@@ -6,7 +6,7 @@
 | Version | 1.0 — **DRAFT, pending researcher approval** |
 | Prepared | 2026-10-14 |
 | Status of searches | **Not run.** Only capability probes and count-only pilots were executed (listed in `search_queries.csv`, `row_type` = `capability_probe` / `pilot_count`). No records have been collected. |
-| Companion files | `search_queries.csv` (exact queries, dates, counts), `screening_criteria.md` (eligibility), `paper_inventory.schema.json` (record format), `../reviews/unresolved_questions.md` |
+| Companion files | `search_queries.csv` (exact queries, dates, counts), `screening_criteria.md` (eligibility), `schemas/` (record formats; see `collection_workflow.md`), `../reviews/unresolved_questions.md` |
 
 ---
 
@@ -256,6 +256,10 @@ from this list.
 
 ## 5. Record collection
 
+> Implementation (LIT-002): `collection_workflow.md` describes the actual scripts, file
+> layout, provenance rules and what has been tested. Where it differs in detail from §5, the
+> workflow document describes the implemented behaviour.
+
 ### 5.1 Raw exports (immutable)
 ```
 research/literature/raw_exports/<query_id>_<YYYY-MM-DD>.json   # unmodified tool output
@@ -361,7 +365,7 @@ Additional rules:
 ## 8. Data extraction and analysis
 
 ### 8.1 Extraction
-Fields follow `paper_inventory.schema.json`: disorder, biomarker type, dataset, sample size,
+Fields follow `schemas/paper_inventory.schema.json`: disorder, biomarker type, dataset, sample size,
 models, explainability method, calibration/uncertainty method, validation design, reported
 metrics (verbatim), limitations, and RQ tags. Extraction is done by the assistant, and the
 researcher spot-checks 5 records.
@@ -404,9 +408,10 @@ claiming PRISMA compliance for a systematic review.
 
 | Task | Content | Proposed day |
 |---|---|---|
-| LIT-002 | Run Q-PM-01…15 (snapshot), export raw, dedupe; run Consensus, arXiv and publisher queries; verify seeds | Day 3 (2026-10-16) |
-| LIT-003 | Title/abstract screening + audit sample | Days 4–5 |
-| LIT-004 | Full-text screening, extraction, appraisal (Tier 1→2), citation chasing | Days 6–8 |
+| LIT-002 | Collection/verification workflow implemented and tested (done 2026-10-14; see `collection_workflow.md`) | Day 1 |
+| next | Run Q-PM-01…15 (snapshot), export raw, dedupe; run Consensus, arXiv and publisher queries; verify seeds | Day 3 (2026-10-16) |
+| next+1 | Title/abstract screening + audit sample | Days 4–5 |
+| next+2 | Full-text screening, extraction, appraisal (Tier 1→2), citation chasing | Days 6–8 |
 | (Stage C) | Critical comparison | Days 9–12 |
 
 ## 10. Known limitations of this strategy
@@ -425,3 +430,4 @@ claiming PRISMA compliance for a systematic review.
 | Version | Date | Change | Approved |
 |---|---|---|---|
 | 1.0 | 2026-10-14 | Initial draft (LIT-001) | Pending |
+| 1.0.1 | 2026-10-14 | LIT-002: schema path updated (`schemas/`); pointer to `collection_workflow.md` added; §9 task labels updated (LIT-002 became the workflow task). No change to queries or criteria | Pending |

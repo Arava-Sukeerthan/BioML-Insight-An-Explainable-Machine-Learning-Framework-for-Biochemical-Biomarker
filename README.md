@@ -16,9 +16,11 @@ main contribution, outcome definition, and final evaluation protocol.
 
 ```
 GOVERNANCE.md                    Research principles, stage gates, schedule (proposed)
+CLAUDE.md                        Pointer to GOVERNANCE.md for assistant sessions
 research/
   setup/environment_assessment.md  Tools, network access, and limitations
-  literature/                      Search strategy, queries, screening criteria, paper inventory
+  literature/                      Search strategy, queries, screening criteria, collection workflow,
+                                   schemas/, raw_exports/ (manifest only in Git), records/
   methodology/                     Research questions, hypotheses, framework, protocol, design decisions
   reviews/                         Daily review log and unresolved questions
 logs/
@@ -28,8 +30,10 @@ logs/
   EXPERIMENT_LOG.md                Experiment runs (none before Stage G)
   session_logs/                    One log per working session
 scripts/
-  literature/                      Small utilities (query validation; later dedup/verification)
+  literature/                      Query validation, PubMed E-utilities client, record build/dedup/verify
+tests/
+  literature/                      Unit tests (synthetic fixtures only)
 ```
 
-Directories for code (`src/`), tests (`tests/`), and data (`data/`) will be created when
+Directories for analysis code (`src/`) and data (`data/`) will be created when
 the corresponding stage begins. Raw data will not be committed to Git.

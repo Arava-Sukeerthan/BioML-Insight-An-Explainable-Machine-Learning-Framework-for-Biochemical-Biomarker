@@ -14,3 +14,12 @@ __pycache__/
 outputs/tmp/
 # OS
 .DS_Store
+# Literature (repository is PUBLIC; see research/literature/collection_workflow.md §7, decision D-010):
+# raw API/tool responses and record files that contain abstracts are kept out of Git.
+# MANIFEST.csv (with sha256), the paper-ID registry, review files and the abstract-free
+# publications_index.csv ARE committed.
+research/literature/raw_exports/*
+!research/literature/raw_exports/MANIFEST.csv
+!research/literature/raw_exports/README.md
+research/literature/records/source_records.jsonl
+research/literature/records/publications.jsonl

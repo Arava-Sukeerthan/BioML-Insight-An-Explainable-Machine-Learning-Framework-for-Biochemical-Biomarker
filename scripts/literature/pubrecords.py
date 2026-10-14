@@ -1,0 +1,970 @@
+"""Publication-metadata workflow for BioML-Insight (LIT-002).
+
+Pipeline (see research/literature/collection_workflow.md):
+
+  raw_exports/  --register-->  MANIFEST.csv (sha256, query_id, timestamp, route)
+       |
+       +--build--> records/source_records.jsonl   one record per retrieved hit, original kept verbatim
+                   records/publications.jsonl     deduplicated publication records
+                   records/dedup_review.csv       uncertain matches for manual decision
+                   records/paper_id_registry.csv  append-only identifier -> paper_id map
+                   records/build_report.json      counts, completeness, conflicts
+
+Manual inputs that survive rebuilds:
+  records/dedup_decisions.csv        paper_id_a,paper_id_b,decision(same|different),reviewer,date,note
+  screening/decisions.csv            paper_id,stage,decision,reason_code,screener,date,justification
+  records/verification_overrides.csv paper_id,verification_status,note,reviewer,date
+  records/fulltext_status.csv        paper_id,full_text_availability,note,date
+
+Standard library only (plus optional jsonschema for schema validation).
+"""
+from __future__ import annotations
+
+import argparse
+import csv
+import datetime as dt
+import difflib
+import hashlib
+import html
+import json
+import re
+import sys
+import unicodedata
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+# --------------------------------------------------------------------------------------------
+# Constants
+# --------------------------------------------------------------------------------------------
+SOURCE_PRIORITY = ["pubmed", "europepmc", "crossref", "arxiv", "semantic_scholar", "consensus",
+                   "publisher_site", "repository", "google_scholar", "citation_chasing", "web", "manual"]
+AUTHORITATIVE_SOURCES = {"pubmed", "europepmc", "crossref", "arxiv"}
+ROUTE_PRIORITY = ["eutils_api", "pubmed_connector", "structured_transcription"]
+ROUTES = {"eutils_esearch", "eutils_efetch", "pubmed_connector_search",
+          "pubmed_connector_metadata", "structured_transcription"}
+MANIFEST_COLS = ["raw_file", "sha256", "query_id", "source", "route", "endpoint_or_tool",
+                 "request_json", "retrieved_at", "n_items", "transcribed", "transcription_check",
+                 "notes"]
+FUZZY_THRESHOLD = 0.90
+SCREENING_STAGE_ORDER = {"title_abstract": 1, "full_text": 2}
+
+
+# --------------------------------------------------------------------------------------------
+# Normalisation
+# --------------------------------------------------------------------------------------------
+def normalize_doi(doi):
+    if not doi:
+        return None
+    d = html.unescape(str(doi)).strip()
+    d = re.sub(r"^(?:https?://)?(?:dx\.)?doi\.org/", "", d, flags=re.I)
+    d = re.sub(r"^doi:\s*", "", d, flags=re.I)
+    d = d.strip().rstrip(".").lower()
+    return d if re.match(r"^10\.\d{4,9}/\S+$", d) else None
+
+
+def normalize_pmid(pmid):
+    if pmid is None:
+        return None
+    s = str(pmid).strip()
+    return s if re.fullmatch(r"[1-9]\d{0,9}", s) else None
+
+
+def normalize_pmcid(pmcid):
+    if not pmcid:
+        return None
+    m = re.fullmatch(r"(?i)\s*(?:pmc)?(\d+)\s*", str(pmcid))
+    return f"PMC{m.group(1)}" if m else None
+
+
+def normalize_arxiv(arxiv_id):
+    if not arxiv_id:
+        return None
+    s = str(arxiv_id).strip()
+    s = re.sub(r"^(?:https?://)?(?:www\.)?(?:arxiv|alphaxiv)\.org/(?:abs|pdf)/", "", s, flags=re.I)
+    s = re.sub(r"^arxiv:\s*", "", s, flags=re.I)
+    s = re.sub(r"\.pdf$", "", s)
+    s = re.sub(r"v\d+$", "", s)
+    if re.fullmatch(r"\d{4}\.\d{4,5}", s) or re.fullmatch(r"[a-z\-]+(?:\.[A-Z]{2})?/\d{7}", s):
+        return s
+    return None
+
+
+def strip_markup(text):
+    if text is None:
+        return None
+    t = re.sub(r"<[^>]+>", " ", html.unescape(str(text)))
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def normalize_title(title):
+    """Matching key only; the original title is always kept separately."""
+    if not title:
+        return ""
+    t = unicodedata.normalize("NFKD", strip_markup(title))
+    t = "".join(ch for ch in t if not unicodedata.combining(ch)).lower()
+    t = re.sub(r"[^a-z0-9]+", " ", t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def normalize_name(name):
+    if not name:
+        return ""
+    t = unicodedata.normalize("NFKD", name)
+    t = "".join(ch for ch in t if not unicodedata.combining(ch)).lower()
+    return re.sub(r"[^a-z]", "", t)
+
+
+def normalize_journal(j):
+    return normalize_title(j)
+
+
+def first_author_key(authors):
+    for a in authors or []:
+        last = a.get("last_name") or a.get("collective_name") or a.get("name", "").split(",")[0]
+        if last:
+            return normalize_name(last)
+    return ""
+
+
+def parse_year(value):
+    if value is None:
+        return None
+    m = re.search(r"(1[89]\d{2}|20\d{2})", str(value))
+    return int(m.group(1)) if m else None
+
+
+def sha256_file(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 16), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def utc_now():
+    return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
+
+
+# --------------------------------------------------------------------------------------------
+# Parsers: each returns metadata dicts with the original source object kept verbatim
+# --------------------------------------------------------------------------------------------
+def _empty_meta():
+    return {"title": None, "authors": [], "year": None, "journal": None, "doi": None,
+            "pmid": None, "pmcid": None, "arxiv_id": None, "source_url": None,
+            "abstract": None, "publication_types": [], "language": None, "original": None}
+
+
+def parse_connector_article(article):
+    """One article object from the PubMed connector's get_article_metadata response."""
+    m = _empty_meta()
+    ids = article.get("identifiers") or {}
+    m["title"] = strip_markup(article.get("title"))
+    m["abstract"] = strip_markup(article.get("abstract")) or None
+    m["authors"] = [{"last_name": a.get("last_name"), "fore_name": a.get("fore_name"),
+                     "initials": a.get("initials")} for a in article.get("authors") or []]
+    pd = article.get("publication_date") or {}
+    m["year"] = parse_year(pd.get("year"))
+    j = article.get("journal") or {}
+    m["journal"] = j.get("title") or j.get("iso_abbreviation")
+    m["pmid"] = normalize_pmid(ids.get("pmid"))
+    m["doi"] = normalize_doi(ids.get("doi") or article.get("doi"))
+    m["pmcid"] = normalize_pmcid(ids.get("pmc"))
+    m["publication_types"] = list(article.get("article_types") or [])
+    m["language"] = article.get("language")
+    if m["pmid"]:
+        m["source_url"] = f"https://pubmed.ncbi.nlm.nih.gov/{m['pmid']}/"
+    m["original"] = article
+    return m
+
+
+def _text(el):
+    return strip_markup("".join(el.itertext())) if el is not None else None
+
+
+def parse_efetch_xml(xml_bytes):
+    """PubmedArticleSet XML from E-utilities efetch (db=pubmed, retmode=xml)."""
+    root = ET.fromstring(xml_bytes)
+    out = []
+    for art in root.iter("PubmedArticle"):
+        m = _empty_meta()
+        mc = art.find("MedlineCitation")
+        a = mc.find("Article")
+        m["pmid"] = normalize_pmid(_text(mc.find("PMID")))
+        m["title"] = _text(a.find("ArticleTitle"))
+        parts = []
+        for ab in a.findall("Abstract/AbstractText"):
+            label = ab.get("Label")
+            txt = _text(ab)
+            parts.append(f"{label}: {txt}" if label else txt)
+        m["abstract"] = " ".join(p for p in parts if p) or None
+        for au in a.findall("AuthorList/Author"):
+            if au.find("CollectiveName") is not None:
+                m["authors"].append({"collective_name": _text(au.find("CollectiveName"))})
+            else:
+                m["authors"].append({"last_name": _text(au.find("LastName")),
+                                     "fore_name": _text(au.find("ForeName")),
+                                     "initials": _text(au.find("Initials"))})
+        m["journal"] = _text(a.find("Journal/Title")) or _text(a.find("Journal/ISOAbbreviation"))
+        pubdate = a.find("Journal/JournalIssue/PubDate")
+        year = None
+        if pubdate is not None:
+            year = parse_year(_text(pubdate.find("Year")) or _text(pubdate.find("MedlineDate")))
+        if year is None:
+            year = parse_year(_text(a.find("ArticleDate/Year")))
+        m["year"] = year
+        for aid in art.findall("PubmedData/ArticleIdList/ArticleId"):
+            t = aid.get("IdType")
+            if t == "doi" and not m["doi"]:
+                m["doi"] = normalize_doi(aid.text)
+            elif t == "pmc":
+                m["pmcid"] = normalize_pmcid(aid.text)
+        if not m["doi"]:
+            for eloc in a.findall("ELocationID"):
+                if eloc.get("EIdType") == "doi":
+                    m["doi"] = normalize_doi(eloc.text)
+        m["publication_types"] = [_text(p) for p in a.findall("PublicationTypeList/PublicationType")]
+        m["language"] = _text(a.find("Language"))
+        if m["pmid"]:
+            m["source_url"] = f"https://pubmed.ncbi.nlm.nih.gov/{m['pmid']}/"
+        m["original"] = ET.tostring(art, encoding="unicode")
+        out.append(m)
+    return out
+
+
+def parse_transcribed_record(rec):
+    """Records typed into a structured JSON file from a non-JSON tool (Consensus, alphaXiv, web).
+    Expected keys: title, authors (list of 'Last, First' strings or dicts), year, journal, doi,
+    pmid, pmcid, arxiv_id, url, abstract."""
+    m = _empty_meta()
+    m["title"] = strip_markup(rec.get("title"))
+    authors = []
+    for a in rec.get("authors") or []:
+        if isinstance(a, dict):
+            authors.append(a)
+        else:
+            parts = [p.strip() for p in str(a).split(",", 1)]
+            if len(parts) == 2:
+                authors.append({"last_name": parts[0], "fore_name": parts[1]})
+            else:  # "First Middle Last" -> last token is the surname
+                toks = parts[0].split()
+                authors.append({"last_name": toks[-1] if toks else None,
+                                "fore_name": " ".join(toks[:-1]) or None})
+    m["authors"] = authors
+    m["year"] = parse_year(rec.get("year"))
+    m["journal"] = rec.get("journal")
+    m["doi"] = normalize_doi(rec.get("doi"))
+    m["pmid"] = normalize_pmid(rec.get("pmid"))
+    m["pmcid"] = normalize_pmcid(rec.get("pmcid"))
+    m["arxiv_id"] = normalize_arxiv(rec.get("arxiv_id") or rec.get("url"))
+    m["source_url"] = rec.get("url")
+    m["abstract"] = strip_markup(rec.get("abstract")) or None
+    m["original"] = rec
+    return m
+
+
+# --------------------------------------------------------------------------------------------
+# Manifest
+# --------------------------------------------------------------------------------------------
+def read_manifest(lit_dir):
+    p = Path(lit_dir) / "raw_exports" / "MANIFEST.csv"
+    if not p.exists():
+        return []
+    with open(p, newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def register_raw(lit_dir, raw_file, query_id, source, route, endpoint_or_tool, request,
+                 retrieved_at, n_items, transcribed, notes=""):
+    if route not in ROUTES:
+        raise ValueError(f"unknown route {route!r}")
+    lit_dir = Path(lit_dir)
+    raw_path = lit_dir / "raw_exports" / raw_file
+    if not raw_path.exists():
+        raise FileNotFoundError(raw_path)
+    rows = read_manifest(lit_dir)
+    if any(r["raw_file"] == raw_file for r in rows):
+        raise ValueError(f"{raw_file} already registered (raw files are immutable)")
+    row = {"raw_file": raw_file, "sha256": sha256_file(raw_path), "query_id": query_id,
+           "source": source, "route": route, "endpoint_or_tool": endpoint_or_tool,
+           "request_json": json.dumps(request, sort_keys=True), "retrieved_at": retrieved_at,
+           "n_items": str(n_items), "transcribed": "yes" if transcribed else "no",
+           "transcription_check": "not_done" if transcribed else "not_applicable",
+           "notes": notes}
+    mp = lit_dir / "raw_exports" / "MANIFEST.csv"
+    new = not mp.exists()
+    with open(mp, "a", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=MANIFEST_COLS)
+        if new:
+            w.writeheader()
+        w.writerow(row)
+    return row
+
+
+def set_transcription_check(lit_dir, raw_file, status, note=""):
+    """Record the outcome of a re-fetch spot-check for a transcribed raw file. Only the
+    manifest's transcription_check/notes columns change; the raw file itself is never edited."""
+    if status not in ("passed", "failed", "not_done"):
+        raise ValueError(status)
+    mp = Path(lit_dir) / "raw_exports" / "MANIFEST.csv"
+    rows = read_manifest(lit_dir)
+    hit = [r for r in rows if r["raw_file"] == raw_file]
+    if not hit or hit[0]["transcribed"] != "yes":
+        raise ValueError(f"{raw_file} is not a registered transcribed file")
+    hit[0]["transcription_check"] = status
+    if note:
+        hit[0]["notes"] = (hit[0]["notes"] + " | " if hit[0]["notes"] else "") + note
+    with open(mp, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=MANIFEST_COLS)
+        w.writeheader()
+        w.writerows(rows)
+
+
+SPOT_CHECK_FIELDS = ("title", "year", "journal", "doi", "pmcid", "abstract", "authors")
+
+
+def _metadata_by_pmid(lit_dir, row):
+    path = Path(lit_dir) / "raw_exports" / row["raw_file"]
+    if row["route"] == "pubmed_connector_metadata":
+        metas = [parse_connector_article(a) for a in _load_raw_json(lit_dir, row).get("articles", [])]
+    elif row["route"] == "eutils_efetch":
+        metas = parse_efetch_xml(path.read_bytes())
+    else:
+        raise ValueError(f"{row['raw_file']}: spot-check needs a metadata file")
+    return {m["pmid"]: m for m in metas if m["pmid"]}
+
+
+def spot_check(lit_dir, original_file, refetch_file, record=True):
+    """Compare a transcribed metadata file with an independent re-fetch of (a sample of) the
+    same PMIDs. Every PMID in the re-fetch must be present in the original with identical
+    normalised fields. Records passed/failed on the original's manifest row."""
+    rows = {r["raw_file"]: r for r in read_manifest(lit_dir)}
+    orig = _metadata_by_pmid(lit_dir, rows[original_file])
+    ref = _metadata_by_pmid(lit_dir, rows[refetch_file])
+    norm = {"title": normalize_title, "journal": normalize_journal,
+            "abstract": lambda x: normalize_title(x)[:2000],
+            "authors": lambda a: [first_author_key([x]) for x in a or []]}
+    mismatches = []
+    for pmid, m in ref.items():
+        o = orig.get(pmid)
+        if o is None:
+            mismatches.append({"pmid": pmid, "field": "*", "original": None, "refetch": "present"})
+            continue
+        for f in SPOT_CHECK_FIELDS:
+            fn = norm.get(f, lambda x: x)
+            if fn(o.get(f)) != fn(m.get(f)):
+                mismatches.append({"pmid": pmid, "field": f, "original": o.get(f), "refetch": m.get(f)})
+    status = "passed" if ref and not mismatches else "failed"
+    if record:
+        set_transcription_check(lit_dir, original_file, status,
+                                f"spot-check vs {refetch_file}: {len(ref)} PMIDs, {len(mismatches)} mismatches")
+    return status, len(ref), mismatches
+
+
+def verify_manifest(lit_dir, rows):
+    problems = []
+    for r in rows:
+        p = Path(lit_dir) / "raw_exports" / r["raw_file"]
+        if not p.exists():
+            problems.append(f"missing raw file {r['raw_file']}")
+        elif sha256_file(p) != r["sha256"]:
+            problems.append(f"checksum mismatch {r['raw_file']} (raw files must not be edited)")
+    return problems
+
+
+def load_query_strings(lit_dir):
+    p = Path(lit_dir) / "search_queries.csv"
+    if not p.exists():
+        return {}
+    with open(p, newline="") as f:
+        return {r["query_id"]: r["query_string"] for r in csv.DictReader(f)}
+
+
+# --------------------------------------------------------------------------------------------
+# Source records
+# --------------------------------------------------------------------------------------------
+def _load_raw_json(lit_dir, row):
+    with open(Path(lit_dir) / "raw_exports" / row["raw_file"]) as f:
+        doc = json.load(f)
+    return doc.get("response", doc)
+
+
+def build_source_records(lit_dir, rows):
+    """Returns (source_records, completeness). Search hits are joined to metadata by PMID."""
+    queries = load_query_strings(lit_dir)
+    meta_by_pmid = {}            # pmid -> (meta, manifest row)
+    hits = []                    # (row, rank, pmid)
+    direct = []                  # (row, rank, meta) for routes that carry full metadata
+    totals = {}
+
+    for row in rows:
+        route = row["route"]
+        path = Path(lit_dir) / "raw_exports" / row["raw_file"]
+        if route == "pubmed_connector_metadata":
+            for art in _load_raw_json(lit_dir, row).get("articles", []):
+                m = parse_connector_article(art)
+                if m["pmid"]:
+                    meta_by_pmid.setdefault(m["pmid"], (m, row))
+        elif route == "eutils_efetch":
+            for m in parse_efetch_xml(path.read_bytes()):
+                if m["pmid"]:
+                    meta_by_pmid.setdefault(m["pmid"], (m, row))
+        elif route in ("pubmed_connector_search", "eutils_esearch"):
+            resp = _load_raw_json(lit_dir, row)
+            if route == "eutils_esearch":
+                res = resp.get("esearchresult", {})
+                pmids, total = res.get("idlist", []), int(res.get("count", 0))
+                offset = int(res.get("retstart", 0))
+            else:
+                pmids, total = resp.get("pmids", []), int(resp.get("total_count", 0))
+                offset = int(json.loads(row["request_json"] or "{}").get("retstart", 0))
+            totals.setdefault(row["query_id"], {"reported_total": 0, "pmids": set()})
+            t = totals[row["query_id"]]
+            t["reported_total"] = max(t["reported_total"], total)
+            for i, p in enumerate(pmids):
+                p = normalize_pmid(p)
+                if p:
+                    t["pmids"].add(p)
+                    hits.append((row, offset + i + 1, p))
+        elif route == "structured_transcription":
+            for i, rec in enumerate(_load_raw_json(lit_dir, row).get("records", [])):
+                direct.append((row, i + 1, parse_transcribed_record(rec)))
+
+    records = []
+
+    def make(row, rank, meta, pmid=None, meta_row=None):
+        stem = Path(row["raw_file"]).stem
+        rid = f"SR-{stem}-{rank:05d}"
+        r = {k: meta[k] for k in meta if k != "original"} if meta else _empty_meta()
+        r.pop("original", None)
+        if pmid and not r.get("pmid"):
+            r["pmid"] = pmid
+            r["source_url"] = f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
+        r.update({
+            "source_record_id": rid,
+            "source": row["source"],
+            "route": ("eutils_api" if row["route"].startswith("eutils") else
+                      "pubmed_connector" if row["route"].startswith("pubmed_connector") else
+                      "structured_transcription"),
+            "query_id": row["query_id"],
+            "query_string": queries.get(row["query_id"]),
+            "search_timestamp": row["retrieved_at"],
+            "rank": rank,
+            "raw_file": row["raw_file"],
+            "raw_sha256": row["sha256"],
+            "metadata_raw_file": meta_row["raw_file"] if meta_row else None,
+            "transcribed": (row["transcribed"] == "yes") or bool(meta_row and meta_row["transcribed"] == "yes"),
+            "transcription_check": _combined_check(row, meta_row),
+            "metadata_missing": meta is None,
+            "original": meta["original"] if meta else None,
+        })
+        return r
+
+    for row, rank, pmid in hits:
+        meta, meta_row = meta_by_pmid.get(pmid, (None, None))
+        records.append(make(row, rank, meta, pmid=pmid, meta_row=meta_row))
+    for row, rank, meta in direct:
+        records.append(make(row, rank, meta))
+
+    completeness = {q: {"reported_total": v["reported_total"], "unique_pmids_retrieved": len(v["pmids"]),
+                        "complete": len(v["pmids"]) >= v["reported_total"]}
+                    for q, v in sorted(totals.items())}
+    return records, completeness
+
+
+def _combined_check(row, meta_row):
+    checks = [r["transcription_check"] for r in (row, meta_row) if r and r["transcribed"] == "yes"]
+    if not checks:
+        return "not_applicable"
+    if "failed" in checks:
+        return "failed"
+    return "passed" if all(c == "passed" for c in checks) else "not_done"
+
+
+# --------------------------------------------------------------------------------------------
+# Deduplication
+# --------------------------------------------------------------------------------------------
+class _UF:
+    def __init__(self, n):
+        self.p = list(range(n))
+
+    def find(self, i):
+        while self.p[i] != i:
+            self.p[i] = self.p[self.p[i]]
+            i = self.p[i]
+        return i
+
+
+def _source_rank(r):
+    s = SOURCE_PRIORITY.index(r["source"]) if r["source"] in SOURCE_PRIORITY else 99
+    ro = ROUTE_PRIORITY.index(r["route"]) if r["route"] in ROUTE_PRIORITY else 99
+    return (s, ro, r["metadata_missing"], r["search_timestamp"] or "", r["source_record_id"])
+
+
+def deduplicate(records, decisions_same=()):
+    """Cluster source records. Returns (clusters as lists of indices, review pairs as
+    (i, j, reason, similarity) on record indices).
+
+    Automatic merges: shared PMID / DOI / PMCID / arXiv ID, or identical normalised title with
+    the same year and first author, unless the clusters carry different values of the same
+    identifier (then flagged, never merged). Everything weaker is flagged for review."""
+    n = len(records)
+    uf = _UF(n)
+    ids = {"pmid": [set() for _ in range(n)], "doi": [set() for _ in range(n)],
+           "pmcid": [set() for _ in range(n)], "arxiv_id": [set() for _ in range(n)]}
+    for i, r in enumerate(records):
+        for k in ids:
+            if r.get(k):
+                ids[k][i].add(r[k])
+    review = []
+
+    def conflict(a, b):
+        return [k for k in ids if ids[k][a] and ids[k][b] and not (ids[k][a] & ids[k][b])]
+
+    def union(a, b):
+        ra, rb = uf.find(a), uf.find(b)
+        if ra == rb:
+            return True
+        c = conflict(ra, rb)
+        if c:
+            review.append((a, b, "identifier_conflict:" + "+".join(c), None))
+            return False
+        uf.p[rb] = ra
+        for k in ids:
+            ids[k][ra] |= ids[k][rb]
+        return True
+
+    # 1. exact identifiers (deterministic order)
+    for key in ("pmid", "doi", "pmcid", "arxiv_id"):
+        first = {}
+        for i, r in enumerate(records):
+            v = r.get(key)
+            if v:
+                if v in first:
+                    union(first[v], i)
+                else:
+                    first[v] = i
+    # 2. manual "same" decisions (pairs of record indices)
+    for a, b in decisions_same:
+        union(a, b)
+    # 3. normalised titles
+    by_title = {}
+    for i, r in enumerate(records):
+        t = normalize_title(r.get("title"))
+        if len(t) >= 20:
+            by_title.setdefault(t, []).append(i)
+    for t, idx in by_title.items():
+        for a_pos, a in enumerate(idx):
+            for b in idx[a_pos + 1:]:
+                if uf.find(a) == uf.find(b):
+                    continue
+                ra, rb = records[a], records[b]
+                fa, fb = first_author_key(ra["authors"]), first_author_key(rb["authors"])
+                same_author = fa == fb or not fa or not fb
+                ya, yb = ra.get("year"), rb.get("year")
+                if ya and yb and ya == yb and same_author:
+                    union(a, b)
+                elif ya and yb and abs(ya - yb) == 1 and same_author:
+                    review.append((a, b, "same_title_year_differs_by_1", 1.0))
+                else:
+                    review.append((a, b, "same_title_other_differences", 1.0))
+    # 4. fuzzy titles between clusters (blocked by first-author surname)
+    reps = {}
+    for i in range(n):
+        reps.setdefault(uf.find(i), i)
+    blocks = {}
+    for root, i in reps.items():
+        key = first_author_key(records[i]["authors"]) or normalize_title(records[i].get("title"))[:6]
+        blocks.setdefault(key, []).append(i)
+    norm_t = {i: normalize_title(records[i].get("title")) for idx in blocks.values() for i in idx}
+    toks = {i: set(t.split()) for i, t in norm_t.items()}
+    for key, idx in blocks.items():
+        for a_pos, a in enumerate(idx):
+            ta = norm_t[a]
+            for b in idx[a_pos + 1:]:
+                tb = norm_t[b]
+                if not ta or not tb or ta == tb or uf.find(a) == uf.find(b):
+                    continue
+                # cheap filters first (common surnames make large blocks): a pair reaching the
+                # character-ratio threshold shares most words and has similar length
+                if min(len(ta), len(tb)) / max(len(ta), len(tb)) < FUZZY_THRESHOLD - 0.1:
+                    continue
+                inter = len(toks[a] & toks[b])
+                if inter / max(len(toks[a] | toks[b]), 1) < 0.5:
+                    continue
+                sm = difflib.SequenceMatcher(None, ta, tb, autojunk=False)
+                if sm.quick_ratio() < FUZZY_THRESHOLD:
+                    continue
+                s = sm.ratio()
+                if s >= FUZZY_THRESHOLD:
+                    review.append((a, b, "fuzzy_title", round(s, 3)))
+    clusters = {}
+    for i in range(n):
+        clusters.setdefault(uf.find(i), []).append(i)
+    # drop review pairs that ended up in the same cluster
+    review = [p for p in review if uf.find(p[0]) != uf.find(p[1])]
+    return list(clusters.values()), review
+
+
+# --------------------------------------------------------------------------------------------
+# Paper-ID registry
+# --------------------------------------------------------------------------------------------
+def record_keys(r):
+    keys = []
+    for k in ("pmid", "doi", "pmcid", "arxiv_id"):
+        if r.get(k):
+            keys.append(f"{k}:{r[k]}")
+    t = normalize_title(r.get("title"))
+    if t and r.get("year"):
+        keys.append(f"title:{t}|{r['year']}")
+    return keys
+
+
+def load_registry(path):
+    reg = {}
+    if Path(path).exists():
+        with open(path, newline="") as f:
+            for row in csv.DictReader(f):
+                reg[row["key"]] = row["paper_id"]
+    return reg
+
+
+def assign_ids(clusters, records, registry_path, today):
+    reg = load_registry(registry_path)
+    used = [int(v[1:]) for v in reg.values() if re.fullmatch(r"P\d+", v)]
+    nxt = max(used, default=0) + 1
+    new_rows, out, conflicts = [], {}, []
+    # deterministic order: clusters ordered by their best record's sort key
+    order = sorted(range(len(clusters)), key=lambda c: min(_source_rank(records[i]) for i in clusters[c]))
+    taken = set()   # an ID already given to another cluster in this build is never reused
+    for c in order:
+        keys = sorted({k for i in clusters[c] for k in record_keys(records[i])})
+        found = sorted({reg[k] for k in keys if k in reg}, key=lambda x: int(x[1:]))
+        free = [f for f in found if f not in taken]
+        if free:
+            pid = free[0]
+            if len(found) > 1:
+                conflicts.append((pid, [f for f in found if f != pid]))
+        else:
+            pid = f"P{nxt:04d}"
+            nxt += 1
+            if found:   # shares an identifier key with a different, unmerged cluster
+                conflicts.append((pid, found))
+        taken.add(pid)
+        for k in keys:
+            if k not in reg:
+                reg[k] = pid
+                new_rows.append({"key": k, "paper_id": pid, "first_seen": today})
+        out[c] = pid
+    if new_rows:
+        new = not Path(registry_path).exists()
+        with open(registry_path, "a", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["key", "paper_id", "first_seen"])
+            if new:
+                w.writeheader()
+            w.writerows(new_rows)
+    return out, conflicts
+
+
+# --------------------------------------------------------------------------------------------
+# Merge into publication records
+# --------------------------------------------------------------------------------------------
+CONFLICT_FIELDS = {"title": normalize_title, "year": lambda x: x, "journal": normalize_journal,
+                   "doi": lambda x: x, "pmid": lambda x: x, "pmcid": lambda x: x,
+                   "arxiv_id": lambda x: x}
+FILL_FIELDS = ["title", "authors", "year", "journal", "doi", "pmid", "pmcid", "arxiv_id",
+               "source_url", "abstract", "publication_types", "language"]
+
+
+def merge_cluster(members):
+    members = sorted(members, key=_source_rank)
+    primary = members[0]
+    pub, provenance = {}, {}
+    for f in FILL_FIELDS:
+        val, src = None, None
+        for m in members:
+            v = m.get(f)
+            if v not in (None, "", []):
+                val, src = v, m["source_record_id"]
+                break
+        pub[f] = val
+        provenance[f] = src
+    conflicts = []
+    for f, norm in CONFLICT_FIELDS.items():
+        seen = {}
+        for m in members:
+            v = m.get(f)
+            if v in (None, ""):
+                continue
+            seen.setdefault(norm(v), []).append({"source_record_id": m["source_record_id"], "value": v})
+        if len(seen) > 1:
+            conflicts.append({"field": f, "values": [x for vals in seen.values() for x in vals]})
+    return primary, pub, provenance, conflicts
+
+
+def auto_verification(members, conflicts):
+    hard = {c["field"] for c in conflicts} & {"title", "year", "doi", "pmid"}
+    if hard:
+        return "needs_review", "conflicting " + ", ".join(sorted(hard))
+    if all(m["metadata_missing"] for m in members):
+        return "unverified", "no metadata retrieved"
+    sources = {m["source"] for m in members if not m["metadata_missing"]}
+    auth = [m for m in members if m["source"] in AUTHORITATIVE_SOURCES and not m["metadata_missing"]
+            and (m.get("pmid") or m.get("doi") or m.get("arxiv_id"))]
+    if not auth:
+        return "unverified", "no authoritative index record with a persistent identifier"
+    # transcribed connector data counts only if its transcription spot-check passed
+    trusted_auth = [m for m in auth if not m["transcribed"] or m["transcription_check"] == "passed"]
+    if not trusted_auth:
+        return "partially_verified", "authoritative record is transcribed and not yet spot-checked"
+    if len(sources) >= 2:
+        return "verified", "consistent in sources: " + ", ".join(sorted(sources))
+    return "partially_verified", "single source: " + ", ".join(sorted(sources))
+
+
+def full_text_hint(pub):
+    if pub.get("pmcid"):
+        return "pmc_record"
+    if pub.get("arxiv_id"):
+        return "arxiv_preprint"
+    return "not_checked"
+
+
+def _read_csv(path):
+    if not Path(path).exists():
+        return []
+    with open(path, newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def build(lit_dir, today=None, check_schema=True):
+    lit_dir = Path(lit_dir)
+    today = today or dt.date.today().isoformat()
+    rec_dir = lit_dir / "records"
+    rec_dir.mkdir(parents=True, exist_ok=True)
+    rows = read_manifest(lit_dir)
+    problems = verify_manifest(lit_dir, rows)
+    if problems:
+        raise RuntimeError("; ".join(problems))
+    records, completeness = build_source_records(lit_dir, rows)
+
+    # manual dedup decisions are keyed by paper_id -> map back through the registry
+    registry = load_registry(rec_dir / "paper_id_registry.csv")
+    rec_pid = {}
+    for i, r in enumerate(records):
+        for k in record_keys(r):
+            if k in registry:
+                rec_pid.setdefault(i, registry[k])
+    pid_recs = {}
+    for i, pid in rec_pid.items():
+        pid_recs.setdefault(pid, []).append(i)
+    decisions = _read_csv(rec_dir / "dedup_decisions.csv")
+    same, different = [], set()
+    for d in decisions:
+        a, b = d["paper_id_a"], d["paper_id_b"]
+        if d["decision"] == "same" and a in pid_recs and b in pid_recs:
+            same.append((pid_recs[a][0], pid_recs[b][0]))
+        elif d["decision"] == "different":
+            different.add(frozenset((a, b)))
+
+    clusters, review = deduplicate(records, same)
+    ids, reg_conflicts = assign_ids(clusters, records, rec_dir / "paper_id_registry.csv", today)
+    cluster_of = {i: c for c, idx in enumerate(clusters) for i in idx}
+
+    screening = {}
+    for d in sorted(_read_csv(lit_dir / "screening" / "decisions.csv"),
+                    key=lambda d: (SCREENING_STAGE_ORDER.get(d["stage"], 0), d["date"])):
+        screening[d["paper_id"]] = d
+    overrides = {d["paper_id"]: d for d in _read_csv(rec_dir / "verification_overrides.csv")}
+    fulltext = {d["paper_id"]: d for d in _read_csv(rec_dir / "fulltext_status.csv")}
+
+    review_rows, review_by_pid = [], {}
+    for a, b, reason, sim in review:
+        pa, pb = ids[cluster_of[a]], ids[cluster_of[b]]
+        if pa == pb or frozenset((pa, pb)) in different:
+            continue
+        review_by_pid.setdefault(pa, set()).add(pb)
+        review_by_pid.setdefault(pb, set()).add(pa)
+        review_rows.append({"paper_id_a": pa, "paper_id_b": pb, "reason": reason,
+                            "similarity": "" if sim is None else sim,
+                            "title_a": records[a]["title"], "title_b": records[b]["title"],
+                            "year_a": records[a]["year"], "year_b": records[b]["year"]})
+    seen_pairs, uniq_review = set(), []
+    for r in review_rows:
+        k = (min(r["paper_id_a"], r["paper_id_b"]), max(r["paper_id_a"], r["paper_id_b"]), r["reason"])
+        if k not in seen_pairs:
+            seen_pairs.add(k)
+            uniq_review.append(r)
+
+    pubs = []
+    for c, idx in enumerate(clusters):
+        members = [records[i] for i in idx]
+        primary, pub, prov, conflicts = merge_cluster(members)
+        pid = ids[c]
+        status, note = auto_verification(members, conflicts)
+        if pid in overrides:
+            status = overrides[pid]["verification_status"]
+            note = f"manual override by {overrides[pid].get('reviewer','?')} on {overrides[pid].get('date','?')}: {overrides[pid].get('note','')}"
+        sc = screening.get(pid)
+        ft = fulltext.get(pid)
+        if pid in review_by_pid:
+            dup = "possible_duplicate_review"
+        elif len(members) > 1:
+            dup = "merged_duplicates"
+        else:
+            dup = "unique"
+        pubs.append({
+            "paper_id": pid,
+            **pub,
+            "source_databases": sorted({m["source"] for m in members},
+                                       key=lambda s: SOURCE_PRIORITY.index(s) if s in SOURCE_PRIORITY else 99),
+            "source_urls": sorted({m["source_url"] for m in members if m.get("source_url")}),
+            "primary_source_record_id": primary["source_record_id"],
+            "field_provenance": prov,
+            "search_provenance": [{"query_id": m["query_id"], "query_string": m["query_string"],
+                                   "source": m["source"], "search_timestamp": m["search_timestamp"],
+                                   "rank": m["rank"], "source_record_id": m["source_record_id"]}
+                                  for m in sorted(members, key=lambda m: m["source_record_id"])],
+            "duplicate_status": dup,
+            "n_source_records": len(members),
+            "possible_duplicates": sorted(review_by_pid.get(pid, [])),
+            "metadata_conflicts": conflicts,
+            "verification_status": status,
+            "verification_note": note,
+            "full_text_availability": ft["full_text_availability"] if ft else full_text_hint(pub),
+            "screening_decision": sc["decision"] if sc else "not_screened",
+            "screening_stage": sc["stage"] if sc else None,
+            "exclusion_reason": (sc.get("reason_code") or None) if sc else None,
+            "retracted": any("Retracted Publication" in (m.get("publication_types") or []) for m in members),
+        })
+    pubs.sort(key=lambda p: int(p["paper_id"][1:]))
+
+    if check_schema:
+        validate_outputs(records, pubs)
+
+    with open(rec_dir / "source_records.jsonl", "w") as f:
+        for r in sorted(records, key=lambda r: r["source_record_id"]):
+            f.write(json.dumps(r, ensure_ascii=False, sort_keys=True) + "\n")
+    with open(rec_dir / "publications.jsonl", "w") as f:
+        for p in pubs:
+            f.write(json.dumps(p, ensure_ascii=False, sort_keys=True) + "\n")
+    with open(rec_dir / "dedup_review.csv", "w", newline="") as f:
+        cols = ["paper_id_a", "paper_id_b", "reason", "similarity", "title_a", "title_b",
+                "year_a", "year_b"]
+        w = csv.DictWriter(f, fieldnames=cols)
+        w.writeheader()
+        w.writerows(uniq_review)
+    index_cols = ["paper_id", "title", "first_author", "n_authors", "year", "journal", "doi", "pmid",
+                  "pmcid", "arxiv_id", "source_databases", "source_urls", "query_ids", "first_search_timestamp",
+                  "abstract_available", "duplicate_status", "possible_duplicates", "n_metadata_conflicts",
+                  "verification_status", "full_text_availability", "screening_decision", "exclusion_reason",
+                  "retracted"]
+    with open(rec_dir / "publications_index.csv", "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=index_cols)
+        w.writeheader()
+        for p in pubs:
+            a0 = (p["authors"] or [{}])[0]
+            w.writerow({**{k: p.get(k) for k in index_cols if k in p},
+                        "first_author": a0.get("last_name") or a0.get("collective_name") or a0.get("name"),
+                        "n_authors": len(p["authors"] or []),
+                        "source_databases": ";".join(p["source_databases"]),
+                        "source_urls": ";".join(p["source_urls"]),
+                        "query_ids": ";".join(sorted({s["query_id"] for s in p["search_provenance"]})),
+                        "first_search_timestamp": min(s["search_timestamp"] for s in p["search_provenance"]),
+                        "abstract_available": bool(p["abstract"]),
+                        "possible_duplicates": ";".join(p["possible_duplicates"]),
+                        "n_metadata_conflicts": len(p["metadata_conflicts"])})
+    report = {
+        "built_at": utc_now(),
+        "manifest_files": len(rows),
+        "source_records": len(records),
+        "source_records_missing_metadata": sum(r["metadata_missing"] for r in records),
+        "publications": len(pubs),
+        "duplicate_status": _count(p["duplicate_status"] for p in pubs),
+        "verification_status": _count(p["verification_status"] for p in pubs),
+        "publications_with_metadata_conflicts": sum(bool(p["metadata_conflicts"]) for p in pubs),
+        "dedup_review_pairs": len(uniq_review),
+        "registry_conflicts": [{"kept": k, "also": v} for k, v in reg_conflicts],
+        "search_completeness": completeness,
+        "retracted": [p["paper_id"] for p in pubs if p["retracted"]],
+    }
+    with open(rec_dir / "build_report.json", "w") as f:
+        json.dump(report, f, indent=2, sort_keys=True)
+    return report
+
+
+def _count(it):
+    out = {}
+    for x in it:
+        out[x] = out.get(x, 0) + 1
+    return dict(sorted(out.items()))
+
+
+def validate_outputs(records, pubs, schema_dir=None):
+    try:
+        import jsonschema
+    except ImportError:  # pragma: no cover
+        print("warning: jsonschema not installed; schema validation skipped", file=sys.stderr)
+        return
+    schema_dir = Path(schema_dir or Path(__file__).resolve().parents[2] / "research/literature/schemas")
+    with open(schema_dir / "source_record.schema.json") as f:
+        sr = json.load(f)
+    with open(schema_dir / "publication_record.schema.json") as f:
+        pr = json.load(f)
+    for r in records:
+        jsonschema.validate(r, sr)
+    for p in pubs:
+        jsonschema.validate(p, pr)
+
+
+# --------------------------------------------------------------------------------------------
+# CLI
+# --------------------------------------------------------------------------------------------
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--lit-dir", default="research/literature")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    r = sub.add_parser("register", help="register a raw export file in MANIFEST.csv")
+    r.add_argument("raw_file", help="file name inside raw_exports/")
+    r.add_argument("--query-id", required=True)
+    r.add_argument("--source", required=True, choices=SOURCE_PRIORITY)
+    r.add_argument("--route", required=True, choices=sorted(ROUTES))
+    r.add_argument("--endpoint-or-tool", required=True)
+    r.add_argument("--request-json", default="{}")
+    r.add_argument("--retrieved-at", required=True, help="ISO-8601 timestamp of the API/tool call")
+    r.add_argument("--n-items", required=True, type=int)
+    r.add_argument("--transcribed", action="store_true",
+                   help="response was written to disk by the assistant from tool output")
+    r.add_argument("--notes", default="")
+    b = sub.add_parser("build", help="rebuild records from all registered raw exports")
+    b.add_argument("--no-schema", action="store_true")
+    v = sub.add_parser("verify", help="check raw-export checksums against MANIFEST.csv")
+    c = sub.add_parser("spot-check", help="compare a transcribed metadata file with a re-fetch")
+    c.add_argument("original_file")
+    c.add_argument("refetch_file")
+    t = sub.add_parser("set-check", help="record a transcription spot-check outcome manually")
+    t.add_argument("raw_file")
+    t.add_argument("status", choices=["passed", "failed", "not_done"])
+    t.add_argument("--note", default="")
+    a = ap.parse_args(argv)
+    if a.cmd == "register":
+        row = register_raw(a.lit_dir, a.raw_file, a.query_id, a.source, a.route, a.endpoint_or_tool,
+                           json.loads(a.request_json), a.retrieved_at, a.n_items, a.transcribed, a.notes)
+        print(json.dumps(row, indent=2))
+    elif a.cmd == "build":
+        print(json.dumps(build(a.lit_dir, check_schema=not a.no_schema), indent=2))
+    elif a.cmd == "spot-check":
+        status, n, mism = spot_check(a.lit_dir, a.original_file, a.refetch_file)
+        print(json.dumps({"status": status, "pmids_compared": n, "mismatches": mism}, indent=2, default=str))
+        return 0 if status == "passed" else 1
+    elif a.cmd == "set-check":
+        set_transcription_check(a.lit_dir, a.raw_file, a.status, a.note)
+        print(f"{a.raw_file}: transcription_check={a.status}")
+    elif a.cmd == "verify":
+        probs = verify_manifest(a.lit_dir, read_manifest(a.lit_dir))
+        print("\n".join(probs) if probs else "OK: all raw exports match MANIFEST.csv")
+        return 1 if probs else 0
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

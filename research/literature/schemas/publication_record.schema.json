@@ -1,0 +1,342 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Publication record (deduplicated)",
+  "description": "LIT-002. One record per publication after deduplication. Bibliographic fields come from the highest-priority source record (field_provenance says which); disagreeing values are listed in metadata_conflicts, never silently overwritten.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "paper_id",
+    "source_databases",
+    "source_urls",
+    "primary_source_record_id",
+    "field_provenance",
+    "search_provenance",
+    "duplicate_status",
+    "n_source_records",
+    "possible_duplicates",
+    "metadata_conflicts",
+    "verification_status",
+    "verification_note",
+    "full_text_availability",
+    "screening_decision",
+    "screening_stage",
+    "exclusion_reason",
+    "retracted",
+    "title",
+    "authors",
+    "year",
+    "journal",
+    "doi",
+    "pmid",
+    "pmcid",
+    "arxiv_id",
+    "source_url",
+    "abstract",
+    "publication_types",
+    "language"
+  ],
+  "properties": {
+    "paper_id": {
+      "type": "string",
+      "pattern": "^P\\d{4,}$",
+      "description": "Internal ID, stable across rebuilds via records/paper_id_registry.csv"
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "authors": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "last_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fore_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "initials": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "collective_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "year": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1800,
+      "maximum": 2100
+    },
+    "journal": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "doi": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^10\\.\\d{4,9}/\\S+$",
+      "description": "lower-case, no resolver prefix"
+    },
+    "pmid": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[1-9]\\d{0,9}$"
+    },
+    "pmcid": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^PMC\\d+$"
+    },
+    "arxiv_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "without version suffix"
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "abstract": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "publication_types": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "language": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_databases": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "pubmed",
+          "europepmc",
+          "crossref",
+          "arxiv",
+          "semantic_scholar",
+          "consensus",
+          "publisher_site",
+          "repository",
+          "google_scholar",
+          "citation_chasing",
+          "web",
+          "manual"
+        ]
+      },
+      "minItems": 1
+    },
+    "source_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "primary_source_record_id": {
+      "type": "string"
+    },
+    "field_provenance": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "search_provenance": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "query_id",
+          "query_string",
+          "source",
+          "search_timestamp",
+          "rank",
+          "source_record_id"
+        ],
+        "properties": {
+          "query_id": {
+            "type": "string"
+          },
+          "query_string": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "enum": [
+              "pubmed",
+              "europepmc",
+              "crossref",
+              "arxiv",
+              "semantic_scholar",
+              "consensus",
+              "publisher_site",
+              "repository",
+              "google_scholar",
+              "citation_chasing",
+              "web",
+              "manual"
+            ]
+          },
+          "search_timestamp": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "source_record_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "duplicate_status": {
+      "enum": [
+        "unique",
+        "merged_duplicates",
+        "possible_duplicate_review"
+      ]
+    },
+    "n_source_records": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "possible_duplicates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metadata_conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "field",
+          "values"
+        ],
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "minItems": 2
+          }
+        }
+      }
+    },
+    "verification_status": {
+      "enum": [
+        "verified",
+        "partially_verified",
+        "unverified",
+        "needs_review",
+        "failed"
+      ]
+    },
+    "verification_note": {
+      "type": "string"
+    },
+    "full_text_availability": {
+      "enum": [
+        "not_checked",
+        "pmc_record",
+        "pmc_full_text_retrieved",
+        "arxiv_preprint",
+        "publisher_open_access",
+        "researcher_pdf",
+        "abstract_only",
+        "unavailable"
+      ]
+    },
+    "screening_decision": {
+      "enum": [
+        "not_screened",
+        "include",
+        "exclude",
+        "uncertain",
+        "abstract_only"
+      ]
+    },
+    "screening_stage": {
+      "enum": [
+        null,
+        "title_abstract",
+        "full_text"
+      ]
+    },
+    "exclusion_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^E(1[0-2]|[1-9])$"
+    },
+    "retracted": {
+      "type": "boolean"
+    }
+  }
+}
