@@ -57,3 +57,12 @@ strategy is approved.
    resolved before Day 17.
 3. **Ephemeral container**: uncommitted files are lost when the session ends.
 4. No R/LaTeX: manuscript tooling will use pandoc/Markdown unless installed later.
+
+## Addendum — LIT-001 (2026-10-14): research-tool capabilities verified
+Details and exact probe strings: `research/literature/search_queries.csv` (PROBE-01…12).
+- **PubMed connector:** works (search with total counts and query translation; metadata incl. DOI/PMCID/publication types; ID conversion; related articles; PMC full text). **Limits:** ≤ 20 boolean operators and ≤ 5 wildcards per query; `max_results` ≥ 1. The `[edat]` date-range clause is accepted.
+- **Consensus connector:** works on the free tier: 10 results per search, no paging, no DOIs.
+- **alphaXiv connector:** works (arXiv only; ranked; 2 searches per message).
+- **WebSearch:** works, including `allowed_domains` restriction. Google Scholar pages are never returned.
+- **WebFetch:** fails for every tested host (DNS not resolved): Europe PMC, Crossref, Semantic Scholar, Google Scholar, Metabolomics Workbench. Web pages cannot be read in full.
+- Container `curl` additionally blocked for pubmed.ncbi.nlm.nih.gov, PMC, arXiv API, bioRxiv/medRxiv, major publishers, HMDB and MetaboLights.

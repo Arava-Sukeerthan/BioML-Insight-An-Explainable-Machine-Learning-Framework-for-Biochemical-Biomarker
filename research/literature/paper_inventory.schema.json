@@ -1,40 +1,233 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "BioML-Insight paper inventory",
-  "description": "One record per candidate publication. Records are added only from search-tool output; bibliographic fields are never typed from memory. Status: schema PROPOSED in P001, pending approval with the search strategy.",
+  "description": "One record per candidate publication. Records are added only from search-tool output; bibliographic fields are never typed from memory. Status: schema PROPOSED in P001, revised in LIT-001 (source list, provenance, RQ/tier tags); pending approval with the search strategy.",
   "type": "array",
   "items": {
     "type": "object",
-    "required": ["paper_id", "title", "year", "source_db", "query_id", "retrieved_on", "verification_status", "screening_status"],
+    "required": [
+      "paper_id",
+      "title",
+      "year",
+      "source_db",
+      "query_ids",
+      "retrieved_on",
+      "verification_status",
+      "screening_status"
+    ],
     "additionalProperties": false,
     "properties": {
-      "paper_id": {"type": "string", "pattern": "^P[0-9]{4}$", "description": "Internal ID, e.g. P0001"},
-      "title": {"type": "string"},
-      "authors": {"type": "string", "description": "As returned by the source, semicolon-separated"},
-      "year": {"type": "integer"},
-      "venue": {"type": "string"},
-      "doi": {"type": ["string", "null"]},
-      "pmid": {"type": ["string", "null"]},
-      "arxiv_id": {"type": ["string", "null"]},
-      "url": {"type": ["string", "null"]},
-      "source_db": {"type": "string", "enum": ["pubmed", "consensus", "arxiv", "web", "manual"]},
-      "query_id": {"type": "string", "description": "ID of the search query in search_strategy.md that found it"},
-      "retrieved_on": {"type": "string", "format": "date"},
-      "verification_status": {"type": "string", "enum": ["verified", "partially_verified", "unverified", "failed"], "description": "verified = title, authors, year and an identifier confirmed by a second lookup"},
-      "verification_note": {"type": "string"},
-      "screening_status": {"type": "string", "enum": ["not_screened", "included", "excluded_title_abstract", "excluded_full_text"]},
-      "exclusion_reason": {"type": ["string", "null"]},
-      "disorder": {"type": ["string", "null"]},
-      "biomarker_type": {"type": ["string", "null"]},
-      "dataset": {"type": ["string", "null"]},
-      "sample_size": {"type": ["integer", "null"]},
-      "models": {"type": ["string", "null"]},
-      "explainability": {"type": ["string", "null"]},
-      "calibration_or_uncertainty": {"type": ["string", "null"]},
-      "validation_design": {"type": ["string", "null"]},
-      "reported_metrics": {"type": ["string", "null"], "description": "Copied verbatim from the paper with location, never paraphrased into new numbers"},
-      "limitations_noted": {"type": ["string", "null"]},
-      "notes": {"type": ["string", "null"]}
+      "paper_id": {
+        "type": "string",
+        "pattern": "^P[0-9]{4}$",
+        "description": "Internal ID, e.g. P0001"
+      },
+      "title": {
+        "type": "string"
+      },
+      "authors": {
+        "type": "string",
+        "description": "As returned by the source, semicolon-separated"
+      },
+      "year": {
+        "type": "integer"
+      },
+      "venue": {
+        "type": "string"
+      },
+      "doi": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "pmid": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "arxiv_id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "url": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "pmcid": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "source_db": {
+        "type": "string",
+        "enum": [
+          "pubmed",
+          "europepmc",
+          "crossref",
+          "semantic_scholar",
+          "consensus",
+          "arxiv",
+          "google_scholar",
+          "publisher_site",
+          "repository",
+          "citation_chasing",
+          "web",
+          "manual"
+        ],
+        "description": "Most authoritative source of the retained record (PubMed > Europe PMC > Crossref > arXiv > Consensus > web)"
+      },
+      "query_ids": {
+        "type": "string",
+        "description": "Semicolon-separated IDs from search_queries.csv (or 'seed:Sxx', 'cites:Pxxxx') of every search that retrieved the record"
+      },
+      "retrieved_on": {
+        "type": "string",
+        "format": "date"
+      },
+      "verification_status": {
+        "type": "string",
+        "enum": [
+          "verified",
+          "partially_verified",
+          "unverified",
+          "failed"
+        ],
+        "description": "verified = title, authors, year and an identifier confirmed by a second lookup"
+      },
+      "verification_note": {
+        "type": "string"
+      },
+      "screening_status": {
+        "type": "string",
+        "enum": [
+          "not_screened",
+          "included",
+          "excluded_title_abstract",
+          "excluded_full_text"
+        ]
+      },
+      "exclusion_reason": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "publication_type": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "enum": [
+          "original_research",
+          "methodological",
+          "software_framework",
+          "guideline",
+          "review_lead",
+          "preprint_original",
+          "other",
+          null
+        ]
+      },
+      "rq_tags": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Semicolon-separated RQ1..RQ6"
+      },
+      "tier": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "enum": [
+          1,
+          2,
+          3,
+          null
+        ]
+      },
+      "scope_flags": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "e.g. scope_pending; lr_only; prognostic; abstract_only; expression_of_concern"
+      },
+      "disorder": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "biomarker_type": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "dataset": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "sample_size": {
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "models": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "explainability": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "calibration_or_uncertainty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "validation_design": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "reported_metrics": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Copied verbatim from the paper with location, never paraphrased into new numbers"
+      },
+      "limitations_noted": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "notes": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
     }
   }
 }

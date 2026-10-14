@@ -3,7 +3,8 @@
 **An Explainable and Uncertainty-Aware Machine Learning Framework for Biochemical Biomarker-Based Metabolic Disorder Classification**
 
 Status: **Stage A — research setup** (Day 1 of a planned 45-day project, started 2026-10-14).
-No literature has been collected, no dataset has been selected, and no model has been trained.
+The literature-search strategy is drafted and awaiting approval. No literature has been collected,
+no dataset has been selected, and no model has been trained.
 
 ## Governance
 
@@ -17,7 +18,7 @@ main contribution, outcome definition, and final evaluation protocol.
 GOVERNANCE.md                    Research principles, stage gates, schedule (proposed)
 research/
   setup/environment_assessment.md  Tools, network access, and limitations
-  literature/                      Search strategy, paper inventory, review, gap matrix
+  literature/                      Search strategy, queries, screening criteria, paper inventory
   methodology/                     Research questions, hypotheses, framework, protocol, design decisions
   reviews/                         Daily review log and unresolved questions
 logs/
@@ -26,6 +27,8 @@ logs/
   DECISION_LOG.md                  Proposed / approved / rejected / revised decisions
   EXPERIMENT_LOG.md                Experiment runs (none before Stage G)
   session_logs/                    One log per working session
+scripts/
+  literature/                      Small utilities (query validation; later dedup/verification)
 ```
 
 Directories for code (`src/`), tests (`tests/`), and data (`data/`) will be created when
