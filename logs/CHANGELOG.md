@@ -19,4 +19,4 @@
 
 **Validation**: see session log; JSON files parse, CSV header matches schema fields.
 
-**Commit**: recorded in `logs/session_logs/2026-10-14_P001.md` after commit.
+**Commit**: `6bf10d9`
