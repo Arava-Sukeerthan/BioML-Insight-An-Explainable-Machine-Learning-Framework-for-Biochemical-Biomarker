@@ -45,4 +45,4 @@
 
 **Not done (by instruction)**: no records collected; no framework proposed.
 
-**Commit**: see `logs/session_logs/2026-10-14_LIT-001.md`.
+**Commit**: `5621dc9`
