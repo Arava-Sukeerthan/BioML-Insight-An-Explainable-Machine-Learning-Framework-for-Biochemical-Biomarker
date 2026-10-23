@@ -132,6 +132,8 @@ Record
 The audit file (`audit_sample.csv`) contains the sampled records without the assistant's
 decision, plus the random seed used.
 
+> **Implementation note (LIT-004-WORKFLOW-FIXES, 2026-10-23; proposed, D-027, not approved).** The pipeline reads a single file, `screening/decisions.csv`, with the stage as a column (`title_abstract` / `full_text`) instead of two files. `record_id` above is the `paper_id`. Required columns: `paper_id, stage, decision, reason_code, screener, date, justification`; optional: `rq_tags, tier, scope_flags, record_type, dim_explainability, dim_uncertainty, dim_calibration, dim_independent_validation, criteria_version, needs_human`. Columns, types and allowed values: `schemas/screening_decision.schema.json`. No documented field was dropped. The text above is kept unchanged until the researcher decides on D-027.
+
 ## 7. Pilot calibration of the criteria
 Before full screening, the criteria are applied to the first 30 records (in PMID order) of
 `Q-PM-01` and `Q-PM-09`. Ambiguities found are resolved with the researcher and logged before

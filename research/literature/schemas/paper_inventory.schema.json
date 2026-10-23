@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "BioML-Insight paper inventory",
-  "description": "One record per candidate publication. Records are added only from search-tool output; bibliographic fields are never typed from memory. Status: schema PROPOSED in P001, revised in LIT-001 (source list, provenance, RQ/tier tags); pending approval with the search strategy. Revised in LIT-003 (2026-10-23): evidence-table fields added (research_problem, population, prediction_target, biomarkers_features, uncertainty_methods, calibration_methods, preliminary_relevance, retrieval_themes, full_text_availability, abstract_available, source_publication_types, extraction_status); calibration_or_uncertainty split into two fields; sentinel strings allowed for unextracted values; verification_status gains needs_review. Schema still PROPOSED.",
+  "description": "One record per candidate publication. Records are added only from search-tool output; bibliographic fields are never typed from memory. Status: schema PROPOSED in P001, revised in LIT-001 (source list, provenance, RQ/tier tags); pending approval with the search strategy. Revised in LIT-003 (2026-10-23): evidence-table fields added (research_problem, population, prediction_target, biomarkers_features, uncertainty_methods, calibration_methods, preliminary_relevance, retrieval_themes, full_text_availability, abstract_available, source_publication_types, extraction_status); calibration_or_uncertainty split into two fields; sentinel strings allowed for unextracted values; verification_status gains needs_review. Schema still PROPOSED. LIT-004-WORKFLOW-FIXES: screening_status aligned with the publication record; screening_stage and screening descriptor fields added (proposed, D-027).",
   "type": "array",
   "items": {
     "type": "object",
@@ -109,16 +109,19 @@
         "type": "string",
         "enum": [
           "not_screened",
-          "included",
-          "excluded_title_abstract",
-          "excluded_full_text"
-        ]
+          "include",
+          "exclude",
+          "uncertain",
+          "abstract_only"
+        ],
+        "description": "Current screening decision copied from the build (publication_record.screening_decision). 'not_screened' = no decision row; 'uncertain' = screened, undecided. LIT-004-WORKFLOW-FIXES replaced the unused LIT-001 values included/excluded_title_abstract/excluded_full_text (no record carried them)"
       },
       "exclusion_reason": {
         "type": [
           "string",
           "null"
-        ]
+        ],
+        "pattern": "^E(1[0-2]|[1-9])$"
       },
       "publication_type": {
         "type": [
@@ -327,6 +330,73 @@
           "null"
         ],
         "description": "Whether the source returned an abstract (abstract text itself is not stored in this public table)"
+      },
+      "screening_stage": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "enum": [
+          "title_abstract",
+          "full_text",
+          null
+        ]
+      },
+      "dim_explainability": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv)"
+      },
+      "dim_uncertainty": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv)"
+      },
+      "dim_calibration": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv)"
+      },
+      "dim_independent_validation": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv)"
+      },
+      "record_type": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv)"
+      },
+      "screener": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv)"
+      },
+      "screening_date": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv)"
+      },
+      "screening_justification": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv)"
       }
     }
   }

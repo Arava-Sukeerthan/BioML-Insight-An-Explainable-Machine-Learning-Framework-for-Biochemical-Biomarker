@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Screening decision row (screening/decisions.csv)",
+  "description": "LIT-004-WORKFLOW-FIXES (proposed, D-027). One row per decision; append-only; the latest row per paper (stage order, then date, then file order) is the current decision. All CSV values are strings; empty string = not recorded. Validated by pubrecords.load_screening_decisions; a unit test keeps this file and the code in step.",
+  "type": "object",
+  "required": [
+    "paper_id",
+    "stage",
+    "decision",
+    "reason_code",
+    "screener",
+    "date",
+    "justification"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "paper_id": {
+      "type": "string",
+      "pattern": "^P[0-9]{4,}$"
+    },
+    "stage": {
+      "enum": [
+        "title_abstract",
+        "full_text"
+      ]
+    },
+    "decision": {
+      "enum": [
+        "include",
+        "exclude",
+        "uncertain",
+        "abstract_only"
+      ],
+      "description": "'not_screened' is never written: a record without a row is not screened"
+    },
+    "reason_code": {
+      "type": "string",
+      "pattern": "^(E(1[0-2]|[1-9]))?$",
+      "description": "required (E1-E12) iff decision=exclude; empty otherwise"
+    },
+    "screener": {
+      "type": "string",
+      "minLength": 1,
+      "description": "e.g. assistant, researcher, rule:stage0"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "justification": {
+      "type": "string",
+      "description": "required for exclude and uncertain"
+    },
+    "rq_tags": {
+      "type": "string",
+      "pattern": "^((RQ[1-6])(;RQ[1-6])*)?$"
+    },
+    "scope_flags": {
+      "type": "string"
+    },
+    "criteria_version": {
+      "type": "string"
+    },
+    "tier": {
+      "enum": [
+        "",
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    "record_type": {
+      "enum": [
+        "",
+        "original",
+        "methodological",
+        "software",
+        "guideline",
+        "review_lead",
+        "preprint",
+        "notice"
+      ]
+    },
+    "dim_explainability": {
+      "enum": [
+        "",
+        "yes",
+        "no",
+        "unclear"
+      ]
+    },
+    "dim_uncertainty": {
+      "enum": [
+        "",
+        "yes",
+        "no",
+        "unclear"
+      ]
+    },
+    "dim_calibration": {
+      "enum": [
+        "",
+        "yes",
+        "no",
+        "unclear"
+      ]
+    },
+    "dim_independent_validation": {
+      "enum": [
+        "",
+        "external",
+        "temporal",
+        "internal_only",
+        "unclear"
+      ]
+    },
+    "needs_human": {
+      "enum": [
+        "",
+        "yes",
+        "no"
+      ]
+    }
+  },
+  "x-column-order": [
+    "paper_id",
+    "stage",
+    "decision",
+    "reason_code",
+    "screener",
+    "date",
+    "justification",
+    "rq_tags",
+    "tier",
+    "scope_flags",
+    "record_type",
+    "dim_explainability",
+    "dim_uncertainty",
+    "dim_calibration",
+    "dim_independent_validation",
+    "criteria_version",
+    "needs_human"
+  ]
+}

@@ -8,6 +8,7 @@
   "fulltext_review_candidates": 234,
   "identifier_clusters": 2979,
   "identifier_conflict_pairs": 3,
+  "manual_values_carried_forward": 0,
   "merged_by_title_rule": 0,
   "paper_inventory_schema": "valid",
   "preprints_by_pubmed_type": 39,
@@ -38,6 +39,9 @@
     "P1443"
   ],
   "reviews_by_pubmed_type": 433,
+  "screening_status": {
+    "not_screened": 2979
+  },
   "title_based_duplicate_candidates": 12,
   "verification_status": {
     "needs_review": 1,

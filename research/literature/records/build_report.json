@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-10-23T17:23:18+00:00",
+  "built_at": "2026-10-23T18:09:00+00:00",
   "dedup_review_pairs": 15,
   "duplicate_status": {
     "merged_duplicates": 438,
@@ -9,6 +9,7 @@
   "manifest_files": 205,
   "publications": 2979,
   "publications_with_metadata_conflicts": 1,
+  "publications_without_stable_registry_key": 0,
   "registry_conflicts": [
     {
       "also": [
@@ -34,6 +35,9 @@
     "P0939",
     "P1443"
   ],
+  "screening_decision": {
+    "not_screened": 2979
+  },
   "search_completeness": {
     "Q-PM-01": {
       "complete": true,

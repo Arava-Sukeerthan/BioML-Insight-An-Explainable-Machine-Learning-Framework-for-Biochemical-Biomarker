@@ -61,3 +61,11 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** D-025, D-026; Q-026–Q-030; still Q-001, Q-002, Q-007/D-009, Q-008/D-008, Q-022, Q-024.
 - **Recommended next step:** researcher review of the protocol and blockers; then fix B-1 (and B-3/B-4 if approved) before generating the pilot sample.
 - **Researcher decisions:** _pending_
+
+## Day 10 (cont.) — 2026-10-23 — LIT-004-WORKFLOW-FIXES
+- **Work completed:** fixed blockers B-1 (stable IDs for 9 web-only records; IDs kept), B-3 (one validated screening file and schema), B-4 (screening status carried into the inventory; manual values survive rebuilds); 21 regression tests.
+- **Important findings:** `[EVIDENCE]` two rebuilds are byte-identical and keep every paper ID. `[EVIDENCE]` The inventory's `publication_type` list and the protocol's `record_type` list differ (Q-031). `[OPEN]` The format and key scheme are implemented but not approved (D-027).
+- **Decisions requiring review:** D-027 (with Q-027, Q-030); Q-031, Q-032; earlier items unchanged (D-025, D-026, Q-026, Q-028, Q-029, Q-001, Q-002, Q-007/D-009, Q-008/D-008, Q-022, Q-024).
+- **Recommended next step:** `[RECOMMENDATION]` researcher review of D-027 and the remaining blockers B-2, B-5, B-6; then the pilot sample (D-025) once approved.
+- **Researcher decisions:** _pending_
+

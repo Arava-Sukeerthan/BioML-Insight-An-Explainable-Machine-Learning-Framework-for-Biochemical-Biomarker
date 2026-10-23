@@ -15,6 +15,7 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | LIT-003-PRESERVATION-CONFIRMATION | 2026-10-23 | B | Record the researcher's Windows SHA-256 verification of the downloaded archive; do not overstate durable storage | Completed: downloaded copy verified (researcher-reported); durable backup still pending (Q-011) | see CHANGELOG |
 | LIT-003-PRESERVATION-CONFIRMATION (2nd) | 2026-10-23 | B | Record the verified download and a second local copy; do not claim an off-device backup | Completed: integrity verified, local redundancy (same computer); off-device backup outstanding (Q-011) | see CHANGELOG |
 | LIT-004-PREPARATION | 2026-10-23 | B | Prepare a pilot title/abstract screening protocol; no screening | Draft protocol (proposed, D-025/D-026); blockers B-1…B-6 and Q-026–Q-030 recorded; awaiting human review | see CHANGELOG |
+| LIT-004-WORKFLOW-FIXES | 2026-10-23 | B | Fix reproducibility blockers B-1, B-3, B-4 before screening | Stable fallback IDs (9 IDs kept); one validated screening format; screening status carried into the inventory; 21 regression tests; D-027 proposed; no screening | see CHANGELOG |
 
 ## Detailed entries
 
@@ -59,3 +60,17 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
 | Commit | `b48adde` (work commit; log update in a follow-up commit) |
 | Pull request | #2 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2 (open; not merged) |
+
+### LIT-004-WORKFLOW-FIXES
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-WORKFLOW-FIXES |
+| Prompt date | 2026-10-23 (Day 10) |
+| Objective | Resolve the technical reproducibility problems B-1 (unstable record IDs), B-3 (conflicting screening formats) and B-4 (screening-status field) found in LIT-004-PREPARATION, before any screening |
+| Expected deliverables | Deterministic IDs with a migration/mapping report; one consistent screening format (filename, columns, types) in documents and code; status model for include/exclude/uncertain/abstract_only/not_screened carried into the reports; regression tests; logs; concise report |
+| Actual completion status | Completed for review. All three implemented on the PR branch; the format and key scheme are **proposed (D-027), not approved**. No records screened, no pilot sample generated, no duplicate pair resolved |
+| Output files | see CHANGELOG LIT-004-WORKFLOW-FIXES |
+| Validation status | Performed: 43/43 unit tests, query table PASS (158 rows), raw-export checksums OK, archive `sha256sum -c` OK, two rebuilds byte-identical, paper-ID → source-record mapping identical to the pre-fix build |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-WORKFLOW-FIXES: …"; hash reported in the completion report) |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |

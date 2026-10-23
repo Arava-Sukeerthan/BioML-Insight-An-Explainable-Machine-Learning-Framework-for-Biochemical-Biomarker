@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Task | LIT-004-PREPARATION (2026-10-23) |
-| Version | 0.1 — **DRAFT, PROPOSED, not approved** (D-025, D-026) |
+| Version | 0.1 — **DRAFT, PROPOSED, not approved** (D-025, D-026). §1 and §8 status updated in LIT-004-WORKFLOW-FIXES (B-1, B-3, B-4 implemented, pending approval as D-027); no rule changed |
 | Relationship to existing documents | Operational protocol for `screening_criteria.md` v1.0 (LIT-001, draft) and `search_strategy.md` §6. It **does not replace** them. Where it proposes changes, they are listed in §9 as *proposed amendments*. `screening_criteria.md` was **not** edited |
 | Status of screening | **Not started.** No record has been screened, labelled or selected |
 | Scope of claims | The protocol does not assume that the BioML-Insight framework is new or better. Screening exists to describe the existing evidence; whether a defensible research gap exists is decided later (Stage D) from verified, screened evidence |
@@ -18,7 +18,7 @@ or validated shortlist and has no role in eligibility decisions.
 
 | Field needed for title/abstract screening | Where it is | Note |
 |---|---|---|
-| `paper_id` | inventory, index, jsonl | Stable for 2,970 records; **not stable for 9 web-only records** without identifier and year (§8, blocker B-1) |
+| `paper_id` | inventory, index, jsonl | Stable for all 2,979 records since LIT-004-WORKFLOW-FIXES (B-1 fixed by a fallback registry key; P2980–P2988 kept their IDs, `records/id_migration_LIT-004.csv`) |
 | title | inventory | |
 | abstract | `records/publications.jsonl` only (git-ignored, container) | Not in any committed file (D-010). Can be rebuilt from the preserved archive (`preservation/preservation_status.md`). 119 records have no abstract: all 113 arXiv/web records, plus 6 PubMed records whose abstract field is empty or the "[Abstract not available]" placeholder |
 | publication types | inventory `source_publication_types` | Drives Stage 0 (§3) |
@@ -141,14 +141,14 @@ PMID order selects the oldest records, and two queries cover neither themes C/D/
 
 ## 8. Blockers and conflicts found (must be resolved before screening)
 
-| ID | Finding | Evidence | Proposed resolution |
-|---|---|---|---|
-| B-1 | **Unstable paper IDs** for 9 web-only records with no DOI/PMID/PMCID/arXiv ID and no year (P2980–P2988 in the current build; IDs change on every rebuild, e.g. P2977→P2988) | `record_keys()` in `pubrecords.py` needs title **and** year; these 9 have no registry key | Add a registry key from the source URL (or title alone when the year is missing). Small code change + test, then rebuild; record ID mapping. **Not done in this task** (no inventory change allowed) |
-| B-2 | Workflow cannot record a **version** link and cannot merge identifier-conflict pairs | §4 | Add `version` decision and `version_of` note handling (A-4) |
-| B-3 | **Two screening file formats** in project documents: `collection_workflow.md`/`pubrecords.py` read `screening/decisions.csv` (`paper_id,stage,decision,reason_code,screener,date,justification`), while `screening_criteria.md` §6 and `search_strategy.md` §6.2 name `title_abstract_decisions.csv` with `record_id, decision, reason_code, rq_tags, tier, scope_flags, justification, screener, date` | file contents | Use `screening/decisions.csv` (the implemented one), with the extra columns of §2 appended (the reader ignores unknown columns); amend the two documents' wording (A-5) |
-| B-4 | Inventory enum `screening_status` (`not_screened, included, excluded_title_abstract, excluded_full_text`) has no `uncertain`/`abstract_only`, while the publication-record schema has them; `make_literature_reports.py` always writes `not_screened` | schemas, script line 133 | Map decisions from `publications.jsonl` into the inventory and extend the enum (D-024 revision) |
-| B-5 | Abstracts exist only in the container copy of `publications.jsonl` | D-010 | Screening must run where the build outputs exist, or after rebuilding from the preserved archive (requires uploading it back) |
-| B-6 | Scope decisions still open: Q-001 (disorders), Q-002 (biomarker class), D-009/Q-007 (Q-PM-02 strand), D-008/Q-008 (audit), Q-022 (strategy approval) | unresolved_questions.md | Researcher decisions before the pilot (or pilot run explicitly under the provisional scope) |
+| ID | Finding | Evidence | Proposed resolution | Status (LIT-004-WORKFLOW-FIXES) |
+|---|---|---|---|---|
+| B-1 | **Unstable paper IDs** for 9 web-only records with no DOI/PMID/PMCID/arXiv ID and no year (P2980–P2988 in the current build; IDs change on every rebuild, e.g. P2977→P2988) | `record_keys()` in `pubrecords.py` needs title **and** year; these 9 have no registry key | Add a registry key from the source URL (or title alone when the year is missing). Small code change + test, then rebuild; record ID mapping. | **Implemented** with a different key: `source_record:<source_record_id>` (see D-027 for why, and the URL key as an alternative). The 9 IDs were kept (mapping before = after); approval pending (D-027) |
+| B-2 | Workflow cannot record a **version** link and cannot merge identifier-conflict pairs | §4 | Add `version` decision and `version_of` note handling (A-4) | Open |
+| B-3 | **Two screening file formats** in project documents: `collection_workflow.md`/`pubrecords.py` read `screening/decisions.csv` (`paper_id,stage,decision,reason_code,screener,date,justification`), while `screening_criteria.md` §6 and `search_strategy.md` §6.2 name `title_abstract_decisions.csv` with `record_id, decision, reason_code, rq_tags, tier, scope_flags, justification, screener, date` | file contents | Use `screening/decisions.csv` (the implemented one), with the extra columns of §2 appended (the reader ignores unknown columns); amend the two documents' wording (A-5) | **Implemented**, with one difference: the reader now **rejects** unknown columns instead of ignoring them, so a typo cannot drop a field silently. Schema `schemas/screening_decision.schema.json`; implementation notes added to the two documents, their text unchanged. Approval pending (D-027) |
+| B-4 | Inventory enum `screening_status` (`not_screened, included, excluded_title_abstract, excluded_full_text`) has no `uncertain`/`abstract_only`, while the publication-record schema has them; `make_literature_reports.py` always writes `not_screened` | schemas, script line 133 | Map decisions from `publications.jsonl` into the inventory and extend the enum (D-024 revision) | **Implemented**: inventory enum now `not_screened/include/exclude/uncertain/abstract_only` (the old values were never used by any record); stage, reason, descriptors and screener carried into the inventory; manual extraction values carried forward on rebuild. Approval pending (D-027) |
+| B-5 | Abstracts exist only in the container copy of `publications.jsonl` | D-010 | Screening must run where the build outputs exist, or after rebuilding from the preserved archive (requires uploading it back) | Open |
+| B-6 | Scope decisions still open: Q-001 (disorders), Q-002 (biomarker class), D-009/Q-007 (Q-PM-02 strand), D-008/Q-008 (audit), Q-022 (strategy approval) | unresolved_questions.md | Researcher decisions before the pilot (or pilot run explicitly under the provisional scope) | Open |
 
 ## 9. Proposed amendments to `screening_criteria.md` (not applied)
 

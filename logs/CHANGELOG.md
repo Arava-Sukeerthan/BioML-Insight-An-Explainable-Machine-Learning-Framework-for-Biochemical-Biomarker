@@ -315,3 +315,24 @@ after PR #1 had been merged.
 **Deleted**: none.
 
 **Validation**: unit tests, query-table check, raw-export checksum check, inventory unchanged (`git diff`), no raw/archive files staged (results in the completion report).
+
+## LIT-004-WORKFLOW-FIXES — 2026-10-23 — Stable IDs, one screening format, status persistence (no screening)
+
+**Prompt objective**: resolve blockers B-1, B-3 and B-4 (`screening_protocol.md` §8) before any screening.
+
+**Completed**
+- **B-1 (IDs).** `record_keys()` now gives a record with no persistent identifier and no year the registry key `source_record:<source_record_id>` (raw-file stem + rank; raw files are immutable and checksummed). New command `pubrecords.py migrate-fallback-keys` appended these keys for the 9 affected records, mapped to the IDs they already had: **P2980–P2988 unchanged** (`records/id_migration_LIT-004.csv`, before = after). Registry 10,776 → 10,785 rows, append-only. Two rebuilds: `publications_index.csv` and the registry byte-identical; paper-ID → source-record mapping identical to the pre-fix build (2,979 publications); `publications_without_stable_registry_key` = 0.
+- **B-3 (format).** One file `screening/decisions.csv`; required and optional columns, types and enums in the new `schemas/screening_decision.schema.json`, mirrored by constants in `pubrecords.py`. The build validates every row (decision, stage, reason code E1–E12 only on exclude, `abstract_only` only at full text, justification for exclude/uncertain, date format, screener, RQ tags, descriptor enums) and **rejects unknown columns**. Implementation notes added to `screening_criteria.md` §6 and `search_strategy.md` §6.2 (their text unchanged); `collection_workflow.md` §1 tables updated.
+- **B-4 (status).** Inventory `screening_status` enum is now `not_screened / include / exclude / uncertain / abstract_only` (the LIT-001 values `included`, `excluded_title_abstract`, `excluded_full_text` were carried by no record). `make_literature_reports.py` copies decision, stage, reason, descriptors, screener, date and justification from the build instead of writing `not_screened`; no row = `not_screened`, distinct from `uncertain`.
+- **No silent loss.** The build stops (writing nothing) if a screening, override, full-text or dedup input names a paper ID that is not in the build. The report script carries manual extraction values (`EXTRACTION_FIELDS`, `extraction_status`, `publication_type`) forward across rebuilds, stops if such a value belongs to a missing paper ID, and validates the inventory before writing it.
+- Tests: new `tests/literature/test_screening_and_ids.py` (21 tests, synthetic fixtures) for stable IDs over repeated builds and new data, same-title no-year collision, migration (and its collision refusal), every status, invalid values, orphans, schema/code consistency, manual-field persistence.
+- D-027 (PROPOSED) records the format and key scheme, with the URL key and the document wording as alternatives. Q-027 and Q-030 annotated as implemented, still open for approval; Q-031 (`publication_type` vs `record_type` vocabularies) and Q-032 (enforce descriptors?) added.
+
+**Created**: `research/literature/schemas/screening_decision.schema.json`, `research/literature/records/id_migration_LIT-004.csv`, `tests/literature/test_screening_and_ids.py`, `logs/session_logs/2026-10-23_LIT-004-WORKFLOW-FIXES.md`.
+**Modified**: `scripts/literature/pubrecords.py`, `scripts/literature/make_literature_reports.py`, `schemas/paper_inventory.schema.json`, `schemas/publication_record.schema.json`, `paper_inventory.csv/.json` (9 new empty columns only; every existing value unchanged, checked against `HEAD`), `records/paper_id_registry.csv` (+9 rows), `records/build_report.json`, `records/collection_stats.json` (new counters), `screening_protocol.md` (§1, §8 status), `screening_criteria.md`, `search_strategy.md` (notes only), `collection_workflow.md`, `logs/DECISION_LOG.md`, `research/reviews/unresolved_questions.md`, `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file.
+**Not modified**: search strategy content, queries, criteria, scope, dedup decisions (none made), raw exports, archive.
+**Deleted**: none.
+
+**Validation (performed)**: `python3 -I -m unittest discover -s tests/literature` → 43 tests OK; `validate_search_queries.py` → PASS 158 rows; `pubrecords.py verify` → OK; archive `sha256sum -c` → OK; all four schemas pass `check_schema`; no raw export, archive or `.jsonl` staged.
+**Not done**: no screening, no pilot sample, no duplicate resolution, no novelty conclusion.
+

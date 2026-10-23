@@ -337,6 +337,94 @@
     },
     "retracted": {
       "type": "boolean"
+    },
+    "screening_details": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "description": "LIT-004-WORKFLOW-FIXES: the latest screening row for this paper (from screening/decisions.csv), null if not screened",
+      "properties": {
+        "screener": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "justification": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rq_tags": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tier": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scope_flags": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "record_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dim_explainability": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dim_uncertainty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dim_calibration": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dim_independent_validation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "criteria_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "needs_human": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
     }
   }
 }
