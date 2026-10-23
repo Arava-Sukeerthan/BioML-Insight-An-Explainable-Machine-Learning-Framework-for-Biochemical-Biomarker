@@ -200,3 +200,64 @@ explicit "recorded as D-013–D-020" mapping. No literature collected, no models
 
 **Commit / PR**: corrections commit `c9f1374` (hash added in a follow-up commit); pushed to the existing PR #1
 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/1). No new PR; not merged.
+
+## LIT-003 — 2026-10-23 — Execute verified scholarly literature searches
+
+**Prompt objective**: run the stored search strategy on the accessible sources; preserve
+provenance; collect, deduplicate and verify records; build the evidence table and reports.
+No screening, gap analysis, novelty claim or models.
+
+**Governance**: the queries were executed unchanged (only `{RUN_DATE}` = 2026/10/23 was substituted)
+under the researcher's LIT-003 instruction. D-005/D-006/D-007/D-010 remain PROPOSED, and approval is
+requested (Q-022). No approved decision was changed. The branch was restarted from the default branch
+after PR #1 had been merged.
+
+**Completed**
+- Access testing: 19 probes (`access_report.md`, `search_queries.csv` LIT003-PROBE-01…19).
+- PubMed Q-PM-01…15 executed in full: 3,413 hits, 2,866 unique PMIDs, all complete. PMID transcription checked by an independent re-fetch: 15/15 identical. Metadata for all PMIDs (144 verbatim connector responses).
+- arXiv (alphaXiv) Q-AX-01…05: 76 records. Web Q-WS-01…05 + Q-RP-03: 54 records.
+- Not run: Consensus (quota), Europe PMC, Crossref, Semantic Scholar, repository APIs (blocked), Google Scholar (manual).
+- Build: 3,543 source records → 564 exact identifier duplicates removed → **2,979 publications**. 15 pairs (30 records) flagged for manual dedup review. 3 retracted records flagged.
+- Verification: 14 verified, 2,928 partially verified, 36 unverified, 1 needs review.
+- Evidence table (`paper_inventory`), 2,979 rows: all extraction fields `REQUIRES FULL-TEXT REVIEW`. 234 mechanical full-text candidates.
+
+**Created**
+- `research/literature/access_report.md`, `collection_summary.md`, `search_execution_register.md` (generated), `verification_report.md` (generated), `fulltext_review_candidates.csv` (generated)
+- `research/literature/raw_exports/MANIFEST.csv` (205 rows; the raw files themselves are git-ignored)
+- `research/literature/records/`: `build_report.json`, `collection_stats.json`, `dedup_review.csv`, `paper_id_registry.csv`, `publications_index.csv` (git-ignored, not committed: `source_records.jsonl`, `publications.jsonl`)
+- `scripts/literature/make_literature_reports.py`
+- `logs/session_logs/2026-10-23_LIT-003.md`
+
+**Modified**
+- `scripts/literature/pubrecords.py` — `CHECK-` exclusion, `check_search` / `check-search`, abstract-placeholder handling. Reason: transcription control for search pages; correct abstract availability
+- `tests/literature/test_pubrecords.py` — 3 tests added
+- `research/literature/search_queries.csv` — 41 `executed` rows + 19 LIT-003 probe rows appended (existing rows unchanged)
+- `research/literature/schemas/paper_inventory.schema.json` — evidence fields, sentinels, `needs_review`; `calibration_or_uncertainty` split into `calibration_methods` / `uncertainty_methods`. Reason: the LIT-003 evidence items; the schema was PROPOSED and the inventory empty (D-024)
+- `research/literature/paper_inventory.csv/.json` — populated (were empty)
+- `research/literature/collection_workflow.md` (v1.1: status, §5 heading, new §9), `raw_exports/README.md`, `research_plan.md` (status row), `README.md` (status, Stage B)
+- `logs/DECISION_LOG.md` (D-023, D-024 proposed; note on D-005–D-010), `research/reviews/unresolved_questions.md` (Q-011 marked urgent; Q-020–Q-025), `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file
+
+**Deleted**: none. `search_strategy.md` and `screening_criteria.md` were not changed.
+
+**Validation (actually performed)**
+| Check | Outcome |
+|---|---|
+| Evidence table against schema (jsonschema) | valid, 2,979 rows; CSV columns = schema properties |
+| Required fields / types | 0 missing; types valid by schema |
+| Identifier duplicates in final table (PMID, DOI, PMCID, arXiv) | 0 each |
+| Title duplicates | 11 identical normalised titles shared by 2 records; all 11 are in `dedup_review.csv` (not merged) |
+| Count reconciliation | 3,543 raw − 564 identifier duplicates − 0 title merges = 2,979 = publications = inventory rows; manifest hit rows 3,543 = source records; PubMed retrieved 3,413 = sum of reported totals |
+| Source and search IDs | every record has `source_db` and valid `query_ids` (0 violations) |
+| No fabricated metadata | every title/DOI/PMID/PMCID/arXiv ID/year in the inventory equals a value in its source records (0 violations); PubMed identifiers equal the raw response (0 mismatches); extraction fields only contain the sentinel |
+| Abstracts not committed | no abstract column in committed tables |
+| Raw-file checksums | `pubrecords.py verify` → OK |
+| Search-page transcription | `check-search` 15/15 passed |
+| Unit tests | 22 tests OK |
+| Query table | PASS, 158 rows |
+| Git diff inspected; earlier logs preserved | only appended rows in logs/queries, except the Q-011 cell; no file deleted |
+
+**Errors / warnings**: 3 transient connector rate-limit errors (retried). The connector's silent 20-article limit was detected and handled. The web-search domain filter was not honoured. One PubMed metadata call came back inline (7 records) and was re-requested so that it was saved verbatim. No validation failures.
+
+**Unresolved questions**: Q-011 (urgent), Q-020–Q-025, plus earlier open ones.
+
+**Branch / commit / PR**: `claude/sweet-brahmagupta-urw7l1`; commit and PR recorded in a follow-up commit.

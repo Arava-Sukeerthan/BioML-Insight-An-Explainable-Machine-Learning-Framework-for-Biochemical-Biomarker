@@ -45,6 +45,10 @@ ROUTES = {"eutils_esearch", "eutils_efetch", "pubmed_connector_search",
 MANIFEST_COLS = ["raw_file", "sha256", "query_id", "source", "route", "endpoint_or_tool",
                  "request_json", "retrieved_at", "n_items", "transcribed", "transcription_check",
                  "notes"]
+# Search pages registered under "CHECK-<query_id>" are independent re-fetches used only to check
+# the transcription of the original pages (check_search); they never become source records (LIT-003).
+CHECK_PREFIX = "CHECK-"
+ABSTRACT_PLACEHOLDER = re.compile(r"\[\s*abstract not available\s*\]\.?", re.I)
 FUZZY_THRESHOLD = 0.90
 SCREENING_STAGE_ORDER = {"title_abstract": 1, "full_text": 2}
 
@@ -160,6 +164,8 @@ def parse_connector_article(article):
     ids = article.get("identifiers") or {}
     m["title"] = strip_markup(article.get("title"))
     m["abstract"] = strip_markup(article.get("abstract")) or None
+    if m["abstract"] and ABSTRACT_PLACEHOLDER.fullmatch(m["abstract"]):
+        m["abstract"] = None   # PubMed placeholder, not an abstract (the original is kept verbatim)
     m["authors"] = [{"last_name": a.get("last_name"), "fore_name": a.get("fore_name"),
                      "initials": a.get("initials")} for a in article.get("authors") or []]
     pd = article.get("publication_date") or {}
@@ -360,6 +366,45 @@ def spot_check(lit_dir, original_file, refetch_file, record=True):
     return status, len(ref), mismatches
 
 
+def _search_pmids(lit_dir, rows):
+    pmids, total = set(), 0
+    for r in rows:
+        resp = _load_raw_json(lit_dir, r)
+        if r["route"] == "eutils_esearch":
+            res = resp.get("esearchresult", {})
+            ids, t = res.get("idlist", []), int(res.get("count", 0))
+        else:
+            ids, t = resp.get("pmids", []), int(resp.get("total_count", 0))
+        pmids |= {normalize_pmid(p) for p in ids if normalize_pmid(p)}
+        total = max(total, t)
+    return pmids, total
+
+
+def check_search(lit_dir, query_id, record=True):
+    """Compare the PMID set of a query's transcribed search pages with an independent re-fetch
+    registered as CHECK-<query_id> (e.g. a different sort order). Passes only if both sets are
+    identical and complete (= reported total). Records passed/failed on every original page."""
+    rows = read_manifest(lit_dir)
+    search_routes = ("pubmed_connector_search", "eutils_esearch")
+    orig = [r for r in rows if r["query_id"] == query_id and r["route"] in search_routes]
+    check = [r for r in rows if r["query_id"] == CHECK_PREFIX + query_id and r["route"] in search_routes]
+    if not orig or not check:
+        raise ValueError(f"{query_id}: need original pages and {CHECK_PREFIX}{query_id} pages")
+    o, ot = _search_pmids(lit_dir, orig)
+    c, ct = _search_pmids(lit_dir, check)
+    only_o, only_c = sorted(o - c), sorted(c - o)
+    ok = not only_o and not only_c and len(o) == ot == ct
+    status = "passed" if ok else "failed"
+    if record:
+        note = (f"check-search vs {CHECK_PREFIX}{query_id}: {len(o)} vs {len(c)} PMIDs, totals {ot}/{ct}, "
+                f"{len(only_o)} only in original, {len(only_c)} only in re-fetch")
+        for r in orig:
+            if r["transcribed"] == "yes":
+                set_transcription_check(lit_dir, r["raw_file"], status, note)
+    return status, {"original": len(o), "refetch": len(c), "reported_total": ot,
+                    "only_original": only_o, "only_refetch": only_c}
+
+
 def verify_manifest(lit_dir, rows):
     problems = []
     for r in rows:
@@ -399,6 +444,8 @@ def build_source_records(lit_dir, rows):
     for row in rows:
         route = row["route"]
         path = Path(lit_dir) / "raw_exports" / row["raw_file"]
+        if row["query_id"].startswith(CHECK_PREFIX):
+            continue
         if route == "pubmed_connector_metadata":
             for art in _load_raw_json(lit_dir, row).get("articles", []):
                 m = parse_connector_article(art)
@@ -941,6 +988,8 @@ def main(argv=None):
     c = sub.add_parser("spot-check", help="compare a transcribed metadata file with a re-fetch")
     c.add_argument("original_file")
     c.add_argument("refetch_file")
+    s = sub.add_parser("check-search", help="compare a query's search pages with its CHECK- re-fetch")
+    s.add_argument("query_id")
     t = sub.add_parser("set-check", help="record a transcription spot-check outcome manually")
     t.add_argument("raw_file")
     t.add_argument("status", choices=["passed", "failed", "not_done"])
@@ -955,6 +1004,10 @@ def main(argv=None):
     elif a.cmd == "spot-check":
         status, n, mism = spot_check(a.lit_dir, a.original_file, a.refetch_file)
         print(json.dumps({"status": status, "pmids_compared": n, "mismatches": mism}, indent=2, default=str))
+        return 0 if status == "passed" else 1
+    elif a.cmd == "check-search":
+        status, detail = check_search(a.lit_dir, a.query_id)
+        print(json.dumps({"status": status, **detail}, indent=2))
         return 0 if status == "passed" else 1
     elif a.cmd == "set-check":
         set_transcription_check(a.lit_dir, a.raw_file, a.status, a.note)

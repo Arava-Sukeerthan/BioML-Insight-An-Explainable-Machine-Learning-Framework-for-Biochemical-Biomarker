@@ -31,3 +31,12 @@ One entry per researcher review session (~1 h/day).
 - **Outstanding problems:** Q-013 (schedule slip), Q-014, Q-015, Q-019, plus earlier open questions.
 - **Recommended next step:** unchanged. Researcher review of the decisions needed for Stage B, then LIT-003.
 - **Researcher decisions:** _pending_
+
+## Day 10 (cont.) — 2026-10-23 — LIT-003
+- **Task ID:** LIT-003 (execute the stored literature searches; collection, deduplication, verification; no screening)
+- **Work completed:** source access tested (19 probes); 15 PubMed queries executed in full (3,413 hits, 2,866 unique PMIDs) with an independent re-fetch check (15/15 identical); metadata retrieved for all 2,866 PMIDs; 5 arXiv and 6 web queries executed; build → 2,979 publications; register, access report, verification report, evidence table, full-text candidate list (234) and collection summary written.
+- **Important findings:** `[EVIDENCE]` Only PubMed, alphaXiv and web search are reachable; Europe PMC, Crossref, OpenAlex, Semantic Scholar, E-utilities and repository APIs are blocked (CONNECT 403); the Consensus quota is exhausted. `[EVIDENCE]` 564 exact identifier duplicates removed; 15 pairs flagged for manual decision; 3 retracted records flagged. `[EVIDENCE]` 14 verified, 2,928 partially verified, 36 unverified, 1 needs review. `[OPEN]` No content-level findings: nothing has been screened or read.
+- **Decisions requiring review:** Q-022 (approve the executed strategy: D-005–D-007, D-010); D-023, D-024 (proposed); Q-020, Q-021, Q-023, Q-024, Q-025; still Q-001/Q-002 (scope), D-009 (Q-PM-02 handling), D-008 (audit).
+- **Outstanding problems:** raw exports exist only in the container (Q-011, urgent); second-source verification blocked (Q-021).
+- **Recommended next step:** researcher decisions on Q-011 and Q-022 (plus Q-001/Q-002/Q-007), then LIT-004: title/abstract screening of the 2,979 records against `screening_criteria.md`, with the pilot calibration (§7) and the audit sample.
+- **Researcher decisions:** _pending_

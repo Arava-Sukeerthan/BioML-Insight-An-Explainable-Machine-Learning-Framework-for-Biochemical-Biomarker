@@ -1,0 +1,48 @@
+{
+  "dedup_review_pairs_by_reason": {
+    "fuzzy_title": 4,
+    "identifier_conflict": 3,
+    "same_title_other_differences": 5,
+    "same_title_year_differs_by_1": 3
+  },
+  "fulltext_review_candidates": 234,
+  "identifier_clusters": 2979,
+  "identifier_conflict_pairs": 3,
+  "merged_by_title_rule": 0,
+  "paper_inventory_schema": "valid",
+  "preprints_by_pubmed_type": 39,
+  "publications_by_theme": {
+    "A": 501,
+    "B": 743,
+    "C": 693,
+    "D": 529,
+    "E": 618,
+    "F": 141,
+    "Q": 250
+  },
+  "publications_retained": 2979,
+  "publications_with_abstract": 2860,
+  "publications_with_doi": 2852,
+  "publications_with_pmcid": 2028,
+  "raw_by_source": {
+    "arxiv": 76,
+    "pubmed": 3413,
+    "web": 54
+  },
+  "raw_source_records": 3543,
+  "records_requiring_manual_dedup_review": 30,
+  "removed_as_exact_identifier_duplicates": 564,
+  "retracted": [
+    "P0931",
+    "P0939",
+    "P1443"
+  ],
+  "reviews_by_pubmed_type": 433,
+  "title_based_duplicate_candidates": 12,
+  "verification_status": {
+    "needs_review": 1,
+    "partially_verified": 2928,
+    "unverified": 36,
+    "verified": 14
+  }
+}

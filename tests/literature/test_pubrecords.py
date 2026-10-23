@@ -119,6 +119,13 @@ class TestParsers(unittest.TestCase):
         self.assertIs(m["original"], art)
         self.assertEqual(m["source_url"], "https://pubmed.ncbi.nlm.nih.gov/900000010/")
 
+    def test_abstract_placeholder_is_missing(self):
+        art = connector_article("900000011", "SYNTHETIC title without abstract")
+        art["abstract"] = "[Abstract not available]"
+        m = pr.parse_connector_article(art)
+        self.assertIsNone(m["abstract"])
+        self.assertEqual(m["original"]["abstract"], "[Abstract not available]")
+
     def test_efetch_xml(self):
         xml = b"""<?xml version="1.0"?><PubmedArticleSet><PubmedArticle><MedlineCitation>
           <PMID>900000020</PMID><Article><Journal><JournalIssue><PubDate><MedlineDate>2019 Nov-Dec</MedlineDate>
@@ -285,6 +292,31 @@ class TestBuild(unittest.TestCase):
         pr.build(self.fx.lit, today="2026-10-15")
         (p,) = [x for x in self.load() if x["title"] and "cohort one" in x["title"]]
         self.assertEqual(p["verification_status"], "verified")
+
+    def _check_page(self, name, pmids, total=3):
+        self.fx.reg(write_json(self.fx.lit, name, {}, {"pmids": pmids, "total_count": total}),
+                    "CHECK-Q-TEST-A", "pubmed", "pubmed_connector_search", len(pmids),
+                    request={"retstart": 0, "sort": "pub_date"})
+
+    def test_check_search_passes_and_is_not_counted_as_hits(self):
+        # re-fetch in a different order returns the same set -> original pages pass
+        self._check_page("CHECK-Q-TEST-A_search_00.json", ["900000003", "900000001", "900000002"])
+        status, detail = pr.check_search(self.fx.lit, "Q-TEST-A")
+        self.assertEqual(status, "passed")
+        row = [r for r in pr.read_manifest(self.fx.lit) if r["raw_file"] == "Q-TEST-A_search_00.json"][0]
+        self.assertEqual(row["transcription_check"], "passed")
+        report = pr.build(self.fx.lit, today="2026-10-15")
+        self.assertEqual(report["source_records"], 8)                  # check pages add no records
+        self.assertNotIn("CHECK-Q-TEST-A", report["search_completeness"])
+
+    def test_check_search_detects_transcription_error(self):
+        # one PMID differs (planted typo) -> failed, both sides of the difference reported
+        self._check_page("CHECK-Q-TEST-A_search_00.json", ["900000003", "900000001", "900000012"])
+        status, detail = pr.check_search(self.fx.lit, "Q-TEST-A")
+        self.assertEqual(status, "failed")
+        self.assertEqual((detail["only_original"], detail["only_refetch"]), (["900000002"], ["900000012"]))
+        row = [r for r in pr.read_manifest(self.fx.lit) if r["raw_file"] == "Q-TEST-A_search_00.json"][0]
+        self.assertEqual(row["transcription_check"], "failed")
 
 
 class FakeTransport:

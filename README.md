@@ -5,10 +5,10 @@ Learning Framework for Biochemical Biomarker-Based Metabolic Disorder Classifica
 
 > **Status (2026-10-23, Day 10 of a planned 45-day project, started 2026-10-14):**
 > research setup and literature-review preparation. **The research gap, the main contribution
-> and the proposed methodology have not been finalised.** No literature search has been executed:
-> only capability probes and count-only PubMed pilot queries were run (2026-10-14) to design the
-> search. No publication has been collected, screened or verified, no dataset has been selected,
-> and no model has been trained.
+> and the proposed methodology have not been finalised.** The stored literature searches were run
+> for the first time in LIT-003 (2026-10-23): 2,979 publication records were collected (PubMed,
+> arXiv, web search) and deduplicated, and their bibliographic metadata was checked automatically.
+> **None has been screened or read**, no dataset has been selected, and no model has been trained.
 > This repository makes **no claim** of predictive performance, superiority over existing
 > methods, or novelty.
 
@@ -38,7 +38,7 @@ Stage gates are defined in [`GOVERNANCE.md`](GOVERNANCE.md) §2. The day mapping
 | Stage | Content | Proposed days (D-001, not approved) | Actual status (2026-10-23) |
 |---|---|---|---|
 | A | Research setup, governance, literature-search design | 1–2 | Drafted (P001, LIT-001, LIT-002, BIO-001). **Gate not passed:** the search strategy is not approved |
-| B | Literature collection and source verification | 3–8 | Not started. Collection/verification tooling was prepared and tested on synthetic fixtures (LIT-002); no records collected |
+| B | Literature collection and source verification | 3–8 | **In progress.** Collection run (LIT-003, `research/literature/collection_summary.md`); screening, extraction and second-source verification not started |
 | C | Critical comparison of existing methods | 9–12 | Not started |
 | D | Research gap and dataset feasibility | 13–16 | Not started |
 | E | Framework design and experimental protocol (frozen before modelling) | 17–20 | Not started |
