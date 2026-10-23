@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-10-23 |
-| **Preservation status** | **DOWNLOADED AND CHECKSUM-VERIFIED; DURABLE STORAGE NOT YET CONFIRMED.** The researcher downloaded the archive and verified its SHA-256 on Windows on 2026-10-23 (see the 'Researcher-side verification' section). Durable preservation is complete only once the project owner confirms a second private backup or other durable storage location (Q-011) |
+| **Preservation status** | **ARCHIVE INTEGRITY VERIFIED; LOCAL REDUNDANCY ESTABLISHED (2 copies on the same computer); OFF-DEVICE BACKUP / DISASTER RECOVERY OUTSTANDING.** See 'Second local copy' below and the status history |
 | Files preserved in archive | 205 raw export files (all of `raw_exports/MANIFEST.csv`) + `MANIFEST.csv`, `README.md`, `raw_exports_inventory.csv` + `SHA256SUMS.txt` |
 | Total size of raw files | 14,121,733 bytes (about 14 MB) |
 | Archive | `research/literature/preservation/archive/LIT-003_raw_exports_2026-10-23.tar.gz` (git-ignored; inside the ephemeral container) |
@@ -33,8 +33,25 @@ Composition: 144 PubMed metadata files, 50 PubMed search pages (25 original + 25
 | Evidence type | Researcher's statement in the prompt. The assistant did not observe the Windows command output |
 | What it establishes | The downloaded copy is byte-identical to the archive verified in the container. That archive's contents were already checked against `MANIFEST.csv`: 205/205 files, 208/208 hashes after extraction |
 | What it does **not** establish | Durable backup or long-term retention. A single downloaded copy on one machine can still be lost (disk failure, deletion, no backup). No second private backup or other durable location has been confirmed |
-| Durable private storage | **Not confirmed (pending).** No storage location or credentials were requested or recorded |
+| Durable private storage | **Not confirmed (pending)** as of this entry. No storage location or credentials were requested or recorded. *(Superseded by the next section for local copies; off-device storage still not confirmed.)* |
 | Optional further check (not required) | Extract it and run `sha256sum -c SHA256SUMS.txt` (e.g. in WSL or Git Bash) to re-check all 208 contained files |
+
+## Second local copy (LIT-003-PRESERVATION-CONFIRMATION, second update, 2026-10-23)
+| Item | Recorded value (as reported by the researcher; outputs not observed by the assistant) |
+|---|---|
+| Copy 1 | Windows Downloads folder: SHA-256 verified with `certutil -hashfile`, matches `69e690f06834758aea76bca99ec4699c2abb2dac9aa776798aecf0366bd60c0e` |
+| Copy 2 | `%USERPROFILE%\Documents\BioML-Insight-Backup\LIT-003_raw_exports_2026-10-23.tar.gz`: reported as checksum-verified successfully |
+| Location of both copies | **The same computer** (same user profile). No external drive, second device, institutional storage or cloud copy has been reported |
+| What this establishes | Archive integrity (both copies match the expected hash) and **local redundancy** against accidental deletion of a single file |
+| What this does **not** establish | Off-device backup or disaster recovery. Disk failure, loss or theft of the computer, ransomware or a profile reset would affect both copies |
+| Remaining step | Put a third copy on separate private media or storage (e.g. an encrypted external drive, institutional storage, or a private, access-restricted cloud folder), verify its SHA-256, and report it (no credentials) |
+
+### Status history (earlier values kept)
+| Date | Task | Status |
+|---|---|---|
+| 2026-10-23 | LIT-003-HOTFIX | PENDING: verified archive created in the container and delivered to the researcher |
+| 2026-10-23 | LIT-003-PRESERVATION-CONFIRMATION (1) | **DOWNLOADED AND CHECKSUM-VERIFIED; DURABLE STORAGE NOT YET CONFIRMED.** The researcher downloaded the archive and verified its SHA-256 on Windows on 2026-10-23 (see the 'Researcher-side verification' section). Durable preservation is complete only once the project owner confirms a second private backup or other durable storage location (Q-011) |
+| 2026-10-23 | LIT-003-PRESERVATION-CONFIRMATION (2) | Archive integrity verified; local redundancy established (2 copies, same computer); off-device backup outstanding |
 
 ## Storage options investigated
 | Option | Result |
@@ -53,7 +70,8 @@ Composition: 144 PubMed metadata files, 50 PubMed search pages (25 original + 25
 5. Tell the assistant the storage location (no credentials) and the checksum result. The status here is then changed to PRESERVED, with the date.
 
 ## Outstanding risks
-- **(Updated 2026-10-23)** One verified copy now exists outside the container, on the researcher's Windows machine. Until a second private backup or another durable location is confirmed, loss of that machine or file would leave only the ephemeral container copy.
+- **(Updated 2026-10-23, second update)** Two verified copies now exist outside the container, **both on the researcher's Windows computer**. A failure or loss of that computer would affect both. Off-device backup is outstanding.
+- **(Earlier update, 2026-10-23)** One verified copy now exists outside the container, on the researcher's Windows machine. Until a second private backup or another durable location is confirmed, loss of that machine or file would leave only the ephemeral container copy.
 - Container copy and app attachment: retention not guaranteed.
 - If the files are lost, the PubMed searches can be re-run with the same `[edat]`-capped queries. The PMID sets should be reproducible apart from later PubMed deletions or corrections, but the metadata may differ (PubMed updates records). The arXiv and web results are **not** reproducible.
 - The harness's own copies of the metadata responses (`tool-results/`) are also in the container and will be lost with it.

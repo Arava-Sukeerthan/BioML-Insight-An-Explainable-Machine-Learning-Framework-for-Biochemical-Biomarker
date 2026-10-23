@@ -13,6 +13,7 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | LIT-003 | 2026-10-23 | B | Execute the stored literature searches; provenance, dedup, verification, evidence table, reports; no screening/models | Completed for accessible sources (PubMed, arXiv/alphaXiv, web); others blocked. See detailed entry | `b48adde` |
 | LIT-003-HOTFIX | 2026-10-23 | B | Preserve the 205 LIT-003 raw exports (inventory, verified archive, durable storage) | Archive created, verified and delivered to the researcher; **durable preservation pending** researcher action (preservation_status.md) | see CHANGELOG |
 | LIT-003-PRESERVATION-CONFIRMATION | 2026-10-23 | B | Record the researcher's Windows SHA-256 verification of the downloaded archive; do not overstate durable storage | Completed: downloaded copy verified (researcher-reported); durable backup still pending (Q-011) | see CHANGELOG |
+| LIT-003-PRESERVATION-CONFIRMATION (2nd) | 2026-10-23 | B | Record the verified download and a second local copy; do not claim an off-device backup | Completed: integrity verified, local redundancy (same computer); off-device backup outstanding (Q-011) | see CHANGELOG |
 
 ## Detailed entries
 

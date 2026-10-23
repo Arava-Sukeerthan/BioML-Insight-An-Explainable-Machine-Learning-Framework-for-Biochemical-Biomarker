@@ -9,3 +9,12 @@
 | Container archive re-check | see CHANGELOG validation |
 | Status recorded | Downloaded and checksum-verified; **durable storage not confirmed** (no second backup reported); no credentials requested or recorded |
 | Raw exports / archive | Not modified; not committed |
+
+## Second update (same day): second local copy
+| Step | Outcome |
+|---|---|
+| Pre-task `git status` / `git log` | Clean; branch at `7b61e83` (= origin) |
+| Researcher report | Downloads copy verified with `certutil`; second copy at `%USERPROFILE%\Documents\BioML-Insight-Backup\` also verified (as reported; outputs not observed) |
+| Consistency with existing records | No conflict: the earlier records said durable storage was pending; the new information is a second local copy, not an off-device backup |
+| Status recorded | Integrity verified; local redundancy (2 copies, same computer); **off-device backup outstanding**. Earlier status kept in a status-history table |
+| Raw exports / archive | Not modified; not committed |

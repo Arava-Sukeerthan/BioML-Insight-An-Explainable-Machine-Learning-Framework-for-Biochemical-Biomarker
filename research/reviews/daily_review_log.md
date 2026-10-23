@@ -47,3 +47,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** Q-011 (confirm durable backup); earlier items unchanged (Q-022 etc.).
 - **Recommended next step:** keep a second private copy (e.g. institutional or private cloud storage) and confirm here. Then LIT-004 after the pending approvals.
 - **Researcher decisions:** _pending_
+
+## Day 10 (cont.) — 2026-10-23 — LIT-003-PRESERVATION-CONFIRMATION (second update)
+- **Work completed:** recorded a second checksum-verified copy of the LIT-003 archive on the researcher's computer.
+- **Important findings:** `[EVIDENCE]` (researcher-reported) two verified copies exist, both on the same computer. `[OPEN]` No off-device backup.
+- **Decisions requiring review:** Q-011 (off-device backup).
+- **Recommended next step:** put one copy on separate private media or storage and confirm it.
+- **Researcher decisions:** _pending_
