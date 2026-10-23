@@ -299,3 +299,19 @@ after PR #1 had been merged.
 **Deleted**: none. Raw exports and archive not modified and not committed.
 
 **Validation**: container archive `sha256sum -c`; `pubrecords.py verify`; unit tests; query-table check; staged-file check (results in the session report).
+
+## LIT-004-PREPARATION — 2026-10-23 — Screening protocol review (no screening)
+
+**Prompt objective**: prepare a reproducible pilot title/abstract screening protocol without screening, selecting papers or drawing novelty conclusions.
+
+**Completed**
+- Draft `research/literature/screening_protocol.md` v0.1 (PROPOSED). It is an operational layer over `screening_criteria.md` v1.0, which was **not edited**. Contents: input fields; labels and independent descriptors for explainability, uncertainty, calibration and validation; decision rules for the four requested distinctions; Stage-0 handling; the 15 dedup pairs (descriptive categories only); codes E1–E12 unchanged with clarifications; ambiguity/adjudication process; pilot design; blockers B-1…B-6; proposed amendments A-1…A-6.
+- Findings recorded as blockers: unstable IDs for 9 web-only records (B-1); no version linking (B-2); conflicting screening-file specifications (B-3); inventory status enum / report script (B-4); abstracts only in the container (B-5); open scope decisions (B-6).
+- Preservation: the explicit statement that no off-device backup is available (no external drive) was added to `preservation_status.md` and Q-011.
+
+**Created**: `research/literature/screening_protocol.md`, `logs/session_logs/2026-10-23_LIT-004-PREPARATION.md`.
+**Modified**: `logs/DECISION_LOG.md` (D-025, D-026 PROPOSED), `research/reviews/unresolved_questions.md` (Q-011 note; Q-026–Q-030), `research/reviews/daily_review_log.md`, `research/literature/preservation/preservation_status.md`, `logs/PROMPT_LOG.md`, this file.
+**Not modified**: paper inventory, screening criteria, search strategy, code, raw exports, archive.
+**Deleted**: none.
+
+**Validation**: unit tests, query-table check, raw-export checksum check, inventory unchanged (`git diff`), no raw/archive files staged (results in the completion report).

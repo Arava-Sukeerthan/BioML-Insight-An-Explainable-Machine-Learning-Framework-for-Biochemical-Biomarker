@@ -54,3 +54,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** Q-011 (off-device backup).
 - **Recommended next step:** put one copy on separate private media or storage and confirm it.
 - **Researcher decisions:** _pending_
+
+## Day 10 (cont.) — 2026-10-23 — LIT-004-PREPARATION
+- **Work completed:** draft screening protocol (`research/literature/screening_protocol.md`, v0.1, proposed); review of the 15 dedup pairs and 3 retraction flags (descriptive only, no decisions); blockers recorded.
+- **Important findings:** `[EVIDENCE]` 9 web-only records have unstable paper IDs (B-1). `[EVIDENCE]` The workflow cannot link preprint/published versions; 3 version pairs can never be merged (B-2). `[EVIDENCE]` Two different screening-file formats are specified in project documents (B-3); the inventory status enum lacks `uncertain` (B-4). `[EVIDENCE]` No off-device backup is available (no external drive).
+- **Decisions requiring review:** D-025, D-026; Q-026–Q-030; still Q-001, Q-002, Q-007/D-009, Q-008/D-008, Q-022, Q-024.
+- **Recommended next step:** researcher review of the protocol and blockers; then fix B-1 (and B-3/B-4 if approved) before generating the pilot sample.
+- **Researcher decisions:** _pending_

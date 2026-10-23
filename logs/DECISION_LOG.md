@@ -79,3 +79,10 @@ proposal that conflicts with an open one is recorded as an **alternative**, and 
 
 Note (LIT-003): the searches were run while D-005, D-006, D-007 and D-010 are PROPOSED, under the researcher's LIT-003 instruction.
 Their status was **not** changed; approval is requested in Q-022.
+
+## Screening-preparation proposals (added LIT-004-PREPARATION, 2026-10-23)
+
+| ID | Date | Decision | Status | Rationale | Approved by / date |
+|---|---|---|---|---|---|
+| D-025 | 2026-10-23 (LIT-004-PREPARATION) | Screening protocol v0.1 (`research/literature/screening_protocol.md`): labels, descriptors, Stage-0 handling, ambiguity/adjudication process, and pilot design (60 records, stratified random, seed 4004, blinded double screening, pass at κ ≥ 0.60 with no unresolved include/exclude conflicts). **Alternative to** the pilot in `screening_criteria.md` §7 (draft, not approved), which stays open as an option | PROPOSED | Stratified random sampling covers all themes and sources; PMID-order sampling favours old records and two queries only | — |
+| D-026 | 2026-10-23 (LIT-004-PREPARATION) | Record explainability, uncertainty estimation and probability calibration as three independent screening descriptors, plus independent-validation design; RQ5 counting rule left to Q-028 | PROPOSED | The research dimensions must stay separable; the current criteria group calibration and uncertainty together | — |

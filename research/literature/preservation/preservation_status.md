@@ -44,6 +44,7 @@ Composition: 144 PubMed metadata files, 50 PubMed search pages (25 original + 25
 | Location of both copies | **The same computer** (same user profile). No external drive, second device, institutional storage or cloud copy has been reported |
 | What this establishes | Archive integrity (both copies match the expected hash) and **local redundancy** against accidental deletion of a single file |
 | What this does **not** establish | Off-device backup or disaster recovery. Disk failure, loss or theft of the computer, ransomware or a profile reset would affect both copies |
+| Off-device backup availability (2026-10-23, LIT-004-PREPARATION) | **Not currently available.** The project owner reports having no external drive. This limitation is accepted for now and stays explicit; it is not resolved |
 | Remaining step | Put a third copy on separate private media or storage (e.g. an encrypted external drive, institutional storage, or a private, access-restricted cloud folder), verify its SHA-256, and report it (no credentials) |
 
 ### Status history (earlier values kept)
@@ -70,6 +71,7 @@ Composition: 144 PubMed metadata files, 50 PubMed search pages (25 original + 25
 5. Tell the assistant the storage location (no credentials) and the checksum result. The status here is then changed to PRESERVED, with the date.
 
 ## Outstanding risks
+- **(2026-10-23, LIT-004-PREPARATION)** No off-device backup is currently available (no external drive). Disaster-recovery risk stays **open**. Alternatives not requiring a drive (institutional storage, a private access-restricted cloud folder) are possible but not chosen.
 - **(Updated 2026-10-23, second update)** Two verified copies now exist outside the container, **both on the researcher's Windows computer**. A failure or loss of that computer would affect both. Off-device backup is outstanding.
 - **(Earlier update, 2026-10-23)** One verified copy now exists outside the container, on the researcher's Windows machine. Until a second private backup or another durable location is confirmed, loss of that machine or file would leave only the ephemeral container copy.
 - Container copy and app attachment: retention not guaranteed.
