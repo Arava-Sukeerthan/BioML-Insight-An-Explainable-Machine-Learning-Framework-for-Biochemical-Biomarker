@@ -21,7 +21,7 @@ taken from the BIO-001 prompt. Read both files before every task.
 ## 2. Working rules
 8. Preserve the researcher's existing work. Run `git status` first, never discard uncommitted changes, and do not overwrite or delete files without a documented reason. If an equivalent file already exists, update it instead of creating a duplicate.
 9. Record important modifications in `logs/CHANGELOG.md`. Record only work that was actually done. If validation was not performed, say so.
-10. Do not silently modify approved research decisions (`logs/DECISION_LOG.md`). A revision is a new entry that references the old one.
+10. Do not silently modify approved research decisions (`logs/DECISION_LOG.md`). A revision is a new entry that references the old one. Do not change the status of an open proposal that is awaiting the researcher either: record a conflicting new proposal as an *alternative*, and leave both open (added in BIO-001-REVIEW). Cite decisions only by their `D-0nn` ID.
 11. The following are reserved for the researcher: the primary disorder, primary dataset, outcome definition, main contribution, evaluation protocol, and any change to an approved decision.
 12. Do not claim a task is complete without verifying its deliverables with real commands. Record the actual outcomes.
 13. No model training and no performance claims before Day 21 (2026-11-03), and not before the experimental protocol is approved.

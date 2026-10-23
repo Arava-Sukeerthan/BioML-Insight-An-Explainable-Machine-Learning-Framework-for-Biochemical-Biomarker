@@ -144,3 +144,59 @@ Not performed: Markdown rendering check on GitHub; no literature search (by inst
 **Commit**: `fc0c79b` (work); this line added in a follow-up commit.
 
 **Pull request**: #1 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/1 (base `claude/happy-hawking-rxptfv`, head `claude/sweet-brahmagupta-urw7l1`; open, not merged)
+
+## BIO-001-REVIEW — 2026-10-23 — Review and correction of the BIO-001 pull request (#1)
+
+**Prompt objective**: review PR #1 without merging it. Check whether superseding D-004/D-011 was
+justified and restore their status if not; keep the eight BIO-001 decisions traceable without
+ambiguous IDs; check that the README stage status and the review log match the repository; log
+every correction; validate; update the existing PR.
+
+**Finding on D-004 / D-011**: **not justified.** The decision log allowed marking "a proposal replaced before approval"
+as SUPERSEDED, and LIT-001 had done so for D-003. In BIO-001, however:
+(a) D-004 and D-011 were awaiting explicit researcher answers (Q-005, Q-012);
+(b) their replacements D-021/D-022 were themselves only PROPOSED;
+(c) the change therefore settled a choice between two open proposals without the researcher.
+CLAUDE.md rule 7 says an assistant recommendation is not approval, and GOVERNANCE.md §1.9 forbids silent changes to decisions. The BIO-001 changelog
+entry recorded the change, so it was not hidden, but it still pre-empted the researcher.
+
+**Changes and reasons**
+| File | Change | Reason |
+|---|---|---|
+| `logs/DECISION_LOG.md` | D-004 and D-011 rows restored verbatim from `330d3fd` (status PROPOSED) | Restore the status the researcher had not yet decided on |
+| `logs/DECISION_LOG.md` | D-021/D-022 reworded from "Supersedes …" to "**Alternative to** D-004/D-011 … superseded only if approved" | Both options stay open until the researcher chooses |
+| `logs/DECISION_LOG.md` | New "Status history" table (D-003 in LIT-001; D-004/D-011 changed in BIO-001; restored in BIO-001-REVIEW) and a clarified rule: SUPERSEDED only after the replacement is approved or the proposal is withdrawn | Preserve the decision history, including the erroneous change, and prevent a repeat |
+| `logs/DECISION_LOG.md` | Second column renamed "BIO-001 prompt item (cross-reference only)"; values `D001`→`BIO-001/D001` … `D008`→`BIO-001/D008`; explicit mapping table including the existing D-001–D-008 that each must not be confused with | Bare `D001` could be read as `D-001`. Existing IDs D-001–D-022 kept unchanged; 22 unique IDs |
+| `CLAUDE.md` | Rule 10 extended: do not change the status of an open proposal; record conflicting proposals as alternatives; cite decisions only by `D-0nn` | Make the corrected practice persistent |
+| `README.md` | Status: "no literature search has been run" → "no search executed; only capability probes and count-only pilot queries (2026-10-14)" | Accuracy: 12 probes and 30 count-only pilots exist in `search_queries.csv` |
+| `README.md` | Stage table rebuilt with the GOVERNANCE.md §3 day mapping (marked "D-001, not approved") and actual status per stage; Stage A "gate not passed"; Stage B "not started, tooling prepared (LIT-002)" | The BIO-001 table placed Stage F wholly after Day 20, which contradicts GOVERNANCE.md §3 (feasibility from Day 13, acquisition Days 17–20). It also did not state that the Stage-A gate has not been passed |
+| `research/reviews/daily_review_log.md` | BIO-001 entry: "BIO-001 labels D001–D008" → "BIO-001/D001–D008" cross-reference wording; new BIO-001-REVIEW entry | Unambiguous references; record the review |
+| `research/reviews/unresolved_questions.md` | Q-005, Q-012 updated (choose D-004 vs D-021, D-011 vs D-022); Q-014 wording; Q-019 added (dataset timing: D-001 vs BIO-001 prompt) | Expose the choices to the researcher instead of resolving them |
+| `logs/CHANGELOG.md`, `logs/PROMPT_LOG.md`, `logs/session_logs/2026-10-23_BIO-001-REVIEW.md` | This entry, a prompt-log row and detail block, a session log | Logging requirement |
+
+**Not changed (deliberately)**: the provisional research question (README and `research_plan.md`); D-013–D-020 content and status;
+`GOVERNANCE.md`; search strategy, queries and criteria; scripts and tests. The earlier BIO-001 entries in this changelog, the prompt
+log and the BIO-001 session log are kept as written (history), including the bare `D001–D008` wording, which appears there only in an
+explicit "recorded as D-013–D-020" mapping. No literature collected, no models.
+
+**Deleted**: none.
+
+**Validation (actually performed, 2026-10-23)**
+| Check | Outcome |
+|---|---|
+| D-004, D-011 rows vs `330d3fd` (`diff`) | Identical; status PROPOSED |
+| All rows D-001–D-012 vs `330d3fd` | Identical |
+| Decision IDs unique (first column) | 22 rows, 0 duplicates |
+| Mapping | 8/8 mapping-table rows; 8/8 D-013–D-020 rows carry `BIO-001/D00n` and status PENDING |
+| APPROVED in any status cell | 0 |
+| Bare `D00n` outside `BIO-001/` form | Only in the historical BIO-001 changelog, prompt-log and session-log text, each in an explicit mapping statement |
+| README facts | 0 tracked `records/` or `screening/` files; inventory 0 records; 0 `executed` query rows (12 probes, 30 pilots, 56 planned); no `data/` or `src/`; experiment log empty → "not started" for Stages B–J and "no search executed" confirmed. Stage days match GOVERNANCE.md §3 |
+| Research question unchanged | `git diff` on the RQ block since `da3aa35`: no change. Strategy, criteria, queries and GOVERNANCE.md: 0 diff lines since `330d3fd` |
+| Unit tests | `python3 -I -m unittest discover -s tests/literature` → Ran 19 tests, OK |
+| Query table | `validate_search_queries.py` → PASS: 98 rows |
+| Deletions | none |
+
+**Errors / warnings**: none from the commands.
+
+**Commit / PR**: commit recorded in the PROMPT_LOG detail block after it was created; pushed to the existing PR #1
+(https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/1). No new PR; not merged.
