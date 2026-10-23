@@ -141,4 +141,6 @@ Not performed: Markdown rendering check on GitHub; no literature search (by inst
 
 **Unresolved questions**: Q-013–Q-018 added; Q-001–Q-012 remain open.
 
-**Commit / PR**: recorded in a follow-up commit (see below).
+**Commit**: `fc0c79b` (work); this line added in a follow-up commit.
+
+**Pull request**: #1 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/1 (base `claude/happy-hawking-rxptfv`, head `claude/sweet-brahmagupta-urw7l1`; open, not merged)
