@@ -355,3 +355,19 @@ after PR #1 had been merged.
 
 **Validation (performed)**: unit tests 50/50 OK; `validate_search_queries.py` PASS (158 rows); `pubrecords.py verify` OK; archive `sha256sum -c` OK; registry: every committed version is a prefix of the next (10,776 → 10,785 data rows, 0 duplicate keys, 2,979 IDs); report script re-run on real data: inventory unchanged.
 **Not done**: no screening, no pilot sample, no pair resolved, no decision approved, D-028–D-030 not implemented.
+
+## LIT-004-DECISION-RECONCILIATION — 2026-10-23 — Reconcile decisions before the pilot (review only)
+
+**Prompt objective**: reconcile the owner's recommended choices with existing governance and decision texts; consolidated decision table; D-026/D-029, D-028, D-030, scope, Q-PM-02 and search-approval reviews. No production changes.
+
+**Completed**
+- `research/reviews/decision_reconciliation_LIT-004.md`: consolidated table (D-027–D-030, Q-001, Q-002, Q-033, Q-007/D-009, Q-022, D-012/D-023, D-010, D-008, D-025, A-1…A-6); D-028 roles, mapping and precedence (checked against the 34 source types present); D-026/D-029 conflicts C-1…C-6 and revised wording; version-linking ambiguities V-1…V-9; verbatim scope definitions; Q-PM-02 query review; executed-vs-proposed search comparison (26 of 56 planned searches run); 9 contradictions; 15 approval items; implementation order.
+- New open questions Q-035 (biomarker strand field) and Q-036 (arXiv/web transcription spot-check not done).
+
+**Created**: `research/reviews/decision_reconciliation_LIT-004.md`, `logs/session_logs/2026-10-23_LIT-004-DECISION-RECONCILIATION.md`.
+**Modified**: `research/reviews/unresolved_questions.md` (Q-035, Q-036 added), `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file.
+**Not modified**: `logs/DECISION_LOG.md` (no status or text change), schemas, code, screening criteria, protocol, search strategy, scope, inventory, registry, raw exports, archive.
+**Deleted**: none.
+
+**Validation (performed)**: see the completion report: unit tests, query table, raw checksums, archive checksum, `git diff` limited to review/log files.
+**Not done**: no approval recorded, no implementation, no pilot, no screening, no pair resolved.

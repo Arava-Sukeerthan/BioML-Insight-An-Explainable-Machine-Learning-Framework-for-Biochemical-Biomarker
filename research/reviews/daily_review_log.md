@@ -76,3 +76,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** D-027, D-028, D-029, D-030; scope items in `scope_decision_brief.md`; full list in `approval_request_LIT-004.md` §3.
 - **Recommended next step:** `[RECOMMENDATION]` researcher approvals per `approval_request_LIT-004.md` §3, then implement D-028–D-030 and generate the pilot.
 - **Researcher decisions:** _pending_
+
+## Day 10 (cont.) — 2026-10-23 — LIT-004-DECISION-RECONCILIATION
+- **Work completed:** consolidated decision table and reconciliation (`research/reviews/decision_reconciliation_LIT-004.md`); no production change.
+- **Important findings:** `[EVIDENCE]` the prepared D-028 enum misses protocols, datasets, guidelines and expressions of concern; D-029 as prepared differs from the owner's restatement; D-030 is ambiguous on primaries, withdrawals, retractions and PRISMA levels; the D-012 spot-check was not done for arXiv/web; 30 of 56 planned searches were not run. `[HYPOTHESIS]` Q-PM-02 is both broader and narrower than the provisional scope (MeSH tree not verified).
+- **Decisions requiring review:** 15 items in §9 of the reconciliation; Q-035, Q-036.
+- **Recommended next step:** `[RECOMMENDATION]` owner answers §9; then the implementation order in §10.
+- **Researcher decisions:** _pending_

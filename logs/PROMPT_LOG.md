@@ -17,6 +17,7 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | LIT-004-PREPARATION | 2026-10-23 | B | Prepare a pilot title/abstract screening protocol; no screening | Draft protocol (proposed, D-025/D-026); blockers B-1…B-6 and Q-026–Q-030 recorded; awaiting human review | see CHANGELOG |
 | LIT-004-WORKFLOW-FIXES | 2026-10-23 | B | Fix reproducibility blockers B-1, B-3, B-4 before screening | Stable fallback IDs (9 IDs kept); one validated screening format; screening status carried into the inventory; 21 regression tests; D-027 proposed; no screening | see CHANGELOG |
 | LIT-004-REVIEW-AND-DECISIONS | 2026-10-23 | B | Prepare decisions for approval; version-linking and scope briefs; integrity checks | D-027–D-030 proposed with exact texts; briefs written; 7 integrity tests; awaiting human review; no screening | see CHANGELOG |
+| LIT-004-DECISION-RECONCILIATION | 2026-10-23 | B | Reconcile owner choices with governance and decision texts; no production change | Consolidated decision table; 9 contradictions; 15 approval items; implementation order; awaiting human review | see CHANGELOG |
 
 ## Detailed entries
 
@@ -89,3 +90,18 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
 | Commit | see `git log` (commit "LIT-004-REVIEW-AND-DECISIONS: …"; hash in the completion report) |
 | Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+### LIT-004-DECISION-RECONCILIATION
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-DECISION-RECONCILIATION |
+| Prompt date | 2026-10-23 (Day 10) |
+| Objective | Consolidate and reconcile the pending decisions with the owner's recommended choices before pilot screening, without changing production files or decision statuses |
+| Expected deliverables | Consolidated decision table; contradictions; exact approval items; implementation order; review/session logs |
+| Actual completion status | Completed; awaiting human review. Nothing approved or implemented |
+| Output files | see CHANGELOG LIT-004-DECISION-RECONCILIATION |
+| Validation status | Performed (completion report) |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-DECISION-RECONCILIATION: …") |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
