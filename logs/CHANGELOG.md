@@ -81,3 +81,64 @@
 **Not done**: no real search run; no publications collected; no live API test (hosts blocked).
 
 **Commit**: `eee92c1`
+
+## BIO-001 — 2026-10-23 — Establish research governance and project logbook
+
+**Prompt objective**: prepare the existing repository for rigorous, reproducible research.
+Inspect the repository, establish or update the governance files, change/prompt/decision logs
+and review logs, and prepare the literature research plan and research integrity protocol.
+No models, no literature search, no novelty assumption.
+
+**Initial state**: clean tree; 29 tracked files from P001, LIT-001 and LIT-002 (all from
+2026-10-14); no PRs; single remote branch `claude/happy-hawking-rxptfv`. Details in
+`logs/session_logs/2026-10-23_BIO-001.md`.
+
+**Completed**
+- `CLAUDE.md` expanded from a pointer into persistent instructions with all rules listed in the BIO-001 prompt
+- `README.md` rewritten: working title, objective, provisional research question (`[OPEN]`), stage table with actual status, integrity principles, repository layout, workflow. It states explicitly that the gap and methodology are not finalised and that no performance is claimed
+- Decision log: `PENDING` status added; research-scope decisions D-013–D-020 (prompt labels D001–D008), all PENDING with evidence required, rationale and approval status; process decisions D-021 (PR per task, no auto-merge) and D-022 (CLAUDE.md scope), both PROPOSED
+- `research/literature/research_plan.md`: overview of themes A–F mapped to RQ1–RQ6; databases with **tested** access status; concepts; preliminary criteria; verification; extraction; gap-assessment strategy; deliverables; limitations. No references cited
+- `research/methodology/research_integrity.md`: 13-section protocol (datasets, provenance, raw-data preservation, leakage, in-fold preprocessing, run logging, negative results, statistics, traceability, exploratory vs final, external-validation claims, clinical-validity claims, compliance check)
+- Review log entry for Day 10; unresolved questions Q-013–Q-018
+
+**Created**
+- `research/literature/research_plan.md`
+- `research/methodology/research_integrity.md`
+- `logs/session_logs/2026-10-23_BIO-001.md`
+
+**Modified**
+- `CLAUDE.md`, `README.md` — reasons above
+- `logs/DECISION_LOG.md` — new entries added. Only the status cells of the unapproved proposals D-004 and D-011 were changed (to SUPERSEDED), following the D-003 precedent
+- `research/methodology/design_decisions.md` — outdated sentence ("D-001 to D-004 … only") corrected; pointer to D-013–D-020 and the integrity protocol
+- `research/reviews/daily_review_log.md`, `research/reviews/unresolved_questions.md` — entries appended
+- `logs/CHANGELOG.md`, `logs/PROMPT_LOG.md` — this entry
+
+**Deleted**: none. **Not modified (deliberately)**: `GOVERNANCE.md` (changes need an approved decision); all literature-design files, scripts and tests.
+
+**Reasons for important changes**
+- Decision IDs D001–D008 from the prompt would clash with the existing D-001–D-008 → numbered D-013–D-020, with a mapping column (Q-014).
+- Branch: the suggested `research/bio-001-project-governance` was not used. The session may only push to `claude/sweet-brahmagupta-urw7l1`.
+- `research_plan.md` is an overview, not a second strategy, to avoid conflicting duplicates of `search_strategy.md`.
+
+**Validation (actually performed, 2026-10-23)**
+| Check | Command / method | Outcome |
+|---|---|---|
+| Required files exist | `test -e` for the 9 files + `logs/session_logs/` | All present |
+| Duplicate/conflicting governance docs | `find` for *claude*, *readme*, *changelog*, *prompt_log*, *decision*, *integrity*, *plan* | One of each. `raw_exports/README.md` and `design_decisions.md` are distinct, non-conflicting files |
+| Existing work preserved | `git status --short`; `git diff --diff-filter=D` | 6 modified, 3 new, 0 deleted. Previous log entries retained (appended only, apart from the two superseded status cells) |
+| README unsupported claims | `grep -iE 'outperform\|superior\|state-of-the-art\|novel\|accuracy\|auc\|achiev\|validated\|clinical'` | Only disclaimer and principle sentences matched. One wording changed from "Data leakage is prevented" to "must be prevented", so it no longer reads as an achieved fact |
+| Fabricated references in plan/protocol/README/CLAUDE | `grep -E 'et al\|10.NNNN/\|doi.org\|PMID\|(19xx\|(20xx'` | No reference patterns; only task dates matched |
+| Pending decisions marked | `grep` D-013–D-020 rows with `\| PENDING \|`; `grep APPROVED` | 8/8 PENDING, 8 "Not approved"; no decision has APPROVED status |
+| Unit tests | `python3 -I -m unittest discover -s tests/literature` | Ran 19 tests, OK (same as baseline) |
+| Query table | `validate_search_queries.py research/literature/search_queries.csv` | PASS: 98 rows (unchanged) |
+| Network | `curl` to 5 bibliographic APIs | All blocked (HTTP 000) |
+| Final diff inspected | `git diff --stat`, `git diff` | Reviewed before commit |
+| Completed vs planned | Manual review of this entry | Planned items appear only under research_plan §9, the decision log and unresolved questions, never as completed |
+
+Not performed: Markdown rendering check on GitHub; no literature search (by instruction).
+
+**Errors / warnings**: none from the commands. Warning: the project is behind the proposed schedule (Q-013).
+
+**Unresolved questions**: Q-013–Q-018 added; Q-001–Q-012 remain open.
+
+**Commit / PR**: recorded in a follow-up commit (see below).
