@@ -10,7 +10,7 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | LIT-002 | 2026-10-14 | A→B prep | Prepare a reproducible workflow for collecting, deduplicating and verifying publications (official APIs where possible; provenance; dedup; conflict preservation; review flags; structured record; validation test) | Completed as a draft pending approval: E-utilities client (blocked host; offline-tested), connector/transcription registration, dedup/merge/verification builder, schemas, 19 passing unit tests on synthetic data. No real publications collected | `eee92c1` |
 | BIO-001 | 2026-10-23 | A | Establish research governance and project logbook: inspect repository; update CLAUDE.md and README; change/prompt/decision logs; review logs; literature research plan; research integrity protocol; PR. No models, no literature search | Completed (drafts pending researcher approval). See detailed entry below | `fc0c79b` |
 | BIO-001-REVIEW | 2026-10-23 | A | Review and correct PR #1 without merging (decision statuses, ID traceability, README/review-log accuracy) | Completed. See detailed entry below | `c9f1374` |
-| LIT-003 | 2026-10-23 | B | Execute the stored literature searches; provenance, dedup, verification, evidence table, reports; no screening/models | Completed for accessible sources (PubMed, arXiv/alphaXiv, web); others blocked. See detailed entry | see below |
+| LIT-003 | 2026-10-23 | B | Execute the stored literature searches; provenance, dedup, verification, evidence table, reports; no screening/models | Completed for accessible sources (PubMed, arXiv/alphaXiv, web); others blocked. See detailed entry | `b48adde` |
 
 ## Detailed entries
 
@@ -53,5 +53,5 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Output files | see CHANGELOG LIT-003 |
 | Validation status | Performed; all checks passed (CHANGELOG LIT-003) |
 | Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
-| Commit | recorded in follow-up commit |
-| Pull request | recorded in follow-up commit |
+| Commit | `b48adde` (work commit; log update in a follow-up commit) |
+| Pull request | #2 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2 (open; not merged) |

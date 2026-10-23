@@ -260,4 +260,4 @@ after PR #1 had been merged.
 
 **Unresolved questions**: Q-011 (urgent), Q-020–Q-025, plus earlier open ones.
 
-**Branch / commit / PR**: `claude/sweet-brahmagupta-urw7l1`; commit and PR recorded in a follow-up commit.
+**Branch / commit / PR**: `claude/sweet-brahmagupta-urw7l1`; work commit `b48adde` (this line added in a follow-up commit); PR #2 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2 (open, not merged)
