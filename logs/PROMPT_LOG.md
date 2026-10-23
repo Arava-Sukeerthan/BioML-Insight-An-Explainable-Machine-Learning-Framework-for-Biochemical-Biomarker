@@ -9,7 +9,7 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | LIT-001 | 2026-10-14 | A | Design a reproducible literature-search strategy (queries for PubMed, Europe PMC, Crossref, Semantic Scholar, Google Scholar, publisher sites, metabolomics repositories; inclusion/exclusion criteria; collection, dedup, screening, verification, analysis). Do not collect papers or propose the framework | Completed as a draft pending approval. Capabilities verified (12 probes); 30 count-only PubMed pilots; 56 planned queries across 9 sources; screening criteria; strategy document. No records collected | `5621dc9` |
 | LIT-002 | 2026-10-14 | A→B prep | Prepare a reproducible workflow for collecting, deduplicating and verifying publications (official APIs where possible; provenance; dedup; conflict preservation; review flags; structured record; validation test) | Completed as a draft pending approval: E-utilities client (blocked host; offline-tested), connector/transcription registration, dedup/merge/verification builder, schemas, 19 passing unit tests on synthetic data. No real publications collected | `eee92c1` |
 | BIO-001 | 2026-10-23 | A | Establish research governance and project logbook: inspect repository; update CLAUDE.md and README; change/prompt/decision logs; review logs; literature research plan; research integrity protocol; PR. No models, no literature search | Completed (drafts pending researcher approval). See detailed entry below | `fc0c79b` |
-| BIO-001-REVIEW | 2026-10-23 | A | Review and correct PR #1 without merging (decision statuses, ID traceability, README/review-log accuracy) | Completed. See detailed entry below | see below |
+| BIO-001-REVIEW | 2026-10-23 | A | Review and correct PR #1 without merging (decision statuses, ID traceability, README/review-log accuracy) | Completed. See detailed entry below | `c9f1374` |
 
 ## Detailed entries
 
@@ -38,5 +38,5 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Output files | Created: `logs/session_logs/2026-10-23_BIO-001-REVIEW.md`. Modified: `logs/DECISION_LOG.md`, `CLAUDE.md`, `README.md`, `research/reviews/daily_review_log.md`, `research/reviews/unresolved_questions.md`, `logs/CHANGELOG.md`, `logs/PROMPT_LOG.md` |
 | Validation status | Performed. All checks passed (see CHANGELOG BIO-001-REVIEW) |
 | Branch | `claude/sweet-brahmagupta-urw7l1` (same branch as BIO-001) |
-| Commit | recorded in follow-up commit |
+| Commit | `c9f1374` (corrections; log update in a follow-up commit) |
 | Pull request | #1 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/1; not merged |

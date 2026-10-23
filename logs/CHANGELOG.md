@@ -198,5 +198,5 @@ explicit "recorded as D-013–D-020" mapping. No literature collected, no models
 
 **Errors / warnings**: none from the commands.
 
-**Commit / PR**: commit recorded in the PROMPT_LOG detail block after it was created; pushed to the existing PR #1
+**Commit / PR**: corrections commit `c9f1374` (hash added in a follow-up commit); pushed to the existing PR #1
 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/1). No new PR; not merged.
