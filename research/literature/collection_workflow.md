@@ -84,7 +84,7 @@ errors. Controls:
 | Duplicate status | `duplicate_status`, `n_source_records`, `possible_duplicates` | `unique` / `merged_duplicates` / `possible_duplicate_review` |
 | Verification status | `verification_status`, `verification_note` | §4.3 |
 | Full-text availability | `full_text_availability` | Auto: `pmc_record` (has PMCID), `arxiv_preprint`, else `not_checked`; manual updates via `fulltext_status.csv` |
-| Screening decision | `screening_decision`, `screening_stage`, `exclusion_reason`, `screening_details` | `not_screened` until `screening/decisions.csv` has an entry. Copied unchanged into `paper_inventory` (`screening_status` etc.) by `make_literature_reports.py` |
+| Screening decision | `screening_decision`, `screening_stage`, `exclusion_reason`, `screening_details` | `not_screened` until `screening/decisions.csv` has an entry. Copied unchanged into `paper_inventory` (`screening_status` etc.) by `make_literature_reports.py` . In the inventory, `paper_inventory.json` is the file to edit by hand; the CSV is a generated copy. Manual values (extraction fields, `extraction_status`, `publication_type`, `notes`) are carried forward on rebuild. If the CSV was edited after it was generated (checksum in `records/collection_stats.json`) and disagrees with the JSON, the run stops without writing |
 | Exclusion reason | `exclusion_reason` | Codes E1–E12 from `screening_criteria.md` |
 | (additional) | `pmcid`, `arxiv_id`, `publication_types`, `language`, `retracted`, `metadata_conflicts`, `field_provenance`, `primary_source_record_id` | |
 

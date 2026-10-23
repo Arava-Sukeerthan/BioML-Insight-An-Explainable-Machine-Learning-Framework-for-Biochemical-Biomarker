@@ -54,6 +54,46 @@ INV_COLS = ["paper_id", "title", "authors", "year", "venue", "doi", "pmid", "arx
 MANUAL_FIELDS = EXTRACTION_FIELDS + ["extraction_status", "publication_type"]
 MANUAL_DEFAULTS = {**{k: SENTINEL for k in EXTRACTION_FIELDS}, "extraction_status": "not_extracted",
                    "publication_type": None}
+YEAR_NOTE = "year not returned by the source (0 = missing)"   # generated, not a manual note
+
+
+def _csv_text(v):
+    """A value as csv.DictWriter writes it (None -> empty)."""
+    return "" if v is None else str(v)
+
+
+def manual_values(lit):
+    """Manual values of the existing inventory, keyed by paper ID. paper_inventory.json is the file
+    that is edited; the CSV is a generated copy. If the CSV was changed after it was generated
+    (checksum recorded in collection_stats.json), its manual fields must agree with the JSON,
+    otherwise an edit made in the CSV would be overwritten silently, so the run stops instead
+    (LIT-004-REVIEW-AND-DECISIONS)."""
+    jpath, cpath = lit / "paper_inventory.json", lit / "paper_inventory.csv"
+    previous = {r["paper_id"]: r for r in json.load(open(jpath))} if jpath.exists() else {}
+    spath = lit / "records" / "collection_stats.json"
+    recorded = json.load(open(spath)).get("paper_inventory_csv_sha256") if spath.exists() else None
+    if cpath.exists() and recorded != pr.sha256_file(cpath):
+        with open(cpath, newline="") as f:
+            rows = {r["paper_id"]: r for r in csv.DictReader(f)}
+        if not previous and any(any(_csv_text(MANUAL_DEFAULTS[k]) != r.get(k, "") for k in MANUAL_FIELDS)
+                                or r.get("notes", "") not in ("", YEAR_NOTE) for r in rows.values()):
+            raise SystemExit("paper_inventory.csv has manual values but paper_inventory.json is missing "
+                             "(nothing written)")
+        diff = sorted(f"{pid}:{k}" for pid, r in previous.items() for k in MANUAL_FIELDS + ["notes"]
+                      if pid in rows and k in rows[pid] and _csv_text(r.get(k)) != rows[pid][k])
+        diff += sorted(f"{pid}:(row only in one file)" for pid in set(rows) ^ set(previous)) if previous else []
+        if diff:
+            raise SystemExit("paper_inventory.csv and paper_inventory.json disagree on manual fields; "
+                             "copy the edits into the JSON file first (nothing written): "
+                             + ", ".join(diff[:20]) + (" ..." if len(diff) > 20 else ""))
+    out = {}
+    for pid, r in previous.items():
+        v = {k: r.get(k) for k in MANUAL_FIELDS if k in r and r.get(k) != MANUAL_DEFAULTS[k]}
+        if r.get("notes") not in (None, YEAR_NOTE):
+            v["notes"] = r["notes"]
+        if v:
+            out[pid] = v
+    return out
 
 
 def load_jsonl(path):
@@ -128,12 +168,7 @@ def main(argv=None):
     stats["retracted"] = report["retracted"]
 
     # ---------------- evidence table (paper_inventory) ----------------
-    previous = {}
-    if (lit / "paper_inventory.json").exists():
-        previous = {r["paper_id"]: r for r in json.load(open(lit / "paper_inventory.json"))}
-    manual_prev = {pid: {k: r.get(k) for k in MANUAL_FIELDS if k in r and r.get(k) != MANUAL_DEFAULTS[k]}
-                   for pid, r in previous.items()}
-    manual_prev = {pid: v for pid, v in manual_prev.items() if v}
+    manual_prev = manual_values(lit)
     built = {p["paper_id"] for p in pubs}
     lost = sorted(set(manual_prev) - built)
     if lost:
@@ -174,7 +209,7 @@ def main(argv=None):
         }
         if row["year"] is None:
             row["year"] = 0  # schema requires an integer; 0 = year not returned by the source
-            row["notes"] = "year not returned by the source (0 = missing)"
+            row["notes"] = YEAR_NOTE
         row.update(manual_prev.get(p["paper_id"], {}))
         inv.append(row)
     try:   # validate before anything is written
@@ -193,6 +228,7 @@ def main(argv=None):
         w = csv.DictWriter(f, fieldnames=INV_COLS)
         w.writeheader()
         w.writerows(inv)
+    stats["paper_inventory_csv_sha256"] = pr.sha256_file(lit / "paper_inventory.csv")
 
     # ---------------- full-text review candidates (mechanical) ----------------
     cand = []

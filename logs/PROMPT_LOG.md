@@ -16,6 +16,7 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | LIT-003-PRESERVATION-CONFIRMATION (2nd) | 2026-10-23 | B | Record the verified download and a second local copy; do not claim an off-device backup | Completed: integrity verified, local redundancy (same computer); off-device backup outstanding (Q-011) | see CHANGELOG |
 | LIT-004-PREPARATION | 2026-10-23 | B | Prepare a pilot title/abstract screening protocol; no screening | Draft protocol (proposed, D-025/D-026); blockers B-1…B-6 and Q-026–Q-030 recorded; awaiting human review | see CHANGELOG |
 | LIT-004-WORKFLOW-FIXES | 2026-10-23 | B | Fix reproducibility blockers B-1, B-3, B-4 before screening | Stable fallback IDs (9 IDs kept); one validated screening format; screening status carried into the inventory; 21 regression tests; D-027 proposed; no screening | see CHANGELOG |
+| LIT-004-REVIEW-AND-DECISIONS | 2026-10-23 | B | Prepare decisions for approval; version-linking and scope briefs; integrity checks | D-027–D-030 proposed with exact texts; briefs written; 7 integrity tests; awaiting human review; no screening | see CHANGELOG |
 
 ## Detailed entries
 
@@ -73,4 +74,18 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Validation status | Performed: 43/43 unit tests, query table PASS (158 rows), raw-export checksums OK, archive `sha256sum -c` OK, two rebuilds byte-identical, paper-ID → source-record mapping identical to the pre-fix build |
 | Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
 | Commit | see `git log` (commit "LIT-004-WORKFLOW-FIXES: …"; hash reported in the completion report) |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+### LIT-004-REVIEW-AND-DECISIONS
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-REVIEW-AND-DECISIONS |
+| Prompt date | 2026-10-23 (Day 10) |
+| Objective | Prepare the researcher's decisions (D-027, Q-031, Q-032) for explicit approval; investigate version linking (B-2); scope decision brief (Q-001, Q-002, Q-007/D-009, Q-008/D-008, Q-022); integrity validation; no screening |
+| Expected deliverables | Exact decision texts; version-linking findings and proposal; scope brief; validation results; logs; report; stop for human review |
+| Actual completion status | Completed; awaiting human review. D-027–D-030 PROPOSED (none approved); conflicts found for Q-031 and Q-032 and recorded with options. Two integrity gaps in the report script fixed (CSV-only edits, manual notes). No screening, no pilot, no pair resolved |
+| Output files | see CHANGELOG LIT-004-REVIEW-AND-DECISIONS |
+| Validation status | Performed: 50/50 unit tests; query table PASS; raw checksums OK; archive OK; registry append-only across all commits |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-REVIEW-AND-DECISIONS: …"; hash in the completion report) |
 | Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |

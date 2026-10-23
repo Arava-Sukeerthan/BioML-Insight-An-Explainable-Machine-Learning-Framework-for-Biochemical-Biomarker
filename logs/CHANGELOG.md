@@ -336,3 +336,22 @@ after PR #1 had been merged.
 **Validation (performed)**: `python3 -I -m unittest discover -s tests/literature` → 43 tests OK; `validate_search_queries.py` → PASS 158 rows; `pubrecords.py verify` → OK; archive `sha256sum -c` → OK; all four schemas pass `check_schema`; no raw export, archive or `.jsonl` staged.
 **Not done**: no screening, no pilot sample, no duplicate resolution, no novelty conclusion.
 
+
+## LIT-004-REVIEW-AND-DECISIONS — 2026-10-23 — Decisions prepared for approval; version linking and scope briefs (no screening)
+
+**Prompt objective**: prepare the researcher's decisions for explicit approval, investigate version linking (B-2), brief the open scope questions, and validate data integrity before pilot screening.
+
+**Completed**
+- Decisions prepared, all **PROPOSED** (none approved): D-027 confirmation text; D-028 (Q-031) and D-029 (Q-032) with the conflicts found (`publication_type` is a judgement enum, and source types already sit in `source_publication_types`; `dim_independent_validation` uses a four-value enum under D-026) and options; D-030 version linking. Exact texts in `research/reviews/approval_request_LIT-004.md`.
+- B-2 investigated: the 15 pairs categorised from metadata only (8 preprint/journal, 1 unclear version, 2 web = PubMed article, 1 web preprint, 1 arXiv/journal, 1 erratum, 1 distinct patents); no shared URLs in the build. Reversible link representation and counting rules (reports vs studies) proposed in `research/literature/version_linking_proposal.md`. No pair resolved.
+- Scope brief `research/methodology/scope_decision_brief.md`: disorders, biomarkers/modalities (gap: proteomics, Q-033), broader biomedical ML, Q-PM-02 (743 records, 626 unique; 83 also retrieved by C/D/E queries, a proxy only), approvals for the executed search.
+- Integrity: `make_literature_reports.py` now (1) stops if `paper_inventory.csv` was edited after generation and disagrees with the JSON (checksum recorded in `collection_stats.json`), and (2) carries manual `notes` forward. Previously both could be overwritten on rebuild.
+- 7 tests added (`TestIntegrity`): registry append-only, decisions attached after rebuilds with new and merging data, manual note kept, invalid screening input keeps annotations, invalid manual value writes nothing, CSV-only edit not overwritten, `not_screened` ≠ `uncertain` in inventory and index.
+
+**Created**: `research/reviews/approval_request_LIT-004.md`, `research/literature/version_linking_proposal.md`, `research/methodology/scope_decision_brief.md`, `logs/session_logs/2026-10-23_LIT-004-REVIEW-AND-DECISIONS.md`.
+**Modified**: `scripts/literature/make_literature_reports.py`, `tests/literature/test_screening_and_ids.py`, `research/literature/records/collection_stats.json` (CSV checksum), `research/literature/screening_protocol.md` (B-2 status), `research/literature/collection_workflow.md`, `logs/DECISION_LOG.md` (D-028–D-030, note on D-027), `research/reviews/unresolved_questions.md` (notes; Q-033, Q-034), `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file.
+**Not modified**: inventory contents, registry, criteria, strategy, scope, dedup decisions, raw exports, archive.
+**Deleted**: none.
+
+**Validation (performed)**: unit tests 50/50 OK; `validate_search_queries.py` PASS (158 rows); `pubrecords.py verify` OK; archive `sha256sum -c` OK; registry: every committed version is a prefix of the next (10,776 → 10,785 data rows, 0 duplicate keys, 2,979 IDs); report script re-run on real data: inventory unchanged.
+**Not done**: no screening, no pilot sample, no pair resolved, no decision approved, D-028–D-030 not implemented.

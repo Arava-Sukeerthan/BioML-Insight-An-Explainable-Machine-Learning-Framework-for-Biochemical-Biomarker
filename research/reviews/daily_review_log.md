@@ -69,3 +69,10 @@ One entry per researcher review session (~1 h/day).
 - **Recommended next step:** `[RECOMMENDATION]` researcher review of D-027 and the remaining blockers B-2, B-5, B-6; then the pilot sample (D-025) once approved.
 - **Researcher decisions:** _pending_
 
+
+## Day 10 (cont.) — 2026-10-23 — LIT-004-REVIEW-AND-DECISIONS
+- **Work completed:** decision texts for D-027–D-030 prepared; version-linking proposal; scope decision brief; two integrity gaps in the report script closed; 7 tests.
+- **Important findings:** `[EVIDENCE]` the stated meanings for Q-031 and Q-032 conflict with the current schema/D-026 (options prepared). `[EVIDENCE]` `same` decisions cannot link versions and are ignored for identifier-conflict pairs. `[EVIDENCE]` Proteomics is undefined in the biomarker scope (Q-033).
+- **Decisions requiring review:** D-027, D-028, D-029, D-030; scope items in `scope_decision_brief.md`; full list in `approval_request_LIT-004.md` §3.
+- **Recommended next step:** `[RECOMMENDATION]` researcher approvals per `approval_request_LIT-004.md` §3, then implement D-028–D-030 and generate the pilot.
+- **Researcher decisions:** _pending_

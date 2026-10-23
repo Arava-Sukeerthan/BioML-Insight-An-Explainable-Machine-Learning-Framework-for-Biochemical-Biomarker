@@ -10,6 +10,7 @@
   "identifier_conflict_pairs": 3,
   "manual_values_carried_forward": 0,
   "merged_by_title_rule": 0,
+  "paper_inventory_csv_sha256": "24e14837ee2623c06308121b48e4cf513fb3bebc151d96070f466b941d0c3454",
   "paper_inventory_schema": "valid",
   "preprints_by_pubmed_type": 39,
   "publications_by_theme": {

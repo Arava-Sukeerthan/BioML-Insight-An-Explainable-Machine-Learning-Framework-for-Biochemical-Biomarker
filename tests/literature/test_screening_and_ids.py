@@ -363,5 +363,118 @@ class TestInventoryRebuild(unittest.TestCase):
         self.assertEqual((self.fx.lit / "paper_inventory.csv").read_bytes(), first)
 
 
+class TestIntegrity(unittest.TestCase):
+    """LIT-004-REVIEW-AND-DECISIONS: registry append-only, decisions stay attached, invalid input
+    cannot erase manual annotations."""
+
+    def setUp(self):
+        self.fx = WebFixture()
+        self.fx.build()
+        self.fx.reports()
+        self.reg = self.fx.lit / "records" / "paper_id_registry.csv"
+
+    def test_registry_is_append_only(self):
+        before = self.reg.read_bytes()
+        self.fx.build(today="2026-10-15")
+        self.assertEqual(self.reg.read_bytes(), before)              # no new data -> unchanged
+        self.fx.reg(write_json(self.fx.lit, "Q-TEST-WS_2026-10-03.json", {}, web_rows(
+            ("SYNTHETIC late web-only record", "https://example.org/web/6"),
+        )), "Q-TEST-WS", "web", "structured_transcription", 1)
+        self.fx.build(today="2026-10-16")
+        pr.migrate_fallback_keys(self.fx.lit, today="2026-10-16")
+        after = self.reg.read_bytes()
+        self.assertTrue(after.startswith(before))
+        self.assertGreater(len(after), len(before))
+
+    def test_decisions_stay_attached_after_rebuilds(self):
+        pubs = self.fx.pubs()
+        dec = ["include", "exclude", "uncertain"]
+        rows, expect = [], {}
+        for i, p in enumerate(sorted(pubs, key=lambda p: p["paper_id"])):
+            d = dec[i % 3]
+            rows.append([p["paper_id"], "title_abstract", d, "E12" if d == "exclude" else "", "assistant",
+                         "2026-10-15", "test" if d != "include" else ""])
+            expect[p["paper_id"]] = (d, sorted(s["source_record_id"] for s in p["search_provenance"]))
+        self.fx.write_decisions(rows)
+        # new data merging into an existing record (900000003 again, another query) and a new record
+        self.fx.reg(write_json(self.fx.lit, "Q-TEST-B_search_01.json", {}, {
+            "pmids": ["900000003"], "total_count": 2}), "Q-TEST-B", "pubmed", "pubmed_connector_search", 1,
+            request={"retstart": 1})
+        self.fx.reg(write_json(self.fx.lit, "Q-TEST-WS_2026-10-04.json", {}, web_rows(
+            ("SYNTHETIC composition for treating a disorder", "https://example.org/patent/5"),
+        )), "Q-TEST-WS", "web", "structured_transcription", 1)
+        for day in ("2026-10-16", "2026-10-17"):
+            self.fx.build(today=day)
+            got = {p["paper_id"]: p for p in self.fx.pubs()}
+            for pid, (d, srcs) in expect.items():
+                self.assertEqual(got[pid]["screening_decision"], d, pid)
+                self.assertTrue(set(srcs) <= {s["source_record_id"] for s in got[pid]["search_provenance"]})
+            new = [p for p in got.values() if p["paper_id"] not in expect]
+            self.assertEqual([p["screening_decision"] for p in new], ["not_screened"])
+
+    def _inv_with_manual(self):
+        path = self.fx.lit / "paper_inventory.json"
+        inv = json.load(open(path))
+        inv[0]["disorder"] = "SYNTHETIC disorder (test)"
+        inv[1]["notes"] = "SYNTHETIC manual note (test)"
+        json.dump(inv, open(path, "w"))
+        self.fx.reports()            # writes the CSV consistently
+        return inv[0]["paper_id"], inv[1]["paper_id"]
+
+    def test_manual_note_survives(self):
+        a, b = self._inv_with_manual()
+        self.fx.build(today="2026-10-15")
+        self.fx.reports()
+        inv = self.fx.inventory()
+        self.assertEqual(inv[a]["disorder"], "SYNTHETIC disorder (test)")
+        self.assertEqual(inv[b]["notes"], "SYNTHETIC manual note (test)")
+
+    def test_invalid_screening_input_keeps_annotations(self):
+        a, _ = self._inv_with_manual()
+        self.fx.write_decisions([[a, "title_abstract", "excluded", "", "assistant", "2026-10-15", "x"]])
+        with self.assertRaises(ValueError):
+            self.fx.build(today="2026-10-15")
+        self.fx.reports()            # runs on the previous, valid build
+        self.assertEqual(self.fx.inventory()[a]["disorder"], "SYNTHETIC disorder (test)")
+        self.assertEqual(self.fx.inventory()[a]["screening_status"], "not_screened")
+
+    def test_invalid_manual_value_writes_nothing(self):
+        import jsonschema
+        path = self.fx.lit / "paper_inventory.json"
+        inv = json.load(open(path))
+        inv[0]["publication_type"] = "SYNTHETIC invalid type"
+        json.dump(inv, open(path, "w"))
+        before = path.read_bytes(), (self.fx.lit / "paper_inventory.csv").read_bytes()
+        with self.assertRaises((jsonschema.ValidationError, SystemExit)):
+            self.fx.reports()
+        self.assertEqual((path.read_bytes(), (self.fx.lit / "paper_inventory.csv").read_bytes()), before)
+
+    def test_csv_only_edit_is_not_overwritten(self):
+        cpath = self.fx.lit / "paper_inventory.csv"
+        with open(cpath, newline="") as f:
+            rows = list(csv.DictReader(f))
+        rows[0]["disorder"] = "SYNTHETIC edited in CSV (test)"
+        with open(cpath, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=mlr.INV_COLS)
+            w.writeheader()
+            w.writerows(rows)
+        before = cpath.read_bytes()
+        with self.assertRaises(SystemExit):
+            self.fx.reports()
+        self.assertEqual(cpath.read_bytes(), before)
+
+    def test_not_screened_and_uncertain_are_distinct_everywhere(self):
+        ids = sorted(p["paper_id"] for p in self.fx.pubs())
+        self.fx.write_decisions([[ids[0], "title_abstract", "uncertain", "", "assistant", "2026-10-15", "x"]])
+        self.fx.build(today="2026-10-15")
+        self.fx.reports()
+        inv = self.fx.inventory()
+        self.assertEqual(inv[ids[0]]["screening_status"], "uncertain")
+        self.assertEqual({inv[i]["screening_status"] for i in ids[1:]}, {"not_screened"})
+        idx = list(csv.DictReader(open(self.fx.lit / "records" / "publications_index.csv", newline="")))
+        self.assertEqual({r["screening_decision"] for r in idx if r["paper_id"] != ids[0]}, {"not_screened"})
+        self.assertNotIn("not_screened", pr.SCREENING_DECISIONS)   # cannot be written as a decision
+
+
 if __name__ == "__main__":
     unittest.main()
