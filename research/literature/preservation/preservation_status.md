@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-10-23 |
-| **Preservation status** | **PENDING.** A verified archive exists and was delivered to the researcher through the Claude app. It counts as durably preserved only once the researcher has saved it to private storage they control and confirmed the checksum (Q-011) |
+| **Preservation status** | **DOWNLOADED AND CHECKSUM-VERIFIED; DURABLE STORAGE NOT YET CONFIRMED.** The researcher downloaded the archive and verified its SHA-256 on Windows on 2026-10-23 (see the 'Researcher-side verification' section). Durable preservation is complete only once the project owner confirms a second private backup or other durable storage location (Q-011) |
 | Files preserved in archive | 205 raw export files (all of `raw_exports/MANIFEST.csv`) + `MANIFEST.csv`, `README.md`, `raw_exports_inventory.csv` + `SHA256SUMS.txt` |
 | Total size of raw files | 14,121,733 bytes (about 14 MB) |
 | Archive | `research/literature/preservation/archive/LIT-003_raw_exports_2026-10-23.tar.gz` (git-ignored; inside the ephemeral container) |
@@ -24,6 +24,18 @@
 
 Composition: 144 PubMed metadata files, 50 PubMed search pages (25 original + 25 `CHECK-` re-fetch), 5 arXiv (alphaXiv) files, 6 web-search files.
 
+## Researcher-side verification (LIT-003-PRESERVATION-CONFIRMATION, 2026-10-23)
+| Item | Recorded value |
+|---|---|
+| Copy verified | The downloaded copy of `LIT-003_raw_exports_2026-10-23.tar.gz` on the researcher's Windows machine |
+| Command (as reported by the researcher) | `certutil -hashfile ".\LIT-003_raw_exports_2026-10-23.tar.gz" SHA256` |
+| Result (as reported by the researcher) | `69e690f06834758aea76bca99ec4699c2abb2dac9aa776798aecf0366bd60c0e`, exactly the expected hash |
+| Evidence type | Researcher's statement in the prompt. The assistant did not observe the Windows command output |
+| What it establishes | The downloaded copy is byte-identical to the archive verified in the container. That archive's contents were already checked against `MANIFEST.csv`: 205/205 files, 208/208 hashes after extraction |
+| What it does **not** establish | Durable backup or long-term retention. A single downloaded copy on one machine can still be lost (disk failure, deletion, no backup). No second private backup or other durable location has been confirmed |
+| Durable private storage | **Not confirmed (pending).** No storage location or credentials were requested or recorded |
+| Optional further check (not required) | Extract it and run `sha256sum -c SHA256SUMS.txt` (e.g. in WSL or Git Bash) to re-check all 208 contained files |
+
 ## Storage options investigated
 | Option | Result |
 |---|---|
@@ -41,6 +53,7 @@ Composition: 144 PubMed metadata files, 50 PubMed search pages (25 original + 25
 5. Tell the assistant the storage location (no credentials) and the checksum result. The status here is then changed to PRESERVED, with the date.
 
 ## Outstanding risks
-- Until step 2 is done, the only copies are in the ephemeral container and in the app attachment (retention not guaranteed).
+- **(Updated 2026-10-23)** One verified copy now exists outside the container, on the researcher's Windows machine. Until a second private backup or another durable location is confirmed, loss of that machine or file would leave only the ephemeral container copy.
+- Container copy and app attachment: retention not guaranteed.
 - If the files are lost, the PubMed searches can be re-run with the same `[edat]`-capped queries. The PMID sets should be reproducible apart from later PubMed deletions or corrections, but the metadata may differ (PubMed updates records). The arXiv and web results are **not** reproducible.
 - The harness's own copies of the metadata responses (`tool-results/`) are also in the container and will be lost with it.

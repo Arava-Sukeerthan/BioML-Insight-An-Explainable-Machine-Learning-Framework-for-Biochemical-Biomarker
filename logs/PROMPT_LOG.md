@@ -12,6 +12,7 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | BIO-001-REVIEW | 2026-10-23 | A | Review and correct PR #1 without merging (decision statuses, ID traceability, README/review-log accuracy) | Completed. See detailed entry below | `c9f1374` |
 | LIT-003 | 2026-10-23 | B | Execute the stored literature searches; provenance, dedup, verification, evidence table, reports; no screening/models | Completed for accessible sources (PubMed, arXiv/alphaXiv, web); others blocked. See detailed entry | `b48adde` |
 | LIT-003-HOTFIX | 2026-10-23 | B | Preserve the 205 LIT-003 raw exports (inventory, verified archive, durable storage) | Archive created, verified and delivered to the researcher; **durable preservation pending** researcher action (preservation_status.md) | see CHANGELOG |
+| LIT-003-PRESERVATION-CONFIRMATION | 2026-10-23 | B | Record the researcher's Windows SHA-256 verification of the downloaded archive; do not overstate durable storage | Completed: downloaded copy verified (researcher-reported); durable backup still pending (Q-011) | see CHANGELOG |
 
 ## Detailed entries
 

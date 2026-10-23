@@ -276,3 +276,15 @@ after PR #1 had been merged.
 **Validation**: as above; plus `git check-ignore` confirms the archive is ignored and `git status` shows no raw or archive file staged.
 **Errors / warnings**: none. Google Drive not used (not approved; inline base64 upload impractical).
 **PR**: existing PR #2 updated (no new PR).
+
+## LIT-003-PRESERVATION-CONFIRMATION — 2026-10-23 — Record researcher-side checksum verification
+
+**Prompt objective**: record that the researcher downloaded the LIT-003 archive and verified its SHA-256 on Windows. Durable storage must not be marked complete without a confirmed second backup.
+
+**Completed**: `preservation_status.md` now says **downloaded and checksum-verified; durable storage not yet confirmed**. It records the command and hash as reported by the researcher, states that checksum verification shows identity and integrity but not durable backup or retention, and keeps Q-011 open for a second private backup or durable location. No storage credentials or locations were requested or recorded.
+
+**Modified**: `research/literature/preservation/preservation_status.md`, `research/literature/raw_exports/README.md`, `research/reviews/unresolved_questions.md` (Q-011 note), `logs/PROMPT_LOG.md`, this file.
+**Created**: `logs/session_logs/2026-10-23_LIT-003-PRESERVATION-CONFIRMATION.md`.
+**Deleted**: none. Raw exports and archive not modified and not committed.
+
+**Validation (actually performed)**: see the session report; container archive `sha256sum -c` against the `.sha256` file; `pubrecords.py verify`; unit tests; query-table check; `git status` and staged-file check for raw or archive files.

@@ -40,3 +40,10 @@ One entry per researcher review session (~1 h/day).
 - **Outstanding problems:** raw exports exist only in the container (Q-011, urgent); second-source verification blocked (Q-021).
 - **Recommended next step:** researcher decisions on Q-011 and Q-022 (plus Q-001/Q-002/Q-007), then LIT-004: title/abstract screening of the 2,979 records against `screening_criteria.md`, with the pilot calibration (§7) and the audit sample.
 - **Researcher decisions:** _pending_
+
+## Day 10 (cont.) — 2026-10-23 — LIT-003-PRESERVATION-CONFIRMATION
+- **Work completed:** recorded the researcher's Windows SHA-256 verification of the downloaded LIT-003 archive (matches `69e690f0…0c0e`).
+- **Important findings:** `[EVIDENCE]` (researcher-reported) the downloaded copy is identical to the verified container archive. `[OPEN]` No second private backup or durable storage confirmed yet.
+- **Decisions requiring review:** Q-011 (confirm durable backup); earlier items unchanged (Q-022 etc.).
+- **Recommended next step:** keep a second private copy (e.g. institutional or private cloud storage) and confirm here. Then LIT-004 after the pending approvals.
+- **Researcher decisions:** _pending_
