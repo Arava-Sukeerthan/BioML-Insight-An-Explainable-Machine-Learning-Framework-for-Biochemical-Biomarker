@@ -11,6 +11,7 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | BIO-001 | 2026-10-23 | A | Establish research governance and project logbook: inspect repository; update CLAUDE.md and README; change/prompt/decision logs; review logs; literature research plan; research integrity protocol; PR. No models, no literature search | Completed (drafts pending researcher approval). See detailed entry below | `fc0c79b` |
 | BIO-001-REVIEW | 2026-10-23 | A | Review and correct PR #1 without merging (decision statuses, ID traceability, README/review-log accuracy) | Completed. See detailed entry below | `c9f1374` |
 | LIT-003 | 2026-10-23 | B | Execute the stored literature searches; provenance, dedup, verification, evidence table, reports; no screening/models | Completed for accessible sources (PubMed, arXiv/alphaXiv, web); others blocked. See detailed entry | `b48adde` |
+| LIT-003-HOTFIX | 2026-10-23 | B | Preserve the 205 LIT-003 raw exports (inventory, verified archive, durable storage) | Archive created, verified and delivered to the researcher; **durable preservation pending** researcher action (preservation_status.md) | see CHANGELOG |
 
 ## Detailed entries
 

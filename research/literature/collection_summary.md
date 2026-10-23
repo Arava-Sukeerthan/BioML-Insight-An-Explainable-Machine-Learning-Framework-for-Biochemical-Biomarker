@@ -108,5 +108,5 @@ All 2,979 records still need title/abstract screening before anyone can decide w
 3. Metadata files are the connector responses saved verbatim by the Claude Code harness (not transcribed). The connector returns PubMed's metadata as served on 2026-10-23.
 4. arXiv records have no author lists (the tool does not return them), and their transcription was not spot-checked.
 5. Web-search results contain truncated titles (e.g., "Frontiers"), and the domain filter was not honoured.
-6. Raw exports (14 MB, incl. abstracts) are git-ignored under D-010 (proposed) and exist only in the ephemeral container. Only the manifest with SHA-256 checksums is committed.
+6. Raw exports (14 MB, incl. abstracts) are git-ignored under D-010 (proposed). Only the manifest with SHA-256 checksums is committed. LIT-003-HOTFIX: a verified archive was delivered to the researcher, but durable preservation is **pending** until it is saved to private storage (`preservation/preservation_status.md`).
 7. The search was run on Day 10, after the date the strategy assumed (Day 3). The `[edat]` cap fixes the snapshot at 2026-10-23.
