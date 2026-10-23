@@ -69,3 +69,13 @@ and must not be cited alone: `D-001`–`D-008` are different decisions. *(Renumb
 
 Rule clarified in BIO-001-REVIEW: an assistant may not change the status of an entry that is under researcher review. A new
 proposal that conflicts with an open one is recorded as an **alternative**, and both stay open until the researcher decides.
+
+## Literature-collection decisions (added LIT-003, 2026-10-23)
+
+| ID | Date | Decision | Status | Rationale | Approved by / date |
+|---|---|---|---|---|---|
+| D-023 | 2026-10-23 (LIT-003) | Route-B control for transcribed PubMed search pages: every query is re-fetched with a different sort order (`CHECK-<query_id>`); `pubrecords.py check-search` must report identical PMID sets and totals before the pages count as spot-checked. Metadata files saved verbatim by the harness are registered as not transcribed. Extends D-012 without replacing it | PROPOSED | The connector's search output can only be kept by transcription. A 100 % independent re-fetch makes transcription errors detectable (LIT-003: 15/15 identical) | — |
+| D-024 | 2026-10-23 (LIT-003) | Evidence-table schema revision (paper_inventory): fields added for the LIT-003 evidence items; `REQUIRES FULL-TEXT REVIEW` / `NOT REPORTED` / `NOT APPLICABLE` sentinels; calibration and uncertainty recorded separately; `needs_review` status added | PROPOSED | The LIT-003 prompt lists evidence items that the LIT-001 schema did not contain. Sentinels prevent guessed values (Q-025) | — |
+
+Note (LIT-003): the searches were run while D-005, D-006, D-007 and D-010 are PROPOSED, under the researcher's LIT-003 instruction.
+Their status was **not** changed; approval is requested in Q-022.

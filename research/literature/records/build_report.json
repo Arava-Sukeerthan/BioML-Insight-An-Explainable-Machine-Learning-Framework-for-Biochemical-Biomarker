@@ -1,0 +1,122 @@
+{
+  "built_at": "2026-10-23T17:23:18+00:00",
+  "dedup_review_pairs": 15,
+  "duplicate_status": {
+    "merged_duplicates": 438,
+    "possible_duplicate_review": 30,
+    "unique": 2511
+  },
+  "manifest_files": 205,
+  "publications": 2979,
+  "publications_with_metadata_conflicts": 1,
+  "registry_conflicts": [
+    {
+      "also": [
+        "P1213"
+      ],
+      "kept": "P1320"
+    },
+    {
+      "also": [
+        "P2128"
+      ],
+      "kept": "P2148"
+    },
+    {
+      "also": [
+        "P2488"
+      ],
+      "kept": "P2535"
+    }
+  ],
+  "retracted": [
+    "P0931",
+    "P0939",
+    "P1443"
+  ],
+  "search_completeness": {
+    "Q-PM-01": {
+      "complete": true,
+      "reported_total": 434,
+      "unique_pmids_retrieved": 434
+    },
+    "Q-PM-02": {
+      "complete": true,
+      "reported_total": 743,
+      "unique_pmids_retrieved": 743
+    },
+    "Q-PM-03": {
+      "complete": true,
+      "reported_total": 52,
+      "unique_pmids_retrieved": 52
+    },
+    "Q-PM-04": {
+      "complete": true,
+      "reported_total": 390,
+      "unique_pmids_retrieved": 390
+    },
+    "Q-PM-05": {
+      "complete": true,
+      "reported_total": 308,
+      "unique_pmids_retrieved": 308
+    },
+    "Q-PM-06": {
+      "complete": true,
+      "reported_total": 285,
+      "unique_pmids_retrieved": 285
+    },
+    "Q-PM-07": {
+      "complete": true,
+      "reported_total": 58,
+      "unique_pmids_retrieved": 58
+    },
+    "Q-PM-08": {
+      "complete": true,
+      "reported_total": 154,
+      "unique_pmids_retrieved": 154
+    },
+    "Q-PM-09": {
+      "complete": true,
+      "reported_total": 262,
+      "unique_pmids_retrieved": 262
+    },
+    "Q-PM-10": {
+      "complete": true,
+      "reported_total": 315,
+      "unique_pmids_retrieved": 315
+    },
+    "Q-PM-11": {
+      "complete": true,
+      "reported_total": 102,
+      "unique_pmids_retrieved": 102
+    },
+    "Q-PM-12": {
+      "complete": true,
+      "reported_total": 19,
+      "unique_pmids_retrieved": 19
+    },
+    "Q-PM-13": {
+      "complete": true,
+      "reported_total": 172,
+      "unique_pmids_retrieved": 172
+    },
+    "Q-PM-14": {
+      "complete": true,
+      "reported_total": 99,
+      "unique_pmids_retrieved": 99
+    },
+    "Q-PM-15": {
+      "complete": true,
+      "reported_total": 20,
+      "unique_pmids_retrieved": 20
+    }
+  },
+  "source_records": 3543,
+  "source_records_missing_metadata": 0,
+  "verification_status": {
+    "needs_review": 1,
+    "partially_verified": 2928,
+    "unverified": 36,
+    "verified": 14
+  }
+}

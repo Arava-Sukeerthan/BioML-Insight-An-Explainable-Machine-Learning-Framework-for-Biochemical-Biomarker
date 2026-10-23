@@ -23,3 +23,6 @@ research/literature/raw_exports/*
 !research/literature/raw_exports/README.md
 research/literature/records/source_records.jsonl
 research/literature/records/publications.jsonl
+
+# LIT-003-HOTFIX: preservation archive of raw exports (contains abstracts; never commit)
+research/literature/preservation/archive/

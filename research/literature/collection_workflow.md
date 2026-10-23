@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Task | LIT-002 (Stage A → B preparation) |
-| Version | 1.0 — prepared 2026-10-14 |
-| Status | **Implemented and unit-tested on synthetic data only. No real publication has been collected.** |
+| Version | 1.1 — prepared 2026-10-14; first real use and minimal extensions in LIT-003 (2026-10-23, §9) |
+| Status | Implemented; unit-tested on synthetic data (22 tests). **First real collection run in LIT-003** (2,979 publications; see `collection_summary.md`). Screening not started |
 | Code | `scripts/literature/pubrecords.py`, `scripts/literature/fetch_pubmed_eutils.py`, `scripts/literature/validate_search_queries.py` |
 | Tests | `tests/literature/test_pubrecords.py` (run: `python3 -I -m unittest discover -s tests/literature -v`) |
 | Schemas | `schemas/source_record.schema.json`, `schemas/publication_record.schema.json`, `schemas/paper_inventory.schema.json` |
@@ -138,7 +138,7 @@ PubMed with the number of unique PMIDs actually retrieved. Any query with
 `complete: false` must be finished before screening. Records with publication type
 *Retracted Publication* are flagged (`retracted: true`) for exclusion code E7.
 
-## 5. Operating procedure (for LIT-003 onwards; not yet executed)
+## 5. Operating procedure (route B executed in LIT-003; see §9 for the changes)
 
 **Route A (if `eutils.ncbi.nlm.nih.gov` is enabled):**
 ```
@@ -235,3 +235,20 @@ PubMed abstracts may be under publisher copyright, and the GitHub repository is 
 * Deduplication quality on real data (precision/recall of flags). This will be measured on the
   first real build through the manual review of `dedup_review.csv`.
 * Europe PMC, Crossref, Semantic Scholar and repository routes (not implemented).
+
+## 9. LIT-003 additions (2026-10-23)
+
+Lessons from the first real run, and the minimal changes made:
+
+| Observation | Change |
+|---|---|
+| Large `get_article_metadata` responses are saved **verbatim to a file by the Claude Code harness** (tool-results directory) | These files are copied unchanged into `raw_exports/META_*.json` and registered **without** `--transcribed`. The metadata transcription problem of §2.1 therefore did not arise. Smaller responses that come back inline would have to be transcribed: in LIT-003 one 7-record reply was re-requested together with 13 already-fetched PMIDs so that it was also saved verbatim |
+| The connector accepts up to 100 PMIDs per metadata call but **returns at most 20**, without a warning | Batches of 20. Completeness is checked by comparing all returned PMIDs with the union of search PMIDs |
+| `search_articles` accepts `max_results` ≤ 200 | Paging with `retstart`, 200 per page |
+| Search responses are small and come back inline, so the **PMID lists must be transcribed** | New route-B control: every query is re-fetched with a different sort order (`sort=pub_date`) and registered as `CHECK-<query_id>`. `pubrecords.py check-search <query_id>` compares the two PMID sets and the totals, and records `passed`/`failed` on the original pages. `CHECK-` pages are never turned into source records (`CHECK_PREFIX`). Tests: `test_check_search_*` |
+| PubMed returns the placeholder `[Abstract not available]` | Treated as a missing abstract (the original string is kept in `original`). Test: `test_abstract_placeholder_is_missing` |
+| Deliverables were needed beyond the build outputs | `scripts/literature/make_literature_reports.py` writes the search execution register, evidence table (`paper_inventory`), verification report, full-text candidate list and `records/collection_stats.json` from the build outputs. It reads only, and extracts no study content |
+
+Session helpers used to write the transcribed files (wrapping a tool response with a provenance
+block and calling `pubrecords.py register`) are documented in each raw file's `provenance` block.
+They are not part of the pipeline.

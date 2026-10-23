@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "BioML-Insight paper inventory",
-  "description": "One record per candidate publication. Records are added only from search-tool output; bibliographic fields are never typed from memory. Status: schema PROPOSED in P001, revised in LIT-001 (source list, provenance, RQ/tier tags); pending approval with the search strategy.",
+  "description": "One record per candidate publication. Records are added only from search-tool output; bibliographic fields are never typed from memory. Status: schema PROPOSED in P001, revised in LIT-001 (source list, provenance, RQ/tier tags); pending approval with the search strategy. Revised in LIT-003 (2026-10-23): evidence-table fields added (research_problem, population, prediction_target, biomarkers_features, uncertainty_methods, calibration_methods, preliminary_relevance, retrieval_themes, full_text_availability, abstract_available, source_publication_types, extraction_status); calibration_or_uncertainty split into two fields; sentinel strings allowed for unextracted values; verification_status gains needs_review. Schema still PROPOSED.",
   "type": "array",
   "items": {
     "type": "object",
@@ -97,9 +97,10 @@
           "verified",
           "partially_verified",
           "unverified",
+          "needs_review",
           "failed"
         ],
-        "description": "verified = title, authors, year and an identifier confirmed by a second lookup"
+        "description": "Automatic bibliographic status from pubrecords.py (collection_workflow.md section 4.3); says nothing about scientific content"
       },
       "verification_note": {
         "type": "string"
@@ -165,68 +166,167 @@
         "type": [
           "string",
           "null"
-        ]
+        ],
+        "description": "Sentinel 'REQUIRES FULL-TEXT REVIEW' until extracted."
       },
       "biomarker_type": {
         "type": [
           "string",
           "null"
-        ]
+        ],
+        "description": "Sentinel 'REQUIRES FULL-TEXT REVIEW' until extracted."
       },
       "dataset": {
         "type": [
           "string",
           "null"
-        ]
+        ],
+        "description": "Sentinel 'REQUIRES FULL-TEXT REVIEW' until extracted."
       },
       "sample_size": {
-        "type": [
-          "integer",
-          "null"
-        ]
+        "anyOf": [
+          {
+            "type": "integer",
+            "minimum": 0
+          },
+          {
+            "type": "string",
+            "enum": [
+              "REQUIRES FULL-TEXT REVIEW",
+              "NOT REPORTED",
+              "NOT APPLICABLE"
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Integer only when copied from the full text with location; otherwise a sentinel string"
       },
       "models": {
         "type": [
           "string",
           "null"
-        ]
+        ],
+        "description": "Sentinel 'REQUIRES FULL-TEXT REVIEW' until extracted."
       },
       "explainability": {
         "type": [
           "string",
           "null"
-        ]
-      },
-      "calibration_or_uncertainty": {
-        "type": [
-          "string",
-          "null"
-        ]
+        ],
+        "description": "Sentinel 'REQUIRES FULL-TEXT REVIEW' until extracted."
       },
       "validation_design": {
         "type": [
           "string",
           "null"
-        ]
+        ],
+        "description": "Sentinel 'REQUIRES FULL-TEXT REVIEW' until extracted."
       },
       "reported_metrics": {
         "type": [
           "string",
           "null"
         ],
-        "description": "Copied verbatim from the paper with location, never paraphrased into new numbers"
+        "description": "Copied verbatim from the paper with location, never paraphrased into new numbers Sentinel 'REQUIRES FULL-TEXT REVIEW' until extracted."
       },
       "limitations_noted": {
         "type": [
           "string",
           "null"
-        ]
+        ],
+        "description": "Sentinel 'REQUIRES FULL-TEXT REVIEW' until extracted."
       },
       "notes": {
         "type": [
           "string",
           "null"
         ]
+      },
+      "research_problem": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Research problem as stated by the authors"
+      },
+      "population": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Disorder/population studied"
+      },
+      "prediction_target": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Outcome / label predicted"
+      },
+      "biomarkers_features": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Biomarkers or feature types used"
+      },
+      "uncertainty_methods": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Uncertainty-estimation methods used"
+      },
+      "calibration_methods": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Probability-calibration methods / measures used"
+      },
+      "preliminary_relevance": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Preliminary, mechanical relevance note (which themes retrieved the record); NOT a screening decision or gap conclusion"
+      },
+      "retrieval_themes": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Semicolon-separated themes A-F/Q of the queries that retrieved the record (research_plan.md section 2)"
+      },
+      "full_text_availability": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "pmc_record (PMCID exists; open-access status not checked) / arxiv_preprint / not_checked / researcher_access"
+      },
+      "source_publication_types": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Publication types as returned by the source (PubMed), semicolon-separated"
+      },
+      "extraction_status": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "not_extracted / abstract_only / full_text"
+      },
+      "abstract_available": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "description": "Whether the source returned an abstract (abstract text itself is not stored in this public table)"
       }
     }
   }

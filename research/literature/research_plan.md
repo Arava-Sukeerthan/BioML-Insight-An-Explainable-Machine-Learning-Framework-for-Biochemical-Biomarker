@@ -5,7 +5,7 @@
 | Task | BIO-001 (2026-10-23) |
 | Version | 1.0 — **DRAFT, pending researcher approval** |
 | Role | Overview of how existing work will be investigated. The detailed, executable design is in `search_strategy.md` (v1.0.1), `search_queries.csv`, `screening_criteria.md` and `collection_workflow.md` (LIT-001/LIT-002). If this overview and those files disagree, the detailed files apply and the difference is logged as an open question. |
-| Search status | **No search has been executed.** Only capability probes and count-only PubMed pilots were run on 2026-10-14 (`search_queries.csv`, `row_type` = `capability_probe` / `pilot_count`). No publication has been collected, screened or verified. |
+| Search status | Updated LIT-003 (2026-10-23): PubMed (15 queries), arXiv via alphaXiv (5) and web search (6) **executed**; 2,979 publications collected and deduplicated; bibliographic verification automatic (`verification_report.md`). Consensus, Europe PMC, Crossref, Semantic Scholar and repository APIs not run (`access_report.md`). **Nothing screened or extracted.** |
 | References | **This document cites no publications.** Candidate foundational items recalled from memory are listed as **unverified** seeds in `search_strategy.md` §4.11 and may not be cited until verified. |
 
 ---
