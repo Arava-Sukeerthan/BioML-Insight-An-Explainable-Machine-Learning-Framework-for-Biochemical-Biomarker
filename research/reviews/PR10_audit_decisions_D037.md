@@ -73,3 +73,6 @@ Because the group depends only on the number of `yes`, this is equivalent to: th
 - No screening decision, pilot, criteria v1.1 or model training. D-031–D-037 remain inactive.
 - Q-042 is not answered. No `lr_only` rule.
 - Not part of this task (separate low-severity follow-ups from the audit): the `needs_human` test from the D-034 §5.3 test plan; the D-035 §4 step 6 "pending verification" report; the `abstract_only`-after-full-text behaviour (audit finding 5).
+
+## 6. Addendum (2026-10-24, Q-043-DECISION, D-038)
+The `[OPEN]` point in §2 (Q-043) is answered by D-038 (`Q-043_decision_record_D038.md`): no separate marker; reporting rule in D-038-2. D-037 is unchanged.

@@ -66,6 +66,7 @@ Not applied until the activation conditions in `research/reviews/Q-041_decision_
 - **Researcher verification** of `qualified`/`near_rq5` records: a new `full_text` row with `screener=researcher` restating all statuses, justification "verified: …". Earlier rows are kept (D-035 §4).
 - **Build safeguards (implemented):** a later row of the same stage cannot blank a recorded component; incomplete full-text component rows are rejected; both checks cover all five component columns (D-036).
 - **Coverage group (derived, D-034/D-036):** the build sets `rq5_coverage_group` (`qualified` ≥ 4 `yes`, `near_rq5` = 3, `below_threshold` 0–2) and `rq5_coverage_provisional` (true only if resolving the `unclear` statuses to `yes`/`no` could change the group, D-037) from **confirmed** statuses only; null when not assessed. Screeners never assign it. It describes component coverage, not study quality.
+- **Reporting `qualified` records (D-038):** a record is described as covering all five components only when all five confirmed statuses are `yes`. Records with four `yes` + one `unclear` (naming the component) and four `yes` + one `no` are reported as separate subgroups. No marker field is added; the subgroup comes from the confirmed statuses.
 - **Precedence:** for RQ5 component statuses, D-035 applies where it differs from §2 above (D-026) or R5 (D-029); both stay PROPOSED.
 
 ## 3. Decision rules for the distinctions requested

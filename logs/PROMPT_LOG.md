@@ -301,3 +301,15 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Pull request | None; owner to decide (CLAUDE.md §3.5) |
 
 > **Correction (2026-10-24, GOV-PR10-12-MERGE-RECORD).** The Q-039-DECISION and PR10-AUDIT-DECISIONS entries above show PR #10 and PR #11 as open. That was correct when written. Verified now: **PR #10** merged into `claude/happy-hawking-rxptfv` (merge commit `ad650f9`, parents `17b0866`, `f106fdc`; 06:50:19 UTC, `Arava-Sukeerthan`). **PR #11** merged into `q039-dim-classification`, not the default branch (`bd0c8ee`, parents `f106fdc`, `e8bf189`; 06:50:31 UTC). **PR #12** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/12 — base `claude/happy-hawking-rxptfv` (`ad650f9`) ← head `claude/eloquent-mccarthy-bqtxr3` (`e8bf189`), opened with owner authorization to bring PR #11's D-037 changes into the default branch; merged (`6f57b6f`, parents `ad650f9`, `e8bf189`; 06:59:56 UTC, `Arava-Sukeerthan`). Details: CHANGELOG, GOV-PR10-12-MERGE-RECORD.
+
+### Q-043-DECISION
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | Q-043-DECISION (prompt: owner Decisions 1–4 after the PR #10/#11 audit) |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Record D-038 (Q-043); update PR #10's description; prepare the merge sequence and the `abstract_only` Option A proposal (not implemented) |
+| Actual completion status | D-038 APPROVED — CONDITIONAL (inactive) recorded; PR #10 description updated; merge sequence and Option A proposal delivered for owner approval |
+| Branch | `q043-reporting-rule` (local only, from PR #11's head `e8bf189`); not pushed: the session's only push branch is PR #11's head |
+| Pull request | None; awaiting the owner's choice of branch and PR (CLAUDE.md §3.5) |
+
+> **Update (2026-10-24, Q-043-DECISION).** The "Branch" and "Pull request" rows above were written before the rebase and before the PR existed. The branch was rebased onto `6f57b6f` (see CHANGELOG) and pushed with owner authorization. **PR #13** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/13 — base `claude/happy-hawking-rxptfv` (`6f57b6f`) ← head `q043-reporting-rule` (`07087d3` plus this log-only commit). Open; awaiting owner review; not merged.

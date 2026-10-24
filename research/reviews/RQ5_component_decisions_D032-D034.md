@@ -190,3 +190,8 @@ D-036 (`Q-039_decision_record_D036.md`) answers Q-039 (§7 condition 2).
 D-037 (`PR10_audit_decisions_D037.md`) records two owner decisions taken after the audit of PR #10. The text above is unchanged.
 - **§5.3 derivation (lines 128–129) and the example at line 133:** `rq5_coverage_provisional` is no longer `n_unclear > 0`. It is true only when resolving the `unclear` statuses to `yes`/`no` could change the group (D-037-A1). Four `yes` and one `unclear` is `qualified` and **not** provisional; three `yes` with any `unclear` stays provisional (Q-038-2). The thresholds are unchanged. Whether Q-038-4's "flag kept" needs a separate marker is open (Q-043).
 - **§9, "plus Q-042" (line 187):** Q-042 is not an activation condition (D-037-B1). §7 conditions 3, 4, 6 and 7 remain.
+
+## 11. Addendum (2026-10-24, Q-043-DECISION, D-038)
+D-038 (`Q-043_decision_record_D038.md`) answers Q-043. The text above is unchanged.
+- **Q-038-4, "The flag is kept" (§2.3, line 52):** met by the confirmed `unclear` status of the fifth component, which D-033-4 flags for human review. No separate marker is added.
+- **Q-038-4, "five-component coverage is not claimed":** reports separate `qualified` records with five confirmed `yes`, four `yes` + one `unclear` (naming it), and four `yes` + one `no`. Only the first may be described as covering all five components (D-038-2).

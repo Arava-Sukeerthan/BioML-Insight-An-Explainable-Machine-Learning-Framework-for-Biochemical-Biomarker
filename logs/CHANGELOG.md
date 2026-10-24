@@ -762,3 +762,30 @@ No CI is configured.
 **Statuses confirmed unchanged**: D-036 and D-037 APPROVED — CONDITIONAL (inactive for screening). D-038 is in open PR #13, not on the default branch. Screening and pilot not started (no `screening/decisions.csv` or pilot file exists). Q-042 Open.
 
 **Modified**: this file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_GOV-PR10-12-MERGE-RECORD.md`. **Not modified**: `DECISION_LOG.md`, decision records, code, tests, schemas, criteria, protocol, data. Branch: local `gov-pr10-12-merge-record` from `6f57b6f`; not pushed, no PR.
+
+## Q-043-DECISION — 2026-10-24 — Record D-038 (reporting of qualified records with an unresolved component; no marker)
+
+**Prompt objective**: record the owner's approved Q-043 resolution as a new append-only decision; update PR #10's description (B1 wording); prepare the PR #10/#11 merge sequence and the Option A proposal for `abstract_only` without implementing either.
+
+**Decision**: **D-038 — APPROVED — CONDITIONAL (inactive for screening)**, approved by the researcher (owner) on 2026-10-24 (`research/reviews/Q-043_decision_record_D038.md`). ID checked as the next free one on every branch. Q-043 answered.
+
+**Changed**
+- New decision record `research/reviews/Q-043_decision_record_D038.md`.
+- DECISION_LOG: D-038 section and two status-history rows (+8/−0).
+- `unresolved_questions.md`: Q-043 status cell → Answered.
+- Dated addenda: `RQ5_component_decisions_D032-D034.md` §11, `PR10_audit_decisions_D037.md` §6.
+- `screening_protocol.md` §2a (INACTIVE): one reporting bullet.
+- PR #10 description (GitHub, not a repository file): Q-042 removed from the remaining activation conditions, with a statement that Q-042 remains open and no `lr_only` rule is decided; follow-up note on PR #11. Title, base, head and state unchanged.
+
+**Not modified**: code, schemas, tests, inventory, raw exports, `screening_criteria.md`, `GOVERNANCE.md`, `CLAUDE.md`. No screening decision, pilot or model training. No PR merged, retargeted, approved or closed.
+
+**Validation**: see `logs/session_logs/2026-10-24_Q-043-DECISION.md`. No CI is configured.
+
+**Q-043-DECISION follow-up (2026-10-24, owner instructions after the pre-merge review)**:
+- D-038 record (not yet pushed): status line reads **APPROVED — CONDITIONAL (inactive)**, stating that the reporting rule is approved in principle and screening stays inactive until the applicable activation conditions are met; the §4 "must be carried into criteria v1.1 / protocol v0.2" sentence is replaced by `[RECOMMENDATION] Carry D-038-2 into criteria v1.1 / protocol v0.2 when drafted (owner to confirm).` The DECISION_LOG entry is not edited.
+- PR #11 description (GitHub, owner-authorized): the stale sentence "PR #10's description still lists Q-042 under 'Remaining blockers'. It was not edited and is left for the owner." is replaced by "PR #10's description was updated on 2026-10-24 (owner Decision 2) to remove Q-042 from its activation conditions." Nothing else in PR #11 changed (head `e8bf189`, base, title and state unchanged). The D-037 record (§3, "Not edited: the PR #10 description …") is kept as written; it was accurate when written.
+
+
+**Q-043-DECISION rebase (2026-10-24, log-only)**: branch `q043-reporting-rule` was rebased onto default-branch commit `6f57b6f` (merge of PR #12; D-037 now on the default branch), from its earlier base `e8bf189`. No conflicts; the D-038 diff is byte-identical before and after. Rebased work commits: `1547cf0` → `995166c`, `ef3bfa6` → `83b4951`. The earlier branch notes in PROMPT_LOG and the Q-043-DECISION session log ("from `e8bf189`") were accurate when written and are kept as written. This note's own commit ID is recorded in the PR description.
+
+**Q-043-DECISION PR (2026-10-24)**: **PR #13**, "Q-043: D-038 reporting rule for qualified records with an unresolved component (no marker; inactive)": https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/13. Base `claude/happy-hawking-rxptfv` (`6f57b6f`) ← head `q043-reporting-rule` (work commits `995166c`, `83b4951`, rebase note `07087d3`, plus this log-only commit). Status: **open**, awaiting owner review; not merged.
