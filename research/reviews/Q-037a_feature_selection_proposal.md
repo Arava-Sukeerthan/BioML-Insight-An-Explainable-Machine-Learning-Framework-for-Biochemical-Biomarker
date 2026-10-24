@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Task | Q-037a (2026-10-24) |
-| Status | **PROPOSAL (D-032, PROPOSED). Not approved by the owner.** Nothing here governs screening. No criteria, protocol, schema, code or data were changed |
+| Status | Written as a PROPOSAL (D-032). **Owner responses received 2026-10-24: D-032 APPROVED — CONDITIONAL, inactive for screening** (see §10 and `RQ5_component_decisions_D032-D034.md`). Nothing here governs screening until the activation conditions are met |
 | Decision it serves | D-031 (APPROVED — CONDITIONAL): RQ5 requires ≥ 4 of 5 components (feature/biomarker selection; classification; explainability; probability calibration; uncertainty estimation). This proposal addresses condition **C2** only |
 | Not decided here | Q-037b ("covering" a component), Q-038 (3-of-5 frameworks), D-029/R5 (explainability, calibration and uncertainty definitions), screening schema, criteria v1.1 |
 
@@ -169,3 +169,16 @@ Comments:
 **R-Q037a-5 — Recording**
 [ ] Record the answers above in `logs/DECISION_LOG.md` (D-032)  [ ] Do not record yet
 Comments:
+
+## 10. Owner responses recorded (2026-10-24)
+
+The owner's prompt of 2026-10-24 gave the answers below. Its option letters do not all match the fields in §9, so the answers are recorded by their content (`RQ5_component_decisions_D032-D034.md` §1). The §9 fields above are left as written; this section is the record.
+
+| Field | Owner choice (prompt) | Recorded content |
+|---|---|---|
+| R-Q037a-1 | Option B | Option B as in §3 and §5 |
+| R-Q037a-2 | Option C | A reused published panel alone does not count. A new qualifying procedure in the same study is assessed independently. The study is not excluded for this reason. Reuse is tracked with `scope_flags` token `published_panel_reused` |
+| R-Q037a-3 | Option A | Strict evidence: `yes` only when a qualifying procedure **and** the retained subset of original variables are evidenced; `no` only when evidence establishes absence; otherwise `unclear`. Mentions of importance, panels or reduced predictor sets are not enough |
+| R-Q037a-4 | Option A | Add `dim_feature_selection` (`yes/no/unclear`). Implemented as an optional column; inactive |
+| R-Q037a-5 | Option A | D-032 APPROVED — CONDITIONAL; inactive for screening until its dependencies are resolved |
+

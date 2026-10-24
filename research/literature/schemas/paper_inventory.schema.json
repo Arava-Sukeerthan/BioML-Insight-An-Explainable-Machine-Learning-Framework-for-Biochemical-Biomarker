@@ -363,6 +363,13 @@
         ],
         "description": "From the latest screening decision (screening/decisions.csv)"
       },
+      "dim_feature_selection": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv). RQ5 feature/biomarker-selection component (D-032, APPROVED - CONDITIONAL; inactive for screening)"
+      },
       "dim_independent_validation": {
         "type": [
           "string",

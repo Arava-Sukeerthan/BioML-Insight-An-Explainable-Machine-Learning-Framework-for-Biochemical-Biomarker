@@ -230,6 +230,33 @@ class TestScreeningRecords(unittest.TestCase):
         self.assertEqual((row["rq_tags"], row["tier"], row["record_type"], row["dim_independent_validation"]),
                          ("RQ1;RQ3", 2, "original", "external"))
 
+    def test_feature_selection_descriptor(self):
+        # D-032: optional dim_feature_selection column (yes/no/unclear); files without it stay valid
+        a, b, c = self.ids[:3]
+        header = pr.SCREENING_REQUIRED + ["dim_feature_selection"]
+        self.fx.write_decisions([
+            [a, "full_text", "include", "", "assistant", "2026-10-15", "", "yes"],
+            [b, "full_text", "uncertain", "", "assistant", "2026-10-15", "selection not reported", "unclear"],
+            [c, "full_text", "include", "", "assistant", "2026-10-15", "", ""],
+        ], header=header)
+        self.fx.build(today="2026-10-15")
+        details = {p["paper_id"]: p["screening_details"] for p in self.fx.pubs()}
+        self.assertEqual(details[a]["dim_feature_selection"], "yes")
+        self.assertEqual(details[b]["dim_feature_selection"], "unclear")
+        self.assertIsNone(details[c]["dim_feature_selection"])        # empty is not "no"
+        self.fx.reports()
+        inv = self.fx.inventory()
+        self.assertEqual((inv[a]["dim_feature_selection"], inv[c]["dim_feature_selection"]), ("yes", None))
+        for bad in ("maybe", "Yes", "true"):
+            with self.subTest(bad):
+                self.fx.write_decisions([[a, "full_text", "include", "", "assistant", "2026-10-15", "", bad]],
+                                        header=header)
+                with self.assertRaises(ValueError):
+                    self.fx.build(today="2026-10-16")
+        # unscreened records carry no component value
+        self.assertTrue(all(details[p]["dim_feature_selection"] is None for p in (c,)))
+        self.assertTrue(all(details.get(p) is None for p in self.ids[3:]))
+
     def test_latest_stage_wins(self):
         a = self.ids[0]
         self.fx.write_decisions([
