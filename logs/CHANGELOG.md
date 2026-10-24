@@ -740,3 +740,25 @@ No CI is configured.
 **Validation**: see `logs/session_logs/2026-10-24_PR10-AUDIT-DECISIONS.md`. No CI is configured.
 
 **PR10-AUDIT-DECISIONS PR (2026-10-24)**: **PR #11**, stacked on PR #10: https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/11. Base `q039-dim-classification` (`f106fdc`) ← head `claude/eloquent-mccarthy-bqtxr3` (work commit `29523ea`, plus this log-only commit). Status: **open**, awaiting owner review; not merged. PR #10 not changed.
+
+## CORRECTION — 2026-10-24 — PRs #10, #11 and #12 merged; D-037 reached the default branch through PR #12 (GOV-PR10-12-MERGE-RECORD)
+
+**Scope**: log-only. This supersedes the "open / awaiting owner review / not merged" statements for PR #10 (Q-039-DECISION entry) and PR #11 (PR10-AUDIT-DECISIONS entry) above and in `PROMPT_LOG.md`. Those statements were correct when written and are left unchanged. It also records **PR #12**, which was not previously entered in this file (CLAUDE.md §3.5).
+
+**Verified `[EVIDENCE: GitHub API and git, checked 2026-10-24]`**
+
+| PR | Merged into | Merged at (GitHub `merged_at`, UTC) | Merged by | Merge commit and parents | Merge-commit tree |
+|---|---|---|---|---|---|
+| [#10](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/10) (Q-039 / D-036) | `claude/happy-hawking-rxptfv` (default) | 2026-10-24 06:50:19 | `Arava-Sukeerthan` | `ad650f9`: `17b0866` (base), `f106fdc` (head) | identical to `f106fdc` |
+| [#11](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/11) (D-037: A1, B1; Q-043 opened) | `q039-dim-classification` (its stacked base, **not** the default branch) | 2026-10-24 06:50:31 | `Arava-Sukeerthan` | `bd0c8ee`: `f106fdc` (base), `e8bf189` (head) | identical to `e8bf189` |
+| [#12](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/12) (recovery: PR #11's head into the default branch) | `claude/happy-hawking-rxptfv` (default) | 2026-10-24 06:59:56 | `Arava-Sukeerthan` | `6f57b6f`: `ad650f9` (base), `e8bf189` (head) | identical to `e8bf189` |
+
+- **Sequence.** PR #10 brought D-036 into the default branch. Twelve seconds later, PR #11 was merged into `q039-dim-classification`, so the default branch did **not** receive D-037. PR #12 (opened with owner authorization; head `claude/eloquent-mccarthy-bqtxr3` @ `e8bf189`, 2 commits `29523ea` and `e8bf189`, 14 files, +228/−12, identical to PR #11's diff) then brought D-037 into the default branch without the merge commit `bd0c8ee`.
+- **Result.** The default branch `claude/happy-hawking-rxptfv` is at `6f57b6f`. Its tree equals `e8bf189` (PR #11's reviewed head): D-036 and D-037 are both present. `bd0c8ee` is **not** an ancestor of the default branch; it remains only on `q039-dim-classification`, whose content is identical. No branch was deleted.
+- **Merge-commit times** (git committer date, GitHub): `ad650f9` 06:50:18, `bd0c8ee` 06:50:30, `6f57b6f` 06:59:56 UTC. They differ from `merged_at` by at most one second.
+
+**Post-merge validation** (run on this branch, whose code, tests and data equal `6f57b6f`): see `logs/session_logs/2026-10-24_GOV-PR10-12-MERGE-RECORD.md`. Real-data rebuild, raw-export verify and archive checksum **not run** (raw exports and git-ignored build files are not in the container). No CI is configured.
+
+**Statuses confirmed unchanged**: D-036 and D-037 APPROVED — CONDITIONAL (inactive for screening). D-038 is in open PR #13, not on the default branch. Screening and pilot not started (no `screening/decisions.csv` or pilot file exists). Q-042 Open.
+
+**Modified**: this file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_GOV-PR10-12-MERGE-RECORD.md`. **Not modified**: `DECISION_LOG.md`, decision records, code, tests, schemas, criteria, protocol, data. Branch: local `gov-pr10-12-merge-record` from `6f57b6f`; not pushed, no PR.
