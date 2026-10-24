@@ -299,3 +299,5 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | D-038 APPROVED — CONDITIONAL (inactive) recorded; PR #10 description updated; merge sequence and Option A proposal delivered for owner approval |
 | Branch | `q043-reporting-rule` (local only, from PR #11's head `e8bf189`); not pushed: the session's only push branch is PR #11's head |
 | Pull request | None; awaiting the owner's choice of branch and PR (CLAUDE.md §3.5) |
+
+> **Update (2026-10-24, Q-043-DECISION).** The "Branch" and "Pull request" rows above were written before the rebase and before the PR existed. The branch was rebased onto `6f57b6f` (see CHANGELOG) and pushed with owner authorization. **PR #13** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/13 — base `claude/happy-hawking-rxptfv` (`6f57b6f`) ← head `q043-reporting-rule` (`07087d3` plus this log-only commit). Open; awaiting owner review; not merged.
