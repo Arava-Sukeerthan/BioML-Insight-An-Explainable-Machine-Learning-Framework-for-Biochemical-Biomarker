@@ -114,3 +114,8 @@ D-036 (`Q-039_decision_record_D036.md`) answers Q-039. The text above is unchang
   The G4 trigger is therefore computable. The "pending verification" report (§4 step 6) is still **not implemented**.
 - **§5 line 82 wording:** "No classification definition … is introduced here" referred to the code and protocol at the time. The classification evidence definition is the §2 row (G6), and D-036 uses it unchanged.
 - **Still open:** whether `lr_only` studies can receive classification `yes` (Q-042). D-035 remains APPROVED — CONDITIONAL and inactive.
+
+## 9. Addendum (2026-10-24, PR10-AUDIT-DECISIONS, D-037)
+D-037 (`PR10_audit_decisions_D037.md`): the text above is unchanged.
+- **§5 "Coverage group", "`provisional` = any `unclear`" (line 91):** superseded by D-037-A1. The flag is true only when resolving the `unclear` statuses to `yes`/`no` could change the group.
+- **§6 (activation conditions):** not changed. Q-042 is not among them, and D-037-B1 confirms it is not added through D-036.

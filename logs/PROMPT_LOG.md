@@ -277,3 +277,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Pull request | Not yet created when this entry was written; recorded in a follow-up log commit |
 
 > **Update (2026-10-24, Q-039-DECISION).** The "Pull request" row above was written before the PR existed. **PR #10** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/10 — base `claude/happy-hawking-rxptfv` (`17b0866`) ← head `q039-dim-classification` (`b122e10` plus this log-only commit). Open; awaiting owner review; not merged.
+
+### PR10-AUDIT-DECISIONS
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PR10-AUDIT-DECISIONS (prompt: "two explicit researcher decisions following the independent audit of PR #10": A1 provisional flag, B1 Q-042 activation-blocker status) |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Implement A1 and record A1 and B1 as D-037; screening stays inactive; Q-042 stays open |
+| Actual completion status | D-037 APPROVED — CONDITIONAL (inactive). Implementation and tests complete (69 tests OK). Q-043 opened |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` (session-designated), fast-forwarded to PR #10's head `f106fdc` |
+| Pull request | Not yet created when this entry was written; recorded in a follow-up log commit |

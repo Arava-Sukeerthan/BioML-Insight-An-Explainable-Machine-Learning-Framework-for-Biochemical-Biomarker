@@ -716,3 +716,25 @@ No CI is configured.
 **Validation**: see `logs/session_logs/2026-10-24_Q-039-DECISION.md`. No CI is configured.
 
 **Q-039-DECISION PR (2026-10-24)**: **PR #10**, "Q-039: D-036 dim_classification and build-derived RQ5 coverage group (conditional, inactive)": https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/10. Base `claude/happy-hawking-rxptfv` (`17b0866`) ← head `q039-dim-classification` (work commit `b122e10`, plus this log-only commit). Status: **open**, awaiting owner review; not merged.
+
+## PR10-AUDIT-DECISIONS — 2026-10-24 — Record D-037 (owner decisions A1 and B1 after the PR #10 audit); provisional-flag rule
+
+**Prompt objective**: implement the researcher's Decision A1 (`rq5_coverage_provisional` only when resolving `unclear` statuses could change the group) and record Decision B1 (Q-042 is not a new activation blocker), as a follow-up to PR #10. Screening stays inactive.
+
+**Decision**: **D-037 — APPROVED — CONDITIONAL (inactive for screening)**, approved by the researcher (owner) on 2026-10-24 (`research/reviews/PR10_audit_decisions_D037.md`). It revises part of D-036 by a new entry; D-036 keeps its status and text.
+
+**Implemented**
+- `pubrecords.py`: `derive_rq5_coverage_group()` now sets the provisional flag by enumerating every `yes`/`no` resolution of the `unclear` statuses; true only if one gives a different group. New helper `_rq5_group_for()` holds the unchanged thresholds. Null behaviour for missing statuses unchanged.
+- `publication_record.schema.json`: `rq5_coverage_provisional` description.
+- Tests (`test_screening_and_ids.py`): two new tests (the A1 examples in every component order; all 3,125 status combinations against an independent form of the rule). Expectations changed in three existing tests: 4 `yes` + 1 `unclear` is now `qualified`, not provisional.
+
+**Documentation**
+- New decision record `research/reviews/PR10_audit_decisions_D037.md`.
+- Dated addenda: D-036 record §8, `RQ5_component_decisions_D032-D034.md` §10, D-035 record §9. Original text unchanged.
+- `screening_protocol.md` §2a (INACTIVE): coverage-group line.
+- `unresolved_questions.md`: Q-042 "Needed by" corrected (no longer an activation condition; status **Open**). New **Q-043**: whether D-034(4)'s "flag kept" needs a separate marker for qualified records with an `unclear` component.
+- DECISION_LOG: D-037 section and three status-history rows (+9/−0).
+
+**Not modified**: raw exports, archive, registry, paper IDs, inventory CSV/JSON, `collection_stats.json`, `screening_criteria.md`, `GOVERNANCE.md`, `CLAUDE.md`, D-035 §6 activation conditions. No screening decision, pilot or model training. No `lr_only` rule.
+
+**Validation**: see `logs/session_logs/2026-10-24_PR10-AUDIT-DECISIONS.md`. No CI is configured.
