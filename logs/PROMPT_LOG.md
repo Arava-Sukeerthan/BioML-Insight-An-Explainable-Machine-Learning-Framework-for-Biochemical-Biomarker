@@ -287,3 +287,5 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | D-037 APPROVED — CONDITIONAL (inactive). Implementation and tests complete (69 tests OK). Q-043 opened |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` (session-designated), fast-forwarded to PR #10's head `f106fdc` |
 | Pull request | Not yet created when this entry was written; recorded in a follow-up log commit |
+
+> **Update (2026-10-24, PR10-AUDIT-DECISIONS).** The "Pull request" row above was written before the PR existed. **PR #11** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/11 — base `q039-dim-classification` (`f106fdc`, PR #10's head) ← head `claude/eloquent-mccarthy-bqtxr3` (`29523ea` plus this log-only commit). Open; awaiting owner review; not merged.

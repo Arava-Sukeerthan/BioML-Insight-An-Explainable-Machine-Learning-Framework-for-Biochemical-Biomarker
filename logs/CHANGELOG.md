@@ -738,3 +738,5 @@ No CI is configured.
 **Not modified**: raw exports, archive, registry, paper IDs, inventory CSV/JSON, `collection_stats.json`, `screening_criteria.md`, `GOVERNANCE.md`, `CLAUDE.md`, D-035 §6 activation conditions. No screening decision, pilot or model training. No `lr_only` rule.
 
 **Validation**: see `logs/session_logs/2026-10-24_PR10-AUDIT-DECISIONS.md`. No CI is configured.
+
+**PR10-AUDIT-DECISIONS PR (2026-10-24)**: **PR #11**, stacked on PR #10: https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/11. Base `q039-dim-classification` (`f106fdc`) ← head `claude/eloquent-mccarthy-bqtxr3` (work commit `29523ea`, plus this log-only commit). Status: **open**, awaiting owner review; not merged. PR #10 not changed.
