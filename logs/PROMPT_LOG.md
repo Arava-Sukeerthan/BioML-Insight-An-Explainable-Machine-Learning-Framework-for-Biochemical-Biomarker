@@ -275,3 +275,5 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | D-036 APPROVED — CONDITIONAL (inactive). Implementation and tests complete (67 tests OK). Q-042 (`lr_only`) opened |
 | Branch | `q039-dim-classification` (from default `17b0866`) |
 | Pull request | Not yet created when this entry was written; recorded in a follow-up log commit |
+
+> **Update (2026-10-24, Q-039-DECISION).** The "Pull request" row above was written before the PR existed. **PR #10** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/10 — base `claude/happy-hawking-rxptfv` (`17b0866`) ← head `q039-dim-classification` (`b122e10` plus this log-only commit). Open; awaiting owner review; not merged.

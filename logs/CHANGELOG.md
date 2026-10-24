@@ -714,3 +714,5 @@ No CI is configured.
 **Not modified**: `screening_criteria.md`, raw exports, archive, registry, paper IDs, `GOVERNANCE.md`. No screening decision, pilot or model training.
 
 **Validation**: see `logs/session_logs/2026-10-24_Q-039-DECISION.md`. No CI is configured.
+
+**Q-039-DECISION PR (2026-10-24)**: **PR #10**, "Q-039: D-036 dim_classification and build-derived RQ5 coverage group (conditional, inactive)": https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/10. Base `claude/happy-hawking-rxptfv` (`17b0866`) ← head `q039-dim-classification` (work commit `b122e10`, plus this log-only commit). Status: **open**, awaiting owner review; not merged.
