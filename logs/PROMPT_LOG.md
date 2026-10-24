@@ -337,3 +337,33 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Pull request | None; owner to decide (CLAUDE.md §3.5) |
 
 > **Correction (2026-10-24, GOV-PR15-MERGE-RECORD).** The GOV-PR13-14-MERGE-RECORD entry above shows the branch as "local … not pushed" and "Pull request: None". Both were correct when written. Verified now: **PR #15** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/15 — base `claude/happy-hawking-rxptfv` (`694b389`) ← head `gov-pr13-14-merge-record` (`4af0acb`); merged (`5c7d455`, parents `694b389`, `4af0acb`; 08:03:26 UTC, `Arava-Sukeerthan`). Details: CHANGELOG, GOV-PR15-MERGE-RECORD.
+
+### PROTOCOL-DRAFT-001
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PROTOCOL-DRAFT-001 (prompt: "prepare a rigorous research protocol draft for review. Do not start model training or evaluation") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Draft protocol v0.1 for the NHANES laboratory-defined dysglycaemia study, separating confirmed user preferences, provisional choices, decisions requiring approval, unresolved technical questions and activation blockers |
+| Actual completion status | Draft created and checked. **Not approved, not frozen.** Awaiting researcher review |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` (local, reset to default `eb79996` with no unique commits on either side); uncommitted; not pushed |
+| Pull request | None (owner prompt: no push, no PR) |
+
+### PROTOCOL-DRAFT-002
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PROTOCOL-DRAFT-002 (prompt: owner-authorized FA-2 preference, hs-CRP exclusion, draft-only edits, data-protection safeguards and tests) |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Apply the three authorized draft-level changes and add data-protection safeguards with tests; no approvals, no activation |
+| Actual completion status | Draft rev. 1, `.gitignore` rules and tests done and checked (69 + 6 tests OK). FA-2 **not approved**; Q-044, Q-045 and Q-059 open |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` (local); uncommitted; not pushed |
+| Pull request | None (owner prompt: no commit, push or PR) |
+
+### PROTOCOL-DRAFT-003
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PROTOCOL-DRAFT-003 (prompt: "Option A: make the specified corrections, improve reproducibility and data protection, run the relevant checks, and then commit and push") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Protocol wording corrections, a reproducible aggregate-count script, stronger data protection and tests; commit and push the reviewed changes |
+| Actual completion status | Edits and checks done (see CHANGELOG). Commit and push recorded in Git history and the final task report. FA-2 and the protocol **not approved** |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` → `origin/claude/eloquent-mccarthy-bqtxr3` (explicit push with upstream) |
+| Pull request | None opened in this task |

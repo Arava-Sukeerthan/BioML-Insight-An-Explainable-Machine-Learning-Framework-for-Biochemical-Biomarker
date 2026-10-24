@@ -832,3 +832,125 @@ No CI is configured.
 **Final correction for this sequence**: this record closes the merge-history sequence for PRs #13–#15. Its own statements that it was prepared locally with no PR are accurate when written and will not be corrected by a further record created solely for that purpose; any publication of this record is shown by the git history and GitHub. Later governance records may still be needed for other work.
 
 **Modified**: this file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_GOV-PR15-MERGE-RECORD.md`. **Not modified**: `DECISION_LOG.md`, decision records, code, tests, schemas, criteria, protocol, data.
+
+## 2026-10-24 — PROTOCOL-DRAFT-001 (experimental protocol draft v0.1; nothing approved)
+
+**Objective**: prepare a draft experimental protocol for review for the provisional NHANES laboratory-defined dysglycaemia study (owner prompt 2026-10-24). No training, evaluation, screening or pilot.
+
+**Created**: `research/methodology/experimental_protocol_v0.1_draft.md` (draft v0.1; informs D-019 and D-013–D-018; changes no decision status).
+**Modified**: `research/reviews/unresolved_questions.md` (Q-044–Q-058 appended, +15/−0); this file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_PROTOCOL-DRAFT-001.md`.
+**Not modified**: `logs/DECISION_LOG.md` (no entry added or changed; the protocol's proposals are listed as FA-1–FA-13 inside the draft, for the researcher to record if wanted); `GOVERNANCE.md`; `CLAUDE.md`; `.gitignore`; `research_integrity.md`; code, tests, schemas; screening files.
+
+**Evidence used** (all re-checkable):
+- Official CDC codebook pages for the 32 required files (opened 2026-10-24 in the NHANES-VERIFY task, whose report was delivered in conversation and is not committed).
+- The verified local raw files in git-ignored `data/raw/nhanes/`. All 32 were re-hashed against the local manifest in this task: 0 mismatches. No new download.
+- Aggregate descriptive checks, with no modelling:
+  - eligibility cascade: 3,088 and 2,485;
+  - outcome prevalence 65.0% / 58.8% unweighted;
+  - complete cases per predictor group;
+  - 49 and 30 stratum × PSU clusters;
+  - unit-consistency checks for the triglyceride, hs-CRP and urine-albumin equations.
+- Inventory status of the candidate references: none is `verified`; two are `partially_verified` (P0303, P0256), so none is citable.
+
+**Main findings recorded in the draft**:
+- The primary candidate outcome is the majority class and dominated by FPG 100–125 mg/dL alone.
+- The triglyceride equation is supported in mg/dL, not the "mg/L" stated in the text (Q-044).
+- The hs-CRP equation is plausible only in mg/L; CDC's mean difference is not reproduced (Q-045).
+- Insulin has no published cross-period equation (Q-047).
+- `.gitignore` has no rule for participant-level model outputs (AB-10; not changed).
+
+**Validation (actual outcomes)**:
+- `python3 -I -m unittest discover -s tests/literature`: 69 tests, OK.
+- `validate_search_queries.py`: PASS, 158 rows.
+- `DECISION_LOG.md`: no diff; 38 unique IDs, no duplicates.
+- `git ls-files`: no `.xpt` or `data/` path tracked.
+
+**Not done**: no model training, evaluation, screening or pilot. No commit, push or PR (the owner prompt forbids pushing and PR actions; the work is uncommitted on local branch `claude/eloquent-mccarthy-bqtxr3`, based on default `eb79996`). The equations were transcribed but not yet re-checked character by character (AB-9).
+
+## 2026-10-24 — PROTOCOL-DRAFT-002 (owner-authorized draft edits and data-protection safeguards; nothing approved)
+
+**Authorization** (owner prompt, 2026-10-24), limited to three actions:
+1. Retain FA-2 (HbA1c ≥ 5.7% OR FPG ≥ 100 mg/dL) as the **preferred proposed** primary outcome.
+2. Exclude hs-CRP from the primary predictor set until the cross-period conversion discrepancy is resolved; apply no unverified equation.
+3. Make draft-only protocol edits, add data-protection safeguards and tests, and update the permitted task logs.
+
+**Preferred candidate vs approved decision.** The owner's preference is recorded inside the draft (CUP-5, CUP-12). **FA-2 is not approved.** It remains pending formal approval (D-019, D-014; GOVERNANCE.md §2) and verification of the ADA primary source (PMID 41358893 found; full text not read). No DECISION_LOG entry was added or changed.
+
+**Modified**:
+- `research/methodology/experimental_protocol_v0.1_draft.md` → v0.1 rev. 1:
+  - FA-2 recorded as preferred, still pending; "either laboratory criterion, not a clinical diagnosis" made explicit;
+  - S-15a (both tests, discordant negative) and S-15b (exploratory; discordant excluded, may inflate separability) added;
+  - hs-CRP removed from groups A and B (A 21, B 27; complete-case counts recomputed: A 2,970 / 2,305, B 2,674 / 2,194);
+  - unresolved conversion documented, with conditional S-16a (development period only, no conversion) and S-16b (temporal; only if Q-045 is resolved);
+  - period prevalence differences labelled outcome-distribution findings;
+  - verbatim CDC equation strings;
+  - safeguards recorded; AB-10 left open.
+- `.gitignore`: rules appended for raw/statistical-package files (XPT, sas7bdat, dta, rds; any case), participant-level directories (`/data/derived/`, `/outputs/participant_level/`, `/outputs/models/`, `/models/`), and columnar tables, arrays and serialized objects (any case). Existing rules unchanged.
+- `research/reviews/unresolved_questions.md`: Q-059 appended (hs-CRP instrument timing within 2021–2023). No status changed.
+- This file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`.
+
+**Created**:
+- `tests/data_protection/test_data_protection.py`: 6 checks, with limitations stated in its docstring.
+- `outputs/README.md`: designates `outputs/aggregate/` as the only committed output location.
+- `logs/session_logs/2026-10-24_PROTOCOL-DRAFT-002.md`.
+
+**Evidence gathered in this task**: official CDC files fetched 2026-10-24 — `TRIGLY_L.htm`, `HSCRP_L.htm`, `HSCRP_J.htm`, and the method manuals TRIGLY-L-MET, HSCRP-J-MET, HSCRP-K-MET and HSCRP-L-MET.
+- `[EVIDENCE: CDC documentation]` The hs-CRP bridging passage says "(mg/dL)", but the variable and all three method manuals use mg/L; the 2021–2023 instrument change happened "during the cycle".
+- **Unresolved hs-CRP issue:** units (Q-045) and instrument timing (Q-059). No conversion applied.
+- **Triglycerides (Q-044):** provisional documentary evidence for mg/dL; still open.
+- **References:** none newly verified. The container could not reach any second bibliographic source.
+
+**Validation (actual outcomes)**:
+- `python3 -I -m unittest discover -s tests/literature`: 69 tests, OK.
+- `python3 -I -m unittest discover -s tests/data_protection -v`: 6 tests, OK, none skipped.
+- Negative control on a scratchpad copy of the working tree with synthetic bad files: the identifier, SAS-transport and format checks each failed as expected. The run also exposed case-sensitive extension rules, which were then made case-insensitive and retested (OK). The copy was deleted.
+- `validate_search_queries.py`: PASS, 158 rows.
+- `git ls-files -ci --exclude-standard`: 0 tracked files conflict with the new rules.
+- `DECISION_LOG.md`, `GOVERNANCE.md`, `CLAUDE.md` and `research_integrity.md` unchanged.
+
+**Not done / limitations**: no model training, evaluation, pilot, screening or protocol activation. No commit, push or PR: the work is uncommitted on local `claude/eloquent-mccarthy-bqtxr3`, together with the uncommitted PROTOCOL-DRAFT-001 files. The new test directory is not run by the `CLAUDE.md` test command (`tests/literature` only); it must be run separately until `CLAUDE.md` is updated through the proper route. The checks cannot detect participant data under unusual names or formats, renamed identifiers, or anything in Git history.
+
+## 2026-10-24 — PROTOCOL-DRAFT-003 (Option A: corrections, reproducibility, data protection; commit and push authorized)
+
+**Authorization** (owner prompt, 2026-10-24, "Option A"):
+- make the specified protocol corrections;
+- add reproducible aggregate-count scripts;
+- strengthen the data-protection rules and tests;
+- run the checks;
+- commit and push the reviewed changes to the intended project branch.
+
+No approval of FA-2, the protocol or any decision is implied.
+
+**Modified**:
+- `research/methodology/experimental_protocol_v0.1_draft.md` → v0.1 rev. 2. Scientific wording:
+  - §5.1: the ADA confirmation-rule statement is now provisional (primary text not read);
+  - §10: the CDC combining-periods wording now quotes `DEMO_L` ("urged to proceed with caution before combining"), replacing "advises against";
+  - §18: the conformal "guarantee" is removed; it is stated as an unverified hypothesis, with coverage measured.
+
+  Correction found by the reproduction check (§5.2): "median FPG 103 vs 101 mg/dL" was the median of a broader reference population (adults ≥ 18, diagnosed diabetes not excluded). The analytic-sample medians are 101 vs 100 mg/dL. The correction is recorded in the change history.
+
+  Also: revision-2 safeguards recorded in §22. FA-2 stays preferred and unapproved; hs-CRP stays out of the primary sets; S-15a/b and S-16a/b unchanged.
+- `.gitignore` (block appended; earlier rules untouched): SPSS any case; `.onnx`, `.pt`, `.pth`, `.safetensors`, `.cbm` and `.ubj` any case; archives and spreadsheets under `/data/`; archives under `/outputs/`. JSON is deliberately **not** ignored globally.
+- `tests/data_protection/test_data_protection.py` (untracked file, rewritten): 10 tests.
+  - Strict/skip Git handling; a `check-ignore` error is now a failure.
+  - Content signatures for SAS transport, Parquet, NumPy and HDF5.
+  - Validated identifier allowlist; detector self-tests on synthetic bytes.
+  - More representative paths; limitations listed in the docstring.
+- This file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`.
+
+**Created**:
+- `scripts/nhanes/descriptive_counts.py`: consolidates the scratchpad scripts; verifies the 32 input SHA-256 hashes; aggregate output only; no modelling.
+- `scripts/nhanes/README.md`.
+- `scripts/run_checks.sh`: literature tests, strict data-protection checks and the query-table check.
+- `tests/data_protection/identifier_allowlist.txt` (no entries).
+- `logs/session_logs/2026-10-24_PROTOCOL-DRAFT-003.md`.
+
+**Verification (actual)**:
+- `descriptive_counts.py` vs the draft: 85 values compared, 84 identical. The one difference is the median-FPG population labelling above, corrected rather than silently changed.
+- Negative control (synthetic files in a scratchpad copy) found one test flaw: an invalid allowlist entry still exempted its file. It was fixed and re-checked: every planted problem detected; the documented limitations (`.txt` rows, JSON-format model) not detected, as stated.
+- Missing-git simulation: default mode skipped; strict mode failed.
+- The `check-ignore` error path itself was not exercised.
+- Test results are in the session log.
+
+**References**: none newly verified; reference status unchanged.
+**Not done**: no training, evaluation, pilot, screening or activation. `CLAUDE.md`'s test command not changed (protected): the project-wide command is `sh scripts/run_checks.sh`.

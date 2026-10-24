@@ -195,3 +195,32 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** whether to commit and publish this record; the remaining activation conditions in the D-035 record §6 (Q-040; D-027 and D-024; the remaining R5/D-029 items; criteria v1.1 and protocol v0.2, frozen as the pilot's `criteria_version`; the other pilot-blocking items). Separately, open question Q-042 (not an activation condition, D-037-B1).
 - **Recommended next step:** owner review of this record; then resolve the outstanding D-035 record §6 activation conditions above before D-039 is considered. D-039 is not started.
 - **Researcher decisions:** none in this task.
+
+## Day 11 (cont.) — 2026-10-24 — PROTOCOL-DRAFT-001
+- **Work completed:** experimental protocol draft v0.1 (`research/methodology/experimental_protocol_v0.1_draft.md`); open questions Q-044–Q-058.
+- **Important findings:** `[EVIDENCE: local descriptive check]`
+  - The analytic samples are 3,088 (2017–March 2020) and 2,485 (2021–2023).
+  - The candidate outcome is 65.0% and 58.8% positive, mostly from FPG 100–125 mg/dL alone.
+  - The triglyceride equation units are supported as mg/dL (Q-044). The hs-CRP equation units are unresolved (Q-045).
+  - None of the needed references is citable yet (protocol Appendix D).
+- **Decisions requiring review:** FA-1–FA-13 in protocol §24; D-013, D-014, D-015, D-017, D-018 and D-019 (all PENDING); Q-044–Q-058.
+- **Recommended next step:** researcher review of the draft, starting with FA-2 (outcome) and Q-044/Q-045; then authorize verification of the candidate references into the inventory.
+- **Researcher decisions:** none in this task. The confirmed preferences in the prompt are recorded as CUP-1–CUP-11 inside the draft, not as approvals.
+
+## Day 11 (cont.) — 2026-10-24 — PROTOCOL-DRAFT-002
+- **Work completed:** protocol draft v0.1 rev. 1 (owner-authorized draft edits); data-protection `.gitignore` rules, `outputs/README.md` and `tests/data_protection/` (6 checks).
+- **Important findings:**
+  - `[EVIDENCE: CDC documentation]` The hs-CRP equation passage states mg/dL, while the variable and all three method manuals use mg/L, and the 2021–2023 instrument change happened "during the cycle" (Q-045, new Q-059). No conversion applied; hs-CRP removed from the primary sets.
+  - A development-period-only hs-CRP sensitivity analysis needs no conversion: both 2017–2020 method manuals name the Cobas 6000.
+- **Decisions requiring review:** FA-2 (preferred by the owner, **not approved**); the safeguards (AB-10 left open); Q-044, Q-045, Q-059.
+- **Recommended next step:** owner review of rev. 1, and authorization to commit (the work is uncommitted); NCHS enquiry on hs-CRP units and instrument timing.
+- **Researcher decisions:** the owner expressed preferences (FA-2 preferred; hs-CRP excluded) and authorized draft edits. These are recorded as preferences, not approvals.
+
+## Day 11 (cont.) — 2026-10-24 — PROTOCOL-DRAFT-003
+- **Work completed:** protocol draft rev. 2 (three wording corrections and one traceability correction); reproducible aggregate-count script; extended data-protection rules and tests; `scripts/run_checks.sh`.
+- **Important findings:**
+  - `[EVIDENCE: local descriptive check]` 84 of 85 draft values reproduce exactly. The median-FPG sentence had used the broader reference population (corrected: analytic samples 101 vs 100 mg/dL).
+  - The negative control found an allowlist-exemption flaw in the new test (fixed).
+- **Decisions requiring review:** FA-2 (preferred, **not approved**); the safeguards (AB-10 open); Q-044, Q-045, Q-059; whether to add `sh scripts/run_checks.sh` to `CLAUDE.md` §4 (owner approval needed).
+- **Recommended next step:** owner review of rev. 2 and of the pushed branch; NCHS enquiry (hs-CRP); a second bibliographic source for reference verification.
+- **Researcher decisions:** Option A authorization (corrections, scripts, safeguards, commit and push). No decision approved.
