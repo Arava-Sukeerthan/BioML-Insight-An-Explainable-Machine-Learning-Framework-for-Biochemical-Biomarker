@@ -412,7 +412,7 @@
     },
     "rq5_coverage_provisional": {
       "type": ["boolean", "null"],
-      "description": "D-034: true when any confirmed component status is unclear (the group could change once resolved; for qualified it only marks the unclear component). null when rq5_coverage_group is null"
+      "description": "D-034, D-037-A1: true only when resolving the confirmed unclear statuses to yes or no (all other statuses held fixed) could change rq5_coverage_group; false when every resolution gives the same group (so qualified is never provisional). The unclear statuses themselves stay in rq5_components. null when rq5_coverage_group is null"
     },
     "retracted": {
       "type": "boolean"

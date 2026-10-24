@@ -160,3 +160,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** the PR for this task; Q-042; Q-040.
 - **Recommended next step:** owner review of the PR; then Q-040 or Q-042.
 - **Researcher decisions:** Q-039 Choice 1 Option A and Choice 2 Option A, 2026-10-24.
+
+## Day 11 (cont.) — 2026-10-24 — PR10-AUDIT-DECISIONS
+- **Work completed:** D-037 recorded (owner Decisions A1 and B1). `rq5_coverage_provisional` is now true only when resolving `unclear` statuses could change the group. Q-042 is no longer listed as an activation condition; it stays Open.
+- **Important findings:** `[EVIDENCE]` under A1, `qualified` is never provisional (4 `yes` + 1 `unclear` included); this departs from the D-034 record §5.3 example, which is superseded by addendum. `[OPEN]` Q-043: whether D-034(4)'s "flag kept" needs a separate marker.
+- **Decisions requiring review:** the follow-up PR for this task; Q-043; Q-042; Q-040.
+- **Recommended next step:** owner review of this PR and PR #10.
+- **Researcher decisions:** Decisions A1 and B1, 2026-10-24.

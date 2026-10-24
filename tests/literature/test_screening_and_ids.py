@@ -9,6 +9,7 @@ Run from the repository root:
     python3 -I -m unittest discover -s tests/literature -v
 """
 import csv
+import itertools
 import json
 import shutil
 import sys
@@ -703,7 +704,8 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
     def test_coverage_group_logic(self):
         g = pr.derive_rq5_coverage_group
         self.assertEqual(g(self.five("yes", "yes", "yes", "yes", "yes")), ("qualified", False))
-        self.assertEqual(g(self.five("yes", "yes", "yes", "yes", "unclear")), ("qualified", True))
+        # D-037-A1: 4 yes + 1 unclear stays qualified whichever way the unclear resolves
+        self.assertEqual(g(self.five("yes", "yes", "yes", "yes", "unclear")), ("qualified", False))
         self.assertEqual(g(self.five("yes", "yes", "yes", "yes", "no")), ("qualified", False))
         self.assertEqual(g(self.five("no", "yes", "yes", "yes", "yes")), ("qualified", False))
         self.assertEqual(g(self.five("yes", "yes", "yes", "unclear", "unclear")), ("near_rq5", True))
@@ -728,6 +730,48 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
         with self.assertRaises(ValueError):
             g(self.five("yes", "yes", "yes", "yes", "maybe"))
 
+    def test_provisional_only_when_resolution_could_change_group(self):
+        # D-037-A1 examples and edge cases: (statuses, expected group, expected provisional)
+        g = pr.derive_rq5_coverage_group
+        cases = [
+            (("yes", "yes", "yes", "yes", "unclear"), "qualified", False),        # 4 or 5 yes: qualified
+            (("yes", "yes", "yes", "unclear", "unclear"), "near_rq5", True),      # can become qualified
+            (("yes", "yes", "yes", "unclear", "no"), "near_rq5", True),           # can become qualified
+            (("yes", "unclear", "no", "no", "no"), "below_threshold", False),     # at most 2 yes
+            (("unclear", "unclear", "no", "no", "no"), "below_threshold", False), # at most 2 yes
+            (("unclear", "no", "no", "no", "no"), "below_threshold", False),      # at most 1 yes
+            (("yes", "yes", "unclear", "no", "no"), "below_threshold", True),     # can reach near_rq5
+            (("yes", "unclear", "unclear", "no", "no"), "below_threshold", True), # can reach near_rq5
+            (("unclear", "unclear", "unclear", "no", "no"), "below_threshold", True),
+            (("unclear",) * 5, "below_threshold", True),
+            (("no",) * 5, "below_threshold", False),                              # no unclear
+            (("yes", "yes", "yes", "no", "no"), "near_rq5", False),               # no unclear
+        ]
+        for vals, group, prov in cases:
+            for perm in sorted(set(itertools.permutations(vals))):            # component order is irrelevant
+                with self.subTest(statuses=perm):
+                    self.assertEqual(g(self.five(*perm)), (group, prov))
+
+    def test_provisional_rule_over_all_status_combinations(self):
+        # every combination of yes/no/unclear/not-assessed, checked against the D-037-A1 rule written
+        # independently: the reachable yes counts are n_yes .. n_yes + n_unclear
+        def band(n):
+            return 2 if n >= 4 else 1 if n == 3 else 0
+        names = {2: "qualified", 1: "near_rq5", 0: "below_threshold"}
+        seen = set()
+        for vals in itertools.product(("yes", "no", "unclear", None, ""), repeat=5):
+            with self.subTest(statuses=vals):
+                got = pr.derive_rq5_coverage_group(self.five(*vals))
+                if any(v in (None, "") for v in vals):
+                    self.assertEqual(got, (None, None))           # not assessed: never treated as "no"
+                    continue
+                n_yes, n_unclear = vals.count("yes"), vals.count("unclear")
+                expected = (names[band(n_yes)], band(n_yes + n_unclear) != band(n_yes))
+                self.assertEqual(got, expected)
+                seen.add(got)
+        self.assertNotIn(("qualified", True), seen)                 # qualified is never provisional
+        self.assertEqual(len(seen), 5)
+
     def test_build_derives_coverage_group_from_confirmed_statuses(self):
         p = self.ids
         self.fx.write_decisions([
@@ -740,7 +784,8 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
         ], header=self.header)
         self.fx.build(today="2026-10-16")
         self.assertEqual(self.group(p[0]), ("qualified", False))
-        self.assertEqual(self.group(p[1]), ("qualified", True))
+        self.assertEqual(self.group(p[1]), ("qualified", False))     # D-037-A1
+        self.assertEqual(self.rq5(p[1])["confirmed"]["statuses"]["uncertainty"], "unclear")   # kept visible
         self.assertEqual(self.group(p[2]), ("near_rq5", True))
         self.assertEqual(self.group(p[3]), ("below_threshold", False))
         self.assertEqual(self.group(p[4]), (None, None))
@@ -783,7 +828,7 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
         self.assertFalse(eb["changed_by_verification"])
         # the group follows the researcher's (latest) confirmed row
         self.assertEqual(self.group(a), ("qualified", False))
-        self.assertEqual(self.group(b), ("qualified", True))
+        self.assertEqual(self.group(b), ("qualified", False))   # D-037-A1: the unclear fifth cannot change it
 
     def test_ids_and_unscreened_inventory_values_stable(self):
         self.fx.reports()

@@ -86,3 +86,8 @@
   - criteria v1.1 and protocol v0.2, frozen as the pilot's `criteria_version`;
   - the other pilot-blocking items.
 - `screening_criteria.md` is unchanged. `screening_protocol.md` §2a (INACTIVE) is updated only to describe the five columns and the derived group.
+
+## 8. Addendum (2026-10-24, PR10-AUDIT-DECISIONS, D-037)
+D-037 (`PR10_audit_decisions_D037.md`) records two owner decisions taken after the independent audit of PR #10. The text above is unchanged as the record of D-036. These statements are superseded:
+- **§4 "Provisional" (line 54):** `rq5_coverage_provisional` is now true only when resolving the `unclear` statuses to `yes`/`no` could change the group (D-037-A1). For example, 4 `yes` plus an `unclear` fifth gives `qualified`, **not** provisional. Thresholds and null behaviour are unchanged.
+- **§7, "Q-042 (new)" (line 85):** Q-042 is **not** an activation condition through D-036 (D-037-B1). It stays Open. The other conditions in §7 are unchanged.
