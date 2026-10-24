@@ -182,3 +182,14 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 
 > **Correction (2026-10-24):** PR #2 was merged on 2026-10-23 at 17:51 UTC (head `7b61e83`). The "Pull request: #2 (existing, updated); not merged" fields for LIT-003 (second update), LIT-004-PREPARATION, LIT-004-WORKFLOW-FIXES, LIT-004-REVIEW-AND-DECISIONS, LIT-004-DECISION-RECONCILIATION, LIT-004-OWNER-BALLOT, LIT-004-PROPOSED-RESPONSES, LIT-004-CLARIFICATION-ADDENDUM, LIT-004-FINAL-CONFIRMATION-SHEET and LIT-004-Q028-DECISION are incorrect. Their commits are on the branch but in **no PR**. See CHANGELOG "CORRECTION — 2026-10-24".
 
+### LIT-004-PR
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-PR (prompt: "proceed with preparing a new pull request to review the ten commits pushed after PR #2 was merged") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | New PR for the post-merge commits; no history rewrite |
+| Actual completion status | PR #3 opened; awaiting owner review; not merged |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit range | `7b61e83..8f258a8` (11 commits), plus this log commit |
+| Pull request | **#3** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/3 (open; not merged). Supersedes the incorrect "PR #2 updated" fields (see Correction above) |
+

@@ -480,3 +480,26 @@ The CHANGELOG and PROMPT_LOG entries for those tasks state "PR #2 (existing, upd
 The status was not checked after the merge, and the reports repeated the earlier state.
 
 **Remaining step:** the owner decides how these 10 commits are reviewed, e.g. a new PR from the same branch into `claude/happy-hawking-rxptfv`. No rebase or force-push is needed, because `7b61e83` is already in the base. No PR was created, because the owner's instructions in these tasks excluded creating another PR.
+
+## LIT-004-PR — 2026-10-24 — New pull request for the post-PR #2 commits
+
+**Prompt objective**: open a new PR for the commits pushed after PR #2 was merged, without rewriting history.
+
+**Completed**
+- Verified with git and the GitHub API:
+  - PR #1 (head `7352cee`) and PR #2 (head `7b61e83`, merge commit `7ffdcd2`, 2026-10-23 17:51 UTC) are both merged into `claude/happy-hawking-rxptfv` (the default branch).
+  - No open PR existed.
+  - 11 commits, `7b61e83..8f258a8`, were in no PR.
+- Opened **PR #3**: https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/3. Base `claude/happy-hawking-rxptfv`, head `claude/sweet-brahmagupta-urw7l1`; not merged.
+
+**Created**: `logs/session_logs/2026-10-24_LIT-004-PR.md`. **Modified**: `logs/PROMPT_LOG.md`, this file.
+**Not modified**: decisions, criteria, schemas, code, data.
+
+**Validation (performed)**:
+- Unit tests: 50 OK.
+- Query table: PASS, 158 rows.
+- Raw-export checksums: OK. Archive checksum: OK.
+- Schemas and inventory: valid.
+- Registry: 2,979 IDs, 0 duplicate keys.
+- `git merge-tree`: clean.
+- No raw, archive, `.jsonl` or git-ignored files in the diff.
