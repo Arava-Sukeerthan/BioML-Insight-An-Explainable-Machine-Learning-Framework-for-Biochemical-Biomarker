@@ -181,3 +181,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** merge authorization for PR #10/#11; branch for the D-038 commit; Option A proposal.
 - **Recommended next step:** owner merge authorization, then Option A.
 - **Researcher decisions:** Q-043 resolution, PR #10 description, PR sequence in principle, Option A in principle (2026-10-24).
+
+## Day 11 (cont.) — 2026-10-24 — GOV-PR13-14-MERGE-RECORD
+- **Work completed:** log-only record of the merges of PR #14 (`f7f6bb7`) and PR #13 (`694b389`), and of the conflict-resolution merge `6776eba`.
+- **Important findings:** `[EVIDENCE]` the PR #13 merge equals the reviewed head `6776eba`; D-038 is on the default branch. PR #14 had not been recorded by number until this record.
+- **Decisions requiring review:** whether to publish this record; D-039 proposal.
+- **Recommended next step:** owner review of this record; then D-039.
+- **Researcher decisions:** none in this task.
