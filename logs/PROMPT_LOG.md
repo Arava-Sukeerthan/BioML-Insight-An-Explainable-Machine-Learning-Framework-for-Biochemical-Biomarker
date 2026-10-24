@@ -257,3 +257,11 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Correction appended; awaiting owner review |
 | Branch | `gov-pr8-merge-record` (new, from default `18f4b09`) |
 | Pull request | None created; owner to decide (CLAUDE.md §3.5) |
+
+> **Correction (2026-10-24, GOV-PR8-MERGE-RECORD).** The "Pull request" row above ("None created; owner to decide") was correct when written. On the owner's request, a PR was then opened:
+
+| Field | Value |
+|---|---|
+| Pull request | **#9**: "docs: record PR #8 merge in governance logs" (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/9) |
+| Base ← head | `claude/happy-hawking-rxptfv` (`18f4b09`) ← `gov-pr8-merge-record` (`bf36297` when opened, plus this log-only commit) |
+| Status | Open; awaiting owner review; not merged |
