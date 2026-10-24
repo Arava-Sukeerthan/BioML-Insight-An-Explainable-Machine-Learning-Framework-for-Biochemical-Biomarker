@@ -185,3 +185,8 @@ D-036 (`Q-039_decision_record_D036.md`) answers Q-039 (§7 condition 2).
 - **§5.1:** `dim_classification` is now **implemented** (`""/yes/no/unclear`, optional; inactive).
 - **§5.3:** `rq5_coverage_group` and `rq5_coverage_provisional` are derived in the build from **confirmed** statuses (D-035 G3). Blocker (a) is resolved, and (b) and (c) were resolved by D-035. The §5.3 test plan is implemented in `tests/literature/test_screening_and_ids.py` (`TestRQ5ComponentEvidence`).
 - **§7:** conditions 2 and 5 are met. Conditions 3, 4, 6 and 7 remain, plus Q-042 (`lr_only` classification eligibility).
+
+## 10. Addendum (2026-10-24, PR10-AUDIT-DECISIONS, D-037)
+D-037 (`PR10_audit_decisions_D037.md`) records two owner decisions taken after the audit of PR #10. The text above is unchanged.
+- **§5.3 derivation (lines 128–129) and the example at line 133:** `rq5_coverage_provisional` is no longer `n_unclear > 0`. It is true only when resolving the `unclear` statuses to `yes`/`no` could change the group (D-037-A1). Four `yes` and one `unclear` is `qualified` and **not** provisional; three `yes` with any `unclear` stays provisional (Q-038-2). The thresholds are unchanged. Whether Q-038-4's "flag kept" needs a separate marker is open (Q-043).
+- **§9, "plus Q-042" (line 187):** Q-042 is not an activation condition (D-037-B1). §7 conditions 3, 4, 6 and 7 remain.

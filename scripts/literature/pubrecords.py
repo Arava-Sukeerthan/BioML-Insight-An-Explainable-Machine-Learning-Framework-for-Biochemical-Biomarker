@@ -27,6 +27,7 @@ import datetime as dt
 import difflib
 import hashlib
 import html
+import itertools
 import json
 import re
 import sys
@@ -1073,12 +1074,19 @@ def rq5_component_evidence(rows):
     return out
 
 
+def _rq5_group_for(n_yes):
+    """D-034 thresholds (unchanged): >= 4 yes qualified, exactly 3 near_rq5, 0-2 below_threshold."""
+    return "qualified" if n_yes >= 4 else "near_rq5" if n_yes == 3 else "below_threshold"
+
+
 def derive_rq5_coverage_group(statuses):
     """D-034 coverage group from the five CONFIRMED (full-text) component statuses (D-035).
-    Returns (group, provisional): group is None when any component is not assessed (empty/None);
-    otherwise "qualified" (>= 4 yes), "near_rq5" (exactly 3) or "below_threshold" (0-2). "unclear"
-    never counts as yes; provisional is True when any component is "unclear".
-    Used by build() for rq5_coverage_group / rq5_coverage_provisional (D-036); a coverage
+    Returns (group, provisional): both None when any component is not assessed (empty/None);
+    otherwise group is "qualified" (>= 4 yes), "near_rq5" (exactly 3) or "below_threshold" (0-2),
+    and "unclear" never counts as yes.
+    provisional (D-037-A1): True only when some resolution of the "unclear" statuses to yes/no,
+    with all other statuses held fixed, gives a different group. Every resolution is checked.
+    Used by build() for rq5_coverage_group / rq5_coverage_provisional (D-036, D-037); a coverage
     descriptor only, never a quality judgment, and never assigned by a screener."""
     vals = [statuses.get(name) for name in RQ5_COMPONENT_FIELDS]
     if any(v in (None, "") for v in vals):
@@ -1087,8 +1095,11 @@ def derive_rq5_coverage_group(statuses):
     if bad:
         raise ValueError(f"invalid component status {bad}")
     n_yes = vals.count("yes")
-    group = "qualified" if n_yes >= 4 else "near_rq5" if n_yes == 3 else "below_threshold"
-    return group, "unclear" in vals
+    group = _rq5_group_for(n_yes)
+    n_unclear = vals.count("unclear")
+    provisional = any(_rq5_group_for(n_yes + resolved.count("yes")) != group
+                      for resolved in itertools.product(("yes", "no"), repeat=n_unclear))
+    return group, provisional
 
 
 def load_screening_decisions(lit_dir):
