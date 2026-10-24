@@ -103,3 +103,14 @@ D-035 governs no screening until:
 
 ## 7. Open point for the owner (not decided here)
 - Whether to mark the component wording of the proposed D-029 (R5) and D-026 (protocol §2) as superseded by D-035, or leave it until those decisions are taken as a whole. Under the BIO-001-REVIEW rule, an assistant does not change the status of a proposal under review.
+
+## 8. Addendum (2026-10-24, Q-039-DECISION)
+D-036 (`Q-039_decision_record_D036.md`) answers Q-039. The text above is unchanged as the record of D-035. These statements are now superseded:
+- **§4 steps 1 and 6, §5 "Completeness", §5 "Coverage group", §6 item 1:**
+  - classification is recorded in `dim_classification`;
+  - the completeness and erasure checks cover all **five** statuses (G5 fully enforced);
+  - `rq5_coverage_group` / `rq5_coverage_provisional` are derived in the build from confirmed statuses.
+
+  The G4 trigger is therefore computable. The "pending verification" report (§4 step 6) is still **not implemented**.
+- **§5 line 82 wording:** "No classification definition … is introduced here" referred to the code and protocol at the time. The classification evidence definition is the §2 row (G6), and D-036 uses it unchanged.
+- **Still open:** whether `lr_only` studies can receive classification `yes` (Q-042). D-035 remains APPROVED — CONDITIONAL and inactive.

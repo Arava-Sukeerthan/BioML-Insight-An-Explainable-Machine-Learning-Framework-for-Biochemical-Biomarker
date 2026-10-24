@@ -682,3 +682,37 @@ No CI is configured.
 **Modified**: this file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_GOV-PR8-MERGE-RECORD.md`. **Not modified**: `DECISION_LOG.md`, code, tests, schemas, criteria, protocol, data, branches other than the new `gov-pr8-merge-record`.
 
 **GOV-PR8-MERGE-RECORD PR (2026-10-24)**: following the owner's request, **PR #9** "docs: record PR #8 merge in governance logs" was opened: https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/9. Base `claude/happy-hawking-rxptfv` (`18f4b09`) ← head `gov-pr8-merge-record` (`bf36297` when opened; this log-only commit is added on top). Status: **open**, awaiting owner review; not merged. Recorded per CLAUDE.md §3.5; the PROMPT_LOG "Pull request" row for this task is corrected in the same way.
+
+## Q-039-DECISION — 2026-10-24 — Record D-036 (classification status); `dim_classification` and build-derived RQ5 coverage group (inactive)
+
+**Prompt objective**: record the researcher's Q-039 choices (Choice 1 Option A, Choice 2 Option A) as a formal decision and implement them in one reviewable PR, without activating screening.
+
+**Decision**: **D-036 — APPROVED — CONDITIONAL (inactive for screening)**, approved by the researcher (owner) on 2026-10-24 through the explicit choices in the prompt (`research/reviews/Q-039_decision_record_D036.md`). Q-039 is answered. New open question **Q-042** asks whether `lr_only` studies can receive classification `yes`; it is not decided. No other decision changes status. D-026, D-027 and D-029 stay PROPOSED.
+
+**Implemented**
+- `pubrecords.py`:
+  - `dim_classification` (`""/yes/no/unclear`) added to `SCREENING_OPTIONAL` and `SCREENING_ENUMS`;
+  - `RQ5_COMPONENT_FIELDS["classification"] = "dim_classification"`, so the erasure check, the full-text completeness check and preliminary/confirmed detection now cover all five components;
+  - `build()` sets `rq5_coverage_group` and `rq5_coverage_provisional` from `derive_rq5_coverage_group()` on **confirmed** statuses only.
+- Schemas:
+  - screening decision: property and column order;
+  - publication record: `screening_details.dim_classification`, `rq5_coverage_group`, `rq5_coverage_provisional`;
+  - inventory: `dim_classification`.
+- `make_literature_reports.py`: inventory column `dim_classification`.
+- Tests: `TestRQ5ComponentEvidence` rewritten for five components (16 tests). The test that encoded the four-component limitation was replaced. `TestSchemaConsistency` gained a publication-schema test.
+- Real-data outputs regenerated with the repository's tools:
+  - `paper_inventory.csv` and `.json` gain an empty `dim_classification` column for all 2,979 records;
+  - `collection_stats.json`: inventory hash only;
+  - `build_report.json` differed only in `built_at` and was restored.
+
+**Documentation**
+- Protocol §2a (INACTIVE): describes the five columns and the derived group.
+- Dated addenda: D-035 record §8 and `RQ5_component_decisions_D032-D034.md` §9.
+- `unresolved_questions.md`: Q-039 answered; Q-042 added.
+- DECISION_LOG: D-036 section and three status-history rows.
+
+**Not modified**: `screening_criteria.md`, raw exports, archive, registry, paper IDs, `GOVERNANCE.md`. No screening decision, pilot or model training.
+
+**Validation**: see `logs/session_logs/2026-10-24_Q-039-DECISION.md`. No CI is configured.
+
+**Q-039-DECISION PR (2026-10-24)**: **PR #10**, "Q-039: D-036 dim_classification and build-derived RQ5 coverage group (conditional, inactive)": https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/10. Base `claude/happy-hawking-rxptfv` (`17b0866`) ← head `q039-dim-classification` (work commit `b122e10`, plus this log-only commit). Status: **open**, awaiting owner review; not merged.

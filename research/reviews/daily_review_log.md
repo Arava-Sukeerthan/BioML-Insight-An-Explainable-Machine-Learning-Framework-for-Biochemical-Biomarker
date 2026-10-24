@@ -153,3 +153,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** whether to open a PR for this log-only branch.
 - **Recommended next step:** owner review; then Q-039.
 - **Researcher decisions:** none in this task.
+
+## Day 11 (cont.) — 2026-10-24 — Q-039-DECISION
+- **Work completed:** D-036 recorded (Q-039 Choice 1 A, Choice 2 A; APPROVED — CONDITIONAL, inactive). `dim_classification` was added. The RQ5 coverage group is now derived in the build from confirmed statuses (null for all records; no screening data).
+- **Important findings:** `[EVIDENCE]` the five-status completeness rule (D-035 G5) is now enforced; the real-data rebuild changed no ID or value. `[OPEN]` whether `lr_only` studies can be classification `yes` (Q-042).
+- **Decisions requiring review:** the PR for this task; Q-042; Q-040.
+- **Recommended next step:** owner review of the PR; then Q-040 or Q-042.
+- **Researcher decisions:** Q-039 Choice 1 Option A and Choice 2 Option A, 2026-10-24.

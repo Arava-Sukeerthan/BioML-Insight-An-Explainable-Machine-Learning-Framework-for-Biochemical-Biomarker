@@ -180,3 +180,8 @@ D-035 (`Q-041_decision_record_D035.md`) settles the open points of §3 and §5.3
 - **§5.3 implementation:** stage-separated evidence (`rq5_components` in the publication record), the erasure and completeness checks, and `derive_rq5_coverage_group()` are implemented and tested. The group is **not wired into the build** because Q-039 (classification status) is open.
 - §7 condition 1 is met for the component definitions; the other conditions remain.
 
+## 9. Addendum (2026-10-24, Q-039-DECISION)
+D-036 (`Q-039_decision_record_D036.md`) answers Q-039 (§7 condition 2).
+- **§5.1:** `dim_classification` is now **implemented** (`""/yes/no/unclear`, optional; inactive).
+- **§5.3:** `rq5_coverage_group` and `rq5_coverage_provisional` are derived in the build from **confirmed** statuses (D-035 G3). Blocker (a) is resolved, and (b) and (c) were resolved by D-035. The §5.3 test plan is implemented in `tests/literature/test_screening_and_ids.py` (`TestRQ5ComponentEvidence`).
+- **§7:** conditions 2 and 5 are met. Conditions 3, 4, 6 and 7 remain, plus Q-042 (`lr_only` classification eligibility).

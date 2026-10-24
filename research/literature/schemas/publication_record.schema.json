@@ -338,7 +338,7 @@
     "rq5_components": {
       "type": ["object", "null"],
       "additionalProperties": false,
-      "description": "D-035 (Q-041; APPROVED - CONDITIONAL, inactive for screening): RQ5 component statuses by evidence stage. preliminary = latest title/abstract row (triage only, never counted toward D-031/D-034); confirmed = latest full-text row (not for abstract_only decisions), with earlier full-text rows kept as history. null = no component recorded. classification is always null until Q-039 adds a status column",
+      "description": "D-035 (Q-041; APPROVED - CONDITIONAL, inactive for screening): RQ5 component statuses by evidence stage. preliminary = latest title/abstract row (triage only, never counted toward D-031/D-034); confirmed = latest full-text row (not for abstract_only decisions), with earlier full-text rows kept as history. null = no component recorded. classification is recorded in dim_classification (D-036, Q-039)",
       "properties": {
         "preliminary": {
           "type": ["object", "null"],
@@ -405,6 +405,14 @@
         },
         "confirmation_note": {"type": ["string", "null"]}
       }
+    },
+    "rq5_coverage_group": {
+      "enum": ["qualified", "near_rq5", "below_threshold", null],
+      "description": "D-034 coverage group, derived by the build (D-036) from rq5_components.confirmed.statuses only: qualified = >= 4 yes, near_rq5 = exactly 3, below_threshold = 0-2; unclear never counts as yes. null = no confirmed full-text assessment (not assessed). A coverage descriptor, not a quality judgment; never assigned by a screener. Inactive for screening (D-031 to D-036 conditions)"
+    },
+    "rq5_coverage_provisional": {
+      "type": ["boolean", "null"],
+      "description": "D-034: true when any confirmed component status is unclear (the group could change once resolved; for qualified it only marks the unclear component). null when rq5_coverage_group is null"
     },
     "retracted": {
       "type": "boolean"
@@ -478,6 +486,12 @@
           ]
         },
         "dim_feature_selection": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dim_classification": {
           "type": [
             "string",
             "null"

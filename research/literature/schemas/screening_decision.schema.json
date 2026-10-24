@@ -114,6 +114,15 @@
       ],
       "description": "RQ5 feature/biomarker-selection component (D-032, APPROVED - CONDITIONAL; not active for screening until its dependencies are met). Definition: research/reviews/Q-037a_feature_selection_proposal.md section 5 and research/reviews/RQ5_component_decisions_D032-D034.md"
     },
+    "dim_classification": {
+      "enum": [
+        "",
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "description": "RQ5 classification component (D-036, answers Q-039; APPROVED - CONDITIONAL, not active for screening until its dependencies are met). Evidence definition: research/reviews/Q-041_decision_record_D035.md section 2; empty = not assessed, never no. Record: research/reviews/Q-039_decision_record_D036.md"
+    },
     "dim_independent_validation": {
       "enum": [
         "",
@@ -149,6 +158,7 @@
     "dim_independent_validation",
     "criteria_version",
     "needs_human",
-    "dim_feature_selection"
+    "dim_feature_selection",
+    "dim_classification"
   ]
 }

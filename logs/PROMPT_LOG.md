@@ -265,3 +265,15 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Pull request | **#9**: "docs: record PR #8 merge in governance logs" (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/9) |
 | Base ← head | `claude/happy-hawking-rxptfv` (`18f4b09`) ← `gov-pr8-merge-record` (`bf36297` when opened, plus this log-only commit) |
 | Status | Open; awaiting owner review; not merged |
+
+### Q-039-DECISION
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | Q-039-DECISION (prompt: "resolve Q-039 through an explicitly approved decision record and implement the corresponding changes in one controlled, reviewable PR") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Record the owner's Q-039 choices as D-036; implement `dim_classification` and the build-derived coverage group; screening stays inactive |
+| Actual completion status | D-036 APPROVED — CONDITIONAL (inactive). Implementation and tests complete (67 tests OK). Q-042 (`lr_only`) opened |
+| Branch | `q039-dim-classification` (from default `17b0866`) |
+| Pull request | Not yet created when this entry was written; recorded in a follow-up log commit |
+
+> **Update (2026-10-24, Q-039-DECISION).** The "Pull request" row above was written before the PR existed. **PR #10** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/10 — base `claude/happy-hawking-rxptfv` (`17b0866`) ← head `q039-dim-classification` (`b122e10` plus this log-only commit). Open; awaiting owner review; not merged.
