@@ -106,3 +106,9 @@ are in `research/reviews/approval_request_LIT-004.md`. No status was changed.
 Note: D-026 ("RQ5 counting rule left to Q-028") remains PROPOSED. Only its RQ5 reference is now answered by D-031.
 A-3 is answered for RQ5 only; its descriptor part depends on R5 (D-029).
 
+## Proposals (added Q-037a, 2026-10-24)
+
+| ID | Date | Decision | Status | Rationale | Approved by / date |
+|---|---|---|---|---|---|
+| D-032 | 2026-10-24 (Q-037a) | Operational definition of the RQ5 feature/biomarker-selection component (D-031 condition C2). Proposed option B: a data-driven procedure in the study that reduces candidate inputs to a **subset of the original variables**, used as model input or reported as the panel. Projections (PCA etc.), interpretation-only importance, shrinkage without exclusion, and knowledge-based panels do not count. Evidence rules `yes`/`no`/`unclear` (silence = `unclear`); optional descriptor `dim_feature_selection`. Alternatives: option A (broad), option C (narrow). Detail: `research/reviews/Q-037a_feature_selection_proposal.md` | PROPOSED — not approved; not implemented | Distinguishes selection from transformation and from explanation, and is reproducible between screeners. Not chosen for its effect on the RQ5 set size. Depends on Q-037b, Q-038, D-029/R5, D-027, D-024 | — |
+

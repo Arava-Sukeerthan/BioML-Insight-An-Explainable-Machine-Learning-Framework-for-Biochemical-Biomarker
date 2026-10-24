@@ -503,3 +503,26 @@ The status was not checked after the merge, and the reports repeated the earlier
 - Registry: 2,979 IDs, 0 duplicate keys.
 - `git merge-tree`: clean.
 - No raw, archive, `.jsonl` or git-ignored files in the diff.
+
+## Q-037a — 2026-10-24 — Proposal: feature/biomarker-selection component for RQ5 (not approved)
+
+**Prompt objective**: an evidence-based proposal defining the selection component (D-031 condition C2), without screening or implementation.
+
+**Completed**
+- `research/reviews/Q-037a_feature_selection_proposal.md`:
+  - options A (broad), B (data-driven subset selection; recommended), C (narrow), plus a sub-choice on knowledge-based panels;
+  - a comparison of 8 candidate kinds of procedure: qualifies or not, evidence needed, how ambiguity is labelled, likely screener disagreements;
+  - the operational definition, evidence and uncertainty rules, and human-review triggers;
+  - 2 positive, 3 negative and 5 borderline hypothetical examples;
+  - a design for an optional `dim_feature_selection` descriptor (no data migration; IDs unaffected);
+  - risks, dependencies, and owner-response fields left unanswered.
+- Sources verified through PubMed (PMIDs 17720704, 9044528, 11983868). Only statements in the PubMed records are attributed. Unverified points (category names, PCA statement, VIP) are marked as not cited.
+- DECISION_LOG: D-032 PROPOSED. `unresolved_questions.md`: Q-037 annotated; still Open.
+
+**Created**: the proposal and `logs/session_logs/2026-10-24_Q-037a.md`. **Modified**: `logs/DECISION_LOG.md`, `research/reviews/unresolved_questions.md`, `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file.
+**Not modified**: criteria, protocol, strategy, schemas, code, tests, data, other decisions.
+**Branch note**: committed on a **local** branch `q037a-feature-selection` (from `9497a3a`). It was **not pushed**: the session's designated branch is PR #3's head, which this task must not modify. Awaiting the owner's choice of branch strategy.
+
+**Validation (performed)**: see the completion report.
+
+**Q-037a PR (2026-10-24)**: following the owner's approval of the stacked-PR workflow, branch `q037a-feature-selection` was pushed and **PR #4** opened: https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/4. Base `claude/sweet-brahmagupta-urw7l1` (PR #3 head, unchanged at `9497a3a`); head `q037a-feature-selection`. Diff before this log commit: `9497a3a..0e976db`, 7 files. Not merged. D-032 remains PROPOSED.
