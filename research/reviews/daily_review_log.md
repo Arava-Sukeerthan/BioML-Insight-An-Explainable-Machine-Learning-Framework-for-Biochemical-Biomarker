@@ -244,3 +244,12 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** whether K1–K4 count as satisfied and D-040 may be recorded as active (Q-062); whether to commit/push these edits (Q-005 open); D-002 environment pins; the synthetic test plan (Gate 2).
 - **Recommended next step:** owner review of the diff; decide Q-062 and the Git step; then the environment decision and the test plan. No test may run before 2026-11-03.
 - **Researcher decisions:** Rule S and exemption wording (C1 with the activation adjustment), K1–K4 mandatory, APPROVED — CONDITIONAL (inactive), D-040 and date 2026-10-24, D-039 reserved, `logs/SYNTHETIC_VERIFICATION_LOG.md`, C2–C4 wording, authorization of local documentation edits only.
+
+## Day 11 (cont.) — 2026-10-24 — GOV-D040-ACTIVATION
+- **Work completed:** owner-authorized local commit `c843230` of the 10 GOV-D040-RULE-S files; D-040 activation recorded in the decision log Status history; Q-062 closed. Not pushed; the activation edits are uncommitted.
+- **Important findings:** K1–K4 present with the approved wording in `c843230` and in the working tree. "ACTIVE" is not a decision-log status, so the owner chose the existing convention: APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230). The questions file lists "Open / Answered / Superseded"; Q-062 uses "Closed" as the owner authorized.
+- **Decisions requiring review:** whether to commit and push the activation edits (Q-005 open); whether to add "Closed" to the questions-file status list; D-002 environment pins; the synthetic test plan (Gate 2).
+- **Recommended next step:** owner review; commit/push authorization; then the environment decision and test plan. D-040 activation authorizes no synthetic verification; no run before 2026-11-03.
+- **Researcher decisions:** Q-062 Option 1; one local commit; activation label Option (a); Q-062 closure; local documentation edits only.
+- **Correction (same day, owner instruction):** Q-062's status label changed from "Closed" to "Answered", the documented status value. This settles the "Closed" question above; the questions-file header is unchanged.
+- **Correction (same day, owner-approved wording):** Q-062 now states that K1–K4 were satisfied in the documentation committed in `c843230`, and that the activation entry was recorded afterwards, outside that commit. The 6 GOV-D040-ACTIVATION files are then committed locally (owner-authorized); not pushed.

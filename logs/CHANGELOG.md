@@ -1029,3 +1029,26 @@ No approval of FA-2, the protocol or any decision is implied.
 **Not changed**: the experimental protocol draft; every other decision and status (D-002 stays PROPOSED; D-017, D-019 PENDING; D-039 reserved and unused); `scripts/run_checks.sh`; tests. No test code, test plan, environment, package installation, test run, data access, model training or experiment. No commit, push, PR or remote Git operation.
 
 **Validation**: see the session log. Local, read-only checks only (`git status`, `git diff`, ID uniqueness and table-structure checks). The existing test suites (`scripts/run_checks.sh`) were **not run**, because the authorization for this task excluded executing tests.
+
+## 2026-10-24 — GOV-D040-ACTIVATION (Q-062 Option 1: commit, D-040 activation record, Q-062 closed; local edits only)
+
+**Objective**: resolve Q-062 under the owner's Option 1, and record D-040's activation. **One owner-authorized local commit; no push, PR or remote contact** (owner prompts, 2026-10-24).
+
+**Commit** (owner-authorized, local only): `c84323016c77b78b0cfb7ce6378a4adf91d515bb` on `claude/eloquent-mccarthy-bqtxr3` (parent `6deaac5`). It contains exactly the 10 GOV-D040-RULE-S files: `CLAUDE.md`, `GOVERNANCE.md`, `logs/CHANGELOG.md`, `logs/DECISION_LOG.md`, `logs/EXPERIMENT_LOG.md`, `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, `research/reviews/unresolved_questions.md`, `logs/SYNTHETIC_VERIFICATION_LOG.md` (new) and `logs/session_logs/2026-10-24_GOV-D040-RULE-S.md` (new). Pre-commit checks: nothing staged; no other change; diffs as recorded in GOV-D040-RULE-S. The GOV-D040-RULE-S entries above say "uncommitted"; that was true when written, and those changes are now in `c843230`. Not pushed: the branch is 1 commit ahead of `origin/claude/eloquent-mccarthy-bqtxr3`.
+
+**K1–K4**: each present once, with the approved wording, in the committed files (`git show c843230:<path>`) and in the working tree.
+
+**Modified (uncommitted; a further commit needs separate authorization)**:
+- `logs/DECISION_LOG.md`: new Status history row (GOV-D040-ACTIVATION): D-040 `APPROVED — CONDITIONAL (inactive)` → **`APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230)`**. Owner-approved label (Option (a)), following the existing conditional-approval and transition conventions. The D-040 decision row is unchanged (verified identical to `c843230`).
+- `research/reviews/unresolved_questions.md`: Q-062 → **Closed**, quoting the owner's decision and the commit hash. Note: the file header lists "Open / Answered / Superseded"; "Closed" was used as explicitly authorized by the owner, and the header was not changed.
+- This file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`.
+
+**Created**: `logs/session_logs/2026-10-24_GOV-D040-ACTIVATION.md`.
+
+**Not changed**: the D-040 decision text and its conditions; `logs/SYNTHETIC_VERIFICATION_LOG.md` (its rule is one entry per authorized run; none has occurred); every other decision and status. **D-040 activation does not authorize synthetic verification**: the test plan, test code, environment, installation and each run still need separate owner authorization, and no run is permitted before 2026-11-03. No test code, environment, package installation, test run, research-data access, model training or experiment. No push, PR, branch change or remote contact.
+
+**Validation**: local, read-only checks only (`git status`, `git diff`, `git show`, K1–K4 string checks, table-column and ID checks). The test suites were not run (excluded by the authorization).
+
+**Correction (2026-10-24, owner instruction)**: Q-062's status label changed from "Closed" to **"Answered"**, the documented status value (file header: Open / Answered / Superseded). The question, the owner's quoted decision and the commit reference are unchanged. The "Closed" statements above are kept as written. No other change.
+
+**Correction (2026-10-24, owner-approved wording)**: Q-062's answer text now reads: "K1–K4 satisfied in the documentation committed in `c84323016c77b78b0cfb7ce6378a4adf91d515bb`. The activation entry (DECISION_LOG Status history, GOV-D040-ACTIVATION: APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230)) was recorded afterwards, outside that commit." It replaces "Committed in `c84323016c77b78b0cfb7ce6378a4adf91d515bb`; activation recorded in the DECISION_LOG Status history (GOV-D040-ACTIVATION) as APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230).", which could be read as saying the activation entry was committed in `c843230`. D-040's conditions and activation status are unchanged. These GOV-D040-ACTIVATION records and corrections are then committed in one owner-authorized local commit (hash in Git history and the task report); not pushed.

@@ -397,3 +397,15 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | D-040 recorded as APPROVED — CONDITIONAL (inactive); K1–K4 edits made in the working tree, uncommitted; activation not recorded (Q-062). No test, environment, data or model work |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` (from `6deaac5`); changes uncommitted (owner: local working-tree edits only; no commit, push, PR or remote contact) |
 | Pull request | None |
+
+### GOV-D040-ACTIVATION
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | GOV-D040-ACTIVATION (prompts: "resolve Q-062 using Option 1" and "proceed with the following decisions and restrictions" — activation label Option (a), Q-062 closure, follow-up documentation) |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Commit the GOV-D040-RULE-S changes (one authorized local commit); record D-040's activation; close Q-062; update the task logs |
+| Actual completion status | Commit `c84323016c77b78b0cfb7ce6378a4adf91d515bb` (10 files). D-040 activation recorded: APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230). Q-062 Closed. Activation does not authorize synthetic verification |
+| Branch | `claude/eloquent-mccarthy-bqtxr3`: `c843230` committed locally, not pushed (1 ahead of origin); the activation edits are uncommitted (no further commit authorized) |
+| Pull request | None |
+| Correction (2026-10-24) | Owner instruction: Q-062's status label changed from "Closed" to **"Answered"** (documented status value). Decision text and commit reference unchanged. Uncommitted |
+| Correction (2026-10-24, timeline) | Owner-approved Q-062 wording: K1–K4 satisfied in the documentation committed in `c84323016c77b78b0cfb7ce6378a4adf91d515bb`; the activation entry was recorded afterwards, outside that commit. Then one owner-authorized local commit of the 6 GOV-D040-ACTIVATION files (hash in Git history); not pushed |
