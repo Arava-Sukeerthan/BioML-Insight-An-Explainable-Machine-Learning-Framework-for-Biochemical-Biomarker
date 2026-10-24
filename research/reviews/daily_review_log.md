@@ -118,3 +118,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** Q-037, Q-038, R5; all other final-confirmation-sheet lines.
 - **Recommended next step:** owner answers Q-037, Q-038 and R5 (and the remaining sheet lines); then criteria v1.1.
 - **Researcher decisions:** Q-028 → option (c), 2026-10-24 (D-031, conditional).
+
+## Day 11 (cont.) — 2026-10-24 — Q-037a
+- **Work completed:** proposal for the RQ5 feature/biomarker-selection definition (D-032, PROPOSED).
+- **Important findings:** `[EVIDENCE]` three PubMed-verified sources support the selection/embedded-selection/selection-bias points; no verified source for VIP thresholds. `[RECOMMENDATION]` option B (data-driven subset of original variables).
+- **Decisions requiring review:** R-Q037a-1 to 5; branch strategy for this task.
+- **Recommended next step:** owner answers the proposal and chooses the branch strategy.
+- **Researcher decisions:** _pending_

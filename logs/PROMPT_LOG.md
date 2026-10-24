@@ -193,3 +193,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Commit range | `7b61e83..8f258a8` (11 commits), plus this log commit |
 | Pull request | **#3** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/3 (open; not merged). Supersedes the incorrect "PR #2 updated" fields (see Correction above) |
 
+### Q-037a
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | Q-037a (prompt: "Define the feature or biomarker selection component for RQ5") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Decision proposal for the RQ5 selection component; no screening or implementation |
+| Actual completion status | Proposal completed (D-032 PROPOSED); awaiting owner response. Not pushed (branch strategy needs the owner's decision) |
+| Branch | Local `q037a-feature-selection` (based on `9497a3a`, PR #3's head); not pushed |
+| Pull request | None (see branch note in CHANGELOG) |
+
