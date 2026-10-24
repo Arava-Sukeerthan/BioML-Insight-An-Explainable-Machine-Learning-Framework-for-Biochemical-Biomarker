@@ -223,3 +223,25 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Branch | `q041-rq5-evidence-standard` (local; uncommitted; based on `b7c2e51`) |
 | Pull request | None (owner authorization required before commit, push or PR) |
 
+
+> **Correction (2026-10-24, GOV-LOG-CORRECTION).** The Q-041-DECISIONS rows "Branch" and "Pull request" above were true when written but are now stale. Q-041/D-035 was committed as `0eae10a` and pushed to `q041-rq5-evidence-standard`. PR #7 merged it into the intermediate branch `q037a-feature-selection` (`f5b03e3`), not the default branch. PR #8 brings the same changes to the default branch; it is open and subject to owner review. Likewise, the "open; not merged" statements for PR #3, #4 and #5 above are superseded: all three were merged (PR #4 and #5 into intermediate branches). Verified history: `logs/CHANGELOG.md`, "CORRECTION — 2026-10-24 — Q-041/D-035 git status and PR #4–#8 history".
+
+### PR records (verified 2026-10-24)
+| PR | Base ← head | Status | Merge commit | On default branch? |
+|---|---|---|---|---|
+| #3 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/3 | `claude/happy-hawking-rxptfv` ← `claude/sweet-brahmagupta-urw7l1` (`9497a3a`) | Merged | `7c667bf` | Yes |
+| #4 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/4 | `claude/sweet-brahmagupta-urw7l1` (intermediate) ← `q037a-feature-selection` (`b3f1ab2`) | Merged | `ea0889e` | Merge commit no; content yes via #6 |
+| #5 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/5 | `q037a-feature-selection` (intermediate) ← `rq5-decisions-d032-d034` (`b7c2e51`) | Merged | `88badf6` | Yes, via #6 |
+| #6 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/6 | `claude/happy-hawking-rxptfv` ← `q037a-feature-selection` (`88badf6`) | Merged | `c69b162` | Yes (brings D-032–D-034) |
+| #7 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/7 | `q037a-feature-selection` (intermediate) ← `q041-rq5-evidence-standard` (`0eae10a`) | Merged | `f5b03e3` | **No** |
+| #8 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/8 | `claude/happy-hawking-rxptfv` (`c69b162`) ← `q041-rq5-evidence-standard` | **Open**; owner review | — | Not yet |
+
+### GOV-LOG-CORRECTION
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | GOV-LOG-CORRECTION (prompt: "proceed with resolving governance findings M1 and M2 on PR #8's branch before merging") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Correct the stale Q-041 git/PR statements (M1) and record the verified PR #4–#8 history (M2); log-only |
+| Actual completion status | Corrections appended; awaiting owner review of PR #8 |
+| Branch | `q041-rq5-evidence-standard` (PR #8 head) |
+| Pull request | #8 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/8 (open; updated by this log-only commit; not merged) |

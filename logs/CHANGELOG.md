@@ -617,3 +617,38 @@ The status was not checked after the merge, and the reports repeated the earlier
 **Git**: working tree on new local branch `q041-rq5-evidence-standard` (from PR #5 head `b7c2e51`). **Not committed and not pushed** (awaiting owner authorization).
 
 **Validation**: see the session log.
+
+## CORRECTION — 2026-10-24 — Q-041/D-035 git status and PR #4–#8 history (GOV-LOG-CORRECTION, findings M1/M2)
+
+**Scope**: log corrections only. No change to methodology, decisions or decision statuses, criteria, schemas, code, tests or data. Earlier entries are left unchanged as the historical record; this entry supersedes the statements listed below.
+
+**M1 — stale statements** `[EVIDENCE: git, GitHub API, checked 2026-10-24]`
+
+| Location | Earlier statement (true when written) | Corrected status |
+|---|---|---|
+| This file, Q-041-DECISIONS entry ("**Git**" line) | Local branch `q041-rq5-evidence-standard`; "Not committed and not pushed" | Committed as `0eae10a` (parent `b7c2e51`) and pushed to `q041-rq5-evidence-standard`. PR #7 was opened from it and merged into the **intermediate** branch `q037a-feature-selection` (merge commit `f5b03e3`), **not** the default branch. PR #8 was opened from the same head into the default branch to bring the same reviewed changes there; it is open and subject to owner review |
+| `PROMPT_LOG.md`, Q-041-DECISIONS rows "Branch" / "Pull request" | "local; uncommitted"; "None" | As above (PR #7 merged into an intermediate branch; PR #8 open) |
+| `session_logs/2026-10-24_Q-041-DECISIONS.md`, "Branch" row | "uncommitted" | As above (a correction row is appended to that log) |
+| `PROMPT_LOG.md`, Q-037a and RQ5-DECISIONS "Pull request" rows; this file, Q-037a and RQ5-DECISIONS PR notes | PR #4 / PR #5 "open; not merged" | Both merged on 2026-10-24 into intermediate branches (table below); their content reached the default branch through PR #6 |
+| `PROMPT_LOG.md`, LIT-004-PR; this file, LIT-004-PR | PR #3 "open; not merged" | Merged into the default branch (table below) |
+
+**M2 — verified PR history** (times UTC, 2026-10-24; SHAs abbreviated). "Reached default" was checked with `git merge-base --is-ancestor` against `origin/claude/happy-hawking-rxptfv` (head `c69b162`).
+
+| PR | Purpose | Head (SHA) | Base | Status | Merge commit (parents) | Reached default branch? |
+|---|---|---|---|---|---|---|
+| [#3](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/3) | LIT-004 post-PR #2 commits (context) | `claude/sweet-brahmagupta-urw7l1` (`9497a3a`) | `claude/happy-hawking-rxptfv` (default) | Merged 04:48:22 | `7c667bf` (`7ffdcd2`, `9497a3a`) | Yes, directly |
+| [#4](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/4) | Q-037a proposal (D-032 PROPOSED) | `q037a-feature-selection` (`b3f1ab2`) | `claude/sweet-brahmagupta-urw7l1` (**intermediate**) | Merged 04:48:36 | `ea0889e` (`9497a3a`, `b3f1ab2`) | Merge commit `ea0889e`: **no**. Content (`b3f1ab2`): yes, via PR #6 |
+| [#5](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/5) | D-032–D-034, inactive `dim_feature_selection` | `rq5-decisions-d032-d034` (`b7c2e51`) | `q037a-feature-selection` (**intermediate**) | Merged 04:48:50 | `88badf6` (`b3f1ab2`, `b7c2e51`) | Yes, via PR #6 (`88badf6` is PR #6's head) |
+| [#6](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/6) | Bring PR #4/#5 work (D-032–D-034) to default | `q037a-feature-selection` (`88badf6`) | `claude/happy-hawking-rxptfv` (default, `7c667bf`) | Merged 05:00:19 | `c69b162` (`7c667bf`, `88badf6`) | Yes, directly |
+| [#7](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/7) | Q-041/D-035 | `q041-rq5-evidence-standard` (`0eae10a`) | `q037a-feature-selection` (**intermediate**, `88badf6`) | Merged 05:00:28 | `f5b03e3` (`88badf6`, `0eae10a`) | **No** (`f5b03e3` and `0eae10a` are not on default) |
+| [#8](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/8) | Replacement PR: same reviewed Q-041/D-035 changes to default | `q041-rq5-evidence-standard` (`0eae10a` before this log commit) | `claude/happy-hawking-rxptfv` (default, `c69b162`) | **Open**, created 05:03:34; subject to owner review | — | Not yet |
+
+**Unknown / not recorded**: the GitHub account that performed each merge (the API query used did not return `merged_by`); the merge method is inferred to be a merge commit, because each merge SHA has two parents. Creation times of PRs #3–#7 are 03:31:49, 03:45:38, 04:19:29, 04:55:04 and 04:55:46 respectively.
+
+**Cause**: the stacked PRs (#4, #5, #7) were merged without being retargeted to the default branch after their parent PRs merged, and the logs were not updated after the commit, push and merges.
+
+**Decision statuses (unchanged)**: D-026 and D-029 PROPOSED; D-031–D-034 APPROVED — CONDITIONAL; D-035 APPROVED — CONDITIONAL and inactive. Screening and the pilot are not started.
+
+**Modified**: this file; `logs/PROMPT_LOG.md`; `logs/session_logs/2026-10-24_Q-041-DECISIONS.md` (appended correction row); `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_GOV-LOG-CORRECTION.md`. **Not modified**: `DECISION_LOG.md`, code, tests, schemas, research documents, data.
+
+**Validation**: see the session log. No CI is configured, so none ran.
