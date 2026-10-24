@@ -367,3 +367,23 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Edits and checks done (see CHANGELOG). Commit and push recorded in Git history and the final task report. FA-2 and the protocol **not approved** |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` → `origin/claude/eloquent-mccarthy-bqtxr3` (explicit push with upstream) |
 | Pull request | None opened in this task |
+
+### PROTOCOL-EVIDENCE-001
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PROTOCOL-EVIDENCE-001 (prompt: "review primary-source evidence for the proposed dysglycaemia outcome and the unresolved NHANES laboratory-comparability questions") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Verify the ADA criteria (official article) and the CDC hs-CRP/triglyceride documentation; record findings in the draft and logs |
+| Actual completion status | CDC review done. **ADA verification blocked** (source unreachable; Q-061). Protocol rev. 3 records the findings; no status changed |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` (from `a4a2955`); changes uncommitted (prompt: no commit or push) |
+| Pull request | None |
+
+### PROTOCOL-COMMIT-001
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PROTOCOL-COMMIT-001 (prompt: "Final Review, Commit, and Push Approved Protocol Changes") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Review, check, commit and push the PROTOCOL-EVIDENCE-001 changes to the working branch only; S-09b stays proposed |
+| Actual completion status | See CHANGELOG and the final task report (commit hash in Git history) |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` → `origin/claude/eloquent-mccarthy-bqtxr3`; default branch not touched |
+| Pull request | None |

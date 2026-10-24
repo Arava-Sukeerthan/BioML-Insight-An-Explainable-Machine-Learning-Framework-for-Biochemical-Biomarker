@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Task | PROTOCOL-DRAFT-001 (2026-10-24, Day 11) |
-| Version | **0.1, draft revision 2 (PROTOCOL-DRAFT-003, 2026-10-24) — DRAFT for researcher review. Not approved, not frozen, not active.** Revisions 1 and 2 make only owner-authorized draft edits (change history) |
+| Version | **0.1, draft revision 3 (PROTOCOL-EVIDENCE-001, 2026-10-24) — DRAFT for researcher review. Not approved, not frozen, not active.** Revisions 1–3 make only owner-authorized draft edits (change history) |
 | Decision it informs | D-019 (freeze the experimental protocol, **PENDING**). It also informs D-013, D-014, D-015, D-016, D-017 and D-018, which are all **PENDING**. This draft does not change any decision status |
 | Governing documents | `GOVERNANCE.md`, `CLAUDE.md`, `research/methodology/research_integrity.md` (draft v1.0, pending, Q-018), `logs/DECISION_LOG.md` |
 | Data evidence | Local, read-only verification of the official NHANES files on 2026-10-24 (§3, Appendix A). The files are in the git-ignored `data/raw/nhanes/`. Nothing participant-level is committed |
@@ -134,6 +134,20 @@ y = 0  if LBXGH <  5.7  and LBXGLU <  100
   - CR-08 is not a `verified` inventory record.
 - **Undiagnosed-diabetes range.** Participants with HbA1c ≥ 6.5% or FPG ≥ 126 mg/dL are in the positive class. They are reported as a descriptive subgroup (201 and 136).
 - **Name.** The outcome is "laboratory-defined dysglycaemia at a single examination", not a clinical diagnosis. A single survey examination provides no repeat or confirmatory testing. `[OPEN]` ADA guidance is understood to require confirmation for a clinical diagnosis of diabetes. That understanding comes from secondary summaries; the primary text (CR-08) has not been read, so the statement is **provisional**.
+- **Laboratory category vs clinical diagnosis** (revision 3). The outcome assigns a *laboratory-defined glycaemic category* from one HbA1c and one FPG measurement at one survey visit. It is **not a clinical diagnosis**: there is no repeat or confirmatory test, no clinical assessment and no symptom information. Reports must use "meets laboratory criteria" or "laboratory-defined dysglycaemia", never "has prediabetes" or "has diabetes".
+- **The OR rule includes the diabetes range** (revision 3). y = 1 covers participants whose values fall in the prediabetes range **and** those in the diabetes range (HbA1c ≥ 6.5% or FPG ≥ 126 mg/dL; 201 and 136 participants, §5.2).
+  - The population excludes self-reported diagnosed diabetes (E7) and current diabetes pills (E8), so diabetes-range participants are *undiagnosed* and *unconfirmed*.
+  - The outcome is therefore "any laboratory dysglycaemia" (prediabetes range or diabetes range), not "prediabetes". Separating the two is only the exploratory three-class analysis S-05.
+- **Internal consistency of population and outcome** (revision 3 check; no definition changed):
+  1. E7/E8 remove people who report diagnosed diabetes or pill use, consistent with an outcome for *previously undetected* dysglycaemia.
+  2. Insulin use (`DIQ050`) is asked only of `DIQ010` = 1, so it is already covered by E7.
+  3. Borderline (`DIQ010` = 3) and told-prediabetes (`DIQ160` = 1) participants are retained by design (CUP-7). Their awareness questions are not predictors, and S-04 removes them.
+  4. There is no upper exclusion: the diabetes range stays in the positive class (above).
+  5. Both measurements are required (E5), so no participant is labelled from one test.
+  6. Known gap, unchanged: undisclosed glucose-lowering treatment without a diagnosis cannot be identified in 2021–2023 (no drug names), and only in 2017–2020 by S-07.
+
+  The target population and outcome are **unchanged** in revision 3.
+- **ADA source verification attempt** (2026-10-24, PROTOCOL-EVIDENCE-001): **not completed.** None of the official article page (`diabetesjournals.org`), `doi.org`, PubMed Central or Europe PMC could be reached from the environment (no connection, ENOTFOUND), and the PubMed full-text tool returned an empty text. The ADA criteria, the "each test independent" statement and the confirmation guidance therefore remain **unverified** (§5.1 evidence status; CR-08). No ADA table or section number is recorded as verified.
 - **Lab values.** No cross-period adjustment is applied to `LBXGH` or `LBXGLU` (§8).
 
 ### 5.2 Observed outcome distribution
@@ -310,6 +324,41 @@ Equation text was transcribed from the official pages `BIOPRO_L.htm`, `TRIGLY_L.
   - The stated mean of 14.28% is not reproduced exactly; the bridging-sample distribution is not published.
   - Revision 1: these numbers are **not** used to decide the units, and the equation is not applied (§6.4). Q-045 remains unresolved.
 - **Urine albumin.** The implied mean difference is 8.5% (median −1.1%) against the stated 6.20%. This is roughly consistent with the stated mg/L units.
+
+### 8.2 Within-cycle instrument changes in 2021–2023 (revision 3)
+`[EVIDENCE: CDC documentation, read 2026-10-24]`, from the official 2021–2023 codebook pages and method manuals.
+
+**What the sources state:**
+
+| Analyte | Exact statement on the 2021–2023 codebook page | CDC adjustment advice |
+|---|---|---|
+| HbA1c (`GHB_L`, outcome) | "During the cycle, the laboratory instrument changed from the Tosoh G8 to the Bio-Rad D-100." | None needed (bridging: Tosoh 2.3% higher) |
+| hs-CRP (`HSCRP_L`) | "During the cycle, the laboratory equipment changed from the Cobas 6000 Analyzer to the Cobas 8000." | Equations given; units unresolved (§6.4) |
+| Total cholesterol (`TCHOL_L`), HDL (`HDL_L`) | "the lab equipment used changed from the Cobas 6000 Analyzer to the Cobas 8000 during the cycle" | None needed |
+| Triglycerides (`TRIGLY_L`) | "There was a change in the lab method … The glycerol blanked assay used in previous cycles were phased out by the manufacturer. In addition, the lab equipment used for the measurement was updated from the Cobas 6000 Analyzer to Cobas 8000"; bridging "from an instrument change in the August 2021 – August 2023 cycle" | Equations given (§8) |
+| Biochemistry panel (`BIOPRO_L`) | "the lab equipment used for the measurements was updated from the Cobas 6000 Analyzer to Cobas 8000"; bridging "from an instrument change in the August 2021-August 2023 cycle" | Per analyte (§8) |
+
+**Manuals.**
+- The 2021–2023 manuals (`TRIGLY-L-MET`, `HSCRP-L-MET`) describe only the Cobas 8000. The triglyceride manual names only the non-blanked TRIGL reagent.
+- The 2017–2018 and 2019–2020 manuals (`-J-MET`, `-K-MET`) describe the Cobas 6000; the triglyceride manuals also name the glycerol-blanked Trig/GB reagent.
+- No document gives the date of the change, or which 2021–2023 specimens were measured before it.
+
+**What remains unknown:**
+- Which 2021–2023 records were measured on which instrument (and, for triglycerides, with which method).
+- Whether the released 2021–2023 values are all on the new scale, or mixed.
+- **Participant timing cannot be reconstructed:** the only exam-timing variable, `RIDEXMON`, gives a six-month season (November–April or May–October) without a year. Instrument timing is **not** inferred from the cycle label (Q-060).
+
+**Impact on the study:**
+- (a) **hs-CRP:** already excluded from the primary sets (§6.4).
+- (b) **No-adjustment analytes** (HbA1c, total cholesterol, HDL, AST, albumin, total protein, creatinine, uric acid): timing does not change the analysis, because CDC advises no adjustment. The HbA1c instrument mix inside the validation period is a residual outcome-measurement limitation near the 5.7% threshold (§20).
+- (c) **Analytes where CDC recommends or provides an equation** (triglycerides, ALT, ALP, GGT, BUN, total bilirubin): CDC describes the backward equations as a way to "ensure comparability between the August 2021-August 2023 cycle and previous years", i.e. a cycle-level analytic use. Whether applying them to **every** 2021–2023 record is correct depends on the unknown timing. Records measured before the change would be over-corrected.
+
+**Recommendation** `[RECOMMENDATION]`, for researcher decision (FA-5; no status changed):
+- Do not apply any cross-period equation by default until Q-060 is answered (NCHS enquiry: date of each change and whether the released values are mixed).
+- Pending that, temporal validation is run on **unadjusted** 2021–2023 values. This promotes S-08 to the reference analysis.
+  - **Unadjusted values are not established as comparable** with 2017–March 2020, or within the 2021–2023 cycle. The documented instrument/method transition (dates unknown), the triglyceride unit discrepancy (Q-044) and the unresolved participant-level timing (Q-060) remain limitations of the reference analysis, and must be reported as such.
+- Applying CDC's backward equations at cycle level, as CDC describes, becomes a **sensitivity analysis** (S-09b), labelled "assumes all 2021–2023 values are on the new instrument/method".
+- This changes no outcome or population; it changes the harmonisation proposal (FA-5), which needs researcher approval.
 
 ## 9. Preprocessing and missing data
 
@@ -499,6 +548,7 @@ Ten prespecified metrics `[RECOMMENDATION]` (FA-10). Each is computed on interna
 | S-07 | Development only: also exclude participants with a glucose-lowering drug name in `P_RXQ_RX`. 15 such participants found, metformin and liraglutide. The drug list is fixed before freeze (Q-057) |
 | S-08 | Temporal validation with unadjusted 2021–2023 laboratory values |
 | S-09 | Forward-equation harmonisation (2017–2020 → 2021–2023 scale) |
+| S-09b | *Proposed in revision 3 (§8.2), pending FA-5:* CDC backward equations applied at cycle level to all 2021–2023 records of triglycerides, ALT, ALP, GGT, BUN and total bilirubin. Labelled "assumes all 2021–2023 values are on the new instrument/method" (Q-060). Never applied to hs-CRP while Q-045/Q-059 are open. **Not executed.** Any future execution requires FA-5 approval and further documented methodological justification (units: Q-044; record-level applicability: Q-060) |
 | S-10a | Complete-case analysis |
 | S-10b | Iterative imputation |
 | S-11 | Extended biochemistry panel (§6.1 exclusions added back, except leakage variables and magnesium) |
@@ -515,7 +565,7 @@ Ten prespecified metrics `[RECOMMENDATION]` (FA-10). Each is computed on interna
 - Cross-sectional data; a single-visit laboratory outcome with no confirmatory testing.
 - The outcome is dominated by fasting glucose 100–125 mg/dL alone.
 - Self-reported diagnosis and medication; undiagnosed people taking metformin can't be identified in 2021–2023.
-- Residual instrument differences (HbA1c +2.3%) near the threshold.
+- Residual instrument differences (HbA1c +2.3%) near the threshold. The HbA1c and chemistry-analyzer changes happened *within* the 2021–2023 cycle, at unknown dates (§8.2).
 - Equation units not fully confirmed (Q-044, Q-045).
 - Temporal validation is not external validation.
 - Lower response rates and design changes in 2021–2023.
@@ -595,7 +645,7 @@ Ten prespecified metrics `[RECOMMENDATION]` (FA-10). Each is computed on interna
 | FA-2 | Primary outcome HbA1c ≥ 5.7 OR FPG ≥ 100, both measures required, no outcome imputation; S-01, S-03, S-15a and S-15b (exploratory) as outcome sensitivity analyses | CUP; **owner-preferred proposed outcome (2026-10-24)**. Still FA: **not approved**; ADA source not verified | Reserved decision; prevalence 59–65% and FPG-dominated (§5.2) | Researcher (outcome definition, GOVERNANCE.md §2) |
 | FA-3 | Exclude `DIQ070` = 1 (pills) among non-diagnosed participants | PMC | Treated glycaemia; the question routing is identical in both periods | Researcher |
 | FA-4 | Feature lists A (21), B (27), C (6); hs-CRP excluded from the primary sets (CUP-12); group A without age or sex (A′ alternative); race and income not predictors | CUP (groups, hs-CRP exclusion) + PMC (lists) | Leakage and comparability audit (§6–§8) | Researcher, in D-019 |
-| FA-5 | Backward harmonisation of 2021–2023 lab values using CDC equations; S-08 and S-09 as sensitivity analyses | PMC | Model frozen on the development scale; equations are official | Researcher, after Q-044 to Q-046 |
+| FA-5 | Backward harmonisation of 2021–2023 lab values using CDC equations; S-08 and S-09 as sensitivity analyses. *Revision 3 recommendation (§8.2): unadjusted values as reference until Q-060 is resolved; cycle-level CDC equations as sensitivity S-09b* | PMC | Model frozen on the development scale; equations are official | Researcher, after Q-044 to Q-046 |
 | FA-6 | In-fold preprocessing, median imputation plus indicators, 80/20 D-train/D-cal, log-loss tuning, equal budget, 5 seeds | PMC | `research_integrity.md` §4–§6 | Researcher, in D-019 |
 | FA-7 | Unweighted fitting and primary metrics; weighted secondary; PSU-bootstrap and grouped-CV sensitivity analyses | PMC | Prediction estimand vs population inference (§10) | Researcher, in D-019 |
 | FA-8 | Baselines BL-1 to BL-6 (BL-3 library: Q-048; BL-6: Q-049) | CUP (5–6 baselines) + PMC | Data characteristics; literature pending (AB-7) | Researcher, D-018 |
@@ -629,6 +679,9 @@ Also recorded in `research/reviews/unresolved_questions.md`.
 | Q-056 | Formal minimum-sample-size calculation for the development set (method from a verified source) |
 | Q-057 | Fixed glucose-lowering drug-name list for S-07 |
 | Q-058 | Schedule: accept a 3-day compression of Stage J (11-24 vs 11-27 in D-001)? |
+| Q-059 | hs-CRP instrument timing in 2021–2023 (no per-participant instrument indicator) |
+| Q-060 | Within-cycle instrument/method timing for **all** Cobas-measured 2021–2023 analytes with CDC equations (triglycerides, ALT, ALP, GGT, BUN, total bilirubin; and hs-CRP), and for HbA1c: date of each change, and whether released values are mixed. Generalises Q-059. Needed to decide FA-5 (§8.2) |
+| Q-061 | Access to the ADA 2026 Section 2 primary text (blocked from the environment): allow `diabetesjournals.org` (and `doi.org`), or the researcher supplies the PDF, to complete CR-08 verification |
 
 ## 26. Blocker checklist
 
@@ -644,7 +697,7 @@ Also recorded in `research/reviews/unresolved_questions.md`.
 - [ ] **AB-5** D-017 and D-018 approved (framework and baselines).
 - [ ] **AB-6** `research_integrity.md` approved (Q-018).
 - [ ] **AB-7** Literature justification: the candidate references (Appendix D) verified into the inventory, and baseline, threshold and metric choices linked to verified records. Otherwise the researcher must explicitly accept the provisional, data-based justification.
-- [ ] **AB-8** Q-044 and Q-046 resolved, or the researcher accepts the documented fallback (S-08 as reference). For hs-CRP the fallback is exclusion from the primary sets (CUP-12). Resolving Q-045 is needed only for S-16b.
+- [ ] **AB-8** Q-044 and Q-046 resolved, or the researcher accepts the documented fallback (S-08 as reference). For hs-CRP the fallback is exclusion from the primary sets (CUP-12). Resolving Q-045 is needed only for S-16b. *Revision 3:* Q-060 (within-cycle timing) must also be resolved, or the researcher must accept unadjusted values as the reference (§8.2), before any equation is applied.
 - [ ] **AB-9** Equations re-checked character by character against the official pages.
 - [ ] **AB-10** `.gitignore` rule for participant-level outputs and the `SEQN` guard test (authorization needed). *Revision 1:* implemented under owner authorization (§22). Left open pending researcher review, and because the checks are not exhaustive.
 - [ ] **AB-11** Pinned environment (D-002) with the required packages installed and recorded.
@@ -753,7 +806,7 @@ Identifiers come from PubMed connector metadata retrieved on 2026-10-24, where s
 | CR-05 | Bang et al., 2009, *Ann Intern Med*; diabetes self-assessment score (NHANES) | doi:10.7326/0003-4819-151-11-200912010-00005 | Not in inventory |
 | CR-06 | Van Calster et al., 2019, *BMC Med*; calibration | doi:10.1186/s12916-019-1466-7 | Not in inventory |
 | CR-07 | Riley et al., 2020, *BMJ*; sample size for prediction models | doi:10.1136/bmj.m441 | Not in inventory |
-| CR-08 | ADA Standards of Care in Diabetes 2026, Section 2 (diagnosis criteria) | PMID 41358893; doi:10.2337/dc26-S002; *Diabetes Care* 49(Suppl 1):S27–S49 (PubMed record, 2026-10-24). Full text **not read**: the PMC full-text request returned empty | Not in inventory; **claim not verified** |
+| CR-08 | ADA Standards of Care in Diabetes 2026, Section 2 (diagnosis criteria) | PMID 41358893; doi:10.2337/dc26-S002; *Diabetes Care* 49(Suppl 1):S27–S49 (PubMed record, 2026-10-24). Full text **not read**: the PMC full-text request returned empty. Second attempt 2026-10-24 (PROTOCOL-EVIDENCE-001): official page, doi.org, PMC and Europe PMC unreachable; PubMed full text empty again (Q-061) | Not in inventory; **claim not verified** |
 | CR-09 | WHO definition of impaired fasting glucose | To locate | Not in inventory |
 | CR-10 | Corrected resampled t-test for cross-validation | To locate | Not in inventory |
 | CR-11 | TRIPOD+AI reporting guideline | To locate | Not in inventory |
@@ -766,3 +819,4 @@ Identifiers come from PubMed connector metadata retrieved on 2026-10-24, where s
 | 0.1 | 2026-10-24 | Initial draft (PROTOCOL-DRAFT-001) | **No.** Pending researcher review |
 | 0.1 rev. 1 | 2026-10-24 | PROTOCOL-DRAFT-002, owner-authorized draft edits:<br>(1) FA-2 recorded as the owner's preferred proposed outcome, still pending approval and verification of the ADA source; "either laboratory criterion, not a clinical diagnosis" made explicit (§2, §5.1, §24);<br>(2) S-15a and S-15b (exploratory) added, with label counts (§5.3, §19);<br>(3) hs-CRP removed from groups A and B; unresolved conversion documented; conditional S-16a/S-16b (§6.4, §8, §25, Appendix B); counts recomputed (A 21, B 27);<br>(4) period prevalence differences labelled outcome-distribution findings (§5.2, §16);<br>(5) Q-044 documentary evidence and verbatim CDC strings (§8, Appendix B);<br>(6) data-protection safeguards recorded (§22, AB-10);<br>(7) CR-08 identifier recorded, claim still unverified (Appendix D) | **No.** Pending researcher review. No decision status changed |
 | 0.1 rev. 2 | 2026-10-24 | PROTOCOL-DRAFT-003, owner-authorized corrections (Option A):<br>(1) ADA confirmation-rule statement qualified as provisional (§5.1);<br>(2) CDC wording on combining periods quoted from `DEMO_L` ("urged to proceed with caution"), replacing "advises against" (§10);<br>(3) conformal validity guarantee removed; stated as an unverified hypothesis, with coverage measured (§18);<br>(4) median-FPG sentence corrected: v0.1 gave the medians of a broader reference population (103 vs 101), while the analytic samples give 101 vs 100 (§5.2);<br>(5) reproduction script and further safeguards recorded (§22).<br>FA-2 stays a preferred proposed outcome; hs-CRP stays excluded; S-15a/b and S-16a/b unchanged | **No.** Pending researcher review. No decision status changed |
+| 0.1 rev. 3 | 2026-10-24 | PROTOCOL-EVIDENCE-001, primary-source review:<br>(1) ADA verification attempted and **blocked** (source unreachable); the criteria remain unverified (§5.1, CR-08, Q-061);<br>(2) §5.1 makes explicit the laboratory-category vs diagnosis distinction, that the OR rule includes the diabetes range, and the population/outcome consistency check (no definition changed);<br>(3) §8.2 records the official CDC statements on within-cycle instrument/method changes; participant timing cannot be reconstructed (`RIDEXMON` is season only);<br>(4) FA-5 recommendation (unadjusted reference; cycle-level equations as S-09b) proposed for researcher decision; Q-059–Q-061 listed (§25); AB-8 note | **No.** Pending researcher review. No decision status changed |

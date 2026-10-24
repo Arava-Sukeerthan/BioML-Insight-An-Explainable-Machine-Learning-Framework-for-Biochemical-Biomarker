@@ -954,3 +954,52 @@ No approval of FA-2, the protocol or any decision is implied.
 
 **References**: none newly verified; reference status unchanged.
 **Not done**: no training, evaluation, pilot, screening or activation. `CLAUDE.md`'s test command not changed (protected): the project-wide command is `sh scripts/run_checks.sh`.
+
+## 2026-10-24 — PROTOCOL-EVIDENCE-001 (primary-source review: ADA criteria, NHANES laboratory comparability)
+
+**Objective**: verify the ADA outcome criteria from the official article, and review the official CDC documentation for 2017–March 2020 and 2021–2023 hs-CRP and triglycerides (codebooks, method manuals, bridging text). No commit or push, per the prompt.
+
+**Start state**: branch `claude/eloquent-mccarthy-bqtxr3` at `a4a2955`, clean, tracking `origin/claude/eloquent-mccarthy-bqtxr3`.
+
+**ADA: blocked, not verified.**
+- The official page (`diabetesjournals.org`), `doi.org`, PubMed Central and Europe PMC all failed from the container (HTTP 000).
+- WebFetch: ENOTFOUND.
+- PubMed full text for PMC12690183: empty.
+- No ADA criterion, table or section is recorded as verified. New Q-061 asks for access.
+
+**CDC evidence** `[EVIDENCE: CDC documentation, fetched 2026-10-24]`:
+- Pages fetched: `HSCRP_L`, `P_HSCRP`, `TRIGLY_L`, `P_TRIGLY`, `BIOPRO_L`, `TCHOL_L`, `HDL_L`, `GHB_L`.
+- Method manuals: HSCRP-J/K/L-MET and TRIGLY-J/K/L-MET.
+- Cycle pages: lab methods, release notes and lab overview for 2021–2023.
+- The hs-CRP/TG pages and manuals are byte-identical to the 2026-10-24 earlier reads.
+
+**New finding.**
+- The within-cycle change is not specific to hs-CRP:
+  - HbA1c ("During the cycle … Tosoh G8 to the Bio-Rad D-100");
+  - total cholesterol and HDL ("Cobas 6000 … to the Cobas 8000 during the cycle");
+  - triglycerides and the biochemistry panel ("instrument change in the … cycle"; triglyceride method also changed).
+- No date or participant indicator is published; `RIDEXMON` gives only a six-month season with no year.
+- Applying the backward equations to every 2021–2023 record is therefore not established (Q-060).
+- Units and other points are unchanged: hs-CRP stays unresolved (Q-045); triglycerides stay provisional mg/dL (Q-044).
+
+**Modified**:
+- `research/methodology/experimental_protocol_v0.1_draft.md` → rev. 3:
+  - §5.1: laboratory category vs diagnosis; OR rule includes the diabetes range; population/outcome consistency check (no definition changed); ADA attempt recorded.
+  - New §8.2 (CDC statements, unknowns, impact, recommendation).
+  - S-09b proposed; limitation note; FA-5 note (recommendation only).
+  - Q-059–Q-061 in §25; AB-8 note; CR-08 note; change history.
+- `research/reviews/unresolved_questions.md`: Q-060 and Q-061 appended (Open).
+- This file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`.
+
+**Created**: `logs/session_logs/2026-10-24_PROTOCOL-EVIDENCE-001.md`.
+
+**Not changed**: FA-2 (preferred, not approved); the target population and outcome; hs-CRP exclusion; DECISION_LOG and every status. No training, evaluation, activation, commit, push or merge. References other than the CDC documents are not newly verified.
+
+### 2026-10-24 — PROTOCOL-COMMIT-001 (owner-authorized commit and push of PROTOCOL-EVIDENCE-001)
+- **Authorization:** keep S-09b as a proposed, conditional sensitivity analysis; commit and push to `origin/claude/eloquent-mccarthy-bqtxr3` only.
+- **Pre-commit wording clarification** in `experimental_protocol_v0.1_draft.md`, so the text states the owner's boundaries explicitly:
+  - §8.2: unadjusted 2021–2023 values are **not** established as comparable, and the transition, unit discrepancy and timing remain limitations;
+  - S-09b: "**Not executed**"; any future execution requires FA-5 approval and further documented methodological justification.
+- No definition, outcome, population or status changed. FA-2 remains preferred and unapproved; the ADA evidence (Q-061) and Q-060 remain open.
+- S-09b was not run, and no equation was applied.
+- The commit hash is recorded in Git history and the task report, not in this file.

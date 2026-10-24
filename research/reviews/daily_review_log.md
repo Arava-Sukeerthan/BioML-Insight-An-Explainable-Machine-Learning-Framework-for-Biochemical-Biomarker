@@ -224,3 +224,16 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** FA-2 (preferred, **not approved**); the safeguards (AB-10 open); Q-044, Q-045, Q-059; whether to add `sh scripts/run_checks.sh` to `CLAUDE.md` §4 (owner approval needed).
 - **Recommended next step:** owner review of rev. 2 and of the pushed branch; NCHS enquiry (hs-CRP); a second bibliographic source for reference verification.
 - **Researcher decisions:** Option A authorization (corrections, scripts, safeguards, commit and push). No decision approved.
+
+## Day 11 (cont.) — 2026-10-24 — PROTOCOL-EVIDENCE-001
+- **Work completed:** primary-source review; protocol draft rev. 3; Q-060 and Q-061.
+- **Important findings:**
+  - `[EVIDENCE: CDC documentation]` The 2021–2023 instrument changes for HbA1c and the chemistry analyzer (hs-CRP, TC, HDL, TG, BIOPRO) happened **within** the cycle, with no published date or participant indicator.
+  - CDC backward equations cannot yet be shown to apply to every 2021–2023 record (Q-060).
+  - The ADA text could not be reached (Q-061), so the criteria remain unverified.
+- **Decisions requiring review:**
+  - FA-5 recommendation: unadjusted values as reference; cycle-level equations as S-09b.
+  - FA-2 (still preferred, not approved).
+  - Network access or PDF for the ADA article.
+- **Recommended next step:** allow `diabetesjournals.org` and `doi.org`, or supply the ADA PDF; send the NCHS enquiry for Q-044, Q-045, Q-059 and Q-060.
+- **Researcher decisions:** none in this task.
