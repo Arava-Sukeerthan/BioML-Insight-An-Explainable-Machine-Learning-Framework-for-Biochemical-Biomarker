@@ -405,3 +405,19 @@ after PR #1 had been merged.
 
 **Validation (performed)**: production diff empty; unit tests, query table, raw and archive checksums (results in the completion report).
 **Not done**: no response recorded, no spot-check run, no implementation, no pilot, no screening, no pair resolved.
+
+## LIT-004-CLARIFICATION-ADDENDUM — 2026-10-24 — Clarifications for owner review (documentation only)
+
+**Prompt objective**: clarify D-024/Q-034, A-3/Q-028 and the pilot, the D-030 retraction procedure and the D-029 definitions, with response fields; no recording, no implementation.
+
+**Completed**
+- `research/reviews/clarification_addendum_LIT-004.md`: D-024 separated from Q-034 (options: 3 or 4 `extraction_status` values; how ineligible, pending, incomplete and completed states are distinguished via screening status and sentinels; proposed consistency checks); Q-028 options verbatim with consequences, comparison of deciding before the pilot vs provisional RQ5 labels (with representation, exclusion from eligibility, later adjudication and statistics safeguards), recommendation of deciding before the pilot without choosing; D-030 retraction procedure distinguishing the six record kinds, E7/E12 conditions and evidence, human review on insufficient evidence, sensitivity analysis and proposed register; full D-029 definitions with RQ5 handling; response fields R1–R6.
+- Findings `[EVIDENCE]`: Stage 0 (`search_strategy.md` §6.1) does not cover retraction notices, corrections or expressions of concern, so the procedure needs a Stage-0 amendment; no feature-selection descriptor exists for mechanical RQ5 derivation; 141 theme-F publications, 6 in the pilot's F stratum; all 2,979 inventory rows `not_extracted`.
+
+**Created**: `research/reviews/clarification_addendum_LIT-004.md`, `logs/session_logs/2026-10-24_LIT-004-CLARIFICATION-ADDENDUM.md`.
+**Modified**: `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file.
+**Not modified**: `logs/DECISION_LOG.md`, ballot, proposed response set, schemas, code, tests, criteria, protocol, strategy, data.
+**Deleted**: none.
+
+**Validation (performed)**: production diff empty; unit tests, query table, raw and archive checksums (results in the completion report).
+**Not done**: no recording, implementation, spot-check, pilot, screening or pair decision.

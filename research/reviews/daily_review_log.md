@@ -97,3 +97,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** owner confirmation of the response set (all or selected items); D-029 final definitions; D-030 retraction procedure.
 - **Recommended next step:** owner confirmation; then record in `logs/DECISION_LOG.md`, then the arXiv spot-check.
 - **Researcher decisions:** _pending_
+
+## Day 11 (cont.) — 2026-10-24 — LIT-004-CLARIFICATION-ADDENDUM
+- **Work completed:** clarification addendum (`research/reviews/clarification_addendum_LIT-004.md`) with response fields R1–R6.
+- **Important findings:** `[EVIDENCE]` the retraction procedure needs a Stage-0 amendment (notices not covered); mechanical RQ5 derivation would need a feature-selection descriptor. `[RECOMMENDATION]` decide Q-028 before the pilot (owner's choice).
+- **Decisions requiring review:** R1–R6.
+- **Recommended next step:** owner answers R1–R6 and confirms what is to be recorded.
+- **Researcher decisions:** _pending_
