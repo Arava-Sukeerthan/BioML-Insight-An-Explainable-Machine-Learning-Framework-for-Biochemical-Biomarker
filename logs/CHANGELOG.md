@@ -468,3 +468,15 @@ after PR #1 had been merged.
 
 **Validation (performed)**: production diff empty; unit tests, query table, raw and archive checksums (results in the completion report).
 **Not done**: criteria v1.1 and dependent document updates (await C1–C4), implementation, pilot, screening, pair decisions.
+
+## CORRECTION — 2026-10-24 — PR #2 status (recorded in LIT-004-Q028-DECISION)
+
+**Finding `[EVIDENCE]`** (GitHub API, checked 2026-10-24): PR #2 was **merged** by the owner on 2026-10-23 at 17:51 UTC, at head `7b61e83`, as merge commit `7ffdcd2` on `claude/happy-hawking-rxptfv`.
+
+Ten later commits on `claude/sweet-brahmagupta-urw7l1` are **not part of any pull request**: `f8fac8d`, `8056054`, `441d00e`, `6a2d017`, `56910a8`, `d14a002`, `95407fb`, `22f11ea`, `8504899`, `cb5c941`. They run from the second local archive copy through LIT-004-Q028-DECISION.
+
+The CHANGELOG and PROMPT_LOG entries for those tasks state "PR #2 (existing, updated); not merged". **That statement is incorrect** and is corrected here. The earlier entries are left unchanged as the historical record.
+
+The status was not checked after the merge, and the reports repeated the earlier state.
+
+**Remaining step:** the owner decides how these 10 commits are reviewed, e.g. a new PR from the same branch into `claude/happy-hawking-rxptfv`. No rebase or force-push is needed, because `7b61e83` is already in the base. No PR was created, because the owner's instructions in these tasks excluded creating another PR.
