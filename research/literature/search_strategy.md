@@ -28,6 +28,8 @@ framework.
 | RQ5 | Which existing frameworks combine biomarker selection, classification, explainability, and uncertainty estimation? | Closest prior art (critical for any novelty claim) |
 | RQ6 | Which methodological limitations are reported, and what research opportunities follow? | Meta-research, reviews, appraisal of included studies |
 
+> *Note (2026-10-24):* the RQ5 question above omits probability calibration. Under D-031 (approved with conditions, inactive) RQ5 has five components, calibration and uncertainty separate. The wording is to be aligned when criteria v1.1 is written.
+
 ### 1.3 Structured literature review vs. formally systematic review
 | Feature | Formally systematic review (e.g., PRISMA 2020 compliant) | This project (as currently resourced) |
 |---|---|---|
@@ -398,6 +400,8 @@ The items are informed by PROBAST and TRIPOD+AI domains, once those documents ar
   labelled `[EVIDENCE]` / `[HYPOTHESIS]` / `[OPEN]`.
 * RQ5 closest-prior-art table: must be complete before any novelty claim is made.
 
+* *RQ5 note, INACTIVE (D-031–D-035, 2026-10-24):* once active, the closest-prior-art table uses records with ≥ 4 of 5 **confirmed** components (`qualified`), and a separate `near_rq5` comparison (exactly 3; D-034). Components are confirmed only by full-text assessment (D-035), and these records are verified by the researcher.
+
 ### 8.4 Reporting
 A PRISMA-2020-style flow diagram (records identified per source, duplicates removed,
 screened, excluded with reasons, full-text assessed, included), plus a PRISMA-S-style search
@@ -434,3 +438,4 @@ claiming PRISMA compliance for a systematic review.
 | 1.0 | 2026-10-14 | Initial draft (LIT-001) | Pending |
 | 1.0.1 | 2026-10-14 | LIT-002: schema path updated (`schemas/`); pointer to `collection_workflow.md` added; §9 task labels updated (LIT-002 became the workflow task). No change to queries or criteria | Pending |
 | 1.0.1 (note) | 2026-10-23 | LIT-004-WORKFLOW-FIXES: implementation note under §6.2 (screening file name and columns as implemented; D-027 proposed). Text, queries and criteria unchanged; no version bump | Pending |
+| 1.0.1 (note) | 2026-10-24 | Q-041-DECISIONS: inactive RQ5 notes under §1.2 and §8.3 (D-031–D-035). Text, queries and criteria unchanged; no version bump | Pending |

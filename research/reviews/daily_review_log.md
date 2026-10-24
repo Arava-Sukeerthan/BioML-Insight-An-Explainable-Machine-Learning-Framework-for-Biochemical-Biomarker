@@ -132,3 +132,17 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** Q-039, Q-040, Q-041, R5; authorization to push this commit (it would extend PR #4).
 - **Recommended next step:** owner decision on Q-041 together with R5 (the largest blocker).
 - **Researcher decisions:** Q-037a (5), Q-037b (5), Q-038 (5), 2026-10-24.
+
+## Day 11 (cont.) — 2026-10-24 — Q-041-DECISIONS
+- **Work completed:** D-035 recorded (Q-041 G1–G6, APPROVED — CONDITIONAL, inactive); RQ5 component evidence separated by stage, with erasure and completeness safeguards and a verification audit trail; coverage-group function tested but not wired.
+- **Important findings:** `[EVIDENCE]` the latest-row-wins build could erase title/abstract evidence with a later blank row (now prevented by stage separation and a same-stage check); classification still has no status column (Q-039), which blocks the coverage group and full five-status enforcement.
+- **Decisions requiring review:** whether to mark D-029/D-026 component wording superseded; Q-039; Q-040; authorization to commit, push and open a PR.
+- **Recommended next step:** owner decision on Q-039 (classification status column).
+- **Researcher decisions:** Q-041 G1–G6, 2026-10-24.
+
+## Day 11 (cont.) — 2026-10-24 — GOV-LOG-CORRECTION
+- **Work completed:** log-only corrections. The Q-041/D-035 git status is updated (committed `0eae10a`, pushed; PR #7 merged into an intermediate branch; PR #8 open to the default branch). The verified PR #3–#8 history is recorded.
+- **Important findings:** `[EVIDENCE]` PRs #4, #5 and #7 were merged into intermediate branches. #4/#5 content reached the default branch through PR #6. The Q-041/D-035 work is not on the default branch until PR #8 is merged.
+- **Decisions requiring review:** PR #8 (owner review and merge).
+- **Recommended next step:** owner reviews and merges PR #8; then Q-039.
+- **Researcher decisions:** none in this task.

@@ -175,6 +175,8 @@ Comments:
 
 ## R5 — D-029 complete definitions
 
+> **Update 2026-10-24 (Q-041-DECISIONS):** for **RQ5 component statuses**, the owner approved the D-035 evidence definitions (`Q-041_decision_record_D035.md` §2), which replace the "what the abstract states" standard below for explainability, uncertainty and calibration. The other R5 lines (`validation_design`, common rules, human-review triggers, RQ5 ambiguity handling) are **still unanswered**, and D-029 stays PROPOSED. The text below is unchanged.
+
 *Verbatim from the clarification addendum §4 (one cross-reference adjusted to point to the addendum):*
 
 **Common rules.**
