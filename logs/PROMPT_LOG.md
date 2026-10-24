@@ -387,3 +387,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | See CHANGELOG and the final task report (commit hash in Git history) |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` → `origin/claude/eloquent-mccarthy-bqtxr3`; default branch not touched |
 | Pull request | None |
+
+### GOV-D040-RULE-S
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | GOV-D040-RULE-S (prompt: "I confirm the following decisions for BioML-Insight … authorize Claude Code to perform the specified local documentation edits only") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Record D-040 (Rule S and Synthetic Verification Exemption) and the approved cross-references K1–K4; create the synthetic verification log header; update the task logs |
+| Actual completion status | D-040 recorded as APPROVED — CONDITIONAL (inactive); K1–K4 edits made in the working tree, uncommitted; activation not recorded (Q-062). No test, environment, data or model work |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` (from `6deaac5`); changes uncommitted (owner: local working-tree edits only; no commit, push, PR or remote contact) |
+| Pull request | None |

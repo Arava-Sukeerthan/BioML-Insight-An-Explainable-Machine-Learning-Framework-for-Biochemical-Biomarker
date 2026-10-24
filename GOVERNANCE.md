@@ -44,6 +44,8 @@ DECISION_LOG entry approved by the researcher.
 No stage is skipped to meet the deadline. **No predictive model training and no performance
 claims during Days 1–20.**
 
+Synthetic-only software verification that satisfies Rule S (DECISION_LOG D-040) is not predictive model training or modelling for the purposes of this section.
+
 ### Decisions reserved for the researcher
 - Primary dataset
 - Main research contribution

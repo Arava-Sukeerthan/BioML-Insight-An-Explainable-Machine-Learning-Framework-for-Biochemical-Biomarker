@@ -237,3 +237,10 @@ One entry per researcher review session (~1 h/day).
   - Network access or PDF for the ADA article.
 - **Recommended next step:** allow `diabetesjournals.org` and `doi.org`, or supply the ADA PDF; send the NCHS enquiry for Q-044, Q-045, Q-059 and Q-060.
 - **Researcher decisions:** none in this task.
+
+## Day 11 (cont.) — 2026-10-24 — GOV-D040-RULE-S
+- **Work completed:** D-040 recorded (Rule S and Synthetic Verification Exemption); approved cross-references added to `CLAUDE.md` rule 13, `GOVERNANCE.md` §2 and the `logs/EXPERIMENT_LOG.md` header; `logs/SYNTHETIC_VERIFICATION_LOG.md` created (header only); Q-062 opened. Local edits only, uncommitted.
+- **Important findings:** D-040 was unused (working tree and local history); D-039 stays reserved for the screening-related proposal. The K1–K4 edits are in place but uncommitted, so activation is not recorded.
+- **Decisions requiring review:** whether K1–K4 count as satisfied and D-040 may be recorded as active (Q-062); whether to commit/push these edits (Q-005 open); D-002 environment pins; the synthetic test plan (Gate 2).
+- **Recommended next step:** owner review of the diff; decide Q-062 and the Git step; then the environment decision and the test plan. No test may run before 2026-11-03.
+- **Researcher decisions:** Rule S and exemption wording (C1 with the activation adjustment), K1–K4 mandatory, APPROVED — CONDITIONAL (inactive), D-040 and date 2026-10-24, D-039 reserved, `logs/SYNTHETIC_VERIFICATION_LOG.md`, C2–C4 wording, authorization of local documentation edits only.

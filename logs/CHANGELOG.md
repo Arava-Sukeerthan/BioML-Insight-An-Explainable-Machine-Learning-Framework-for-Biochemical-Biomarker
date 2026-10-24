@@ -1003,3 +1003,29 @@ No approval of FA-2, the protocol or any decision is implied.
 - No definition, outcome, population or status changed. FA-2 remains preferred and unapproved; the ADA evidence (Q-061) and Q-060 remain open.
 - S-09b was not run, and no equation was applied.
 - The commit hash is recorded in Git history and the task report, not in this file.
+
+## 2026-10-24 — GOV-D040-RULE-S (record D-040: Rule S and Synthetic Verification Exemption; local edits only)
+
+**Objective**: record the owner-approved Rule S and Synthetic Verification Exemption as D-040, add the approved cross-references (activation conditions K1–K4), create the header of the separate synthetic verification log, and update the task logs. **Local working-tree edits only; no commit, push, PR or remote contact** (owner authorization, 2026-10-24).
+
+**Start state**: branch `claude/eloquent-mccarthy-bqtxr3` at `6deaac5`, clean, tracking `origin/claude/eloquent-mccarthy-bqtxr3`. Pre-edit checks: working tree clean; target sections unchanged; `D-040`, `Q-062`, `GOV-D040` and `logs/SYNTHETIC_VERIFICATION_LOG.md` absent.
+
+**Owner approvals recorded** (owner prompts 2026-10-24): the governance-review C1 wording with the approved activation adjustment; K1–K4 as mandatory activation conditions; status APPROVED — CONDITIONAL (inactive); D-040 used, D-039 kept reserved; decision date 2026-10-24; `logs/SYNTHETIC_VERIFICATION_LOG.md`; the C2–C4 wording; scope A1, Rule S A2, date A3, protocol relationship A4 option (c), location A5, T10 excluded A6.
+
+**Modified**:
+- `logs/DECISION_LOG.md`: new section "Owner decision on synthetic software verification (added GOV-D040-RULE-S, 2026-10-24)" with D-040 (K1); new Status history row. No existing row changed.
+- `CLAUDE.md` rule 13: the approved exception sentence referencing D-040 (K2).
+- `GOVERNANCE.md` §2: the approved one-sentence cross-reference after the "No predictive model training" paragraph, added after K1 (K3).
+- `logs/EXPERIMENT_LOG.md` header: the approved pointer to the synthetic verification log (K4).
+- `research/reviews/unresolved_questions.md`: Q-062 appended (Open).
+- This file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`.
+
+**Created**: `logs/SYNTHETIC_VERIFICATION_LOG.md` (header only; no entries); `logs/session_logs/2026-10-24_GOV-D040-RULE-S.md`.
+
+**Activation status**: the K1–K4 edits exist in the working tree but are **uncommitted**. D-040 stays **APPROVED — CONDITIONAL (inactive)**; no activation row was recorded. Whether the conditions count as satisfied while uncommitted is for the owner to decide (Q-062). All existing restrictions remain in force.
+
+**Context**: the preceding read-only reviews in this session (F-A literature and full-text reviews, F-A specification, synthetic-test preparation, governance and environment proposals) changed no files and were not logged separately; they are summarised in the session log.
+
+**Not changed**: the experimental protocol draft; every other decision and status (D-002 stays PROPOSED; D-017, D-019 PENDING; D-039 reserved and unused); `scripts/run_checks.sh`; tests. No test code, test plan, environment, package installation, test run, data access, model training or experiment. No commit, push, PR or remote Git operation.
+
+**Validation**: see the session log. Local, read-only checks only (`git status`, `git diff`, ID uniqueness and table-structure checks). The existing test suites (`scripts/run_checks.sh`) were **not run**, because the authorization for this task excluded executing tests.

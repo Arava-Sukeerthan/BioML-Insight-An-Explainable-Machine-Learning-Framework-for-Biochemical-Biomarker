@@ -24,7 +24,7 @@ taken from the BIO-001 prompt. Read both files before every task.
 10. Do not silently modify approved research decisions (`logs/DECISION_LOG.md`). A revision is a new entry that references the old one. Do not change the status of an open proposal that is awaiting the researcher either: record a conflicting new proposal as an *alternative*, and leave both open (added in BIO-001-REVIEW). Cite decisions only by their `D-0nn` ID.
 11. The following are reserved for the researcher: the primary disorder, primary dataset, outcome definition, main contribution, evaluation protocol, and any change to an approved decision.
 12. Do not claim a task is complete without verifying its deliverables with real commands. Record the actual outcomes.
-13. No model training and no performance claims before Day 21 (2026-11-03), and not before the experimental protocol is approved.
+13. No model training and no performance claims before Day 21 (2026-11-03), and not before the experimental protocol is approved. Exception: synthetic-only software verification that satisfies Rule S is not model training under this rule (see `logs/DECISION_LOG.md`, D-040).
 
 ## 3. Every task
 1. Pre-task: run `git status`, `git log`, read the relevant files, and identify user changes.
