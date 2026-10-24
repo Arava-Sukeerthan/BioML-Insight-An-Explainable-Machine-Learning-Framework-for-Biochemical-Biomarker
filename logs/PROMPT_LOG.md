@@ -201,5 +201,5 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Objective | Decision proposal for the RQ5 selection component; no screening or implementation |
 | Actual completion status | Proposal completed (D-032 PROPOSED); awaiting owner response. Not pushed (branch strategy needs the owner's decision) |
 | Branch | Local `q037a-feature-selection` (based on `9497a3a`, PR #3's head); not pushed |
-| Pull request | None (see branch note in CHANGELOG) |
+| Pull request | **#4** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/4 (open; dependent on PR #3, base `claude/sweet-brahmagupta-urw7l1`; not merged) |
 
