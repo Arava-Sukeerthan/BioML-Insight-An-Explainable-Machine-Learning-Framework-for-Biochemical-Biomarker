@@ -90,3 +90,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** all 17 ballot items.
 - **Recommended next step:** owner fills in the ballot; responses are then recorded in `logs/DECISION_LOG.md` before any implementation.
 - **Researcher decisions:** _pending_
+
+## Day 11 (cont.) — 2026-10-24 — LIT-004-PROPOSED-RESPONSES
+- **Work completed:** proposed owner-response set v1 for the 17 ballot items (`research/reviews/proposed_owner_responses_LIT-004.md`); not recorded in the decision log.
+- **Important findings:** `[EVIDENCE]` no current record is affected by the retraction procedure (the 3 retracted articles are unlinked; no retraction notices). `[OPEN]` D-024 vs Q-034 scope of the approval; A-3/Q-028 deferred affects theme F screening in the pilot.
+- **Decisions requiring review:** owner confirmation of the response set (all or selected items); D-029 final definitions; D-030 retraction procedure.
+- **Recommended next step:** owner confirmation; then record in `logs/DECISION_LOG.md`, then the arXiv spot-check.
+- **Researcher decisions:** _pending_

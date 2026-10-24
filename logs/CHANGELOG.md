@@ -389,3 +389,19 @@ after PR #1 had been merged.
 
 **Validation (performed)**: `git diff` against the previous commit limited to the four documentation/log files plus this ballot; unit tests 50/50 OK; query table PASS; raw-export checksums OK; archive checksum OK (results in the completion report).
 **Not done**: no approval recorded, no implementation, no pilot, no screening, no pair resolved.
+
+## LIT-004-PROPOSED-RESPONSES — 2026-10-24 — Proposed owner-response set for the LIT-004 ballot (not recorded)
+
+**Prompt objective**: prepare the owner's proposed responses to the 17 ballot items for confirmation, without recording approvals or implementing anything.
+
+**Completed**
+- `research/reviews/proposed_owner_responses_LIT-004.md` (v1, PROPOSED): one response per ballot item with the conditions and dependencies that remain open; D-030 MODIFY with an evidence-based retraction procedure (only the retracted record gets E7; related versions never excluded automatically; decided from the notice's stated reason, with human review); Item 16 options reproduced verbatim with neutral consequences and no recommendation (the ballot's "more cautious" phrase is noted and not adopted); D-024/Q-034 ambiguity flagged; pilot-blocking items listed; confirmation line for the owner.
+- Checked `[EVIDENCE]`: the 3 retracted articles (P0931, P0939, P1443) are in no flagged pair; no retraction notice is present.
+
+**Created**: `research/reviews/proposed_owner_responses_LIT-004.md`, `logs/session_logs/2026-10-24_LIT-004-PROPOSED-RESPONSES.md`.
+**Modified**: `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file.
+**Not modified**: `logs/DECISION_LOG.md` (no status change), the ballot, `unresolved_questions.md`, schemas, code, tests, criteria, protocol, strategy, inventory, registry, raw exports, archive.
+**Deleted**: none.
+
+**Validation (performed)**: production diff empty; unit tests, query table, raw and archive checksums (results in the completion report).
+**Not done**: no response recorded, no spot-check run, no implementation, no pilot, no screening, no pair resolved.
