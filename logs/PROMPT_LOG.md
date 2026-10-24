@@ -210,6 +210,6 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Prompt date | 2026-10-24 (Day 11) |
 | Objective | Record 15 owner decisions (Q-037a, Q-037b, Q-038), reconcile them, and implement only what is safe; screening stays inactive |
 | Actual completion status | Decisions recorded (D-032 status change; D-033, D-034 new; all APPROVED — CONDITIONAL, inactive). `dim_feature_selection` implemented (optional, unused). `rq5_coverage_group` specified, implementation blocked. Q-039–Q-041 opened |
-| Branch | `q037a-feature-selection` (local commit; **not pushed**) |
-| Pull request | None updated. Pushing would extend PR #4 and needs owner authorization |
+| Branch | `rq5-decisions-d032-d034` (commit `ed432a9`, originally made locally on `q037a-feature-selection` and never pushed there) |
+| Pull request | **#5** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/5 (open; stacked on PR #4 → PR #3; not merged). Branch `rq5-decisions-d032-d034`; PR #3 and PR #4 unchanged |
 

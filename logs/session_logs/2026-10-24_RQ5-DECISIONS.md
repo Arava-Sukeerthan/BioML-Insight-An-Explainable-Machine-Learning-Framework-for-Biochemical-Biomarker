@@ -11,3 +11,4 @@
 | Implementation | `dim_feature_selection` optional column (schemas, code, report, 1 test). Real data rebuilt: IDs, registry and existing values unchanged; new column null ×2,979 |
 | Blocked | `rq5_coverage_group` (spec only), `dim_classification`, activation of D-031–D-034 |
 | Git | Local commit only; not pushed (would extend PR #4) |
+| PR | Owner chose a separate stacked PR. New branch `rq5-decisions-d032-d034` at `ed432a9`; the local `q037a-feature-selection` ref was reset to its remote; pushed; PR #5 opened (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/5) with base `q037a-feature-selection`. PR #3 and PR #4 unchanged |
