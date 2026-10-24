@@ -168,6 +168,13 @@ One entry per researcher review session (~1 h/day).
 - **Recommended next step:** owner review of this PR and PR #10.
 - **Researcher decisions:** Decisions A1 and B1, 2026-10-24.
 
+## Day 11 (cont.) — 2026-10-24 — GOV-PR10-12-MERGE-RECORD
+- **Work completed:** log-only record of the merges of PRs #10, #11 and #12; PR #13's description synchronized to its head `fde915a`.
+- **Important findings:** `[EVIDENCE]` PR #11 was merged into `q039-dim-classification`, not the default branch; PR #12 brought its content (`e8bf189`) into the default branch (`6f57b6f`). PR #12 had not been recorded in CHANGELOG/PROMPT_LOG until this record.
+- **Decisions requiring review:** whether to publish this record (push and PR); PR #13; D-039 proposal.
+- **Recommended next step:** owner review of this record and PR #13.
+- **Researcher decisions:** none in this task.
+
 ## Day 11 (cont.) — 2026-10-24 — Q-043-DECISION
 - **Work completed:** D-038 recorded (no marker; three-subgroup reporting rule for `qualified`). PR #10 description updated (Q-042 not an activation condition; still open). Merge sequence and the `abstract_only` Option A proposal prepared.
 - **Important findings:** `[EVIDENCE]` D-037 is the highest decision ID on every branch; D-038 was free. `[OPEN]` the Option A policy for `abstract_only` after a full-text assessment awaits approval.

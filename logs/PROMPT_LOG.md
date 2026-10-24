@@ -290,6 +290,18 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 
 > **Update (2026-10-24, PR10-AUDIT-DECISIONS).** The "Pull request" row above was written before the PR existed. **PR #11** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/11 — base `q039-dim-classification` (`f106fdc`, PR #10's head) ← head `claude/eloquent-mccarthy-bqtxr3` (`29523ea` plus this log-only commit). Open; awaiting owner review; not merged.
 
+### GOV-PR10-12-MERGE-RECORD
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | GOV-PR10-12-MERGE-RECORD (prompt: "prepare an append-only historical record documenting the actual merge history of PRs #10, #11 and #12"; also verify and synchronize PR #13 metadata) |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Record the verified merges of PRs #10, #11 and #12, and that D-037 reached the default branch through PR #12; log-only |
+| Actual completion status | Record prepared locally; awaiting owner review before publishing |
+| Branch | `gov-pr10-12-merge-record` (local, from default `6f57b6f`); not pushed |
+| Pull request | None; owner to decide (CLAUDE.md §3.5) |
+
+> **Correction (2026-10-24, GOV-PR10-12-MERGE-RECORD).** The Q-039-DECISION and PR10-AUDIT-DECISIONS entries above show PR #10 and PR #11 as open. That was correct when written. Verified now: **PR #10** merged into `claude/happy-hawking-rxptfv` (merge commit `ad650f9`, parents `17b0866`, `f106fdc`; 06:50:19 UTC, `Arava-Sukeerthan`). **PR #11** merged into `q039-dim-classification`, not the default branch (`bd0c8ee`, parents `f106fdc`, `e8bf189`; 06:50:31 UTC). **PR #12** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/12 — base `claude/happy-hawking-rxptfv` (`ad650f9`) ← head `claude/eloquent-mccarthy-bqtxr3` (`e8bf189`), opened with owner authorization to bring PR #11's D-037 changes into the default branch; merged (`6f57b6f`, parents `ad650f9`, `e8bf189`; 06:59:56 UTC, `Arava-Sukeerthan`). Details: CHANGELOG, GOV-PR10-12-MERGE-RECORD.
+
 ### Q-043-DECISION
 | Field | Value |
 |---|---|
