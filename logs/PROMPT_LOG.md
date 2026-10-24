@@ -325,3 +325,15 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Pull request | None; owner to decide (CLAUDE.md §3.5) |
 
 > **Correction (2026-10-24, GOV-PR13-14-MERGE-RECORD).** The Q-043-DECISION update note above shows PR #13 as open, and the GOV-PR10-12-MERGE-RECORD entry shows "Pull request: None". Both were correct when written. Verified now: **PR #14** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/14 — base `claude/happy-hawking-rxptfv` (`6f57b6f`) ← head `gov-pr10-12-merge-record` (`30905f4`); merged (`f7f6bb7`, parents `6f57b6f`, `30905f4`; 07:36:47 UTC, `Arava-Sukeerthan`). **PR #13** merged (`694b389`, parents `f7f6bb7`, `6776eba`; 07:48:00 UTC, `Arava-Sukeerthan`), after the authorized conflict-resolution merge `6776eba`. Details: CHANGELOG, GOV-PR13-14-MERGE-RECORD.
+
+### GOV-PR15-MERGE-RECORD
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | GOV-PR15-MERGE-RECORD (prompt: "perform a post-merge verification and prepare a follow-up governance record" for PR #15) |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Record the verified publication and merge of PR #15 (GOV-PR13-14-MERGE-RECORD); log-only |
+| Actual completion status | Record prepared locally; awaiting owner review. Final correction for the PR #13–#15 merge-history sequence (see CHANGELOG) |
+| Branch | `gov-pr15-merge-record` (local, from default `5c7d455`); not pushed |
+| Pull request | None; owner to decide (CLAUDE.md §3.5) |
+
+> **Correction (2026-10-24, GOV-PR15-MERGE-RECORD).** The GOV-PR13-14-MERGE-RECORD entry above shows the branch as "local … not pushed" and "Pull request: None". Both were correct when written. Verified now: **PR #15** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/15 — base `claude/happy-hawking-rxptfv` (`694b389`) ← head `gov-pr13-14-merge-record` (`4af0acb`); merged (`5c7d455`, parents `694b389`, `4af0acb`; 08:03:26 UTC, `Arava-Sukeerthan`). Details: CHANGELOG, GOV-PR15-MERGE-RECORD.

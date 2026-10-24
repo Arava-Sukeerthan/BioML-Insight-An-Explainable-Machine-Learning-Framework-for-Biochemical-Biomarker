@@ -188,3 +188,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** whether to publish this record; D-039 proposal.
 - **Recommended next step:** owner review of this record; then D-039.
 - **Researcher decisions:** none in this task.
+
+## Day 11 (cont.) — 2026-10-24 — GOV-PR15-MERGE-RECORD
+- **Work completed:** log-only record of the merge of PR #15 (`5c7d455`).
+- **Important findings:** `[EVIDENCE]` the PR #15 merge equals the reviewed head `4af0acb`. PR #15 had not been recorded by number until this record.
+- **Decisions requiring review:** whether to commit and publish this record; the remaining activation conditions in the D-035 record §6 (Q-040; D-027 and D-024; the remaining R5/D-029 items; criteria v1.1 and protocol v0.2, frozen as the pilot's `criteria_version`; the other pilot-blocking items). Separately, open question Q-042 (not an activation condition, D-037-B1).
+- **Recommended next step:** owner review of this record; then resolve the outstanding D-035 record §6 activation conditions above before D-039 is considered. D-039 is not started.
+- **Researcher decisions:** none in this task.
