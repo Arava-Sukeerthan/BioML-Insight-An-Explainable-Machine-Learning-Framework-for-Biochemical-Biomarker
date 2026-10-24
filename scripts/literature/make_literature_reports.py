@@ -42,9 +42,58 @@ EXTRACTION_FIELDS = ["research_problem", "disorder", "population", "dataset", "s
                      "calibration_methods", "reported_metrics", "limitations_noted"]
 INV_COLS = ["paper_id", "title", "authors", "year", "venue", "doi", "pmid", "arxiv_id", "url", "pmcid",
             "source_db", "query_ids", "retrieved_on", "verification_status", "verification_note",
-            "screening_status", "exclusion_reason", "publication_type", "rq_tags", "tier", "scope_flags",
+            "screening_status", "screening_stage", "exclusion_reason", "publication_type", "rq_tags", "tier",
+            "scope_flags", "record_type", "dim_explainability", "dim_uncertainty", "dim_calibration",
+            "dim_independent_validation", "screener", "screening_date", "screening_justification",
             "source_publication_types", "abstract_available", "full_text_availability", "retrieval_themes",
             "preliminary_relevance", "extraction_status"] + EXTRACTION_FIELDS + ["notes"]
+
+
+# Fields filled by people (extraction). A rebuild carries their existing values forward instead
+# of resetting them (LIT-004-WORKFLOW-FIXES).
+MANUAL_FIELDS = EXTRACTION_FIELDS + ["extraction_status", "publication_type"]
+MANUAL_DEFAULTS = {**{k: SENTINEL for k in EXTRACTION_FIELDS}, "extraction_status": "not_extracted",
+                   "publication_type": None}
+YEAR_NOTE = "year not returned by the source (0 = missing)"   # generated, not a manual note
+
+
+def _csv_text(v):
+    """A value as csv.DictWriter writes it (None -> empty)."""
+    return "" if v is None else str(v)
+
+
+def manual_values(lit):
+    """Manual values of the existing inventory, keyed by paper ID. paper_inventory.json is the file
+    that is edited; the CSV is a generated copy. If the CSV was changed after it was generated
+    (checksum recorded in collection_stats.json), its manual fields must agree with the JSON,
+    otherwise an edit made in the CSV would be overwritten silently, so the run stops instead
+    (LIT-004-REVIEW-AND-DECISIONS)."""
+    jpath, cpath = lit / "paper_inventory.json", lit / "paper_inventory.csv"
+    previous = {r["paper_id"]: r for r in json.load(open(jpath))} if jpath.exists() else {}
+    spath = lit / "records" / "collection_stats.json"
+    recorded = json.load(open(spath)).get("paper_inventory_csv_sha256") if spath.exists() else None
+    if cpath.exists() and recorded != pr.sha256_file(cpath):
+        with open(cpath, newline="") as f:
+            rows = {r["paper_id"]: r for r in csv.DictReader(f)}
+        if not previous and any(any(_csv_text(MANUAL_DEFAULTS[k]) != r.get(k, "") for k in MANUAL_FIELDS)
+                                or r.get("notes", "") not in ("", YEAR_NOTE) for r in rows.values()):
+            raise SystemExit("paper_inventory.csv has manual values but paper_inventory.json is missing "
+                             "(nothing written)")
+        diff = sorted(f"{pid}:{k}" for pid, r in previous.items() for k in MANUAL_FIELDS + ["notes"]
+                      if pid in rows and k in rows[pid] and _csv_text(r.get(k)) != rows[pid][k])
+        diff += sorted(f"{pid}:(row only in one file)" for pid in set(rows) ^ set(previous)) if previous else []
+        if diff:
+            raise SystemExit("paper_inventory.csv and paper_inventory.json disagree on manual fields; "
+                             "copy the edits into the JSON file first (nothing written): "
+                             + ", ".join(diff[:20]) + (" ..." if len(diff) > 20 else ""))
+    out = {}
+    for pid, r in previous.items():
+        v = {k: r.get(k) for k in MANUAL_FIELDS if k in r and r.get(k) != MANUAL_DEFAULTS[k]}
+        if r.get("notes") not in (None, YEAR_NOTE):
+            v["notes"] = r["notes"]
+        if v:
+            out[pid] = v
+    return out
 
 
 def load_jsonl(path):
@@ -119,10 +168,17 @@ def main(argv=None):
     stats["retracted"] = report["retracted"]
 
     # ---------------- evidence table (paper_inventory) ----------------
+    manual_prev = manual_values(lit)
+    built = {p["paper_id"] for p in pubs}
+    lost = sorted(set(manual_prev) - built)
+    if lost:
+        raise SystemExit("paper_inventory.json has manual values for paper IDs that are not in the "
+                         f"current build (nothing written): {', '.join(lost)}")
     inv = []
     for p in pubs:
         qids = sorted({s["query_id"] for s in p["search_provenance"]})
         th = themes_of(qids)
+        sd = p.get("screening_details") or {}
         row = {
             "paper_id": p["paper_id"], "title": p["title"] or "", "authors": author_string(p["authors"]),
             "year": p["year"], "venue": p["journal"] or "", "doi": p["doi"], "pmid": p["pmid"],
@@ -130,23 +186,41 @@ def main(argv=None):
             "source_db": p["source_databases"][0], "query_ids": ";".join(qids),
             "retrieved_on": min(s["search_timestamp"] for s in p["search_provenance"])[:10],
             "verification_status": p["verification_status"], "verification_note": p["verification_note"],
-            "screening_status": "not_screened", "exclusion_reason": None, "publication_type": None,
-            "rq_tags": None, "tier": None,
-            "scope_flags": "retracted" if p["retracted"] else None,
+            "screening_status": p["screening_decision"], "screening_stage": p["screening_stage"],
+            "exclusion_reason": p["exclusion_reason"], "publication_type": None,
+            "rq_tags": sd.get("rq_tags"), "tier": int(sd["tier"]) if sd.get("tier") else None,
+            "scope_flags": ";".join(x for x in (["retracted"] if p["retracted"] else [])
+                                    + ((sd.get("scope_flags") or "").split(";")) if x) or None,
+            "record_type": sd.get("record_type"), "dim_explainability": sd.get("dim_explainability"),
+            "dim_uncertainty": sd.get("dim_uncertainty"), "dim_calibration": sd.get("dim_calibration"),
+            "dim_independent_validation": sd.get("dim_independent_validation"),
+            "screener": sd.get("screener"), "screening_date": sd.get("date"),
+            "screening_justification": sd.get("justification"),
             "source_publication_types": ";".join(p["publication_types"] or []) or None,
             "abstract_available": bool(p["abstract"]),
             "full_text_availability": p["full_text_availability"],
             "retrieval_themes": ";".join(th) or None,
-            "preliminary_relevance": ("retrieved by theme(s) " + ", ".join(th) + "; not screened"
-                                      if th else "no theme mapping; not screened"),
+            "preliminary_relevance": (("retrieved by theme(s) " + ", ".join(th) if th else "no theme mapping")
+                                      + ("; not screened" if p["screening_decision"] == "not_screened"
+                                         else f"; screening decision: {p['screening_decision']}")),
             "extraction_status": "not_extracted",
             **{k: SENTINEL for k in EXTRACTION_FIELDS},
             "notes": None,
         }
         if row["year"] is None:
             row["year"] = 0  # schema requires an integer; 0 = year not returned by the source
-            row["notes"] = "year not returned by the source (0 = missing)"
+            row["notes"] = YEAR_NOTE
+        row.update(manual_prev.get(p["paper_id"], {}))
         inv.append(row)
+    try:   # validate before anything is written
+        import jsonschema
+        schema = json.load(open(lit / "schemas" / "paper_inventory.schema.json"))
+        jsonschema.validate(inv, schema)
+        stats["paper_inventory_schema"] = "valid"
+    except ImportError:  # pragma: no cover
+        stats["paper_inventory_schema"] = "not checked (jsonschema missing)"
+    stats["manual_values_carried_forward"] = sum(len(v) for v in manual_prev.values())
+    stats["screening_status"] = dict(sorted(collections.Counter(r["screening_status"] for r in inv).items()))
     with open(lit / "paper_inventory.json", "w") as f:
         json.dump(inv, f, indent=1, ensure_ascii=False)
         f.write("\n")
@@ -154,13 +228,7 @@ def main(argv=None):
         w = csv.DictWriter(f, fieldnames=INV_COLS)
         w.writeheader()
         w.writerows(inv)
-    try:
-        import jsonschema
-        schema = json.load(open(lit / "schemas" / "paper_inventory.schema.json"))
-        jsonschema.validate(inv, schema)
-        stats["paper_inventory_schema"] = "valid"
-    except ImportError:  # pragma: no cover
-        stats["paper_inventory_schema"] = "not checked (jsonschema missing)"
+    stats["paper_inventory_csv_sha256"] = pr.sha256_file(lit / "paper_inventory.csv")
 
     # ---------------- full-text review candidates (mechanical) ----------------
     cand = []

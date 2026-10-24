@@ -13,6 +13,7 @@ Pipeline (see research/literature/collection_workflow.md):
 Manual inputs that survive rebuilds:
   records/dedup_decisions.csv        paper_id_a,paper_id_b,decision(same|different),reviewer,date,note
   screening/decisions.csv            paper_id,stage,decision,reason_code,screener,date,justification
+                                     (+ optional descriptor columns; schemas/screening_decision.schema.json)
   records/verification_overrides.csv paper_id,verification_status,note,reviewer,date
   records/fulltext_status.csv        paper_id,full_text_availability,note,date
 
@@ -51,6 +52,26 @@ CHECK_PREFIX = "CHECK-"
 ABSTRACT_PLACEHOLDER = re.compile(r"\[\s*abstract not available\s*\]\.?", re.I)
 FUZZY_THRESHOLD = 0.90
 SCREENING_STAGE_ORDER = {"title_abstract": 1, "full_text": 2}
+# Screening decision file (LIT-004-WORKFLOW-FIXES). Kept in step with
+# research/literature/schemas/screening_decision.schema.json (checked by a unit test).
+SCREENING_REQUIRED = ["paper_id", "stage", "decision", "reason_code", "screener", "date", "justification"]
+SCREENING_OPTIONAL = ["rq_tags", "tier", "scope_flags", "record_type", "dim_explainability",
+                      "dim_uncertainty", "dim_calibration", "dim_independent_validation",
+                      "criteria_version", "needs_human"]
+SCREENING_DECISIONS = ("include", "exclude", "uncertain", "abstract_only")   # "not_screened" = no row
+SCREENING_ENUMS = {
+    "stage": ("title_abstract", "full_text"),
+    "decision": SCREENING_DECISIONS,
+    "tier": ("", "1", "2", "3"),
+    "record_type": ("", "original", "methodological", "software", "guideline", "review_lead", "preprint", "notice"),
+    "dim_explainability": ("", "yes", "no", "unclear"),
+    "dim_uncertainty": ("", "yes", "no", "unclear"),
+    "dim_calibration": ("", "yes", "no", "unclear"),
+    "dim_independent_validation": ("", "external", "temporal", "internal_only", "unclear"),
+    "needs_human": ("", "yes", "no"),
+}
+REASON_CODE = re.compile(r"E(1[0-2]|[1-9])")
+RQ_TAGS = re.compile(r"(RQ[1-6])(;RQ[1-6])*")
 
 
 # --------------------------------------------------------------------------------------------
@@ -663,6 +684,12 @@ def record_keys(r):
     t = normalize_title(r.get("title"))
     if t and r.get("year"):
         keys.append(f"title:{t}|{r['year']}")
+    if not keys and r.get("source_record_id"):
+        # LIT-004-WORKFLOW-FIXES (B-1): a record with no persistent identifier and no year has
+        # no other stable key. Its source-record ID (raw file stem + rank) is deterministic
+        # (raw files are immutable and checksummed) and unique to one cluster, so the paper ID
+        # can never be re-assigned on a rebuild.
+        keys.append(f"source_record:{r['source_record_id']}")
     return keys
 
 
@@ -817,12 +844,28 @@ def build(lit_dir, today=None, check_schema=True):
     ids, reg_conflicts = assign_ids(clusters, records, rec_dir / "paper_id_registry.csv", today)
     cluster_of = {i: c for c, idx in enumerate(clusters) for i in idx}
 
+    screening_rows = load_screening_decisions(lit_dir)
     screening = {}
-    for d in sorted(_read_csv(lit_dir / "screening" / "decisions.csv"),
-                    key=lambda d: (SCREENING_STAGE_ORDER.get(d["stage"], 0), d["date"])):
-        screening[d["paper_id"]] = d
+    for d in sorted(screening_rows, key=lambda d: (SCREENING_STAGE_ORDER[d["stage"]], d["date"])):
+        screening[d["paper_id"]] = d          # latest stage, then latest date, then file order
     overrides = {d["paper_id"]: d for d in _read_csv(rec_dir / "verification_overrides.csv")}
     fulltext = {d["paper_id"]: d for d in _read_csv(rec_dir / "fulltext_status.csv")}
+    # manual inputs that point at a paper ID absent from this build would be silently lost:
+    # stop instead (LIT-004-WORKFLOW-FIXES)
+    built_ids = set(ids.values())
+    orphans = sorted({(name, pid) for name, rows_ in (
+        ("screening/decisions.csv", screening_rows),
+        ("records/verification_overrides.csv", overrides.values()),
+        ("records/fulltext_status.csv", fulltext.values()),
+        ("records/dedup_decisions.csv", [{"paper_id": x} for d in decisions for x in (d["paper_id_a"], d["paper_id_b"])
+                                         if d["decision"] != "same"]))
+        for pid in (r["paper_id"] for r in rows_) if pid not in built_ids})
+    # a "same" decision absorbs one of its two IDs into the other, so only one has to survive
+    orphans += sorted(("records/dedup_decisions.csv", d["paper_id_a"] + "+" + d["paper_id_b"]) for d in decisions
+                      if d["decision"] == "same" and not {d["paper_id_a"], d["paper_id_b"]} & built_ids)
+    if orphans:
+        raise RuntimeError("manual inputs refer to paper IDs not in this build (nothing written): "
+                           + "; ".join(f"{n}:{p}" for n, p in orphans))
 
     review_rows, review_by_pid = [], {}
     for a, b, reason, sim in review:
@@ -881,6 +924,9 @@ def build(lit_dir, today=None, check_schema=True):
             "screening_decision": sc["decision"] if sc else "not_screened",
             "screening_stage": sc["stage"] if sc else None,
             "exclusion_reason": (sc.get("reason_code") or None) if sc else None,
+            "screening_details": ({k: sc.get(k) or None for k in
+                                   ["screener", "date", "justification"] + SCREENING_OPTIONAL}
+                                  if sc else None),
             "retracted": any("Retracted Publication" in (m.get("publication_types") or []) for m in members),
         })
     pubs.sort(key=lambda p: int(p["paper_id"][1:]))
@@ -933,10 +979,93 @@ def build(lit_dir, today=None, check_schema=True):
         "registry_conflicts": [{"kept": k, "also": v} for k, v in reg_conflicts],
         "search_completeness": completeness,
         "retracted": [p["paper_id"] for p in pubs if p["retracted"]],
+        "screening_decision": _count(p["screening_decision"] for p in pubs),
+        "publications_without_stable_registry_key": sum(
+            1 for c in clusters if not any(record_keys(records[i]) for i in c)),
     }
     with open(rec_dir / "build_report.json", "w") as f:
         json.dump(report, f, indent=2, sort_keys=True)
     return report
+
+
+def load_screening_decisions(lit_dir):
+    """Read and validate screening/decisions.csv. Any invalid row stops the build (no row is
+    silently dropped). Returns the rows as dicts (all columns as strings)."""
+    path = Path(lit_dir) / "screening" / "decisions.csv"
+    if not path.exists():
+        return []
+    with open(path, newline="") as f:
+        reader = csv.DictReader(f)
+        cols = reader.fieldnames or []
+        missing = [c for c in SCREENING_REQUIRED if c not in cols]
+        unknown = [c for c in cols if c not in SCREENING_REQUIRED + SCREENING_OPTIONAL]
+        if missing or unknown:
+            raise ValueError(f"{path}: missing columns {missing}, unknown columns {unknown}")
+        rows = [{k: (v or "").strip() for k, v in r.items()} for r in reader]
+    errors = []
+    for n, r in enumerate(rows, start=2):
+        for k in SCREENING_OPTIONAL:
+            r.setdefault(k, "")
+        where = f"line {n} ({r['paper_id'] or '?'})"
+        if not re.fullmatch(r"P\d{4,}", r["paper_id"]):
+            errors.append(f"{where}: bad paper_id")
+        for k, allowed in SCREENING_ENUMS.items():
+            if r[k] not in allowed:
+                errors.append(f"{where}: {k}={r[k]!r} not in {allowed}")
+        if r["decision"] == "exclude" and not REASON_CODE.fullmatch(r["reason_code"]):
+            errors.append(f"{where}: exclude needs reason_code E1-E12")
+        if r["decision"] != "exclude" and r["reason_code"]:
+            errors.append(f"{where}: reason_code only allowed with decision=exclude")
+        if r["decision"] == "abstract_only" and r["stage"] != "full_text":
+            errors.append(f"{where}: abstract_only is a full-text-stage decision")
+        if r["decision"] in ("exclude", "uncertain") and not r["justification"]:
+            errors.append(f"{where}: justification required for {r['decision']}")
+        if not r["screener"]:
+            errors.append(f"{where}: screener required")
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", r["date"]):
+            errors.append(f"{where}: date must be YYYY-MM-DD")
+        if r["rq_tags"] and not RQ_TAGS.fullmatch(r["rq_tags"]):
+            errors.append(f"{where}: rq_tags must be like RQ1;RQ3")
+    if errors:
+        raise ValueError(f"{path}: invalid screening decisions:\n  " + "\n  ".join(errors))
+    return rows
+
+
+def migrate_fallback_keys(lit_dir, today=None):
+    """One-off migration for B-1: give publications of the last build that have no registry key
+    a fallback key mapped to the paper ID they already carry, so the ID is kept rather than
+    re-assigned. Appends to the registry only; refuses on any collision. Returns the mapping."""
+    lit_dir = Path(lit_dir)
+    rec_dir = lit_dir / "records"
+    today = today or dt.date.today().isoformat()
+    reg_path = rec_dir / "paper_id_registry.csv"
+    reg = load_registry(reg_path)
+    src = {}
+    with open(rec_dir / "source_records.jsonl") as f:
+        for line in f:
+            r = json.loads(line)
+            src[r["source_record_id"]] = r
+    new_rows, mapping = [], []
+    with open(rec_dir / "publications.jsonl") as f:
+        for line in f:
+            p = json.loads(line)
+            members = [src[s["source_record_id"]] for s in p["search_provenance"]]
+            keys = sorted({k for m in members for k in record_keys(m)})
+            if any(k in reg for k in keys if not k.startswith("source_record:")):
+                continue                     # already stable through a persistent key
+            for k in keys:
+                if k in reg and reg[k] != p["paper_id"]:
+                    raise ValueError(f"collision: {k} already maps to {reg[k]}, not {p['paper_id']}")
+                if k not in reg:
+                    new_rows.append({"key": k, "paper_id": p["paper_id"], "first_seen": today})
+                    reg[k] = p["paper_id"]
+                    mapping.append({"paper_id_before": p["paper_id"], "paper_id_after": p["paper_id"],
+                                    "registry_key": k, "title": p["title"],
+                                    "source_url": (p["source_urls"] or [None])[0]})
+    if new_rows:
+        with open(reg_path, "a", newline="") as f:
+            csv.DictWriter(f, fieldnames=["key", "paper_id", "first_seen"]).writerows(new_rows)
+    return mapping
 
 
 def _count(it):
@@ -990,6 +1119,8 @@ def main(argv=None):
     c.add_argument("refetch_file")
     s = sub.add_parser("check-search", help="compare a query's search pages with its CHECK- re-fetch")
     s.add_argument("query_id")
+    mg = sub.add_parser("migrate-fallback-keys", help="B-1: register fallback keys for the last build's IDs")
+    mg.add_argument("--mapping-out", required=True, help="CSV file for the ID mapping report")
     t = sub.add_parser("set-check", help="record a transcription spot-check outcome manually")
     t.add_argument("raw_file")
     t.add_argument("status", choices=["passed", "failed", "not_done"])
@@ -1009,6 +1140,14 @@ def main(argv=None):
         status, detail = check_search(a.lit_dir, a.query_id)
         print(json.dumps({"status": status, **detail}, indent=2))
         return 0 if status == "passed" else 1
+    elif a.cmd == "migrate-fallback-keys":
+        mapping = migrate_fallback_keys(a.lit_dir)
+        cols = ["paper_id_before", "paper_id_after", "registry_key", "title", "source_url"]
+        with open(a.mapping_out, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=cols)
+            w.writeheader()
+            w.writerows(mapping)
+        print(f"{len(mapping)} registry keys added; mapping written to {a.mapping_out}")
     elif a.cmd == "set-check":
         set_transcription_check(a.lit_dir, a.raw_file, a.status, a.note)
         print(f"{a.raw_file}: transcription_check={a.status}")

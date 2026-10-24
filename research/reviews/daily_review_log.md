@@ -47,3 +47,74 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** Q-011 (confirm durable backup); earlier items unchanged (Q-022 etc.).
 - **Recommended next step:** keep a second private copy (e.g. institutional or private cloud storage) and confirm here. Then LIT-004 after the pending approvals.
 - **Researcher decisions:** _pending_
+
+## Day 10 (cont.) — 2026-10-23 — LIT-003-PRESERVATION-CONFIRMATION (second update)
+- **Work completed:** recorded a second checksum-verified copy of the LIT-003 archive on the researcher's computer.
+- **Important findings:** `[EVIDENCE]` (researcher-reported) two verified copies exist, both on the same computer. `[OPEN]` No off-device backup.
+- **Decisions requiring review:** Q-011 (off-device backup).
+- **Recommended next step:** put one copy on separate private media or storage and confirm it.
+- **Researcher decisions:** _pending_
+
+## Day 10 (cont.) — 2026-10-23 — LIT-004-PREPARATION
+- **Work completed:** draft screening protocol (`research/literature/screening_protocol.md`, v0.1, proposed); review of the 15 dedup pairs and 3 retraction flags (descriptive only, no decisions); blockers recorded.
+- **Important findings:** `[EVIDENCE]` 9 web-only records have unstable paper IDs (B-1). `[EVIDENCE]` The workflow cannot link preprint/published versions; 3 version pairs can never be merged (B-2). `[EVIDENCE]` Two different screening-file formats are specified in project documents (B-3); the inventory status enum lacks `uncertain` (B-4). `[EVIDENCE]` No off-device backup is available (no external drive).
+- **Decisions requiring review:** D-025, D-026; Q-026–Q-030; still Q-001, Q-002, Q-007/D-009, Q-008/D-008, Q-022, Q-024.
+- **Recommended next step:** researcher review of the protocol and blockers; then fix B-1 (and B-3/B-4 if approved) before generating the pilot sample.
+- **Researcher decisions:** _pending_
+
+## Day 10 (cont.) — 2026-10-23 — LIT-004-WORKFLOW-FIXES
+- **Work completed:** fixed blockers B-1 (stable IDs for 9 web-only records; IDs kept), B-3 (one validated screening file and schema), B-4 (screening status carried into the inventory; manual values survive rebuilds); 21 regression tests.
+- **Important findings:** `[EVIDENCE]` two rebuilds are byte-identical and keep every paper ID. `[EVIDENCE]` The inventory's `publication_type` list and the protocol's `record_type` list differ (Q-031). `[OPEN]` The format and key scheme are implemented but not approved (D-027).
+- **Decisions requiring review:** D-027 (with Q-027, Q-030); Q-031, Q-032; earlier items unchanged (D-025, D-026, Q-026, Q-028, Q-029, Q-001, Q-002, Q-007/D-009, Q-008/D-008, Q-022, Q-024).
+- **Recommended next step:** `[RECOMMENDATION]` researcher review of D-027 and the remaining blockers B-2, B-5, B-6; then the pilot sample (D-025) once approved.
+- **Researcher decisions:** _pending_
+
+
+## Day 10 (cont.) — 2026-10-23 — LIT-004-REVIEW-AND-DECISIONS
+- **Work completed:** decision texts for D-027–D-030 prepared; version-linking proposal; scope decision brief; two integrity gaps in the report script closed; 7 tests.
+- **Important findings:** `[EVIDENCE]` the stated meanings for Q-031 and Q-032 conflict with the current schema/D-026 (options prepared). `[EVIDENCE]` `same` decisions cannot link versions and are ignored for identifier-conflict pairs. `[EVIDENCE]` Proteomics is undefined in the biomarker scope (Q-033).
+- **Decisions requiring review:** D-027, D-028, D-029, D-030; scope items in `scope_decision_brief.md`; full list in `approval_request_LIT-004.md` §3.
+- **Recommended next step:** `[RECOMMENDATION]` researcher approvals per `approval_request_LIT-004.md` §3, then implement D-028–D-030 and generate the pilot.
+- **Researcher decisions:** _pending_
+
+## Day 10 (cont.) — 2026-10-23 — LIT-004-DECISION-RECONCILIATION
+- **Work completed:** consolidated decision table and reconciliation (`research/reviews/decision_reconciliation_LIT-004.md`); no production change.
+- **Important findings:** `[EVIDENCE]` the prepared D-028 enum misses protocols, datasets, guidelines and expressions of concern; D-029 as prepared differs from the owner's restatement; D-030 is ambiguous on primaries, withdrawals, retractions and PRISMA levels; the D-012 spot-check was not done for arXiv/web; 30 of 56 planned searches were not run. `[HYPOTHESIS]` Q-PM-02 is both broader and narrower than the provisional scope (MeSH tree not verified).
+- **Decisions requiring review:** 15 items in §9 of the reconciliation; Q-035, Q-036.
+- **Recommended next step:** `[RECOMMENDATION]` owner answers §9; then the implementation order in §10.
+- **Researcher decisions:** _pending_
+
+## Day 11 — 2026-10-24 — LIT-004-OWNER-BALLOT
+- **Work completed:** owner-review ballot `research/reviews/owner_review_ballot_LIT-004.md` (17 items, APPROVE/REJECT/MODIFY/DEFER fields).
+- **Important findings:** `[EVIDENCE]` all 34 source publication types are covered by the D-028 mapping; the 15 dedup pairs reconcile exactly with `dedup_review.csv` (30 IDs, no mismatch); 26 of 56 planned searches were executed.
+- **Decisions requiring review:** all 17 ballot items.
+- **Recommended next step:** owner fills in the ballot; responses are then recorded in `logs/DECISION_LOG.md` before any implementation.
+- **Researcher decisions:** _pending_
+
+## Day 11 (cont.) — 2026-10-24 — LIT-004-PROPOSED-RESPONSES
+- **Work completed:** proposed owner-response set v1 for the 17 ballot items (`research/reviews/proposed_owner_responses_LIT-004.md`); not recorded in the decision log.
+- **Important findings:** `[EVIDENCE]` no current record is affected by the retraction procedure (the 3 retracted articles are unlinked; no retraction notices). `[OPEN]` D-024 vs Q-034 scope of the approval; A-3/Q-028 deferred affects theme F screening in the pilot.
+- **Decisions requiring review:** owner confirmation of the response set (all or selected items); D-029 final definitions; D-030 retraction procedure.
+- **Recommended next step:** owner confirmation; then record in `logs/DECISION_LOG.md`, then the arXiv spot-check.
+- **Researcher decisions:** _pending_
+
+## Day 11 (cont.) — 2026-10-24 — LIT-004-CLARIFICATION-ADDENDUM
+- **Work completed:** clarification addendum (`research/reviews/clarification_addendum_LIT-004.md`) with response fields R1–R6.
+- **Important findings:** `[EVIDENCE]` the retraction procedure needs a Stage-0 amendment (notices not covered); mechanical RQ5 derivation would need a feature-selection descriptor. `[RECOMMENDATION]` decide Q-028 before the pilot (owner's choice).
+- **Decisions requiring review:** R1–R6.
+- **Recommended next step:** owner answers R1–R6 and confirms what is to be recorded.
+- **Researcher decisions:** _pending_
+
+## Day 11 (cont.) — 2026-10-24 — LIT-004-FINAL-CONFIRMATION-SHEET
+- **Work completed:** final confirmation sheet (`research/reviews/final_confirmation_sheet_LIT-004.md`).
+- **Important findings:** `[EVIDENCE]` after confirmation, the pilot is still blocked by Q-028 (or the provisional alternative), the D-029 definitions, the recorded schema decisions, the arXiv spot-check, implementation and criteria v1.1/protocol v0.2.
+- **Decisions requiring review:** R1–R6 and the v1 items.
+- **Recommended next step:** owner completes the sheet; then recording per R6.
+- **Researcher decisions:** _pending_
+
+## Day 11 (cont.) — 2026-10-24 — LIT-004-Q028-DECISION
+- **Work completed:** owner response to Q-028 verified and recorded as D-031 (APPROVED — CONDITIONAL).
+- **Important findings:** `[EVIDENCE]` feature selection and "covering" have no operational screening definition; X/C/U definitions await R5. `[RECOMMENDATION]` report 3-of-5 frameworks so no novelty conclusion depends on the threshold (Q-038, owner decision).
+- **Decisions requiring review:** Q-037, Q-038, R5; all other final-confirmation-sheet lines.
+- **Recommended next step:** owner answers Q-037, Q-038 and R5 (and the remaining sheet lines); then criteria v1.1.
+- **Researcher decisions:** Q-028 → option (c), 2026-10-24 (D-031, conditional).

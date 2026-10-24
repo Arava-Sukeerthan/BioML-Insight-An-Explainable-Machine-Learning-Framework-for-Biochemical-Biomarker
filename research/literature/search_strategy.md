@@ -308,6 +308,8 @@ The assistant screens all records against the criteria. Possible decisions are `
 stored in `research/literature/screening/title_abstract_decisions.csv` (record ID, decision,
 reason code, RQ tags, one-line justification, screener, date).
 
+> **Implementation note (LIT-004-WORKFLOW-FIXES, 2026-10-23; proposed, D-027, not approved).** The pipeline reads a single file, `screening/decisions.csv`, with the stage as a column (`title_abstract` / `full_text`) instead of two files. `record_id` above is the `paper_id`. Required columns: `paper_id, stage, decision, reason_code, screener, date, justification`; optional: `rq_tags, tier, scope_flags, record_type, dim_explainability, dim_uncertainty, dim_calibration, dim_independent_validation, criteria_version, needs_human`. Columns, types and allowed values: `schemas/screening_decision.schema.json`. No documented field was dropped. The text above is kept unchanged until the researcher decides on D-027.
+
 ### 6.3 Stage 2 — full-text screening
 Full text comes from PMC (open access) through the connector, or from a PDF the researcher
 provides. If full text is unavailable, the record may be retained as **abstract-only** if the
@@ -431,3 +433,4 @@ claiming PRISMA compliance for a systematic review.
 |---|---|---|---|
 | 1.0 | 2026-10-14 | Initial draft (LIT-001) | Pending |
 | 1.0.1 | 2026-10-14 | LIT-002: schema path updated (`schemas/`); pointer to `collection_workflow.md` added; §9 task labels updated (LIT-002 became the workflow task). No change to queries or criteria | Pending |
+| 1.0.1 (note) | 2026-10-23 | LIT-004-WORKFLOW-FIXES: implementation note under §6.2 (screening file name and columns as implemented; D-027 proposed). Text, queries and criteria unchanged; no version bump | Pending |

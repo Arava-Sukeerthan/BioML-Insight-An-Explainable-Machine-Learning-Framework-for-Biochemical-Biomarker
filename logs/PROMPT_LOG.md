@@ -13,6 +13,16 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | LIT-003 | 2026-10-23 | B | Execute the stored literature searches; provenance, dedup, verification, evidence table, reports; no screening/models | Completed for accessible sources (PubMed, arXiv/alphaXiv, web); others blocked. See detailed entry | `b48adde` |
 | LIT-003-HOTFIX | 2026-10-23 | B | Preserve the 205 LIT-003 raw exports (inventory, verified archive, durable storage) | Archive created, verified and delivered to the researcher; **durable preservation pending** researcher action (preservation_status.md) | see CHANGELOG |
 | LIT-003-PRESERVATION-CONFIRMATION | 2026-10-23 | B | Record the researcher's Windows SHA-256 verification of the downloaded archive; do not overstate durable storage | Completed: downloaded copy verified (researcher-reported); durable backup still pending (Q-011) | see CHANGELOG |
+| LIT-003-PRESERVATION-CONFIRMATION (2nd) | 2026-10-23 | B | Record the verified download and a second local copy; do not claim an off-device backup | Completed: integrity verified, local redundancy (same computer); off-device backup outstanding (Q-011) | see CHANGELOG |
+| LIT-004-PREPARATION | 2026-10-23 | B | Prepare a pilot title/abstract screening protocol; no screening | Draft protocol (proposed, D-025/D-026); blockers B-1…B-6 and Q-026–Q-030 recorded; awaiting human review | see CHANGELOG |
+| LIT-004-WORKFLOW-FIXES | 2026-10-23 | B | Fix reproducibility blockers B-1, B-3, B-4 before screening | Stable fallback IDs (9 IDs kept); one validated screening format; screening status carried into the inventory; 21 regression tests; D-027 proposed; no screening | see CHANGELOG |
+| LIT-004-REVIEW-AND-DECISIONS | 2026-10-23 | B | Prepare decisions for approval; version-linking and scope briefs; integrity checks | D-027–D-030 proposed with exact texts; briefs written; 7 integrity tests; awaiting human review; no screening | see CHANGELOG |
+| LIT-004-DECISION-RECONCILIATION | 2026-10-23 | B | Reconcile owner choices with governance and decision texts; no production change | Consolidated decision table; 9 contradictions; 15 approval items; implementation order; awaiting human review | see CHANGELOG |
+| LIT-004-OWNER-BALLOT | 2026-10-24 | B | Final owner-review ballot for outstanding LIT-004 decisions; documentation only | 17-item ballot with response fields; awaiting owner responses | see CHANGELOG |
+| LIT-004-PROPOSED-RESPONSES | 2026-10-24 | B | Prepare proposed owner responses to the 17-item ballot; no recording, no implementation | Proposed response set v1 with conditions; D-030 retraction procedure; awaiting owner confirmation | see CHANGELOG |
+| LIT-004-CLARIFICATION-ADDENDUM | 2026-10-24 | B | Clarify D-024/Q-034, Q-028 timing, D-030 retraction procedure, D-029 definitions; response fields | Addendum with R1–R6 response fields; awaiting owner review | see CHANGELOG |
+| LIT-004-FINAL-CONFIRMATION-SHEET | 2026-10-24 | B | Final owner confirmation sheet; no recording, no implementation | Sheet with R1–R6, v1 items and pilot-blocking list; awaiting owner confirmation | see CHANGELOG |
+| LIT-004-Q028-DECISION | 2026-10-24 | B | Record owner response to Q-028 (option c) after verification | D-031 APPROVED — CONDITIONAL (C1–C4); Q-037, Q-038 opened; no other decision changed | see CHANGELOG |
 
 ## Detailed entries
 
@@ -57,3 +67,129 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
 | Commit | `b48adde` (work commit; log update in a follow-up commit) |
 | Pull request | #2 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2 (open; not merged) |
+
+### LIT-004-WORKFLOW-FIXES
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-WORKFLOW-FIXES |
+| Prompt date | 2026-10-23 (Day 10) |
+| Objective | Resolve the technical reproducibility problems B-1 (unstable record IDs), B-3 (conflicting screening formats) and B-4 (screening-status field) found in LIT-004-PREPARATION, before any screening |
+| Expected deliverables | Deterministic IDs with a migration/mapping report; one consistent screening format (filename, columns, types) in documents and code; status model for include/exclude/uncertain/abstract_only/not_screened carried into the reports; regression tests; logs; concise report |
+| Actual completion status | Completed for review. All three implemented on the PR branch; the format and key scheme are **proposed (D-027), not approved**. No records screened, no pilot sample generated, no duplicate pair resolved |
+| Output files | see CHANGELOG LIT-004-WORKFLOW-FIXES |
+| Validation status | Performed: 43/43 unit tests, query table PASS (158 rows), raw-export checksums OK, archive `sha256sum -c` OK, two rebuilds byte-identical, paper-ID → source-record mapping identical to the pre-fix build |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-WORKFLOW-FIXES: …"; hash reported in the completion report) |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+### LIT-004-REVIEW-AND-DECISIONS
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-REVIEW-AND-DECISIONS |
+| Prompt date | 2026-10-23 (Day 10) |
+| Objective | Prepare the researcher's decisions (D-027, Q-031, Q-032) for explicit approval; investigate version linking (B-2); scope decision brief (Q-001, Q-002, Q-007/D-009, Q-008/D-008, Q-022); integrity validation; no screening |
+| Expected deliverables | Exact decision texts; version-linking findings and proposal; scope brief; validation results; logs; report; stop for human review |
+| Actual completion status | Completed; awaiting human review. D-027–D-030 PROPOSED (none approved); conflicts found for Q-031 and Q-032 and recorded with options. Two integrity gaps in the report script fixed (CSV-only edits, manual notes). No screening, no pilot, no pair resolved |
+| Output files | see CHANGELOG LIT-004-REVIEW-AND-DECISIONS |
+| Validation status | Performed: 50/50 unit tests; query table PASS; raw checksums OK; archive OK; registry append-only across all commits |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-REVIEW-AND-DECISIONS: …"; hash in the completion report) |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+### LIT-004-DECISION-RECONCILIATION
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-DECISION-RECONCILIATION |
+| Prompt date | 2026-10-23 (Day 10) |
+| Objective | Consolidate and reconcile the pending decisions with the owner's recommended choices before pilot screening, without changing production files or decision statuses |
+| Expected deliverables | Consolidated decision table; contradictions; exact approval items; implementation order; review/session logs |
+| Actual completion status | Completed; awaiting human review. Nothing approved or implemented |
+| Output files | see CHANGELOG LIT-004-DECISION-RECONCILIATION |
+| Validation status | Performed (completion report) |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-DECISION-RECONCILIATION: …") |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+### LIT-004-OWNER-BALLOT
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-OWNER-BALLOT (prompt: "Prepare the final owner-review package for the outstanding LIT-004 decisions") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Consolidated, item-by-item owner ballot; no change to decisions, schemas, code, criteria, strategy or data |
+| Expected deliverables | Owner-review document with ballot fields; special checks A–G; logs; report |
+| Actual completion status | Completed; awaiting owner responses |
+| Output files | see CHANGELOG LIT-004-OWNER-BALLOT |
+| Validation status | Performed (completion report) |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-OWNER-BALLOT: …"); committed because CLAUDE.md §3.5 requires each completed task on the PR branch |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+### LIT-004-PROPOSED-RESPONSES
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-PROPOSED-RESPONSES (prompt: "Prepare a proposed owner-response update using the decisions below") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Proposed response set for the authoritative ballot, kept separate from the decision log until the owner confirms |
+| Expected deliverables | Clearly marked proposed responses; D-030 retraction procedure; neutral Item 16 options; logs; report |
+| Actual completion status | Completed; awaiting owner confirmation. Nothing recorded as approved |
+| Output files | see CHANGELOG LIT-004-PROPOSED-RESPONSES |
+| Validation status | Performed (completion report) |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-PROPOSED-RESPONSES: …"); committed under CLAUDE.md §3.5 |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+### LIT-004-CLARIFICATION-ADDENDUM
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-CLARIFICATION-ADDENDUM (prompt: "Prepare a concise clarification addendum for owner review") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Clarify the five open points of the proposed response set; documentation only |
+| Expected deliverables | Addendum with response fields; logs; report |
+| Actual completion status | Completed; awaiting owner review. Nothing recorded or implemented |
+| Output files | see CHANGELOG LIT-004-CLARIFICATION-ADDENDUM |
+| Validation status | Performed (completion report) |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-CLARIFICATION-ADDENDUM: …"); committed under CLAUDE.md §3.5 |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+### LIT-004-FINAL-CONFIRMATION-SHEET
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-FINAL-CONFIRMATION-SHEET (prompt: "Prepare a final confirmation sheet for the owner") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Single confirmation sheet with explicit response fields; documentation only |
+| Expected deliverables | Sheet; logs; report |
+| Actual completion status | Completed; awaiting owner confirmation. Nothing recorded or implemented |
+| Output files | see CHANGELOG LIT-004-FINAL-CONFIRMATION-SHEET |
+| Validation status | Performed (completion report) |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-FINAL-CONFIRMATION-SHEET: …"); committed under CLAUDE.md §3.5 |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+### LIT-004-Q028-DECISION
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-Q028-DECISION (prompt: "For Q-028, I select Option C …") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Verify and record the owner's Q-028 response only |
+| Expected deliverables | Component verification; eligibility and closest-prior-art effects; defensibility check; dependency list; decision log and owner-response updates; tests; report |
+| Actual completion status | Completed. D-031 recorded as APPROVED — CONDITIONAL; conditions C1–C4 open |
+| Output files | see CHANGELOG LIT-004-Q028-DECISION |
+| Validation status | Performed (completion report) |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-Q028-DECISION: …") |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+> **Correction (2026-10-24):** PR #2 was merged on 2026-10-23 at 17:51 UTC (head `7b61e83`). The "Pull request: #2 (existing, updated); not merged" fields for LIT-003 (second update), LIT-004-PREPARATION, LIT-004-WORKFLOW-FIXES, LIT-004-REVIEW-AND-DECISIONS, LIT-004-DECISION-RECONCILIATION, LIT-004-OWNER-BALLOT, LIT-004-PROPOSED-RESPONSES, LIT-004-CLARIFICATION-ADDENDUM, LIT-004-FINAL-CONFIRMATION-SHEET and LIT-004-Q028-DECISION are incorrect. Their commits are on the branch but in **no PR**. See CHANGELOG "CORRECTION — 2026-10-24".
+
+### LIT-004-PR
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-PR (prompt: "proceed with preparing a new pull request to review the ten commits pushed after PR #2 was merged") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | New PR for the post-merge commits; no history rewrite |
+| Actual completion status | PR #3 opened; awaiting owner review; not merged |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit range | `7b61e83..8f258a8` (11 commits), plus this log commit |
+| Pull request | **#3** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/3 (open; not merged). Supersedes the incorrect "PR #2 updated" fields (see Correction above) |
+
