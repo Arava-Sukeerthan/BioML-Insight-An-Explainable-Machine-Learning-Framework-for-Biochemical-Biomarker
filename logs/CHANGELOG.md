@@ -809,3 +809,26 @@ No CI is configured.
 **Statuses confirmed unchanged**: D-036, D-037 and D-038 APPROVED — CONDITIONAL (inactive). Q-042 Open; Q-043 Answered (D-038). Screening and pilot not started (no `screening/decisions.csv` or pilot file exists). No model training.
 
 **Modified**: this file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_GOV-PR13-14-MERGE-RECORD.md`. **Not modified**: `DECISION_LOG.md`, decision records, code, tests, schemas, criteria, protocol, data.
+
+## CORRECTION — 2026-10-24 — PR #15 published and merged (GOV-PR15-MERGE-RECORD)
+
+**Scope**: log-only. This supersedes the "local, not pushed" and "Pull request: None" statements in the GOV-PR13-14-MERGE-RECORD entries above, in `PROMPT_LOG.md` and in that task's session log. Those statements were correct when written and are left unchanged. It records **PR #15** by number for the first time (CLAUDE.md §3.5).
+
+**Verified `[EVIDENCE: GitHub API and git, checked 2026-10-24]`**
+
+| Item | Value |
+|---|---|
+| PR | [#15](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/15), "docs: record merges of PR #14 and PR #13 in governance logs (log-only)": **merged** |
+| Source → target | `gov-pr13-14-merge-record` @ `4af0acb` (one commit, parent `694b389`) → `claude/happy-hawking-rxptfv` (base `694b389`) |
+| Merged at / by | 2026-10-24 08:03:26 UTC (GitHub `merged_at`), `Arava-Sukeerthan` |
+| Merge commit | `5c7d455`, parents `694b389` (base) and `4af0acb` (head); tree identical to `4af0acb` |
+| Default branch | `claude/happy-hawking-rxptfv` at `5c7d455` |
+| Merged content | `694b389..5c7d455` is identical to the reviewed PR #15 diff: `logs/CHANGELOG.md` (+20), `logs/PROMPT_LOG.md` (+12), `logs/session_logs/2026-10-24_GOV-PR13-14-MERGE-RECORD.md` (new, +14), `research/reviews/daily_review_log.md` (+7); 4 files, +53/−0, each appended after the last line of its file |
+
+**Post-merge validation** (run on a copy of `5c7d455`): unit tests 69, OK; query table PASS, 158 rows; decision log 38 unique IDs (D-001–D-038), no duplicates, D-038 once. Real-data rebuild, raw-export verify and archive checksum **not run** (raw exports and git-ignored build files are not in the container). No CI is configured.
+
+**Statuses confirmed unchanged**: D-036, D-037 and D-038 APPROVED — CONDITIONAL (inactive). Q-042 Open. Screening and pilot not started (no `screening/decisions.csv` or pilot file exists). No model training. D-039 not started.
+
+**Final correction for this sequence**: this record closes the merge-history sequence for PRs #13–#15. Its own statements that it was prepared locally with no PR are accurate when written and will not be corrected by a further record created solely for that purpose; any publication of this record is shown by the git history and GitHub. Later governance records may still be needed for other work.
+
+**Modified**: this file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_GOV-PR15-MERGE-RECORD.md`. **Not modified**: `DECISION_LOG.md`, decision records, code, tests, schemas, criteria, protocol, data.
