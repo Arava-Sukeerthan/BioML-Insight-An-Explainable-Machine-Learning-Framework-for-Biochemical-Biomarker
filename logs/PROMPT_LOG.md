@@ -18,6 +18,7 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | LIT-004-WORKFLOW-FIXES | 2026-10-23 | B | Fix reproducibility blockers B-1, B-3, B-4 before screening | Stable fallback IDs (9 IDs kept); one validated screening format; screening status carried into the inventory; 21 regression tests; D-027 proposed; no screening | see CHANGELOG |
 | LIT-004-REVIEW-AND-DECISIONS | 2026-10-23 | B | Prepare decisions for approval; version-linking and scope briefs; integrity checks | D-027–D-030 proposed with exact texts; briefs written; 7 integrity tests; awaiting human review; no screening | see CHANGELOG |
 | LIT-004-DECISION-RECONCILIATION | 2026-10-23 | B | Reconcile owner choices with governance and decision texts; no production change | Consolidated decision table; 9 contradictions; 15 approval items; implementation order; awaiting human review | see CHANGELOG |
+| LIT-004-OWNER-BALLOT | 2026-10-24 | B | Final owner-review ballot for outstanding LIT-004 decisions; documentation only | 17-item ballot with response fields; awaiting owner responses | see CHANGELOG |
 
 ## Detailed entries
 
@@ -103,5 +104,19 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Validation status | Performed (completion report) |
 | Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
 | Commit | see `git log` (commit "LIT-004-DECISION-RECONCILIATION: …") |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+### LIT-004-OWNER-BALLOT
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-OWNER-BALLOT (prompt: "Prepare the final owner-review package for the outstanding LIT-004 decisions") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Consolidated, item-by-item owner ballot; no change to decisions, schemas, code, criteria, strategy or data |
+| Expected deliverables | Owner-review document with ballot fields; special checks A–G; logs; report |
+| Actual completion status | Completed; awaiting owner responses |
+| Output files | see CHANGELOG LIT-004-OWNER-BALLOT |
+| Validation status | Performed (completion report) |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-OWNER-BALLOT: …"); committed because CLAUDE.md §3.5 requires each completed task on the PR branch |
 | Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
 

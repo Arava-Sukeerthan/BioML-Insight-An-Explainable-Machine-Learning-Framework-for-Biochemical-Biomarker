@@ -371,3 +371,21 @@ after PR #1 had been merged.
 
 **Validation (performed)**: see the completion report: unit tests, query table, raw checksums, archive checksum, `git diff` limited to review/log files.
 **Not done**: no approval recorded, no implementation, no pilot, no screening, no pair resolved.
+
+## LIT-004-OWNER-BALLOT — 2026-10-24 — Owner-review ballot for the outstanding LIT-004 decisions (documentation only)
+
+**Prompt objective**: one owner-review document with a ballot entry (issue, options, recommendation, justification, consequences, dependencies, evidence needed, APPROVE/REJECT/MODIFY/DEFER field, comments) for every outstanding LIT-004 decision.
+
+**Completed**
+- `research/reviews/owner_review_ballot_LIT-004.md`: 17 items covering D-027, D-028 (2a–2d), D-029 (+D-026), D-030, Q-024/Q-029, Q-001, Q-002/Q-035, Q-033, Q-007/D-009, Q-022 (D-005–D-007), D-012/D-023/Q-036, D-010/Q-011, D-008/Q-008, D-025/Q-026, A-1…A-6, A-3/Q-028, D-024.
+- D-028 mapping checked against `source_records.jsonl`: 34 distinct source types, all covered; 7 table entries have no current record; resulting counts per type recorded. Retracted article vs retraction notice, corrections, expressions of concern, protocols, datasets, guidelines/consensus separated. arXiv source rule and URL/DOI rules put to the owner as separate choices.
+- D-030 wording conflicts resolved in the proposal text (primary selection, withdrawal by `link_id`, screening decisions after withdrawal, retractions, group rules) with a record/report/study counting specification.
+- 15 pairs reconciled with `records/dedup_review.csv`: 15 rows, 30 distinct IDs, 30 flagged publications, no count mismatch; one presentational difference between protocol §4 and the version-linking proposal noted.
+
+**Created**: `research/reviews/owner_review_ballot_LIT-004.md`, `logs/session_logs/2026-10-24_LIT-004-OWNER-BALLOT.md`.
+**Modified**: `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file.
+**Not modified**: `logs/DECISION_LOG.md`, `unresolved_questions.md`, schemas, code, tests, criteria, protocol, strategy, scope, inventory, registry, screening data (none exists), raw exports, archive.
+**Deleted**: none.
+
+**Validation (performed)**: `git diff` against the previous commit limited to the four documentation/log files plus this ballot; unit tests 50/50 OK; query table PASS; raw-export checksums OK; archive checksum OK (results in the completion report).
+**Not done**: no approval recorded, no implementation, no pilot, no screening, no pair resolved.

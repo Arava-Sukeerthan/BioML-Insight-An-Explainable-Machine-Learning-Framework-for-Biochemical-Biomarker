@@ -83,3 +83,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** 15 items in §9 of the reconciliation; Q-035, Q-036.
 - **Recommended next step:** `[RECOMMENDATION]` owner answers §9; then the implementation order in §10.
 - **Researcher decisions:** _pending_
+
+## Day 11 — 2026-10-24 — LIT-004-OWNER-BALLOT
+- **Work completed:** owner-review ballot `research/reviews/owner_review_ballot_LIT-004.md` (17 items, APPROVE/REJECT/MODIFY/DEFER fields).
+- **Important findings:** `[EVIDENCE]` all 34 source publication types are covered by the D-028 mapping; the 15 dedup pairs reconcile exactly with `dedup_review.csv` (30 IDs, no mismatch); 26 of 56 planned searches were executed.
+- **Decisions requiring review:** all 17 ballot items.
+- **Recommended next step:** owner fills in the ballot; responses are then recorded in `logs/DECISION_LOG.md` before any implementation.
+- **Researcher decisions:** _pending_
