@@ -343,6 +343,19 @@ class TestSchemaConsistency(unittest.TestCase):
     def test_inventory_columns_match_schema(self):
         self.assertEqual(set(mlr.INV_COLS), set(self.inv["items"]["properties"]))
 
+    def test_publication_schema_matches_code(self):
+        pub = json.load(open(REPO / "research" / "literature" / "schemas" / "publication_record.schema.json"))
+        props = pub["properties"]
+        self.assertEqual(set(props["screening_details"]["properties"]),
+                         set(["screener", "date", "justification"] + pr.SCREENING_OPTIONAL))
+        for stage in ("preliminary", "confirmed"):
+            with self.subTest(stage):
+                statuses = props["rq5_components"]["properties"][stage]["properties"]["statuses"]["properties"]
+                self.assertEqual(set(statuses), set(pr.RQ5_COMPONENT_FIELDS))
+        self.assertEqual(props["rq5_coverage_group"]["enum"], ["qualified", "near_rq5", "below_threshold", None])
+        self.assertEqual(props["rq5_coverage_provisional"]["type"], ["boolean", "null"])
+        self.assertNotIn("rq5_coverage_group", pub["required"])
+
     def test_publication_schema_accepts_screened_record(self):
         fx = WebFixture()
         fx.build()
@@ -505,10 +518,12 @@ class TestIntegrity(unittest.TestCase):
 
 
 class TestRQ5ComponentEvidence(unittest.TestCase):
-    """D-035 (Q-041): preliminary vs confirmed component evidence, no silent erasure, completeness,
-    researcher verification, and the D-034 coverage-group logic (not wired: Q-039)."""
+    """D-035 (Q-041) and D-036 (Q-039): five component statuses including dim_classification,
+    preliminary vs confirmed evidence, no silent erasure, five-status completeness, researcher
+    verification, and the D-034 coverage group derived in the build."""
 
-    COMP = ["dim_feature_selection", "dim_explainability", "dim_calibration", "dim_uncertainty"]
+    COMP = ["dim_feature_selection", "dim_classification", "dim_explainability", "dim_calibration",
+            "dim_uncertainty"]
 
     def setUp(self):
         self.fx = WebFixture()
@@ -516,46 +531,104 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
         self.ids = sorted(p["paper_id"] for p in self.fx.pubs())
         self.header = pr.SCREENING_REQUIRED + self.COMP
 
-    def row(self, pid, stage, dec, screener, date, fs="", x="", c="", u="", why="test"):
-        return [pid, stage, dec, "E3" if dec == "exclude" else "", screener, date, why, fs, x, c, u]
+    def row(self, pid, stage, dec, screener, date, fs="", cl="", x="", c="", u="", why="test"):
+        return [pid, stage, dec, "E3" if dec == "exclude" else "", screener, date, why, fs, cl, x, c, u]
+
+    def by_pid(self):
+        return {p["paper_id"]: p for p in self.fx.pubs()}
 
     def rq5(self, pid):
-        return {p["paper_id"]: p for p in self.fx.pubs()}[pid]["rq5_components"]
+        return self.by_pid()[pid]["rq5_components"]
+
+    def group(self, pid):
+        p = self.by_pid()[pid]
+        return p["rq5_coverage_group"], p["rq5_coverage_provisional"]
 
     @staticmethod
     def five(fs, cl, x, c, u):
         return {"feature_selection": fs, "classification": cl, "explainability": x,
                 "calibration": c, "uncertainty": u}
 
-    # 1, 3
+    def test_classification_is_a_recorded_component(self):
+        self.assertEqual(pr.RQ5_COMPONENT_FIELDS["classification"], "dim_classification")
+        self.assertEqual(pr.RQ5_RECORDED_FIELDS, self.COMP)
+        self.assertIn("dim_classification", pr.SCREENING_OPTIONAL)
+        self.assertEqual(pr.SCREENING_ENUMS["dim_classification"], ("", "yes", "no", "unclear"))
+
+    def test_classification_statuses_accepted_and_reported(self):
+        ids = self.ids[:4]
+        values = ["yes", "no", "unclear", ""]
+        self.fx.write_decisions([self.row(pid, "title_abstract", "include", "assistant", "2026-10-15", cl=v)
+                                 for pid, v in zip(ids, values)], header=self.header)
+        self.fx.build(today="2026-10-15")
+        pubs = self.by_pid()
+        for pid, v in zip(ids, values):
+            with self.subTest(v or "empty"):
+                self.assertEqual(pubs[pid]["screening_details"]["dim_classification"], v or None)
+        self.assertEqual(pubs[ids[0]]["rq5_components"]["preliminary"]["statuses"]["classification"], "yes")
+        self.assertIsNone(pubs[ids[3]]["rq5_components"])          # empty = not assessed, never "no"
+        self.fx.reports()
+        inv = self.fx.inventory()
+        self.assertEqual([inv[pid]["dim_classification"] for pid in ids], ["yes", "no", "unclear", None])
+        self.assertTrue(all(inv[pid]["dim_classification"] is None for pid in self.ids[4:]))
+        with open(self.fx.lit / "paper_inventory.csv", newline="") as f:
+            csv_cl = {r["paper_id"]: r["dim_classification"] for r in csv.DictReader(f)}
+        self.assertEqual(csv_cl[ids[1]], "no")
+        for bad in ("maybe", "Yes", "true", "n/a"):
+            with self.subTest(bad):
+                self.fx.write_decisions([self.row(ids[0], "title_abstract", "include", "assistant",
+                                                  "2026-10-15", cl=bad)], header=self.header)
+                with self.assertRaises(ValueError):
+                    self.fx.build(today="2026-10-16")
+
+    def test_files_without_classification_column_stay_valid(self):
+        # files written before D-036 (no dim_classification column) still load; title/abstract
+        # rows may be partial (preliminary triage) and classification is then not assessed
+        a = self.ids[0]
+        old = [c for c in self.COMP if c != "dim_classification"]
+        self.fx.write_decisions([[a, "title_abstract", "include", "", "assistant", "2026-10-15", "",
+                                  "yes", "yes", "", ""]], header=pr.SCREENING_REQUIRED + old)
+        self.fx.build(today="2026-10-15")
+        ev = self.rq5(a)
+        self.assertIsNone(ev["preliminary"]["statuses"]["classification"])
+        self.assertIsNone(self.by_pid()[a]["screening_details"]["dim_classification"])
+
     def test_abstract_stage_yes_is_preliminary_only(self):
         a = self.ids[0]
         self.fx.write_decisions([self.row(a, "title_abstract", "include", "assistant", "2026-10-15",
-                                          "yes", "yes", "", "")], header=self.header)
+                                          "yes", "yes", "yes", "yes", "yes")], header=self.header)
         self.fx.build(today="2026-10-15")
         ev = self.rq5(a)
         self.assertIsNone(ev["confirmed"])
-        self.assertEqual(ev["preliminary"]["statuses"]["feature_selection"], "yes")
-        self.assertIsNone(ev["preliminary"]["statuses"]["calibration"])     # missing is not "no"
-        self.assertIsNone(ev["preliminary"]["statuses"]["classification"])  # no column (Q-039)
+        self.assertEqual(ev["preliminary"]["statuses"], self.five("yes", "yes", "yes", "yes", "yes"))
+        self.assertEqual(self.group(a), (None, None))     # preliminary evidence never gives a group
 
-    # 2
+    def test_partial_abstract_stage_keeps_missing_as_not_assessed(self):
+        a = self.ids[0]
+        self.fx.write_decisions([self.row(a, "title_abstract", "include", "assistant", "2026-10-15",
+                                          "yes", "", "yes", "", "")], header=self.header)
+        self.fx.build(today="2026-10-15")
+        st = self.rq5(a)["preliminary"]["statuses"]
+        self.assertEqual(st, self.five("yes", None, "yes", None, None))     # missing is not "no"
+
     def test_full_text_needed_for_confirmation(self):
         a, b = self.ids[:2]
         self.fx.write_decisions([
-            self.row(a, "title_abstract", "include", "assistant", "2026-10-15", "yes", "yes", "yes", "yes"),
-            self.row(a, "full_text", "include", "assistant", "2026-10-16", "yes", "no", "unclear", "yes"),
-            self.row(b, "title_abstract", "include", "assistant", "2026-10-15", "yes", "yes", "yes", "yes"),
-            self.row(b, "full_text", "abstract_only", "assistant", "2026-10-16", "yes", "yes", "yes", "yes"),
+            self.row(a, "title_abstract", "include", "assistant", "2026-10-15", "yes", "yes", "yes", "yes", "yes"),
+            self.row(a, "full_text", "include", "assistant", "2026-10-16", "yes", "unclear", "no", "unclear", "yes"),
+            self.row(b, "title_abstract", "include", "assistant", "2026-10-15", "yes", "yes", "yes", "yes", "yes"),
+            self.row(b, "full_text", "abstract_only", "assistant", "2026-10-16", "yes", "yes", "yes", "yes", "yes"),
         ], header=self.header)
         self.fx.build(today="2026-10-16")
         ea, eb = self.rq5(a), self.rq5(b)
         self.assertEqual(ea["confirmed"]["statuses"]["explainability"], "no")
-        self.assertEqual(ea["preliminary"]["statuses"]["explainability"], "yes")   # kept, not overwritten
+        self.assertEqual(ea["confirmed"]["statuses"]["classification"], "unclear")
+        self.assertEqual(ea["preliminary"]["statuses"]["classification"], "yes")   # kept, not overwritten
         self.assertIsNone(eb["confirmed"])                                            # no full text
         self.assertIn("abstract_only", eb["confirmation_note"])
+        self.assertEqual(self.group(a), ("below_threshold", True))
+        self.assertEqual(self.group(b), (None, None))
 
-    # 3
     def test_full_text_row_without_components_is_not_assessed(self):
         a = self.ids[0]
         self.fx.write_decisions([self.row(a, "full_text", "include", "assistant", "2026-10-16")],
@@ -564,75 +637,139 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
         ev = self.rq5(a)
         self.assertIsNone(ev["confirmed"])
         self.assertIn("not assessed", ev["confirmation_note"])
+        self.assertEqual(self.group(a), (None, None))
 
-    # 4
     def test_incomplete_full_text_assessment_rejected(self):
-        before = (self.fx.lit / "records" / "publications.jsonl").read_bytes()
-        self.fx.write_decisions([self.row(self.ids[0], "full_text", "include", "assistant", "2026-10-16",
-                                          "yes", "", "", "")], header=self.header)
-        with self.assertRaises(ValueError):
-            self.fx.build(today="2026-10-16")
-        self.assertEqual((self.fx.lit / "records" / "publications.jsonl").read_bytes(), before)
+        pubs_path = self.fx.lit / "records" / "publications.jsonl"
+        before = pubs_path.read_bytes()
+        a = self.ids[0]
+        cases = {
+            "one status": self.row(a, "full_text", "include", "assistant", "2026-10-16", "yes"),
+            "classification omitted": self.row(a, "full_text", "include", "assistant", "2026-10-16",
+                                               "yes", "", "yes", "no", "unclear"),
+            "only classification": self.row(a, "full_text", "include", "assistant", "2026-10-16", cl="yes"),
+        }
+        for name, r in cases.items():
+            with self.subTest(name):
+                self.fx.write_decisions([r], header=self.header)
+                with self.assertRaises(ValueError) as cm:
+                    self.fx.build(today="2026-10-16")
+                self.assertIn("incomplete", str(cm.exception))
+                self.assertEqual(pubs_path.read_bytes(), before)
+        with self.subTest("four-component file without dim_classification"):
+            old = [c for c in self.COMP if c != "dim_classification"]
+            self.fx.write_decisions([[a, "full_text", "include", "", "assistant", "2026-10-16", "test",
+                                      "yes", "yes", "yes", "yes"]], header=pr.SCREENING_REQUIRED + old)
+            with self.assertRaises(ValueError):
+                self.fx.build(today="2026-10-16")
+            self.assertEqual(pubs_path.read_bytes(), before)
 
-    # 5
     def test_later_blank_row_cannot_erase(self):
         a = self.ids[0]
         for stage in ("full_text", "title_abstract"):
             with self.subTest(stage):
                 self.fx.write_decisions([
-                    self.row(a, stage, "include", "assistant", "2026-10-16", "yes", "yes", "no", "unclear"),
+                    self.row(a, stage, "include", "assistant", "2026-10-16", "yes", "yes", "yes", "no", "unclear"),
                     self.row(a, stage, "include", "assistant", "2026-10-17"),
                 ], header=self.header)
                 with self.assertRaises(ValueError):
                     self.fx.build(today="2026-10-17")
         # a full-text row without components does not erase title/abstract evidence (kept as preliminary)
         self.fx.write_decisions([
-            self.row(a, "title_abstract", "include", "assistant", "2026-10-15", "yes", "", "", ""),
+            self.row(a, "title_abstract", "include", "assistant", "2026-10-15", "yes"),
             self.row(a, "full_text", "include", "assistant", "2026-10-16"),
         ], header=self.header)
         self.fx.build(today="2026-10-16")
         self.assertEqual(self.rq5(a)["preliminary"]["statuses"]["feature_selection"], "yes")
 
-    # 6, 7, 8, 9, 10
+    def test_classification_erasure_rejected(self):
+        a = self.ids[0]
+        with self.subTest("title_abstract"):
+            self.fx.write_decisions([
+                self.row(a, "title_abstract", "include", "assistant", "2026-10-15", cl="yes"),
+                self.row(a, "title_abstract", "include", "assistant", "2026-10-16", fs="yes"),
+            ], header=self.header)
+            with self.assertRaises(ValueError) as cm:
+                self.fx.build(today="2026-10-16")
+            self.assertIn("dim_classification is blank", str(cm.exception))
+        with self.subTest("changing a value is allowed"):
+            self.fx.write_decisions([
+                self.row(a, "title_abstract", "include", "assistant", "2026-10-15", cl="yes"),
+                self.row(a, "title_abstract", "include", "assistant", "2026-10-16", cl="unclear"),
+            ], header=self.header)
+            self.fx.build(today="2026-10-16")
+            self.assertEqual(self.rq5(a)["preliminary"]["statuses"]["classification"], "unclear")
+
     def test_coverage_group_logic(self):
         g = pr.derive_rq5_coverage_group
+        self.assertEqual(g(self.five("yes", "yes", "yes", "yes", "yes")), ("qualified", False))
         self.assertEqual(g(self.five("yes", "yes", "yes", "yes", "unclear")), ("qualified", True))
         self.assertEqual(g(self.five("yes", "yes", "yes", "yes", "no")), ("qualified", False))
+        self.assertEqual(g(self.five("no", "yes", "yes", "yes", "yes")), ("qualified", False))
         self.assertEqual(g(self.five("yes", "yes", "yes", "unclear", "unclear")), ("near_rq5", True))
+        self.assertEqual(g(self.five("yes", "yes", "yes", "no", "unclear")), ("near_rq5", True))
         self.assertEqual(g(self.five("yes", "yes", "yes", "no", "no")), ("near_rq5", False))
         for n in range(3):
             vals = ["yes"] * n + ["no"] * (5 - n)
             with self.subTest(n_yes=n):
                 self.assertEqual(g(self.five(*vals)), ("below_threshold", False))
-        self.assertEqual(g(self.five("yes", "yes", "unclear", "unclear", "unclear"))[0], "below_threshold")
-        # unclear (assessed) differs from not assessed
-        self.assertEqual(g(self.five("yes", "yes", "yes", "yes", None)), (None, None))
-        self.assertEqual(g(self.five("yes", "yes", "yes", "yes", "")), (None, None))
+        # unclear never counts as yes
+        self.assertEqual(g(self.five("yes", "yes", "unclear", "unclear", "unclear")), ("below_threshold", True))
+        self.assertEqual(g(self.five("unclear", "unclear", "unclear", "unclear", "unclear")),
+                         ("below_threshold", True))
+        # unclear (assessed) differs from not assessed; missing is never "no"
+        for missing in (None, ""):
+            for k in pr.RQ5_COMPONENT_FIELDS:
+                st = self.five("yes", "yes", "yes", "yes", "yes")
+                st[k] = missing
+                with self.subTest(missing=missing, component=k):
+                    self.assertEqual(g(st), (None, None))
         self.assertEqual(g({}), (None, None))
         with self.assertRaises(ValueError):
             g(self.five("yes", "yes", "yes", "yes", "maybe"))
 
-    def test_build_cannot_derive_group_without_classification(self):
-        a = self.ids[0]
-        self.fx.write_decisions([self.row(a, "full_text", "include", "assistant", "2026-10-16",
-                                          "yes", "yes", "yes", "yes")], header=self.header)
+    def test_build_derives_coverage_group_from_confirmed_statuses(self):
+        p = self.ids
+        self.fx.write_decisions([
+            self.row(p[0], "full_text", "include", "assistant", "2026-10-16", "yes", "yes", "yes", "yes", "yes"),
+            self.row(p[1], "full_text", "include", "assistant", "2026-10-16", "yes", "yes", "yes", "yes", "unclear"),
+            self.row(p[2], "full_text", "include", "assistant", "2026-10-16", "yes", "yes", "yes", "unclear", "no"),
+            self.row(p[3], "full_text", "exclude", "assistant", "2026-10-16", "yes", "yes", "no", "no", "no"),
+            # preliminary only: four yes at title/abstract give no group
+            self.row(p[4], "title_abstract", "include", "assistant", "2026-10-15", "yes", "yes", "yes", "yes", "no"),
+        ], header=self.header)
         self.fx.build(today="2026-10-16")
-        st = self.rq5(a)["confirmed"]["statuses"]
-        self.assertIsNone(st["classification"])
-        self.assertEqual(pr.derive_rq5_coverage_group(st), (None, None))     # Q-039 blocks derivation
-        for p in self.fx.pubs():                                              # unassessed: nothing
-            if p["paper_id"] != a:
-                self.assertIsNone(p["rq5_components"])
+        self.assertEqual(self.group(p[0]), ("qualified", False))
+        self.assertEqual(self.group(p[1]), ("qualified", True))
+        self.assertEqual(self.group(p[2]), ("near_rq5", True))
+        self.assertEqual(self.group(p[3]), ("below_threshold", False))
+        self.assertEqual(self.group(p[4]), (None, None))
+        for pid in p[5:]:                                            # unscreened: nothing derived
+            with self.subTest(pid):
+                self.assertEqual(self.group(pid), (None, None))
+                self.assertIsNone(self.rq5(pid))
+        pubs = self.by_pid()
+        for pid in p[:4]:                                          # group consistent with statuses
+            self.assertEqual(pr.derive_rq5_coverage_group(pubs[pid]["rq5_components"]["confirmed"]["statuses"]),
+                             self.group(pid))
 
-    # 11
+    def test_screeners_cannot_assign_a_group(self):
+        a = self.ids[0]
+        for col in ("rq5_coverage_group", "rq5_coverage_provisional"):
+            with self.subTest(col):
+                self.fx.write_decisions([[a, "full_text", "include", "", "assistant", "2026-10-16", "x",
+                                          "qualified"]], header=pr.SCREENING_REQUIRED + [col])
+                with self.assertRaises(ValueError):                  # unknown column
+                    self.fx.build(today="2026-10-16")
+
     def test_researcher_verification_keeps_audit_trail(self):
         a, b = self.ids[:2]
         self.fx.write_decisions([
-            self.row(a, "full_text", "include", "assistant", "2026-10-16", "yes", "yes", "unclear", "yes"),
-            self.row(a, "full_text", "include", "researcher", "2026-10-18", "yes", "yes", "no", "yes",
+            self.row(a, "full_text", "include", "assistant", "2026-10-16", "yes", "yes", "yes", "unclear", "yes"),
+            self.row(a, "full_text", "include", "researcher", "2026-10-18", "yes", "yes", "yes", "no", "yes",
                      why="verified: calibration not assessed"),
-            self.row(b, "full_text", "include", "assistant", "2026-10-16", "yes", "yes", "yes", "unclear"),
-            self.row(b, "full_text", "include", "researcher", "2026-10-18", "yes", "yes", "yes", "unclear",
+            self.row(b, "full_text", "include", "assistant", "2026-10-16", "yes", "yes", "yes", "yes", "unclear"),
+            self.row(b, "full_text", "include", "researcher", "2026-10-18", "yes", "yes", "yes", "yes", "unclear",
                      why="verified"),
         ], header=self.header)
         self.fx.build(today="2026-10-18")
@@ -641,21 +778,25 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
         self.assertEqual(ea["statuses"]["calibration"], "no")
         self.assertEqual(ea["history"][0]["screener"], "assistant")
         self.assertEqual(ea["history"][0]["statuses"]["calibration"], "unclear")   # evidence kept
+        self.assertEqual(ea["history"][0]["statuses"]["classification"], "yes")
         self.assertTrue(eb["researcher_verified"])
         self.assertFalse(eb["changed_by_verification"])
+        # the group follows the researcher's (latest) confirmed row
+        self.assertEqual(self.group(a), ("qualified", False))
+        self.assertEqual(self.group(b), ("qualified", True))
 
-    # 12
     def test_ids_and_unscreened_inventory_values_stable(self):
         self.fx.reports()
         before_ids = self.fx.id_to_sources()
         before_inv = self.fx.inventory()
         a = self.ids[0]
         self.fx.write_decisions([self.row(a, "full_text", "include", "assistant", "2026-10-16",
-                                          "yes", "yes", "unclear", "no")], header=self.header)
+                                          "yes", "yes", "yes", "unclear", "no")], header=self.header)
         self.fx.build(today="2026-10-16")
         self.fx.reports()
         self.assertEqual(self.fx.id_to_sources(), before_ids)
         after_inv = self.fx.inventory()
+        self.assertEqual(after_inv[a]["dim_classification"], "yes")
         for pid, row in before_inv.items():
             if pid != a:
                 self.assertEqual(after_inv[pid], row)

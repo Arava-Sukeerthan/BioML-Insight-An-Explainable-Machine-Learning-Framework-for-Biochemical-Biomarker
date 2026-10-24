@@ -370,6 +370,13 @@
         ],
         "description": "From the latest screening decision (screening/decisions.csv). RQ5 feature/biomarker-selection component (D-032, APPROVED - CONDITIONAL; inactive for screening)"
       },
+      "dim_classification": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv). RQ5 classification component (D-036, answers Q-039; APPROVED - CONDITIONAL; inactive for screening)"
+      },
       "dim_independent_validation": {
         "type": [
           "string",

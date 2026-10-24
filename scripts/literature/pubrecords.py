@@ -57,7 +57,7 @@ SCREENING_STAGE_ORDER = {"title_abstract": 1, "full_text": 2}
 SCREENING_REQUIRED = ["paper_id", "stage", "decision", "reason_code", "screener", "date", "justification"]
 SCREENING_OPTIONAL = ["rq_tags", "tier", "scope_flags", "record_type", "dim_explainability",
                       "dim_uncertainty", "dim_calibration", "dim_independent_validation",
-                      "criteria_version", "needs_human", "dim_feature_selection"]
+                      "criteria_version", "needs_human", "dim_feature_selection", "dim_classification"]
 SCREENING_DECISIONS = ("include", "exclude", "uncertain", "abstract_only")   # "not_screened" = no row
 SCREENING_ENUMS = {
     "stage": ("title_abstract", "full_text"),
@@ -72,13 +72,16 @@ SCREENING_ENUMS = {
     # D-032 (APPROVED - CONDITIONAL, inactive for screening until its dependencies are met):
     # RQ5 feature/biomarker-selection component
     "dim_feature_selection": ("", "yes", "no", "unclear"),
+    # D-036 (Q-039; APPROVED - CONDITIONAL, inactive for screening): RQ5 classification component
+    # (evidence definition: D-035 record section 2)
+    "dim_classification": ("", "yes", "no", "unclear"),
 }
-# RQ5 components (D-031 to D-035). Status columns in screening/decisions.csv; classification has
-# no column yet (Q-039), so the coverage group cannot be derived in the build.
-RQ5_COMPONENT_FIELDS = {"feature_selection": "dim_feature_selection", "classification": None,
+# RQ5 components (D-031 to D-036). One status column each in screening/decisions.csv; the build
+# derives the D-034 coverage group from the confirmed (full-text) statuses.
+RQ5_COMPONENT_FIELDS = {"feature_selection": "dim_feature_selection", "classification": "dim_classification",
                         "explainability": "dim_explainability", "calibration": "dim_calibration",
                         "uncertainty": "dim_uncertainty"}
-RQ5_RECORDED_FIELDS = [f for f in RQ5_COMPONENT_FIELDS.values() if f]
+RQ5_RECORDED_FIELDS = list(RQ5_COMPONENT_FIELDS.values())
 RESEARCHER = "researcher"   # screener value for the researcher (screening_protocol.md section 6)
 REASON_CODE = re.compile(r"E(1[0-2]|[1-9])")
 RQ_TAGS = re.compile(r"(RQ[1-6])(;RQ[1-6])*")
@@ -856,6 +859,8 @@ def build(lit_dir, today=None, check_schema=True):
 
     screening_rows = load_screening_decisions(lit_dir)
     rq5_evidence = rq5_component_evidence(screening_rows)   # raises on erasure / incomplete rows
+    rq5_groups = {pid: derive_rq5_coverage_group(ev["confirmed"]["statuses"]) if ev["confirmed"] else (None, None)
+                  for pid, ev in rq5_evidence.items()}
     screening = {}
     for d in sorted(screening_rows, key=lambda d: (SCREENING_STAGE_ORDER[d["stage"]], d["date"])):
         screening[d["paper_id"]] = d          # latest stage, then latest date, then file order
@@ -939,6 +944,8 @@ def build(lit_dir, today=None, check_schema=True):
                                    ["screener", "date", "justification"] + SCREENING_OPTIONAL}
                                   if sc else None),
             "rq5_components": rq5_evidence.get(pid),
+            "rq5_coverage_group": rq5_groups.get(pid, (None, None))[0],
+            "rq5_coverage_provisional": rq5_groups.get(pid, (None, None))[1],
             "retracted": any("Retracted Publication" in (m.get("publication_types") or []) for m in members),
         })
     pubs.sort(key=lambda p: int(p["paper_id"][1:]))
@@ -1012,8 +1019,8 @@ def rq5_component_evidence(rows):
       so a researcher verification row (screener=researcher) never hides the evidence it replaced.
     Raises ValueError (nothing is written) when a later row of the same stage would blank a component
     recorded earlier at that stage, or when a full-text row records some but not all component statuses
-    (an empty value means "not assessed", never "no"). Limitation (Q-039): completeness covers the four
-    existing component columns (RQ5_RECORDED_FIELDS); classification has no column yet."""
+    (an empty value means "not assessed", never "no"). Completeness covers all five component
+    columns (RQ5_RECORDED_FIELDS, D-036)."""
     by_pid, errors = {}, []
     order = sorted(enumerate(rows), key=lambda t: (t[1]["paper_id"], SCREENING_STAGE_ORDER[t[1]["stage"]],
                                                    t[1]["date"], t[0]))
@@ -1071,7 +1078,8 @@ def derive_rq5_coverage_group(statuses):
     Returns (group, provisional): group is None when any component is not assessed (empty/None);
     otherwise "qualified" (>= 4 yes), "near_rq5" (exactly 3) or "below_threshold" (0-2). "unclear"
     never counts as yes; provisional is True when any component is "unclear".
-    Not wired into the build: classification has no status column yet (Q-039)."""
+    Used by build() for rq5_coverage_group / rq5_coverage_provisional (D-036); a coverage
+    descriptor only, never a quality judgment, and never assigned by a screener."""
     vals = [statuses.get(name) for name in RQ5_COMPONENT_FIELDS]
     if any(v in (None, "") for v in vals):
         return None, None
