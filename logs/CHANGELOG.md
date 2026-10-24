@@ -740,3 +740,21 @@ No CI is configured.
 **Validation**: see `logs/session_logs/2026-10-24_PR10-AUDIT-DECISIONS.md`. No CI is configured.
 
 **PR10-AUDIT-DECISIONS PR (2026-10-24)**: **PR #11**, stacked on PR #10: https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/11. Base `q039-dim-classification` (`f106fdc`) ← head `claude/eloquent-mccarthy-bqtxr3` (work commit `29523ea`, plus this log-only commit). Status: **open**, awaiting owner review; not merged. PR #10 not changed.
+
+## Q-043-DECISION — 2026-10-24 — Record D-038 (reporting of qualified records with an unresolved component; no marker)
+
+**Prompt objective**: record the owner's approved Q-043 resolution as a new append-only decision; update PR #10's description (B1 wording); prepare the PR #10/#11 merge sequence and the Option A proposal for `abstract_only` without implementing either.
+
+**Decision**: **D-038 — APPROVED — CONDITIONAL (inactive for screening)**, approved by the researcher (owner) on 2026-10-24 (`research/reviews/Q-043_decision_record_D038.md`). ID checked as the next free one on every branch. Q-043 answered.
+
+**Changed**
+- New decision record `research/reviews/Q-043_decision_record_D038.md`.
+- DECISION_LOG: D-038 section and two status-history rows (+8/−0).
+- `unresolved_questions.md`: Q-043 status cell → Answered.
+- Dated addenda: `RQ5_component_decisions_D032-D034.md` §11, `PR10_audit_decisions_D037.md` §6.
+- `screening_protocol.md` §2a (INACTIVE): one reporting bullet.
+- PR #10 description (GitHub, not a repository file): Q-042 removed from the remaining activation conditions, with a statement that Q-042 remains open and no `lr_only` rule is decided; follow-up note on PR #11. Title, base, head and state unchanged.
+
+**Not modified**: code, schemas, tests, inventory, raw exports, `screening_criteria.md`, `GOVERNANCE.md`, `CLAUDE.md`. No screening decision, pilot or model training. No PR merged, retargeted, approved or closed.
+
+**Validation**: see `logs/session_logs/2026-10-24_Q-043-DECISION.md`. No CI is configured.

@@ -167,3 +167,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** the follow-up PR for this task; Q-043; Q-042; Q-040.
 - **Recommended next step:** owner review of this PR and PR #10.
 - **Researcher decisions:** Decisions A1 and B1, 2026-10-24.
+
+## Day 11 (cont.) — 2026-10-24 — Q-043-DECISION
+- **Work completed:** D-038 recorded (no marker; three-subgroup reporting rule for `qualified`). PR #10 description updated (Q-042 not an activation condition; still open). Merge sequence and the `abstract_only` Option A proposal prepared.
+- **Important findings:** `[EVIDENCE]` D-037 is the highest decision ID on every branch; D-038 was free. `[OPEN]` the Option A policy for `abstract_only` after a full-text assessment awaits approval.
+- **Decisions requiring review:** merge authorization for PR #10/#11; branch for the D-038 commit; Option A proposal.
+- **Recommended next step:** owner merge authorization, then Option A.
+- **Researcher decisions:** Q-043 resolution, PR #10 description, PR sequence in principle, Option A in principle (2026-10-24).
