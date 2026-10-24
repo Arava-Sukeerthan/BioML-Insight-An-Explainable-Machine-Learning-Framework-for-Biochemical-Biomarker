@@ -105,6 +105,15 @@
         "unclear"
       ]
     },
+    "dim_feature_selection": {
+      "enum": [
+        "",
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "description": "RQ5 feature/biomarker-selection component (D-032, APPROVED - CONDITIONAL; not active for screening until its dependencies are met). Definition: research/reviews/Q-037a_feature_selection_proposal.md section 5 and research/reviews/RQ5_component_decisions_D032-D034.md"
+    },
     "dim_independent_validation": {
       "enum": [
         "",
@@ -139,6 +148,7 @@
     "dim_calibration",
     "dim_independent_validation",
     "criteria_version",
-    "needs_human"
+    "needs_human",
+    "dim_feature_selection"
   ]
 }

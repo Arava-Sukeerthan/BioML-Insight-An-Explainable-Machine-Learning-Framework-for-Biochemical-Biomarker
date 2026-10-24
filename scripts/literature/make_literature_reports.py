@@ -44,7 +44,8 @@ INV_COLS = ["paper_id", "title", "authors", "year", "venue", "doi", "pmid", "arx
             "source_db", "query_ids", "retrieved_on", "verification_status", "verification_note",
             "screening_status", "screening_stage", "exclusion_reason", "publication_type", "rq_tags", "tier",
             "scope_flags", "record_type", "dim_explainability", "dim_uncertainty", "dim_calibration",
-            "dim_independent_validation", "screener", "screening_date", "screening_justification",
+            "dim_independent_validation", "dim_feature_selection", "screener", "screening_date",
+            "screening_justification",
             "source_publication_types", "abstract_available", "full_text_availability", "retrieval_themes",
             "preliminary_relevance", "extraction_status"] + EXTRACTION_FIELDS + ["notes"]
 
@@ -194,6 +195,7 @@ def main(argv=None):
             "record_type": sd.get("record_type"), "dim_explainability": sd.get("dim_explainability"),
             "dim_uncertainty": sd.get("dim_uncertainty"), "dim_calibration": sd.get("dim_calibration"),
             "dim_independent_validation": sd.get("dim_independent_validation"),
+            "dim_feature_selection": sd.get("dim_feature_selection"),
             "screener": sd.get("screener"), "screening_date": sd.get("date"),
             "screening_justification": sd.get("justification"),
             "source_publication_types": ";".join(p["publication_types"] or []) or None,

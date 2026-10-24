@@ -503,3 +503,80 @@ The status was not checked after the merge, and the reports repeated the earlier
 - Registry: 2,979 IDs, 0 duplicate keys.
 - `git merge-tree`: clean.
 - No raw, archive, `.jsonl` or git-ignored files in the diff.
+
+## Q-037a — 2026-10-24 — Proposal: feature/biomarker-selection component for RQ5 (not approved)
+
+**Prompt objective**: an evidence-based proposal defining the selection component (D-031 condition C2), without screening or implementation.
+
+**Completed**
+- `research/reviews/Q-037a_feature_selection_proposal.md`:
+  - options A (broad), B (data-driven subset selection; recommended), C (narrow), plus a sub-choice on knowledge-based panels;
+  - a comparison of 8 candidate kinds of procedure: qualifies or not, evidence needed, how ambiguity is labelled, likely screener disagreements;
+  - the operational definition, evidence and uncertainty rules, and human-review triggers;
+  - 2 positive, 3 negative and 5 borderline hypothetical examples;
+  - a design for an optional `dim_feature_selection` descriptor (no data migration; IDs unaffected);
+  - risks, dependencies, and owner-response fields left unanswered.
+- Sources verified through PubMed (PMIDs 17720704, 9044528, 11983868). Only statements in the PubMed records are attributed. Unverified points (category names, PCA statement, VIP) are marked as not cited.
+- DECISION_LOG: D-032 PROPOSED. `unresolved_questions.md`: Q-037 annotated; still Open.
+
+**Created**: the proposal and `logs/session_logs/2026-10-24_Q-037a.md`. **Modified**: `logs/DECISION_LOG.md`, `research/reviews/unresolved_questions.md`, `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file.
+**Not modified**: criteria, protocol, strategy, schemas, code, tests, data, other decisions.
+**Branch note**: committed on a **local** branch `q037a-feature-selection` (from `9497a3a`). It was **not pushed**: the session's designated branch is PR #3's head, which this task must not modify. Awaiting the owner's choice of branch strategy.
+
+**Validation (performed)**: see the completion report.
+
+**Q-037a PR (2026-10-24)**: following the owner's approval of the stacked-PR workflow, branch `q037a-feature-selection` was pushed and **PR #4** opened: https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/4. Base `claude/sweet-brahmagupta-urw7l1` (PR #3 head, unchanged at `9497a3a`); head `q037a-feature-selection`. Diff before this log commit: `9497a3a..0e976db`, 7 files. Not merged. D-032 remains PROPOSED.
+
+## RQ5-DECISIONS — 2026-10-24 — Record the owner's Q-037a, Q-037b and Q-038 decisions; implement `dim_feature_selection` (inactive)
+
+**Prompt objective**: record and reconcile 15 owner decisions (Q-037a ×5, Q-037b ×5, Q-038 ×5), keep the dependent definitions inactive, and implement only what the schema safely supports.
+
+**Owner-approved (conditional, inactive)**
+- D-032 (Q-037a): PROPOSED → APPROVED — CONDITIONAL. Recorded as a status-history row; the original row is kept.
+- D-033 (Q-037b): new entry, APPROVED — CONDITIONAL.
+- D-034 (Q-038): new entry, APPROVED — CONDITIONAL.
+- D-031 not revised. Its conditions C2–C4 are answered at decision level; C1 (R5) is open.
+
+**Implemented (inactive for screening)**
+- Optional column `dim_feature_selection` (`""/yes/no/unclear`):
+  - `pubrecords.py`: `SCREENING_OPTIONAL`, `SCREENING_ENUMS`;
+  - `schemas/screening_decision.schema.json`;
+  - `schemas/publication_record.schema.json` (`screening_details`);
+  - `schemas/paper_inventory.schema.json`;
+  - `make_literature_reports.py`;
+  - one new test.
+- Real data rebuilt:
+  - paper-ID → source-record mapping identical;
+  - registry identical;
+  - every existing inventory value unchanged;
+  - the new column is null for all 2,979 records (no value filled).
+
+**Proposed / specified only**
+- `rq5_coverage_group` derivation, with a companion `rq5_coverage_provisional` flag; `pending_review` not proposed. Implementation **blocked** (Q-039, Q-041, R5, D-027).
+- `scope_flags` tokens `published_panel_reused` (documented convention) and `proposed_only:<component>` (proposal).
+- Component-specific evidence criteria (owner minimums only; no added requirements).
+
+**Conflicts and open dependencies**
+- New Q-039: no classification status field.
+- New Q-040: non-metabolic 3-of-5 frameworks are excluded with E4 at screening, so the near-RQ5 group may be incomplete.
+- New Q-041: R5 "stated" vs D-033 "applied", and the meaning of "confirmed".
+- Option letters for Q-037a and the Q-037b/Q-038 options are not in the repository; the choices are recorded by content.
+
+**Created**: `research/reviews/RQ5_component_decisions_D032-D034.md`, `logs/session_logs/2026-10-24_RQ5-DECISIONS.md`.
+**Modified**:
+- `logs/DECISION_LOG.md` (append-only)
+- `research/reviews/unresolved_questions.md` (Q-037 and Q-038 status; Q-039–Q-041 added)
+- `research/reviews/Q-037a_feature_selection_proposal.md` (status line; §10 owner responses)
+- the schemas, code and test above
+- `research/literature/paper_inventory.csv/.json` (new null column)
+- `records/build_report.json` (`built_at`)
+- `records/collection_stats.json` (CSV checksum)
+- `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file
+
+**Not modified**: screening criteria, protocol, search strategy, research plan, other decisions, raw exports, archive.
+
+**Git**: committed locally on `q037a-feature-selection` (PR #4's head branch). **Not pushed**: pushing would add this commit to PR #4 and needs the owner's authorization.
+
+**Validation (performed)**: see the session log and completion report.
+
+**RQ5-DECISIONS PR (2026-10-24)**: following the owner's choice of a separate stacked PR, branch `rq5-decisions-d032-d034` was created at `ed432a9`. That commit was unpushed and its parent is PR #4's head `b3f1ab2`, so no history was rewritten. The local `q037a-feature-selection` ref was reset to its unchanged remote (`b3f1ab2`); the remote PR #4 branch was not touched. The new branch was pushed and **PR #5** opened: https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/5. Base `q037a-feature-selection` (PR #4 head) ← head `rq5-decisions-d032-d034`. Not merged. D-032–D-034 remain APPROVED — CONDITIONAL and inactive.

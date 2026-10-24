@@ -67,6 +67,8 @@ and must not be cited alone: `D-001`–`D-008` are different decisions. *(Renumb
 | 2026-10-23 | BIO-001 | D-011 | PROPOSED → SUPERSEDED by D-022 | Same |
 | 2026-10-23 | BIO-001-REVIEW | D-004, D-011 | **Restored to PROPOSED** (original rows restored verbatim from commit `330d3fd`) | The BIO-001 change was not justified. D-004 and D-011 were awaiting the researcher's answer (Q-005, Q-012), and their replacements D-021/D-022 are themselves unapproved. Marking them superseded therefore pre-empted a researcher choice between two open proposals. A proposal may be marked SUPERSEDED only when its replacement is approved or the researcher withdraws it |
 | 2026-10-24 | LIT-004-Q028-DECISION | D-031 (new; answers Q-028 and the RQ5 part of A-3) | Recorded as **APPROVED — CONDITIONAL** (conditions C1–C4) | Explicit owner response: "For Q-028, I select Option C … Please treat this as my owner response for Q-028 only." No other entry changed |
+| 2026-10-24 | RQ5-DECISIONS | D-032 | PROPOSED → **APPROVED — CONDITIONAL (inactive for screening)** | Owner choices R-Q037a-1 Option B, -2 Option C, -3 Option A, -4 Option A, -5 Option A (owner prompt 2026-10-24; recorded by content in `research/reviews/RQ5_component_decisions_D032-D034.md` §2.1). Original D-032 row kept unchanged |
+| 2026-10-24 | RQ5-DECISIONS | D-031 | No status change (stays APPROVED — CONDITIONAL, not applied) | Conditions C2, C3, C4 answered at decision level by D-032, D-033, D-034; **C1 (R5/D-029) still open**; activation also needs Q-039, Q-040, Q-041 |
 
 Rule clarified in BIO-001-REVIEW: an assistant may not change the status of an entry that is under researcher review. A new
 proposal that conflicts with an open one is recorded as an **alternative**, and both stay open until the researcher decides.
@@ -105,4 +107,21 @@ are in `research/reviews/approval_request_LIT-004.md`. No status was changed.
 
 Note: D-026 ("RQ5 counting rule left to Q-028") remains PROPOSED. Only its RQ5 reference is now answered by D-031.
 A-3 is answered for RQ5 only; its descriptor part depends on R5 (D-029).
+
+## Proposals (added Q-037a, 2026-10-24)
+
+| ID | Date | Decision | Status | Rationale | Approved by / date |
+|---|---|---|---|---|---|
+| D-032 | 2026-10-24 (Q-037a) | Operational definition of the RQ5 feature/biomarker-selection component (D-031 condition C2). Proposed option B: a data-driven procedure in the study that reduces candidate inputs to a **subset of the original variables**, used as model input or reported as the panel. Projections (PCA etc.), interpretation-only importance, shrinkage without exclusion, and knowledge-based panels do not count. Evidence rules `yes`/`no`/`unclear` (silence = `unclear`); optional descriptor `dim_feature_selection`. Alternatives: option A (broad), option C (narrow). Detail: `research/reviews/Q-037a_feature_selection_proposal.md` | PROPOSED — not approved; not implemented | Distinguishes selection from transformation and from explanation, and is reproducible between screeners. Not chosen for its effect on the RQ5 set size. Depends on Q-037b, Q-038, D-029/R5, D-027, D-024 | — |
+
+## Owner decisions on RQ5 components (added RQ5-DECISIONS, 2026-10-24)
+
+Owner's choices are from the owner prompt of 2026-10-24. Detail, provenance (option letters vs repository fields), reconciliation and specification: `research/reviews/RQ5_component_decisions_D032-D034.md`. D-032's status change is in the status history above.
+
+| ID | Date | Decision | Status | Rationale | Approved by / date |
+|---|---|---|---|---|---|
+| D-033 | 2026-10-24 (RQ5-DECISIONS) | Q-037b, component-coverage evidence. (1) A component counts only with evidence that it was actually applied or evaluated; mentions or proposed architecture do not count; a negative result still counts if the procedure was performed. (2) Only implemented or evaluated components count; proposed ones may be recorded separately without being confusable with coverage. (3) Sufficient methodological evidence is required; full reproducibility or public code is not a universal requirement; a favourable metric alone is not evidence. (4) `yes`/`no`/`unclear`; missing information is never `no`; `unclear` is flagged for human review. (5) Shared framework with component-specific criteria (record §4). Owner choices: Q-037b-1 to -5 all Option A | **APPROVED — CONDITIONAL (inactive for screening)** until record §7 is met (R5 reconciled with D-033: Q-041; Q-039; Q-040; D-027/D-024; criteria v1.1) | Owner decision. Answers D-031 condition C3 | Researcher (owner), 2026-10-24 |
+| D-034 | 2026-10-24 (RQ5-DECISIONS) | Q-038, studies with three of five components. (1) D-031 threshold kept; groups `qualified` (≥ 4 confirmed `yes`), `near_rq5` (exactly 3), `below_threshold` (0–2); not a quality measure. (2) 3 confirmed `yes` → provisional `near_rq5` even with `unclear` components; `unclear` never counts as `yes`. (3) Separate near-RQ5 analysis with a structured comparison against `qualified`, with no causal claims and no counts before screening. (4) ≥ 4 `yes` + an `unclear` fifth qualifies; flag kept; no five-component claim. (5) Derived field `rq5_coverage_group`, never assigned by screeners; `pending_review` only if necessary and never substantive. Owner choices: Q-038-1 A, -2 B, -3 B, -4 A, -5 A | **APPROVED — CONDITIONAL (inactive)**. `rq5_coverage_group` **not implemented** (blocked: Q-039, Q-041, R5, D-027); specification in record §5.3 | Owner decision. Answers D-031 condition C4. Screening retention of non-metabolic 3-of-5 frameworks is **not** decided (Q-040) | Researcher (owner), 2026-10-24 |
+
+Note: D-032 implementation: the optional `dim_feature_selection` column was added to the screening schema and code, and an inventory column was added (null for all 2,979 records; no value filled). It is **inactive**; nothing may be screened with it until D-032's activation conditions are met.
 

@@ -118,3 +118,17 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** Q-037, Q-038, R5; all other final-confirmation-sheet lines.
 - **Recommended next step:** owner answers Q-037, Q-038 and R5 (and the remaining sheet lines); then criteria v1.1.
 - **Researcher decisions:** Q-028 → option (c), 2026-10-24 (D-031, conditional).
+
+## Day 11 (cont.) — 2026-10-24 — Q-037a
+- **Work completed:** proposal for the RQ5 feature/biomarker-selection definition (D-032, PROPOSED).
+- **Important findings:** `[EVIDENCE]` three PubMed-verified sources support the selection/embedded-selection/selection-bias points; no verified source for VIP thresholds. `[RECOMMENDATION]` option B (data-driven subset of original variables).
+- **Decisions requiring review:** R-Q037a-1 to 5; branch strategy for this task.
+- **Recommended next step:** owner answers the proposal and chooses the branch strategy.
+- **Researcher decisions:** _pending_
+
+## Day 11 (cont.) — 2026-10-24 — RQ5-DECISIONS
+- **Work completed:** 15 owner decisions recorded (D-032 → APPROVED — CONDITIONAL; D-033, D-034 new, conditional); `dim_feature_selection` added (optional, inactive); `rq5_coverage_group` specified.
+- **Important findings:** `[EVIDENCE]` no classification status field exists (Q-039); non-metabolic 3-of-5 frameworks are E4 under criteria v1.0 (Q-040); the R5 "stated" standard differs from D-033's "applied" (Q-041).
+- **Decisions requiring review:** Q-039, Q-040, Q-041, R5; authorization to push this commit (it would extend PR #4).
+- **Recommended next step:** owner decision on Q-041 together with R5 (the largest blocker).
+- **Researcher decisions:** Q-037a (5), Q-037b (5), Q-038 (5), 2026-10-24.
