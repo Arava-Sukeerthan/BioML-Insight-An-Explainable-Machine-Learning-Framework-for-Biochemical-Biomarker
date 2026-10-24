@@ -213,3 +213,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Branch | `rq5-decisions-d032-d034` (commit `ed432a9`, originally made locally on `q037a-feature-selection` and never pushed there) |
 | Pull request | **#5** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/5 (open; stacked on PR #4 → PR #3; not merged). Branch `rq5-decisions-d032-d034`; PR #3 and PR #4 unchanged |
 
+### Q-041-DECISIONS
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | Q-041-DECISIONS (prompt: "Record Q-041 Decisions and Prepare RQ5 Updates") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Record G1–G6 as D-035, update the RQ5 docs, and implement safe parts with tests; no screening |
+| Actual completion status | D-035 APPROVED — CONDITIONAL (inactive). Stage-separated evidence, erasure and completeness checks, verification audit trail and coverage-group function implemented and tested. Coverage group not wired (Q-039) |
+| Branch | `q041-rq5-evidence-standard` (local; uncommitted; based on `b7c2e51`) |
+| Pull request | None (owner authorization required before commit, push or PR) |
+

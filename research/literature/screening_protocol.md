@@ -58,6 +58,15 @@ without a stated method is `dim_explainability=unclear`, not `yes`. These descri
 abstract *claims*, not how well it was done; quality is appraised at full text
 (`search_strategy.md` §8.2).
 
+### 2a. RQ5 component evidence (approved with conditions, **INACTIVE**; D-031–D-035)
+Not applied until the activation conditions in `research/reviews/Q-041_decision_record_D035.md` §6 are met. For RQ5 component statuses, this subsection replaces the "states/claims" meaning above. The descriptors' other uses stay as written (D-026 and D-029, proposed).
+- **Five components:** feature selection (`dim_feature_selection`), classification (no column yet, Q-039), explainability (`dim_explainability`), probability calibration (`dim_calibration`), uncertainty estimation (`dim_uncertainty`).
+- **`yes`** = a qualifying procedure applied to the study's data or model, with a documented output (definitions: D-032; D-035 §2). **`no`** = the absence is stated or the fully described design excludes it. **`unclear`** = assessed but unresolved. **Empty** = not assessed, never `no`.
+- **Preliminary vs confirmed:** title/abstract statuses are preliminary (triage only). Statuses are **confirmed** only on a `full_text` row, never on an `abstract_only` decision. A full-text RQ5 assessment records all five statuses.
+- **Researcher verification** of `qualified`/`near_rq5` records: a new `full_text` row with `screener=researcher` restating all statuses, justification "verified: …". Earlier rows are kept (D-035 §4).
+- **Build safeguards (implemented):** a later row of the same stage cannot blank a recorded component; incomplete full-text component rows are rejected. **Limitation (Q-039):** the completeness check covers the four existing component columns only; classification joins it when Q-039 adds a status column.
+- **Precedence:** for RQ5 component statuses, D-035 applies where it differs from §2 above (D-026) or R5 (D-029); both stay PROPOSED.
+
 ## 3. Decision rules for the distinctions requested
 
 | Distinction | Rule (applies at title/abstract; doubt → `uncertain`) | Existing basis |

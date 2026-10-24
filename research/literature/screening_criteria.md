@@ -99,6 +99,8 @@ relevance or as comparators. They are not part of the RQ1 ML-method landscape. T
 | RQ5 | Proposes or evaluates an integrated pipeline/framework covering **≥ 3** of: biomarker/feature selection; classification; explainability; calibration or uncertainty estimation — for biomarker/omics/clinical tabular data | — (any domain is retained here as closest prior art, tagged with domain) |
 | RQ6 | Systematic/scoping reviews, meta-research, reporting guidelines, risk-of-bias tools, or empirical studies of methodological pitfalls (leakage, overfitting, reproducibility) relevant to biomarker/omics/clinical ML | Narrative reviews without methodological content → `review_lead` only |
 
+> **RQ5 amendment, approved with conditions, INACTIVE (D-031–D-035, 2026-10-24).** Not applied until the activation conditions in `research/reviews/Q-041_decision_record_D035.md` §6 are met; the text above stays the working draft. Once active: RQ5 requires **at least 4 of 5** separate components (feature selection; classification; explainability; probability calibration; uncertainty estimation; D-031). A component counts only when it was **applied or evaluated with a documented output** (D-033, D-035), never when it is only proposed or mentioned. Component definitions: D-032 (selection) and D-035 §2. Coverage groups `qualified` / `near_rq5` / `below_threshold` (D-034) use **confirmed** statuses only, i.e. from a full-text assessment (D-035 G3). `qualified` and `near_rq5` records are verified by the researcher (D-035 G4).
+
 ---
 
 ## 4. Decision procedure
@@ -125,6 +127,8 @@ Record
 | 1 | RQ1-eligible and addresses ≥ 2 of {explainability, calibration/uncertainty, external validation}; all RQ5; reporting guidelines/RoB tools |
 | 2 | Methodological papers for RQ2–RQ4; RQ1-eligible studies addressing exactly one of the three aspects |
 | 3 | Other RQ1-eligible studies. These are coded from the abstract; full text is read for a random sample only |
+
+> **Tier note, INACTIVE (D-031, D-034, D-035).** Once active, "all RQ5" in Tier 1 means records whose **preliminary** (title/abstract) statuses could reach the D-031 threshold, so that their components can be confirmed at full text. Whether `near_rq5` candidates are also Tier 1 is not decided.
 
 ## 6. Screening record format
 `research/literature/screening/title_abstract_decisions.csv` and `full_text_decisions.csv`:

@@ -171,3 +171,12 @@ All of the following are required before any of them governs screening:
 5. `rq5_coverage_group` implemented and tested per §5.3.
 6. D-031, D-032, D-033 and D-034 written into `screening_criteria.md` v1.1 and protocol v0.2, frozen as the pilot's `criteria_version`.
 7. The other pilot-blocking items in `final_confirmation_sheet_LIT-004.md` resolved.
+
+## 8. Addendum (2026-10-24, Q-041-DECISIONS)
+D-035 (`Q-041_decision_record_D035.md`) settles the open points of §3 and §5.3 that depended on Q-041.
+- **§3, D-029 / R5 row:** for RQ5 component statuses the evidence standard is now D-035 (applied or evaluated, with documented output). D-029 stays PROPOSED for its other content.
+- **§4:** the component criteria are now the D-035 definitions (record §2).
+- **§5.3 open point:** "confirmed `yes`" = a status from a full-text assessment (not `abstract_only`).
+- **§5.3 implementation:** stage-separated evidence (`rq5_components` in the publication record), the erasure and completeness checks, and `derive_rq5_coverage_group()` are implemented and tested. The group is **not wired into the build** because Q-039 (classification status) is open.
+- §7 condition 1 is met for the component definitions; the other conditions remain.
+

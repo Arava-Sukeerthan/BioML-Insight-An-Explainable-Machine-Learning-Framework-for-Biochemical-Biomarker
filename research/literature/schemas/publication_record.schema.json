@@ -335,6 +335,77 @@
       ],
       "pattern": "^E(1[0-2]|[1-9])$"
     },
+    "rq5_components": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "description": "D-035 (Q-041; APPROVED - CONDITIONAL, inactive for screening): RQ5 component statuses by evidence stage. preliminary = latest title/abstract row (triage only, never counted toward D-031/D-034); confirmed = latest full-text row (not for abstract_only decisions), with earlier full-text rows kept as history. null = no component recorded. classification is always null until Q-039 adds a status column",
+      "properties": {
+        "preliminary": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "statuses": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "feature_selection": {"enum": ["yes", "no", "unclear", null]},
+                "classification": {"enum": ["yes", "no", "unclear", null]},
+                "explainability": {"enum": ["yes", "no", "unclear", null]},
+                "calibration": {"enum": ["yes", "no", "unclear", null]},
+                "uncertainty": {"enum": ["yes", "no", "unclear", null]}
+              }
+            },
+            "screener": {"type": "string"},
+            "date": {"type": "string"}
+          }
+        },
+        "confirmed": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "statuses": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "feature_selection": {"enum": ["yes", "no", "unclear", null]},
+                "classification": {"enum": ["yes", "no", "unclear", null]},
+                "explainability": {"enum": ["yes", "no", "unclear", null]},
+                "calibration": {"enum": ["yes", "no", "unclear", null]},
+                "uncertainty": {"enum": ["yes", "no", "unclear", null]}
+              }
+            },
+            "screener": {"type": "string"},
+            "date": {"type": "string"},
+            "researcher_verified": {"type": "boolean"},
+            "changed_by_verification": {"type": "boolean"},
+            "history": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "screener": {"type": "string"},
+                  "date": {"type": "string"},
+                  "decision": {"type": "string"},
+                  "statuses": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "feature_selection": {"enum": ["yes", "no", "unclear", null]},
+                "classification": {"enum": ["yes", "no", "unclear", null]},
+                "explainability": {"enum": ["yes", "no", "unclear", null]},
+                "calibration": {"enum": ["yes", "no", "unclear", null]},
+                "uncertainty": {"enum": ["yes", "no", "unclear", null]}
+              }
+            }
+                }
+              }
+            }
+          }
+        },
+        "confirmation_note": {"type": ["string", "null"]}
+      }
+    },
     "retracted": {
       "type": "boolean"
     },

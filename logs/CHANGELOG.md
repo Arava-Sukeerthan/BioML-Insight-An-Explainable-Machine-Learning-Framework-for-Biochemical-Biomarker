@@ -580,3 +580,40 @@ The status was not checked after the merge, and the reports repeated the earlier
 **Validation (performed)**: see the session log and completion report.
 
 **RQ5-DECISIONS PR (2026-10-24)**: following the owner's choice of a separate stacked PR, branch `rq5-decisions-d032-d034` was created at `ed432a9`. That commit was unpushed and its parent is PR #4's head `b3f1ab2`, so no history was rewritten. The local `q037a-feature-selection` ref was reset to its unchanged remote (`b3f1ab2`); the remote PR #4 branch was not touched. The new branch was pushed and **PR #5** opened: https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/5. Base `q037a-feature-selection` (PR #4 head) ← head `rq5-decisions-d032-d034`. Not merged. D-032–D-034 remain APPROVED — CONDITIONAL and inactive.
+
+## Q-041-DECISIONS — 2026-10-24 — Record D-035 (RQ5 evidence standard); stage-separated component evidence (inactive)
+
+**Prompt objective**: record the owner's Q-041 choices (G1–G6), update the RQ5 documentation consistently, and implement only what resolved dependencies permit; no screening.
+
+**Owner-approved (conditional, inactive)**
+- D-035, new: G1 A, G2 A, G3 I, G4 B, G5 A, G6 approve.
+- Status-history notes:
+  - D-031: C1 met at decision level; still conditional.
+  - D-034: "confirmed" defined; groups unchanged.
+  - D-029 and D-026: stay PROPOSED; their component wording is governed by D-035 for RQ5.
+- No approved decision was changed.
+
+**Implemented**
+- `pubrecords.py`:
+  - `rq5_component_evidence()`: per paper, `preliminary` (latest title/abstract row) and `confirmed` (latest full-text row, not `abstract_only`), with full-text history, `researcher_verified` and `changed_by_verification`;
+  - a later same-stage row blanking a recorded component stops the build;
+  - a full-text row with only some component statuses stops the build;
+  - `derive_rq5_coverage_group()`: D-034 on confirmed statuses, with `null` for not assessed and a provisional flag. **Not wired** (Q-039).
+- Publication-record schema: new `rq5_components` (null for all records).
+- 9 new tests; one existing test moved to title/abstract rows (G5 completeness).
+- Screening-file columns, inventory and IDs unchanged.
+
+**Documentation (INACTIVE notes; draft text unchanged)**
+- `screening_criteria.md` (RQ5, Tier 1);
+- `screening_protocol.md` new §2a;
+- `search_strategy.md` §1.2, §8.3 and change history;
+- `research_plan.md` §2, §8 and change history;
+- the R5 note in `final_confirmation_sheet_LIT-004.md`;
+- §8 addendum in `RQ5_component_decisions_D032-D034.md`;
+- Q-041 answered.
+
+**Created**: `research/reviews/Q-041_decision_record_D035.md`, `logs/session_logs/2026-10-24_Q-041-DECISIONS.md`.
+**Not modified**: screening data (none exists), inventory values, registry, raw exports, archive, PR branches.
+**Git**: working tree on new local branch `q041-rq5-evidence-standard` (from PR #5 head `b7c2e51`). **Not committed and not pushed** (awaiting owner authorization).
+
+**Validation**: see the session log.

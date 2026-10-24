@@ -32,6 +32,8 @@ Stage D (decisions D-013, D-016).
 | F | Existing integrated frameworks combining several components | RQ5 (Q-PM-11, Q-PM-12) | **Closest prior art**: pipelines covering ≥ 3 of {biomarker selection, classification, explainability, calibration/uncertainty} |
 | (cross-cutting) | Methodological quality and reported limitations | RQ6 (Q-PM-13, Q-PM-14) | Reviews, reporting guidelines, risk-of-bias tools, leakage and reproducibility studies |
 
+> *RQ5 note, INACTIVE (D-031–D-035, 2026-10-24):* once active, theme F closest prior art = ≥ 4 of 5 separate components, each confirmed at full text (`qualified`), plus a separate `near_rq5` comparison (exactly 3; D-034). The "≥ 3 of {…}" wording above is the earlier draft.
+
 ## 3. Candidate scholarly databases
 Access status was **tested** on 2026-10-14 (probes PROBE-01…12) and re-checked for the APIs on
 2026-10-23 (BIO-001: `curl` to E-utilities, Europe PMC, Crossref, Semantic Scholar and arXiv API
@@ -111,6 +113,8 @@ The researcher spot-checks 5 extracted records (planned).
 5. **Feasibility filter**: a gap is only a candidate contribution if genuine data to study it exist (D-014, D-015) and it can be investigated within the schedule.
 6. Every gap statement is labelled `[EVIDENCE]`, `[HYPOTHESIS]` or `[OPEN]`. The researcher approves the gap and contribution (Stage D gate). **A gap is a hypothesis until the closest-prior-art check is done.**
 
+   *Note, INACTIVE (D-031, D-034, D-035):* "≥ 3 components" above will read "≥ 4 of 5 confirmed components (`qualified`), with `near_rq5` (exactly 3) reported separately" once the conditions are met.
+
 ## 9. Planned literature-review deliverables
 None of these exist yet.
 | Deliverable | Planned path | Stage |
@@ -140,3 +144,4 @@ None of these exist yet.
 | Version | Date | Change | Approved |
 |---|---|---|---|
 | 1.0 | 2026-10-23 | Initial overview plan (BIO-001); no change to queries or criteria | Pending |
+| 1.0 (note) | 2026-10-24 | Q-041-DECISIONS: inactive RQ5 notes under §2 (theme F) and §8 item 3 (D-031–D-035); no other change | Pending |
