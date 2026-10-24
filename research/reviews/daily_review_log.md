@@ -146,3 +146,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** PR #8 (owner review and merge).
 - **Recommended next step:** owner reviews and merges PR #8; then Q-039.
 - **Researcher decisions:** none in this task.
+
+## Day 11 (cont.) — 2026-10-24 — GOV-PR8-MERGE-RECORD
+- **Work completed:** log-only record of PR #8's merge (`18f4b09`, 05:20:14 UTC) and post-merge validation.
+- **Important findings:** `[EVIDENCE]` the merge tree equals PR #8's head `4835d3b`, so the merge introduced no extra changes. D-026/D-029 are PROPOSED and D-035 is conditional and inactive.
+- **Decisions requiring review:** whether to open a PR for this log-only branch.
+- **Recommended next step:** owner review; then Q-039.
+- **Researcher decisions:** none in this task.

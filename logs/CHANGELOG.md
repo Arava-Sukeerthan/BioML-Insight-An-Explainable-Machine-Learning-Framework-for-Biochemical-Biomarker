@@ -652,3 +652,33 @@ The status was not checked after the merge, and the reports repeated the earlier
 **Modified**: this file; `logs/PROMPT_LOG.md`; `logs/session_logs/2026-10-24_Q-041-DECISIONS.md` (appended correction row); `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_GOV-LOG-CORRECTION.md`. **Not modified**: `DECISION_LOG.md`, code, tests, schemas, research documents, data.
 
 **Validation**: see the session log. No CI is configured, so none ran.
+
+## CORRECTION — 2026-10-24 — PR #8 merged (GOV-PR8-MERGE-RECORD)
+
+**Scope**: log-only. This supersedes the "PR #8 open / subject to owner review / not yet on default" statements in the CORRECTION entry above (GOV-LOG-CORRECTION) and in `PROMPT_LOG.md`. Those statements were correct when written and are left unchanged.
+
+**Verified `[EVIDENCE: GitHub API and git, checked 2026-10-24]`**
+
+| Item | Value |
+|---|---|
+| PR | [#8](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/8): **merged** (no longer open) |
+| Merged at | 2026-10-24 05:20:14 UTC |
+| Merged by | `Arava-Sukeerthan` (GitHub `merged_by` for PR #8). The merge accounts for PRs #3–#7 remain **not verified** |
+| Merge commit | `18f4b09`, parents `c69b162` (base before merge) and `4835d3b` (head before merge) |
+| Default branch | `claude/happy-hawking-rxptfv` at `18f4b09`; `0eae10a` (Q-041/D-035) and `4835d3b` (log corrections) are ancestors |
+| Merge content | The merge-commit tree is identical to `4835d3b`. The diff `c69b162..18f4b09` is identical to the PR #8 diff (17 files, +620/−6). `DECISION_LOG.md` is append-only (+10/−0) |
+
+**Post-merge validation** (run on a checkout whose tree equals `18f4b09`):
+- unit tests: 60, OK;
+- query table: PASS, 158 rows;
+- raw-export verify: OK, all match `MANIFEST.csv`;
+- archive checksum: OK;
+- decision IDs: 35 unique (D-001–D-035), no gaps or duplicates.
+
+No CI is configured.
+
+**Statuses confirmed unchanged**: D-026 and D-029 PROPOSED; D-035 APPROVED — CONDITIONAL, inactive for screening. Screening and pilot not started (no `screening/decisions.csv` or pilot file exists).
+
+**Modified**: this file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_GOV-PR8-MERGE-RECORD.md`. **Not modified**: `DECISION_LOG.md`, code, tests, schemas, criteria, protocol, data, branches other than the new `gov-pr8-merge-record`.
+
+**GOV-PR8-MERGE-RECORD PR (2026-10-24)**: following the owner's request, **PR #9** "docs: record PR #8 merge in governance logs" was opened: https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/9. Base `claude/happy-hawking-rxptfv` (`18f4b09`) ← head `gov-pr8-merge-record` (`bf36297` when opened; this log-only commit is added on top). Status: **open**, awaiting owner review; not merged. Recorded per CLAUDE.md §3.5; the PROMPT_LOG "Pull request" row for this task is corrected in the same way.

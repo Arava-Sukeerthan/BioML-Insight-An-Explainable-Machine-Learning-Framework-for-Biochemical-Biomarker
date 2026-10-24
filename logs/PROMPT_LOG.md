@@ -245,3 +245,23 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Corrections appended; awaiting owner review of PR #8 |
 | Branch | `q041-rq5-evidence-standard` (PR #8 head) |
 | Pull request | #8 — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/8 (open; updated by this log-only commit; not merged) |
+
+> **Correction (2026-10-24, GOV-PR8-MERGE-RECORD).** In the "PR records" table and the GOV-LOG-CORRECTION entry above, PR #8 is shown as open. That was correct when written, but PR #8 is now **merged**: merge commit `18f4b09` (parents `c69b162`, `4835d3b`), 2026-10-24 05:20:14 UTC, by `Arava-Sukeerthan`. The Q-041/D-035 work and the log corrections are now on the default branch. Post-merge validation: 60 tests OK; query table PASS (158); raw-export verify OK; archive checksum OK; decision IDs D-001–D-035 with no duplicates. Details: `logs/CHANGELOG.md`, "CORRECTION — 2026-10-24 — PR #8 merged".
+
+### GOV-PR8-MERGE-RECORD
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | GOV-PR8-MERGE-RECORD (prompt: "make a narrowly scoped, log-only correction to record the verified merge of PR #8") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Record PR #8's verified merge and post-merge validation; log-only |
+| Actual completion status | Correction appended; awaiting owner review |
+| Branch | `gov-pr8-merge-record` (new, from default `18f4b09`) |
+| Pull request | None created; owner to decide (CLAUDE.md §3.5) |
+
+> **Correction (2026-10-24, GOV-PR8-MERGE-RECORD).** The "Pull request" row above ("None created; owner to decide") was correct when written. On the owner's request, a PR was then opened:
+
+| Field | Value |
+|---|---|
+| Pull request | **#9**: "docs: record PR #8 merge in governance logs" (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/9) |
+| Base ← head | `claude/happy-hawking-rxptfv` (`18f4b09`) ← `gov-pr8-merge-record` (`bf36297` when opened, plus this log-only commit) |
+| Status | Open; awaiting owner review; not merged |
