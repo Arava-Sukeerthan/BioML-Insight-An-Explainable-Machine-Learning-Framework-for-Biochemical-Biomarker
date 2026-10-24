@@ -104,3 +104,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** R1–R6.
 - **Recommended next step:** owner answers R1–R6 and confirms what is to be recorded.
 - **Researcher decisions:** _pending_
+
+## Day 11 (cont.) — 2026-10-24 — LIT-004-FINAL-CONFIRMATION-SHEET
+- **Work completed:** final confirmation sheet (`research/reviews/final_confirmation_sheet_LIT-004.md`).
+- **Important findings:** `[EVIDENCE]` after confirmation, the pilot is still blocked by Q-028 (or the provisional alternative), the D-029 definitions, the recorded schema decisions, the arXiv spot-check, implementation and criteria v1.1/protocol v0.2.
+- **Decisions requiring review:** R1–R6 and the v1 items.
+- **Recommended next step:** owner completes the sheet; then recording per R6.
+- **Researcher decisions:** _pending_

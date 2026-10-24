@@ -421,3 +421,27 @@ after PR #1 had been merged.
 
 **Validation (performed)**: production diff empty; unit tests, query table, raw and archive checksums (results in the completion report).
 **Not done**: no recording, implementation, spot-check, pilot, screening or pair decision.
+
+## LIT-004-FINAL-CONFIRMATION-SHEET — 2026-10-24 — Final confirmation sheet for the owner (documentation only)
+
+**Prompt objective**: one confirmation sheet with explicit response fields (R1–R6 plus the remaining v1 items) before anything is recorded or implemented.
+
+**Completed**
+- `research/reviews/final_confirmation_sheet_LIT-004.md`:
+  - response semantics, with conditional approvals recorded as `APPROVED — CONDITIONAL` and never converted;
+  - R1 (D-024) separate from R2 (Q-034, option (b) recommended);
+  - R3 with the Q-028 options, components and hypothetical examples copied verbatim, the reasons to decide before the pilot, and all dependent criteria and workflow items;
+  - R4, the D-030 retraction procedure, conditional on sub-items R4a–R4e;
+  - R5, the complete D-029 definitions plus their implementation dependencies;
+  - the v1 items summary;
+  - R6 recording choice;
+  - the pilot-blocking list.
+- Quoted text was copied programmatically from the addendum and the v1 set. One cross-reference was adjusted.
+
+**Created**: `research/reviews/final_confirmation_sheet_LIT-004.md`, `logs/session_logs/2026-10-24_LIT-004-FINAL-CONFIRMATION-SHEET.md`.
+**Modified**: `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file.
+**Not modified**: `logs/DECISION_LOG.md`, the ballot, the proposed response set, the addendum, schemas, code, tests, criteria, protocol, strategy, data.
+**Deleted**: none.
+
+**Validation (performed)**: production diff empty; unit tests, query table, raw and archive checksums (results in the completion report).
+**Not done**: no recording, implementation, spot-check, pilot, screening or pair decision.
