@@ -73,6 +73,13 @@ SCREENING_ENUMS = {
     # RQ5 feature/biomarker-selection component
     "dim_feature_selection": ("", "yes", "no", "unclear"),
 }
+# RQ5 components (D-031 to D-035). Status columns in screening/decisions.csv; classification has
+# no column yet (Q-039), so the coverage group cannot be derived in the build.
+RQ5_COMPONENT_FIELDS = {"feature_selection": "dim_feature_selection", "classification": None,
+                        "explainability": "dim_explainability", "calibration": "dim_calibration",
+                        "uncertainty": "dim_uncertainty"}
+RQ5_RECORDED_FIELDS = [f for f in RQ5_COMPONENT_FIELDS.values() if f]
+RESEARCHER = "researcher"   # screener value for the researcher (screening_protocol.md section 6)
 REASON_CODE = re.compile(r"E(1[0-2]|[1-9])")
 RQ_TAGS = re.compile(r"(RQ[1-6])(;RQ[1-6])*")
 
@@ -848,6 +855,7 @@ def build(lit_dir, today=None, check_schema=True):
     cluster_of = {i: c for c, idx in enumerate(clusters) for i in idx}
 
     screening_rows = load_screening_decisions(lit_dir)
+    rq5_evidence = rq5_component_evidence(screening_rows)   # raises on erasure / incomplete rows
     screening = {}
     for d in sorted(screening_rows, key=lambda d: (SCREENING_STAGE_ORDER[d["stage"]], d["date"])):
         screening[d["paper_id"]] = d          # latest stage, then latest date, then file order
@@ -930,6 +938,7 @@ def build(lit_dir, today=None, check_schema=True):
             "screening_details": ({k: sc.get(k) or None for k in
                                    ["screener", "date", "justification"] + SCREENING_OPTIONAL}
                                   if sc else None),
+            "rq5_components": rq5_evidence.get(pid),
             "retracted": any("Retracted Publication" in (m.get("publication_types") or []) for m in members),
         })
     pubs.sort(key=lambda p: int(p["paper_id"][1:]))
@@ -989,6 +998,89 @@ def build(lit_dir, today=None, check_schema=True):
     with open(rec_dir / "build_report.json", "w") as f:
         json.dump(report, f, indent=2, sort_keys=True)
     return report
+
+
+def _component_statuses(row):
+    return {name: (row.get(col) or None) if col else None for name, col in RQ5_COMPONENT_FIELDS.items()}
+
+
+def rq5_component_evidence(rows):
+    """Per paper, keep RQ5 component statuses by evidence stage (D-035, Q-041):
+    - "preliminary": latest title/abstract row; for triage only, never counted toward D-031/D-034;
+    - "confirmed": latest full-text row, unless that row is an abstract_only decision (no full text,
+      so nothing can be confirmed) or records no component; earlier full-text rows are kept as history,
+      so a researcher verification row (screener=researcher) never hides the evidence it replaced.
+    Raises ValueError (nothing is written) when a later row of the same stage would blank a component
+    recorded earlier at that stage, or when a full-text row records some but not all component statuses
+    (an empty value means "not assessed", never "no"). Limitation (Q-039): completeness covers the four
+    existing component columns (RQ5_RECORDED_FIELDS); classification has no column yet."""
+    by_pid, errors = {}, []
+    order = sorted(enumerate(rows), key=lambda t: (t[1]["paper_id"], SCREENING_STAGE_ORDER[t[1]["stage"]],
+                                                   t[1]["date"], t[0]))
+    for _, r in order:
+        by_pid.setdefault(r["paper_id"], []).append(r)
+    out = {}
+    for pid, prow in by_pid.items():
+        for stage in SCREENING_STAGE_ORDER:
+            seen = {}
+            for r in (x for x in prow if x["stage"] == stage):
+                for f in RQ5_RECORDED_FIELDS:
+                    if r[f]:
+                        seen[f] = r[f]
+                    elif f in seen:
+                        errors.append(f"{pid} ({stage}, {r['date']}): {f} is blank but was recorded as "
+                                      f"{seen[f]!r} in an earlier {stage} row; restate it (use 'unclear' if unresolved)")
+        ft = [r for r in prow if r["stage"] == "full_text"]
+        for r in ft:
+            filled = [f for f in RQ5_RECORDED_FIELDS if r[f]]
+            if filled and len(filled) < len(RQ5_RECORDED_FIELDS):
+                missing = [f for f in RQ5_RECORDED_FIELDS if not r[f]]
+                errors.append(f"{pid} (full_text, {r['date']}): component assessment incomplete, missing {missing} "
+                              "(record 'unclear' when assessed but unresolved)")
+        ta = [r for r in prow if r["stage"] == "title_abstract"]
+        prelim = None
+        if ta and any(ta[-1][f] for f in RQ5_RECORDED_FIELDS):
+            prelim = {"statuses": _component_statuses(ta[-1]), "screener": ta[-1]["screener"], "date": ta[-1]["date"]}
+        confirmed, note = None, None
+        if ft:
+            last = ft[-1]
+            if last["decision"] == "abstract_only":
+                note = "full text unavailable (abstract_only): component statuses cannot be confirmed"
+            elif any(last[f] for f in RQ5_RECORDED_FIELDS):
+                history = [{"screener": r["screener"], "date": r["date"], "decision": r["decision"],
+                            "statuses": _component_statuses(r)}
+                           for r in ft[:-1] if any(r[f] for f in RQ5_RECORDED_FIELDS)]
+                verified = last["screener"].lower() == RESEARCHER
+                prior = [h for h in history if h["screener"].lower() != RESEARCHER]
+                confirmed = {"statuses": _component_statuses(last), "screener": last["screener"],
+                             "date": last["date"], "researcher_verified": verified,
+                             "changed_by_verification": bool(verified and prior and
+                                                             prior[-1]["statuses"] != _component_statuses(last)),
+                             "history": history}
+            else:
+                note = "no component statuses recorded at full text (not assessed)"
+        if prelim or confirmed or note:
+            out[pid] = {"preliminary": prelim, "confirmed": confirmed, "confirmation_note": note}
+    if errors:
+        raise ValueError("screening/decisions.csv: RQ5 component evidence problems:\n  " + "\n  ".join(errors))
+    return out
+
+
+def derive_rq5_coverage_group(statuses):
+    """D-034 coverage group from the five CONFIRMED (full-text) component statuses (D-035).
+    Returns (group, provisional): group is None when any component is not assessed (empty/None);
+    otherwise "qualified" (>= 4 yes), "near_rq5" (exactly 3) or "below_threshold" (0-2). "unclear"
+    never counts as yes; provisional is True when any component is "unclear".
+    Not wired into the build: classification has no status column yet (Q-039)."""
+    vals = [statuses.get(name) for name in RQ5_COMPONENT_FIELDS]
+    if any(v in (None, "") for v in vals):
+        return None, None
+    bad = [v for v in vals if v not in ("yes", "no", "unclear")]
+    if bad:
+        raise ValueError(f"invalid component status {bad}")
+    n_yes = vals.count("yes")
+    group = "qualified" if n_yes >= 4 else "near_rq5" if n_yes == 3 else "below_threshold"
+    return group, "unclear" in vals
 
 
 def load_screening_decisions(lit_dir):
