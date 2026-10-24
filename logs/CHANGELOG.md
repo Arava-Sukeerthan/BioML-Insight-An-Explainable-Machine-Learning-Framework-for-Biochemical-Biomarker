@@ -789,3 +789,23 @@ No CI is configured.
 **Q-043-DECISION rebase (2026-10-24, log-only)**: branch `q043-reporting-rule` was rebased onto default-branch commit `6f57b6f` (merge of PR #12; D-037 now on the default branch), from its earlier base `e8bf189`. No conflicts; the D-038 diff is byte-identical before and after. Rebased work commits: `1547cf0` → `995166c`, `ef3bfa6` → `83b4951`. The earlier branch notes in PROMPT_LOG and the Q-043-DECISION session log ("from `e8bf189`") were accurate when written and are kept as written. This note's own commit ID is recorded in the PR description.
 
 **Q-043-DECISION PR (2026-10-24)**: **PR #13**, "Q-043: D-038 reporting rule for qualified records with an unresolved component (no marker; inactive)": https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/13. Base `claude/happy-hawking-rxptfv` (`6f57b6f`) ← head `q043-reporting-rule` (work commits `995166c`, `83b4951`, rebase note `07087d3`, plus this log-only commit). Status: **open**, awaiting owner review; not merged.
+
+## CORRECTION — 2026-10-24 — PRs #14 and #13 merged; D-038 on the default branch (GOV-PR13-14-MERGE-RECORD)
+
+**Scope**: log-only. This supersedes the "open / not merged" statements for PR #13 (Q-043-DECISION PR paragraph above, and `PROMPT_LOG.md`), the "not pushed, no PR" statements for the GOV-PR10-12-MERGE-RECORD branch, and that record's dated statement "D-038 is in open PR #13, not on the default branch". Those statements were correct when written and are left unchanged. It also records **PR #14** by number for the first time (CLAUDE.md §3.5).
+
+**Verified `[EVIDENCE: GitHub API and git, checked 2026-10-24]`**
+
+| PR | Merged into | Merged at (GitHub `merged_at`, UTC) | Merged by | Merge commit and parents | Merge-commit tree |
+|---|---|---|---|---|---|
+| [#14](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/14) (GOV-PR10-12-MERGE-RECORD, log-only) | `claude/happy-hawking-rxptfv` | 2026-10-24 07:36:47 | `Arava-Sukeerthan` | `f7f6bb7`: `6f57b6f` (base), `30905f4` (head) | — |
+| [#13](https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/13) (Q-043 / D-038) | `claude/happy-hawking-rxptfv` | 2026-10-24 07:48:00 | `Arava-Sukeerthan` | `694b389`: `f7f6bb7` (base), `6776eba` (head) | identical to `6776eba` |
+
+- **Conflict resolution before the merge.** After PR #14 merged, PR #13 conflicted in `logs/CHANGELOG.md`, `logs/PROMPT_LOG.md` and `research/reviews/daily_review_log.md`: both sides had appended at the end of each file. With owner authorization, `f7f6bb7` was merged into `q043-reporting-rule` (`6776eba`, parents `fde915a`, `f7f6bb7`; `--no-ff`, no rebase, normal push). Each file keeps the default-branch text byte for byte, followed by the PR #13 block.
+- **Result.** The default branch is at `694b389`. `f7f6bb7..694b389` is identical to the reviewed PR #13 diff (10 files, +119/−1). D-036, D-037 and D-038 are all on the default branch.
+
+**Post-merge validation** (run on a copy of `694b389`): unit tests 69, OK; query table PASS, 158 rows; decision log 38 unique IDs (D-001–D-038), no duplicates, D-038 once. Real-data rebuild, raw-export verify and archive checksum **not run** (raw exports and git-ignored build files are not in the container). No CI is configured.
+
+**Statuses confirmed unchanged**: D-036, D-037 and D-038 APPROVED — CONDITIONAL (inactive). Q-042 Open; Q-043 Answered (D-038). Screening and pilot not started (no `screening/decisions.csv` or pilot file exists). No model training.
+
+**Modified**: this file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_GOV-PR13-14-MERGE-RECORD.md`. **Not modified**: `DECISION_LOG.md`, decision records, code, tests, schemas, criteria, protocol, data.

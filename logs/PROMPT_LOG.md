@@ -313,3 +313,15 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Pull request | None; awaiting the owner's choice of branch and PR (CLAUDE.md §3.5) |
 
 > **Update (2026-10-24, Q-043-DECISION).** The "Branch" and "Pull request" rows above were written before the rebase and before the PR existed. The branch was rebased onto `6f57b6f` (see CHANGELOG) and pushed with owner authorization. **PR #13** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/13 — base `claude/happy-hawking-rxptfv` (`6f57b6f`) ← head `q043-reporting-rule` (`07087d3` plus this log-only commit). Open; awaiting owner review; not merged.
+
+### GOV-PR13-14-MERGE-RECORD
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | GOV-PR13-14-MERGE-RECORD (prompt: "verify PR #13's merge and prepare a log-only follow-up report"; then "proceed with creating the local governance record GOV-PR13-14-MERGE-RECORD") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Record the verified merges of PR #14 and PR #13 and the conflict resolution before PR #13's merge; log-only |
+| Actual completion status | Record prepared locally; awaiting owner review before publishing |
+| Branch | `gov-pr13-14-merge-record` (local, from default `694b389`); not pushed |
+| Pull request | None; owner to decide (CLAUDE.md §3.5) |
+
+> **Correction (2026-10-24, GOV-PR13-14-MERGE-RECORD).** The Q-043-DECISION update note above shows PR #13 as open, and the GOV-PR10-12-MERGE-RECORD entry shows "Pull request: None". Both were correct when written. Verified now: **PR #14** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/14 — base `claude/happy-hawking-rxptfv` (`6f57b6f`) ← head `gov-pr10-12-merge-record` (`30905f4`); merged (`f7f6bb7`, parents `6f57b6f`, `30905f4`; 07:36:47 UTC, `Arava-Sukeerthan`). **PR #13** merged (`694b389`, parents `f7f6bb7`, `6776eba`; 07:48:00 UTC, `Arava-Sukeerthan`), after the authorized conflict-resolution merge `6776eba`. Details: CHANGELOG, GOV-PR13-14-MERGE-RECORD.
