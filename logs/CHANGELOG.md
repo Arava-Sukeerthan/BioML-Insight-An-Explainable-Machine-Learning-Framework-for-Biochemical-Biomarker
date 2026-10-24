@@ -758,3 +758,8 @@ No CI is configured.
 **Not modified**: code, schemas, tests, inventory, raw exports, `screening_criteria.md`, `GOVERNANCE.md`, `CLAUDE.md`. No screening decision, pilot or model training. No PR merged, retargeted, approved or closed.
 
 **Validation**: see `logs/session_logs/2026-10-24_Q-043-DECISION.md`. No CI is configured.
+
+**Q-043-DECISION follow-up (2026-10-24, owner instructions after the pre-merge review)**:
+- D-038 record (not yet pushed): status line reads **APPROVED — CONDITIONAL (inactive)**, stating that the reporting rule is approved in principle and screening stays inactive until the applicable activation conditions are met; the §4 "must be carried into criteria v1.1 / protocol v0.2" sentence is replaced by `[RECOMMENDATION] Carry D-038-2 into criteria v1.1 / protocol v0.2 when drafted (owner to confirm).` The DECISION_LOG entry is not edited.
+- PR #11 description (GitHub, owner-authorized): the stale sentence "PR #10's description still lists Q-042 under 'Remaining blockers'. It was not edited and is left for the owner." is replaced by "PR #10's description was updated on 2026-10-24 (owner Decision 2) to remove Q-042 from its activation conditions." Nothing else in PR #11 changed (head `e8bf189`, base, title and state unchanged). The D-037 record (§3, "Not edited: the PR #10 description …") is kept as written; it was accurate when written.
+

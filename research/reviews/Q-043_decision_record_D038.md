@@ -6,7 +6,7 @@
 | Question | **Q-043** (raised 2026-10-24, PR10-AUDIT-DECISIONS; status **Open** until this record): D-034(4)/Q-038-4 says a record with ≥ 4 confirmed `yes` and an `unclear` fifth qualifies with the "flag kept". Under D-037-A1 such a record has `rq5_coverage_provisional = false`. Is the component-level `unclear` enough, or should qualified records with an `unclear` component get a separate derived marker? (`unresolved_questions.md`) |
 | Owner response | Owner prompt of 2026-10-24, "Decision 1: Q-043": approves the proposed resolution that no separate stored or derived marker is added; the five confirmed component statuses remain the source of evidence; reporting distinguishes three subgroups of `qualified` records; only records with five confirmed `yes` may be described as covering all five components; thresholds and the D-037-A1 meaning of `rq5_coverage_provisional` unchanged; screening stays inactive |
 | Basis | The proposed resolution delivered in the session on 2026-10-24 (in the conversation, not committed), after the read-only audit of PR #10 and PR #11 |
-| Recorded as | **D-038 — APPROVED — CONDITIONAL, inactive for screening** (`logs/DECISION_LOG.md`). ID verified as the next free one: D-037 is the highest ID on every branch, and D-038 is not used anywhere |
+| Recorded as | **D-038 — APPROVED — CONDITIONAL (inactive)** (`logs/DECISION_LOG.md`). The reporting rule is approved in principle; screening remains inactive until all applicable activation conditions are met (D-035 record §6). ID verified as the next free one: D-037 is the highest ID on every branch, and D-038 is not used anywhere |
 | Approved by | The researcher (owner), 2026-10-24, through the explicit approval above. No other approval is claimed |
 | Screening | **Not started.** No screening decision exists, so no record has a coverage group |
 
@@ -33,6 +33,7 @@
 | D-037 | A1 unchanged. Its `[OPEN]` point (Q-043, record §2) is answered | No status change (inactive) |
 
 ## 4. Not done, and not activated
-- No code, schema, test or inventory change. No report exists yet; D-038-2 applies to the first RQ5 report and must be carried into criteria v1.1 / protocol v0.2 when they are drafted.
+- No code, schema, test or inventory change. No report exists yet; D-038-2 applies to the first RQ5 report.
+- `[RECOMMENDATION]` Carry D-038-2 into criteria v1.1 / protocol v0.2 when drafted (owner to confirm).
 - No screening decision, pilot or model training. D-031–D-038 remain inactive. Activation conditions unchanged (D-035 record §6).
 - Q-042 stays Open; no `lr_only` rule.
