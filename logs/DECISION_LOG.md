@@ -66,6 +66,7 @@ and must not be cited alone: `D-001`–`D-008` are different decisions. *(Renumb
 | 2026-10-23 | BIO-001 | D-004 | PROPOSED → SUPERSEDED by D-021 | Assistant applied the "replaced before approval" rule |
 | 2026-10-23 | BIO-001 | D-011 | PROPOSED → SUPERSEDED by D-022 | Same |
 | 2026-10-23 | BIO-001-REVIEW | D-004, D-011 | **Restored to PROPOSED** (original rows restored verbatim from commit `330d3fd`) | The BIO-001 change was not justified. D-004 and D-011 were awaiting the researcher's answer (Q-005, Q-012), and their replacements D-021/D-022 are themselves unapproved. Marking them superseded therefore pre-empted a researcher choice between two open proposals. A proposal may be marked SUPERSEDED only when its replacement is approved or the researcher withdraws it |
+| 2026-10-24 | LIT-004-Q028-DECISION | D-031 (new; answers Q-028 and the RQ5 part of A-3) | Recorded as **APPROVED — CONDITIONAL** (conditions C1–C4) | Explicit owner response: "For Q-028, I select Option C … Please treat this as my owner response for Q-028 only." No other entry changed |
 
 Rule clarified in BIO-001-REVIEW: an assistant may not change the status of an entry that is under researcher review. A new
 proposal that conflicts with an open one is recorded as an **alternative**, and both stay open until the researcher decides.
@@ -95,3 +96,13 @@ Note (LIT-004-REVIEW-AND-DECISIONS, 2026-10-23): the researcher wrote that the D
 "acceptable in principle" and asked for D-027, Q-031 and Q-032 to be prepared for explicit approval.
 D-027, D-028 and D-029 therefore stay **PROPOSED**. The exact approval texts and the conflicts found
 are in `research/reviews/approval_request_LIT-004.md`. No status was changed.
+
+## Owner decisions (added LIT-004-Q028-DECISION, 2026-10-24)
+
+| ID | Date | Decision | Status | Rationale | Approved by / date |
+|---|---|---|---|---|---|
+| D-031 | 2026-10-24 (LIT-004-Q028-DECISION) | RQ5 counting rule (answers Q-028; RQ5 part of amendment A-3): an integrated pipeline/framework is RQ5-eligible if it covers **at least 4 of 5 separate components**: (1) biomarker/feature selection; (2) classification; (3) explainability; (4) probability calibration; (5) uncertainty estimation. Calibration and uncertainty count separately. Ballot option (c). Detail, effects and dependent documents: `research/reviews/Q-028_owner_decision_record.md` | **APPROVED — CONDITIONAL.** Not applied in screening until: **C1** explainability/calibration/uncertainty definitions approved (R5, D-029); **C2** feature-selection component defined (Q-037a); **C3** "covering a component" defined (Q-037b); **C4** handling of 3-of-5 frameworks for closest-prior-art and screening decided (Q-038); then written into `screening_criteria.md` v1.1. Draft criteria v1.0 text unchanged until then | Owner's choice. Assistant check: defensible as a pre-specified definition if C1–C4 are met (record §4). Risk noted: a narrower closest-prior-art set could overstate novelty unless 3/5 frameworks are reported (Q-038) | Researcher (owner), 2026-10-24 — response to `final_confirmation_sheet_LIT-004.md` R3 |
+
+Note: D-026 ("RQ5 counting rule left to Q-028") remains PROPOSED. Only its RQ5 reference is now answered by D-031.
+A-3 is answered for RQ5 only; its descriptor part depends on R5 (D-029).
+

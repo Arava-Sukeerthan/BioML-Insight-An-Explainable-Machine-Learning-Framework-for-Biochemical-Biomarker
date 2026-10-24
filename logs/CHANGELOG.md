@@ -445,3 +445,26 @@ after PR #1 had been merged.
 
 **Validation (performed)**: production diff empty; unit tests, query table, raw and archive checksums (results in the completion report).
 **Not done**: no recording, implementation, spot-check, pilot, screening or pair decision.
+
+## LIT-004-Q028-DECISION — 2026-10-24 — Record the owner's Q-028 response (conditional)
+
+**Prompt objective**: record the owner's response to Q-028 (option (c), ≥ 4 of 5 separate components) after verifying the components, effects, defensibility and dependencies; no other decision.
+
+**Completed**
+- Verified the five components against `screening_criteria.md` §3 and the ballot. Found that feature selection has no operational screening definition, "covering a component" is undefined, and explainability/calibration/uncertainty depend on unapproved D-029 definitions (R5).
+- `research/reviews/Q-028_owner_decision_record.md`:
+  - the six qualifying combinations and the effect on RQ5 eligibility and the closest-prior-art table;
+  - the defensibility assessment, which does not consider which novelty conclusion either threshold would favour;
+  - conditions C1–C4;
+  - the dependent documents.
+- `logs/DECISION_LOG.md`: new **D-031, APPROVED — CONDITIONAL** (researcher/owner, 2026-10-24), plus a status-history row and a note that D-026 and A-3 stay partly open. No other entry was changed.
+- `unresolved_questions.md`: Q-028 marked answered (→ D-031, conditional); Q-037 (feature-selection and "covering" definitions) and Q-038 (handling of 3-of-5 frameworks) added.
+- `final_confirmation_sheet_LIT-004.md`: R3 option (c) marked with the owner's words. All other lines remain unanswered.
+
+**Created**: `research/reviews/Q-028_owner_decision_record.md`, `logs/session_logs/2026-10-24_LIT-004-Q028-DECISION.md`.
+**Modified**: `logs/DECISION_LOG.md`, `research/reviews/unresolved_questions.md`, `research/reviews/final_confirmation_sheet_LIT-004.md`, `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file.
+**Not modified**: screening criteria, protocol, search strategy, research plan, schemas, code, tests, data, and every other decision entry.
+**Deleted**: none.
+
+**Validation (performed)**: production diff empty; unit tests, query table, raw and archive checksums (results in the completion report).
+**Not done**: criteria v1.1 and dependent document updates (await C1–C4), implementation, pilot, screening, pair decisions.

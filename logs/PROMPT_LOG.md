@@ -22,6 +22,7 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | LIT-004-PROPOSED-RESPONSES | 2026-10-24 | B | Prepare proposed owner responses to the 17-item ballot; no recording, no implementation | Proposed response set v1 with conditions; D-030 retraction procedure; awaiting owner confirmation | see CHANGELOG |
 | LIT-004-CLARIFICATION-ADDENDUM | 2026-10-24 | B | Clarify D-024/Q-034, Q-028 timing, D-030 retraction procedure, D-029 definitions; response fields | Addendum with R1–R6 response fields; awaiting owner review | see CHANGELOG |
 | LIT-004-FINAL-CONFIRMATION-SHEET | 2026-10-24 | B | Final owner confirmation sheet; no recording, no implementation | Sheet with R1–R6, v1 items and pilot-blocking list; awaiting owner confirmation | see CHANGELOG |
+| LIT-004-Q028-DECISION | 2026-10-24 | B | Record owner response to Q-028 (option c) after verification | D-031 APPROVED — CONDITIONAL (C1–C4); Q-037, Q-038 opened; no other decision changed | see CHANGELOG |
 
 ## Detailed entries
 
@@ -163,5 +164,19 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Validation status | Performed (completion report) |
 | Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
 | Commit | see `git log` (commit "LIT-004-FINAL-CONFIRMATION-SHEET: …"); committed under CLAUDE.md §3.5 |
+| Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
+
+### LIT-004-Q028-DECISION
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-004-Q028-DECISION (prompt: "For Q-028, I select Option C …") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Verify and record the owner's Q-028 response only |
+| Expected deliverables | Component verification; eligibility and closest-prior-art effects; defensibility check; dependency list; decision log and owner-response updates; tests; report |
+| Actual completion status | Completed. D-031 recorded as APPROVED — CONDITIONAL; conditions C1–C4 open |
+| Output files | see CHANGELOG LIT-004-Q028-DECISION |
+| Validation status | Performed (completion report) |
+| Branch | `claude/sweet-brahmagupta-urw7l1` → base `claude/happy-hawking-rxptfv` |
+| Commit | see `git log` (commit "LIT-004-Q028-DECISION: …") |
 | Pull request | #2 (existing, updated) — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/2; not merged |
 

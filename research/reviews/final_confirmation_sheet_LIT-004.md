@@ -5,6 +5,7 @@
 | Task | LIT-004-FINAL-CONFIRMATION-SHEET (2026-10-24) |
 | Status | **For the owner's explicit confirmation. Nothing is recorded, approved or implemented.** `logs/DECISION_LOG.md`, schemas, code, criteria, screening data and the pilot are unchanged |
 | Built from | `owner_review_ballot_LIT-004.md` (authoritative ballot), `proposed_owner_responses_LIT-004.md` (v1), `clarification_addendum_LIT-004.md`. Text marked *verbatim* was copied programmatically from those files; the only edit is one cross-reference, noted where it occurs |
+| Owner responses received | **R3 / Q-028 only (2026-10-24): option (c)**, recorded as D-031 APPROVED — CONDITIONAL. Every other line of this sheet is still unanswered |
 | After confirmation | Only the items the owner selects in R6 are written to `logs/DECISION_LOG.md`, each with its conditions. Implementation is a separate, later task |
 
 ## How responses are recorded
@@ -113,9 +114,9 @@ The alternative (defer, with `rq5_provisional` labels) is specified in the clari
 | Optional `dim_feature_selection` descriptor (addendum §2) | Needed only to derive RQ5 mechanically. Otherwise feature selection is read from the abstract with a written justification |
 
 R3 — timing: [ ] APPROVE "decide before the pilot"  [ ] REJECT (use provisional labels, addendum §2)  [ ] MODIFY  [ ] DEFER
-R3 — option (only if deciding now): [ ] (a)  [ ] (b)  [ ] (c)
+R3 — option (only if deciding now): [ ] (a)  [ ] (b)  [x] (c)   ← owner response 2026-10-24
 R3 — A-3: [ ] APPROVE together with the option chosen above  [ ] DEFER
-Comments:
+Comments: **Owner response received 2026-10-24 (Q-028 only):** "For Q-028, I select Option C: five separate components with an inclusion threshold of at least 4 out of 5. Please treat this as my owner response for Q-028 only." Recorded as D-031, APPROVED — CONDITIONAL (C1–C4; `Q-028_owner_decision_record.md`). The timing line is answered implicitly: Q-028 is decided before the pilot. The A-3 line is not ticked: A-3's descriptor part depends on R5, so A-3 stays partly open.
 
 ## R4 — D-030 retraction procedure (CONDITIONAL)
 
@@ -285,7 +286,7 @@ Comments:
 ## Pilot-blocking items after confirmation
 
 Even with every line approved, the pilot sample is **not** generated until:
-1. **R3 / Q-028** is decided (option (a), (b) or (c)), or the owner chooses the provisional-label alternative instead.
+1. **R3 / Q-028**: decided 2026-10-24 (option (c), D-031), but **conditional**. Its conditions C1–C4 (R5; Q-037a/b; Q-038) must be resolved before the pilot.
 2. **R5 / D-029** definitions are all approved.
 3. **R1 / D-024** and **v1 Item 1 / D-027** are recorded, so the schema the pilot writes into is fixed.
 4. **R2 / Q-034** — not pilot-blocking (extraction comes after screening), but needed before extraction.

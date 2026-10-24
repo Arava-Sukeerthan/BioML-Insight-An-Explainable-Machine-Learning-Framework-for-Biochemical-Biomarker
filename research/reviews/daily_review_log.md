@@ -111,3 +111,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** R1–R6 and the v1 items.
 - **Recommended next step:** owner completes the sheet; then recording per R6.
 - **Researcher decisions:** _pending_
+
+## Day 11 (cont.) — 2026-10-24 — LIT-004-Q028-DECISION
+- **Work completed:** owner response to Q-028 verified and recorded as D-031 (APPROVED — CONDITIONAL).
+- **Important findings:** `[EVIDENCE]` feature selection and "covering" have no operational screening definition; X/C/U definitions await R5. `[RECOMMENDATION]` report 3-of-5 frameworks so no novelty conclusion depends on the threshold (Q-038, owner decision).
+- **Decisions requiring review:** Q-037, Q-038, R5; all other final-confirmation-sheet lines.
+- **Recommended next step:** owner answers Q-037, Q-038 and R5 (and the remaining sheet lines); then criteria v1.1.
+- **Researcher decisions:** Q-028 → option (c), 2026-10-24 (D-031, conditional).
