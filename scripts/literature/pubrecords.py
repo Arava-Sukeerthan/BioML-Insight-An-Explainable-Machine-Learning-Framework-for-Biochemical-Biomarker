@@ -57,7 +57,7 @@ SCREENING_STAGE_ORDER = {"title_abstract": 1, "full_text": 2}
 SCREENING_REQUIRED = ["paper_id", "stage", "decision", "reason_code", "screener", "date", "justification"]
 SCREENING_OPTIONAL = ["rq_tags", "tier", "scope_flags", "record_type", "dim_explainability",
                       "dim_uncertainty", "dim_calibration", "dim_independent_validation",
-                      "criteria_version", "needs_human"]
+                      "criteria_version", "needs_human", "dim_feature_selection"]
 SCREENING_DECISIONS = ("include", "exclude", "uncertain", "abstract_only")   # "not_screened" = no row
 SCREENING_ENUMS = {
     "stage": ("title_abstract", "full_text"),
@@ -69,6 +69,9 @@ SCREENING_ENUMS = {
     "dim_calibration": ("", "yes", "no", "unclear"),
     "dim_independent_validation": ("", "external", "temporal", "internal_only", "unclear"),
     "needs_human": ("", "yes", "no"),
+    # D-032 (APPROVED - CONDITIONAL, inactive for screening until its dependencies are met):
+    # RQ5 feature/biomarker-selection component
+    "dim_feature_selection": ("", "yes", "no", "unclear"),
 }
 REASON_CODE = re.compile(r"E(1[0-2]|[1-9])")
 RQ_TAGS = re.compile(r"(RQ[1-6])(;RQ[1-6])*")

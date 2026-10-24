@@ -526,3 +526,55 @@ The status was not checked after the merge, and the reports repeated the earlier
 **Validation (performed)**: see the completion report.
 
 **Q-037a PR (2026-10-24)**: following the owner's approval of the stacked-PR workflow, branch `q037a-feature-selection` was pushed and **PR #4** opened: https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/4. Base `claude/sweet-brahmagupta-urw7l1` (PR #3 head, unchanged at `9497a3a`); head `q037a-feature-selection`. Diff before this log commit: `9497a3a..0e976db`, 7 files. Not merged. D-032 remains PROPOSED.
+
+## RQ5-DECISIONS — 2026-10-24 — Record the owner's Q-037a, Q-037b and Q-038 decisions; implement `dim_feature_selection` (inactive)
+
+**Prompt objective**: record and reconcile 15 owner decisions (Q-037a ×5, Q-037b ×5, Q-038 ×5), keep the dependent definitions inactive, and implement only what the schema safely supports.
+
+**Owner-approved (conditional, inactive)**
+- D-032 (Q-037a): PROPOSED → APPROVED — CONDITIONAL. Recorded as a status-history row; the original row is kept.
+- D-033 (Q-037b): new entry, APPROVED — CONDITIONAL.
+- D-034 (Q-038): new entry, APPROVED — CONDITIONAL.
+- D-031 not revised. Its conditions C2–C4 are answered at decision level; C1 (R5) is open.
+
+**Implemented (inactive for screening)**
+- Optional column `dim_feature_selection` (`""/yes/no/unclear`):
+  - `pubrecords.py`: `SCREENING_OPTIONAL`, `SCREENING_ENUMS`;
+  - `schemas/screening_decision.schema.json`;
+  - `schemas/publication_record.schema.json` (`screening_details`);
+  - `schemas/paper_inventory.schema.json`;
+  - `make_literature_reports.py`;
+  - one new test.
+- Real data rebuilt:
+  - paper-ID → source-record mapping identical;
+  - registry identical;
+  - every existing inventory value unchanged;
+  - the new column is null for all 2,979 records (no value filled).
+
+**Proposed / specified only**
+- `rq5_coverage_group` derivation, with a companion `rq5_coverage_provisional` flag; `pending_review` not proposed. Implementation **blocked** (Q-039, Q-041, R5, D-027).
+- `scope_flags` tokens `published_panel_reused` (documented convention) and `proposed_only:<component>` (proposal).
+- Component-specific evidence criteria (owner minimums only; no added requirements).
+
+**Conflicts and open dependencies**
+- New Q-039: no classification status field.
+- New Q-040: non-metabolic 3-of-5 frameworks are excluded with E4 at screening, so the near-RQ5 group may be incomplete.
+- New Q-041: R5 "stated" vs D-033 "applied", and the meaning of "confirmed".
+- Option letters for Q-037a and the Q-037b/Q-038 options are not in the repository; the choices are recorded by content.
+
+**Created**: `research/reviews/RQ5_component_decisions_D032-D034.md`, `logs/session_logs/2026-10-24_RQ5-DECISIONS.md`.
+**Modified**:
+- `logs/DECISION_LOG.md` (append-only)
+- `research/reviews/unresolved_questions.md` (Q-037 and Q-038 status; Q-039–Q-041 added)
+- `research/reviews/Q-037a_feature_selection_proposal.md` (status line; §10 owner responses)
+- the schemas, code and test above
+- `research/literature/paper_inventory.csv/.json` (new null column)
+- `records/build_report.json` (`built_at`)
+- `records/collection_stats.json` (CSV checksum)
+- `research/reviews/daily_review_log.md`, `logs/PROMPT_LOG.md`, this file
+
+**Not modified**: screening criteria, protocol, search strategy, research plan, other decisions, raw exports, archive.
+
+**Git**: committed locally on `q037a-feature-selection` (PR #4's head branch). **Not pushed**: pushing would add this commit to PR #4 and needs the owner's authorization.
+
+**Validation (performed)**: see the session log and completion report.

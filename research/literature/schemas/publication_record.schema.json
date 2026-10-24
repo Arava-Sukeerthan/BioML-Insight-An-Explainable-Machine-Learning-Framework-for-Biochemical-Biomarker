@@ -406,6 +406,12 @@
             "null"
           ]
         },
+        "dim_feature_selection": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "dim_independent_validation": {
           "type": [
             "string",
