@@ -1109,3 +1109,33 @@ No approval of FA-2, the protocol or any decision is implied.
 | C10 | Review header: "prepared on base `53e419a`" | evidence review header |
 
 No decision, question status, raw export, manifest row or search row was changed. No test, script, rebuild, search or network call was run for these corrections.
+
+## LIT-005-PRESERVATION — 2026-10-28 — Archive of the 39 LIT-005 raw exports (no data, inventory or decision change)
+
+**Prompt objective**: create a verifiable, deterministic archive of the 39 LIT-005 raw export files so the researcher can keep a copy outside the ephemeral container; record its status after the researcher's own checksum check.
+
+**Preceding step (same day, researcher-authorised)**: the LIT-005 commit `db8493706affc5d556e284c13026190e206a1338` was pushed to `origin/claude/eloquent-mccarthy-bqtxr3` (fast-forward from `53e419a`).
+
+**Completed**
+- File list taken from the 39 `MANIFEST.csv` rows dated 2026-10-28 (all LIT-005); 39/39 present as regular files and matching their manifest SHA-256; no `data/` or NHANES path involved.
+- Archive `research/literature/preservation/archive/LIT-005_raw_exports_2026-10-28.tar.gz` (479,473 bytes, SHA-256 `7b7d4674426c7581839b970cad37e21251ade0bf22d295814ac542bd7ec96ea1`): GNU tar with sorted names, fixed mtime, owner/group 0, fixed mode, file entries only; `gzip -n -9`; built twice, byte-identical.
+- Companion files: `.tar.gz.sha256`, `LIT-005_SHA256SUMS.txt`, `LIT-005_archive_manifest.csv` (all git-ignored).
+- Delivered to the researcher as attachments (twice; the second time the original archive was re-sent, not rebuilt).
+- **Researcher-reported** (not observed by the assistant): the copy at `%USERPROFILE%\Downloads\LIT-005_raw_exports_2026-10-28.tar.gz` has the expected SHA-256.
+- `research/literature/preservation/preservation_status.md`: LIT-005 section appended (+54 lines; LIT-003 content unchanged).
+
+**Not changed**: raw exports, `MANIFEST.csv`, generated literature artifacts, inventory, protocol, screening criteria, decisions. The LIT-003 archive was not restored.
+
+**Validation (actually performed, container side)**
+| Check | Outcome |
+|---|---|
+| Archive entries vs the 39 manifest paths | identical; 39 regular files, no other entries |
+| Extraction to a fresh temporary directory + `sha256sum -c LIT-005_SHA256SUMS.txt` | 39/39 OK |
+| Two builds | byte-identical |
+| `sha256sum -c` on the archive checksum file (before the second delivery) | OK |
+| Archive git-ignored | yes (`research/literature/preservation/archive/`) |
+| Tests, rebuild, searches, network calls | none |
+
+**Status**: archive integrity verified (container and researcher-reported). **Off-device backup / disaster recovery remains outstanding**: one copy outside the container, on one laptop.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3`; documentation committed locally in one researcher-authorised commit (hash in Git history); not pushed; no PR.

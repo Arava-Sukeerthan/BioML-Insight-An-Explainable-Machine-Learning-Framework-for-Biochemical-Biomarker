@@ -77,3 +77,57 @@ Composition: 144 PubMed metadata files, 50 PubMed search pages (25 original + 25
 - Container copy and app attachment: retention not guaranteed.
 - If the files are lost, the PubMed searches can be re-run with the same `[edat]`-capped queries. The PMID sets should be reproducible apart from later PubMed deletions or corrections, but the metadata may differ (PubMed updates records). The arXiv and web results are **not** reproducible.
 - The harness's own copies of the metadata responses (`tool-results/`) are also in the container and will be lost with it.
+
+---
+
+## LIT-005 raw exports (LIT-005-PRESERVATION, 2026-10-28)
+Scope: this section covers only the 39 raw export files registered in `raw_exports/MANIFEST.csv` on 2026-10-28 (task LIT-005). Everything above refers to the LIT-003 archive and is unchanged.
+
+| Field | Value |
+|---|---|
+| **Preservation status** | **ARCHIVE INTEGRITY VERIFIED (container and researcher side); ONE COPY OUTSIDE THE CONTAINER (researcher's Windows laptop); OFF-DEVICE BACKUP / DISASTER RECOVERY OUTSTANDING** |
+| Files preserved in archive | **39** raw export files: 18 PubMed search pages (9 original + 9 `CHECK-` re-fetch), 20 PubMed metadata files (`META_2026-10-28_000…019.json`), 1 alphaXiv structured transcription (`Q-AX-G9_2026-10-28.json`) |
+| Archive filename | `LIT-005_raw_exports_2026-10-28.tar.gz` |
+| Archive (container copy) | `research/literature/preservation/archive/LIT-005_raw_exports_2026-10-28.tar.gz` (git-ignored; inside the ephemeral container) |
+| Archive size | 479,473 bytes |
+| Archive SHA-256 | `7b7d4674426c7581839b970cad37e21251ade0bf22d295814ac542bd7ec96ea1` |
+| Archive contents | Exactly the 39 files, stored under their repository paths `research/literature/raw_exports/<file>`; file entries only (no directories); no checksum or manifest file inside the archive |
+| Companion files (container, git-ignored, delivered with the archive) | `LIT-005_raw_exports_2026-10-28.tar.gz.sha256` (archive checksum); `LIT-005_SHA256SUMS.txt` (SHA-256 of the 39 files, paths relative to the extraction root); `LIT-005_archive_manifest.csv` (the 39 `MANIFEST.csv` rows plus each archive path) |
+| Determinism | GNU tar 1.35, `--sort=name`, `--format=gnu`, fixed mtime 2026-10-28T00:00:00Z, owner/group 0 (numeric), fixed mode `u=rw,go=r`, `--no-recursion`; `gzip -n -9`. Built twice; both builds byte-identical |
+
+### Container-side verification (2026-10-28)
+| Check | Result |
+|---|---|
+| File list | 39 rows dated 2026-10-28 in `MANIFEST.csv`, all with LIT-005 notes; no duplicate or unexpected names; no path under `data/` or referring to NHANES |
+| Files vs `MANIFEST.csv` before archiving | 39/39 present as regular files (no symlinks); 39/39 SHA-256 match |
+| Archive entries | 39 entries, all regular files; entry list identical to the 39 manifest paths; no `.git`, environment, NHANES or `data/` paths |
+| Extraction into a fresh temporary directory; `sha256sum -c LIT-005_SHA256SUMS.txt` | 39/39 OK, 0 failed; 39 files extracted. The temporary directory was deleted afterwards |
+| Archive checksum file | `sha256sum -c LIT-005_raw_exports_2026-10-28.tar.gz.sha256` → OK (re-checked before the second delivery) |
+| Original raw files modified | No (read and archived only) |
+| Git | Archive and companion files git-ignored (`.gitignore`: `research/literature/preservation/archive/`); not staged or committed |
+
+### Delivery and researcher-side verification (2026-10-28)
+| Item | Recorded value |
+|---|---|
+| Delivery | Archive and the three companion files delivered as attachments in the Claude app session (twice, the second time on the researcher's request; the original archive was re-sent, not rebuilt) |
+| Copy verified | `%USERPROFILE%\Downloads\LIT-005_raw_exports_2026-10-28.tar.gz` on the researcher's Windows laptop |
+| Result (as reported by the researcher, 2026-10-28) | SHA-256 `7b7d4674426c7581839b970cad37e21251ade0bf22d295814ac542bd7ec96ea1`, exactly the expected value |
+| Evidence type | Researcher's statement in the prompt. The assistant did not observe the command or its output. Whether the optional per-file check (`sha256sum -c LIT-005_SHA256SUMS.txt` after extraction) was run was not reported |
+| What it establishes | The downloaded copy is byte-identical to the container archive, whose 39 files were verified against `MANIFEST.csv` and `LIT-005_SHA256SUMS.txt` |
+| What it does **not** establish | Durable or off-device backup. There is **one** copy outside the container, in the Downloads folder of one laptop. No second copy (same or other device), external drive, institutional storage or cloud copy has been reported. Loss of that file or laptop would leave only the ephemeral container copy |
+
+### Remaining steps (researcher)
+1. Optionally make a second local copy (e.g. a backup folder, as for LIT-003) and verify its SHA-256.
+2. For disaster recovery, put a copy on separate private media or storage (encrypted external drive, institutional storage or a private, access-restricted cloud folder), verify its SHA-256, and report the location type and result (no credentials). Do **not** put it in the public repository (D-010, proposed; the files contain PubMed abstracts).
+3. Keep the LIT-003 archive (`69e690f…`) and the LIT-005 archive (`7b7d4674…`) together: an inventory rebuild needs both sets of raw files (Q-063).
+
+### Status history (LIT-005)
+| Date | Task | Status |
+|---|---|---|
+| 2026-10-28 | LIT-005-PRESERVATION (archive) | Archive created and verified in the container; delivered to the researcher |
+| 2026-10-28 | LIT-005-PRESERVATION (confirmation) | Researcher reports the downloaded copy's SHA-256 matches exactly. Archive integrity verified; one copy outside the container (Windows Downloads); off-device backup outstanding |
+
+### Outstanding risks (LIT-005)
+- Only one copy exists outside the container, on one laptop. Disaster-recovery risk stays **open**.
+- Container copy and app attachments: retention not guaranteed.
+- If lost: the 8 PubMed queries (`Q-PM-G1…G8@2026-10-28`) are `[edat]`-capped and can be re-run, but metadata may differ. The alphaXiv ranking (`Q-AX-G9`) is **not** reproducible.

@@ -419,3 +419,14 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | 8 PubMed + 1 alphaXiv searches executed and logged; Consensus blocked (quota); 39 raw files registered; evidence review written; no reference newly verified (second sources blocked); inventory not rebuilt (LIT-003 raw exports missing, Q-063); screening not started |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` at `53e419a`; uncommitted |
 | Pull request | None |
+
+### LIT-005-PRESERVATION
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-005-PRESERVATION (prompts, 2026-10-28: push authorisation for `db84937`; "Perform a strictly scoped preservation task for the 39 raw export files associated with LIT-005"; request to re-send the archive; "documentation-only task" to update `preservation_status.md`; "continue the BioML-Insight LIT-005 preservation workflow") |
+| Prompt date | 2026-10-28 (Day 15) |
+| Objective | Push the LIT-005 commit; archive and verify the 39 LIT-005 raw exports; deliver them; record the researcher's checksum confirmation; complete the `CLAUDE.md` §3 logs |
+| Actual completion status | `db84937` pushed (fast-forward). Archive created (39 files, SHA-256 `7b7d4674…6ea1`), verified 39/39 after extraction, delivered twice. Researcher reports a matching SHA-256 for the Downloads copy (researcher statement). `preservation_status.md` updated. Off-device backup outstanding |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` from `db84937`; one local commit of 5 documentation files (hash in Git history); not pushed |
+| Pull request | None |
+| Note on the LIT-005 entry above | Its "Branch … at `53e419a`; uncommitted" describes the state when it was written. LIT-005 was later committed as `db84937` and pushed (2026-10-28) |

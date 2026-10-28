@@ -261,3 +261,10 @@ One entry per researcher review session (~1 h/day).
 - **Recommended next step:** restore the LIT-003 exports and rebuild; decide the verification route; clear the screening conditions by 11-01.
 - **Researcher decisions:** authorisation of the LIT-005 searches and file updates (2026-10-28).
 - **Correction (same day, LIT-005 pre-commit review, researcher-authorised):** "395 new to the inventory" means not matched **by PMID**; inventory records without a PMID were not compared by DOI, so the rebuild's duplicate check is still needed. The screening-pilot blocker list in `LIT-005_evidence_review.md` §8 now follows `final_confirmation_sheet_LIT-004.md` ("Pilot-blocking items after confirmation") and `screening_protocol.md` B-6. Other corrections: see `logs/CHANGELOG.md`.
+
+## Day 15 (cont.) — 2026-10-28 — LIT-005-PRESERVATION
+- **Work completed:** LIT-005 commit `db84937` pushed; deterministic archive of the 39 LIT-005 raw exports created, verified (39/39 after extraction) and delivered; `preservation_status.md` LIT-005 section added.
+- **Important findings:** archive SHA-256 `7b7d4674426c7581839b970cad37e21251ade0bf22d295814ac542bd7ec96ea1`. The researcher reports that the Downloads copy matches (researcher statement; not observed by the assistant). Only one copy exists outside the container, so off-device backup is still outstanding.
+- **Decisions requiring review:** off-device storage for both archives; Q-063 (restore the LIT-003 archive and rebuild); Q-064 (verification route).
+- **Recommended next step:** store both archives on separate private media and verify them; then authorise the LIT-003 restore and rebuild.
+- **Researcher decisions:** authorisation of the push, the archive task, the documentation update and one local commit (2026-10-28).
