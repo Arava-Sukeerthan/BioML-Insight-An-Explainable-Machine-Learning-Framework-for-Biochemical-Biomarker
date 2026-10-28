@@ -409,3 +409,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Pull request | None |
 | Correction (2026-10-24) | Owner instruction: Q-062's status label changed from "Closed" to **"Answered"** (documented status value). Decision text and commit reference unchanged. Uncommitted |
 | Correction (2026-10-24, timeline) | Owner-approved Q-062 wording: K1–K4 satisfied in the documentation committed in `c84323016c77b78b0cfb7ce6378a4adf91d515bb`; the activation entry was recorded afterwards, outside that commit. Then one owner-authorized local commit of the 6 GOV-D040-ACTIVATION files (hash in Git history); not pushed |
+
+### LIT-005
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-005 (prompt: "We are continuing BioML-Insight on October 28, 2026 … Continue the literature survey through a focused, reproducible search and verification workflow") |
+| Prompt date | 2026-10-28 (Day 15) |
+| Objective | Named searches G-1…G-8 (PubMed), alphaXiv SHAP-stability/class-conditional conformal search, Consensus G-5 if available; verification; transcript-derived notes for 2026-10-24; synthesis, gap matrix, contribution recommendation; no screening |
+| Actual completion status | 8 PubMed + 1 alphaXiv searches executed and logged; Consensus blocked (quota); 39 raw files registered; evidence review written; no reference newly verified (second sources blocked); inventory not rebuilt (LIT-003 raw exports missing, Q-063); screening not started |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `53e419a`; uncommitted |
+| Pull request | None |

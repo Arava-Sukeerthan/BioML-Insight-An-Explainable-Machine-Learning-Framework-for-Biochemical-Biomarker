@@ -1052,3 +1052,60 @@ No approval of FA-2, the protocol or any decision is implied.
 **Correction (2026-10-24, owner instruction)**: Q-062's status label changed from "Closed" to **"Answered"**, the documented status value (file header: Open / Answered / Superseded). The question, the owner's quoted decision and the commit reference are unchanged. The "Closed" statements above are kept as written. No other change.
 
 **Correction (2026-10-24, owner-approved wording)**: Q-062's answer text now reads: "K1–K4 satisfied in the documentation committed in `c84323016c77b78b0cfb7ce6378a4adf91d515bb`. The activation entry (DECISION_LOG Status history, GOV-D040-ACTIVATION: APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230)) was recorded afterwards, outside that commit." It replaces "Committed in `c84323016c77b78b0cfb7ce6378a4adf91d515bb`; activation recorded in the DECISION_LOG Status history (GOV-D040-ACTIVATION) as APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230).", which could be read as saying the activation entry was committed in `c843230`. D-040's conditions and activation status are unchanged. These GOV-D040-ACTIVATION records and corrections are then committed in one owner-authorized local commit (hash in Git history and the task report); not pushed.
+
+## LIT-005 — 2026-10-28 — Focused gap searches, transcript-derived notes and evidence review (no screening)
+
+**Prompt objective**: researcher-authorised named searches (PubMed G-1…G-8, one alphaXiv search, Consensus G-5 if the quota permits); bibliographic verification where possible; document the 2026-10-24 conversation review as transcript-derived historical notes; thematic synthesis, gap matrix and contribution recommendation. No screening, no inclusion/exclusion decisions, no protocol, governance or decision changes, no participant-level data, no commit/push/PR.
+
+**Governance**: searches executed under the researcher's LIT-005 instruction; D-005/D-006/D-007 remain PROPOSED. Screening stays blocked (D-035 record §6 conditions 2–6 unmet). Q-021 unchanged; PMC not treated as a second source.
+
+**Completed**
+- 8 PubMed searches, each recorded in `search_queries.csv` before execution and re-fetched with `sort=pub_date`; `pubrecords.py check-search` passed for all 8 (44, 27, 33, 68, 1, 21, 2, 244 hits).
+- alphaXiv search: 15 ranked listings (structured transcription).
+- Consensus G-5: **not executed** — monthly quota exhausted (resets 2026-11-01).
+- PubMed metadata for the 395 PMIDs not in the inventory: 20 harness-saved responses copied unchanged; 394 returned, PMID 31314250 missing (Q-067).
+- Second-source check: Crossref, doi.org and Europe PMC refused by the network policy (403). **No reference newly verified.**
+- 24 new or re-found records read at abstract level; 2026-10-24 findings documented as transcript-derived notes with limitations.
+
+**Created**
+- `research/literature/reviews/LIT-005_evidence_review.md`
+- `logs/session_logs/2026-10-28_LIT-005.md`
+- 39 raw files in `research/literature/raw_exports/` (git-ignored, not committed): 18 PubMed search pages (9 original + 9 `CHECK-`), 20 metadata files, 1 alphaXiv file
+
+**Modified (append only)**
+- `research/literature/search_queries.csv` — 10 rows (G1–G8, AX-G9, CN-G5); existing rows unchanged
+- `research/literature/raw_exports/MANIFEST.csv` — 39 rows; existing rows unchanged. `retrieved_at` of the new rows corrected the same day to transcript tool-result times (search pages) and harness file times (metadata); the provenance blocks inside the 19 transcribed raw files keep approximate placeholder times written by the session helper, as noted in each manifest row
+- `research/reviews/unresolved_questions.md` — Q-063…Q-067
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file
+
+**Not changed**: all generated literature artifacts (`paper_inventory.*`, `records/*`, `verification_report.md`, `search_execution_register.md`, `fulltext_review_candidates.csv`). Reason: `pubrecords.py build` stops in `verify_manifest` because the 205 LIT-003 raw exports are missing in this workspace (Q-063); hand-editing generated files was not done. Inventory remains 2,979 records. Protocol, decision log, governance files and `screening/` untouched.
+
+**Validation (actually performed)**
+| Check | Outcome |
+|---|---|
+| `validate_search_queries.py` | PASS, 168 rows |
+| `pubrecords.py check-search` Q-PM-G1…G8 | passed ×8 |
+| `pubrecords.py verify` | 39 new files match their checksums; 205 LIT-003 files reported missing (pre-existing) |
+| `git diff` on CSVs | only appended lines; no historical line changed |
+| Unit tests | not run (not required for documentation and registration changes; no code changed) |
+| Rebuild | **not possible** (see above) |
+
+**Errors / warnings**: one PubMed rate-limit error (retried once, succeeded); Consensus quota; network-policy blocks; PMID 31314250 not returned.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3`, base `53e419a`; changes uncommitted; no PR (not authorised).
+
+**Correction (2026-10-28, LIT-005 pre-commit review; researcher-authorised C1–C10)**: the statements above are kept; these corrections apply.
+| ID | Correction | Where |
+|---|---|---|
+| C1 | Screening-pilot blocker list (D-035 record §6, condition 6) replaced by the documented list in `final_confirmation_sheet_LIT-004.md` ("Pilot-blocking items after confirmation") plus `screening_protocol.md` B-6. Q-024 pair decisions and D-030 are no longer listed as blockers (the sheet says they are not pilot-blocking for the current pilot); the Q-036 arXiv spot-check, implementation of D-028/D-029/`biomarker_class`/scope flags, and Q-001/Q-002 are added | evidence review §8 |
+| C2 | 2026-10-24 leads re-found: 7, not 3 (adds MacNell 2023, Kim 2026, Si 2025, Morrison 2024 from G-6) | evidence review §1.1 |
+| C3 | Q-PM-11/12: 120 unique inventory records, not 121 (one record retrieved by both) | evidence review §6, §8 |
+| C4 | Pre-task check 12:01Z; second-source check 12:13Z | session log (appended correction) |
+| C5 | arXiv listings: "not checked against the inventory" (wrong cross-reference to §6 removed) | evidence review §1.1 |
+| C6 | "New to the inventory" = not matched by PMID only; PMID-less inventory records not compared by DOI; rebuild duplicate check still needed. Applies also to "395 PMIDs not in the inventory" in this entry | evidence review §1, §1.1, §7; session log and daily review log (appended corrections) |
+| C7 | The D-012 ≥ 10 % spot-check was not performed for the hand-copied file `Q-AX-G9_2026-10-28.json` | evidence review §1, §11; session log |
+| C8 | 2026-10-24 notes "summarised from", not "quoted from", that report (the separately marked quotation is unchanged) | evidence review §3 |
+| C9 | Q-065's feasibility statement marked as an assistant estimate `[HYPOTHESIS]` | `unresolved_questions.md` (correction note in the Q-065 row) |
+| C10 | Review header: "prepared on base `53e419a`" | evidence review header |
+
+No decision, question status, raw export, manifest row or search row was changed. No test, script, rebuild, search or network call was run for these corrections.
