@@ -318,3 +318,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** explicit approval, amendment or rejection of D-042 (then Q-069 can be marked Answered); protocol revision 4; D-001/CUP-11 (11-24 target); the commit decision.
 - **Recommended next step:** researcher review of D-042 and protocol revision 4.
 - **Researcher decisions:** in-principle approval of the Q-069 resolution; approval of the recording treatment and protocol edits for preparation (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — D-042-APPROVAL
+- **Work completed:** researcher approval of D-042 recorded; Q-069 marked Answered and linked to D-042; protocol draft revision 5 (references to D-042 updated from "proposed" to "approved").
+- **Important findings:** `[EVIDENCE]` D-042 is the first approved rule on stage order: the Stage C and Stage D gates must both pass before D-017, D-018 and D-019 are approved and before any real-data training. Neither gate has passed. Precedent for recording approvals is mixed (D-032: history only; D-042: row cells updated at the owner's instruction, text unchanged).
+- **Decisions requiring review:** this diff and the commit decision; D-001/CUP-11 (11-24 target); the screening-activation decisions (`screening_activation_decision_brief_D035.md` §8), starting with Q-065 (due 2026-11-01); Q-021/Q-064/Q-068.
+- **Recommended next step:** researcher decisions on Q-065 and the schedule (D-001, Q-013, Q-058).
+- **Researcher decisions:** explicit approval of D-042 as written (2026-10-29).

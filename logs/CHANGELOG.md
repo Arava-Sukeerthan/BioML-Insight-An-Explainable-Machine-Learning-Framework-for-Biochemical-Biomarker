@@ -1309,3 +1309,25 @@ No decision, question status, raw export, manifest row or search row was changed
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `eca5116`; uncommitted; not staged, not pushed; no PR.
+
+## D-042-APPROVAL — 2026-10-29 — Researcher approval of D-042 recorded; Q-069 Answered; protocol references synchronised (documentation only)
+
+**Prompt objective** (researcher, 2026-10-29): "I explicitly approve D-042 exactly as currently written in `logs/DECISION_LOG.md`." Record the approval following the governance and audit-log conventions; mark Q-069 Answered and link it to D-042; update only references made factually stale by the approval. No task ID was assigned; the label is the assistant's. No staging, commit or push.
+
+**Convention note**: precedent for approving a PROPOSED entry is mixed. D-032's approval (2026-10-24) is recorded only in the Status history, with "Original D-032 row kept unchanged"; other PROPOSED rows had their status cell changed in place (e.g., D-003). As instructed, D-042's row had only its status cell (→ **APPROVED**) and "Approved by" cell (→ "Researcher (owner), 2026-10-29 — explicit approval of the text as written") updated; the decision text and rationale are byte-identical; the earlier status stays in the Status history.
+
+**Modified**
+- `logs/DECISION_LOG.md`: D-042 status and "Approved by" cells; Status-history row (PROPOSED — awaiting explicit approval → **APPROVED**); note under the D-042 table.
+- `research/reviews/unresolved_questions.md`: Q-069 status → "**Answered 2026-10-29 by the owner** → D-042 (APPROVED): …", with the earlier status quoted (convention of Q-037, Q-039, Q-041). Question text and other columns unchanged.
+- `research/methodology/experimental_protocol_v0.1_draft.md`: header → draft revision 5; five references "D-042, proposed" → "D-042, approved 2026-10-29" (§23 intro; §26 block heading, AB-7, AB-13, submission line); change-history row "0.1 rev. 5" (Approved: **No**). The revision 4 row keeps its wording.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-29_D-042-APPROVAL.md`.
+
+**Not changed (historical, accurate when written)**: earlier CHANGELOG, PROMPT_LOG, daily-review and session-log entries that describe D-042 as PROPOSED; `research/reviews/screening_activation_decision_brief_D035.md` (it records Q-069 as opened). **Not changed (protected or out of scope)**: `GOVERNANCE.md`; `CLAUDE.md`; D-001, D-016–D-019 and every other decision status; every other question status.
+
+**What the approval does not do**: it passes no gate (the Stage C and Stage D gates are not passed); it does not activate screening, authorise real-data training or experiments, approve D-016–D-019, freeze the protocol, or relax the Stage B verification requirement. **Screening remains inactive.**
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `9aefe42`; uncommitted; not staged, not pushed; no PR.

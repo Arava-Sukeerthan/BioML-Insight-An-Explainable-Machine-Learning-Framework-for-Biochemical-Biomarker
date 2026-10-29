@@ -523,3 +523,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | D-042 recorded (PROPOSED — awaiting explicit approval); Q-069 Open with linking note; protocol draft revision 4 (§23, §26, header, change history); two contradictions in the proposal corrected before editing (Rule S timing; D-014 placement). No decision approved; protocol not frozen; screening inactive |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` at `eca5116`; uncommitted; not pushed |
 | Pull request | None |
+
+### D-042-APPROVAL (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label D-042-APPROVAL (prompt: "I explicitly approve D-042 exactly as currently written in `logs/DECISION_LOG.md`. Please record my approval …") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Record the explicit approval of D-042; mark Q-069 Answered; update only references made stale by the approval |
+| Actual completion status | D-042 APPROVED (status and "Approved by" cells; decision text unchanged; Status-history row; note); Q-069 Answered → D-042; protocol draft revision 5 (five reference updates; not approved, not frozen). No other decision or question status changed; no gate passed; screening inactive |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `9aefe42`; uncommitted; not pushed |
+| Pull request | None |
