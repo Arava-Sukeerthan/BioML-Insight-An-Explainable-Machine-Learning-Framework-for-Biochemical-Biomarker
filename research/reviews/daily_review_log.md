@@ -311,3 +311,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** Q-065 (due 2026-11-01); D-001/Q-013/Q-058/Q-069 (schedule); R5 and D-029; Q-040; D-024, D-027, D-028, Q-035; v1 Items 6–9, 13–15; Q-036; Q-063 upload; Q-021/Q-064/Q-068 (citation route); commit decision for the three uncommitted tasks.
 - **Recommended next step:** researcher decisions in the order of the brief's §8, starting with Q-065 and the schedule.
 - **Researcher decisions:** instruction to prepare the brief, documentation only (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — Q-069-RESOLUTION
+- **Work completed:** read-only analysis of Q-069; D-042 recorded as PROPOSED; Q-069 note; protocol draft revision 4 (§23 dependency-ordered schedule and new fallback; §26 prerequisites for D-017–D-019, AB-13, AB-7 change, D-016 removed from "Not blocking training").
+- **Important findings:** `[EVIDENCE]` no repository source explicitly permits or forbids parallel stages. The evidence required for D-017 (approved D-016) and D-018 (most-used methods in included RQ1 studies) already made training depend on Stages C and D; protocol revision 3's "D-016 not blocking training" line was inconsistent with that. Two contradictions in the proposal were corrected before editing (Rule S execution timing, D-040 (7); D-014 placement).
+- **Decisions requiring review:** explicit approval, amendment or rejection of D-042 (then Q-069 can be marked Answered); protocol revision 4; D-001/CUP-11 (11-24 target); the commit decision.
+- **Recommended next step:** researcher review of D-042 and protocol revision 4.
+- **Researcher decisions:** in-principle approval of the Q-069 resolution; approval of the recording treatment and protocol edits for preparation (2026-10-29).

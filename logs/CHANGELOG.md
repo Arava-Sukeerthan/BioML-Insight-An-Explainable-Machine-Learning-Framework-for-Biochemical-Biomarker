@@ -1287,3 +1287,25 @@ No decision, question status, raw export, manifest row or search row was changed
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted together with the two earlier tasks; not staged, not pushed; no PR.
+
+## Q-069-RESOLUTION — 2026-10-29 — D-042 PROPOSED (stage order before D-017–D-019 and training); protocol draft revision 4 (documentation only)
+
+**Prompt objective** (researcher, 2026-10-29): after a read-only analysis of Q-069 and a reviewed proposal, record the researcher's in-principle resolution as D-042 (PROPOSED — awaiting explicit approval), keep Q-069 Open with a linking note, and revise the experimental protocol draft (§23, §26) to match. No task ID was assigned; the label is the assistant's. No screening, training, experiment, protocol freeze, decision approval, staging, commit or push.
+
+**Contradictions found in the reviewed proposal and corrected before editing** (reported to the researcher):
+1. §23 row P listed Rule S synthetic verification as "Ongoing". D-040 (7) says "No execution before 2026-11-03" and requires an approved test plan. Row P now covers Rule S test **planning** only and refers to D-040 (7).
+2. §23 step 5 placed D-014 and the outcome definition (Stage F gate) after the Stage D gate. D-042 orders only D-017, D-018 and D-019. D-014/outcome now has its own row ("F"), with timing not fixed by D-042, but needed before D-017 (its evidence requirement) and before training (AB-3).
+
+**Modified**
+- `research/methodology/experimental_protocol_v0.1_draft.md`: header "Version" → draft revision 4; §23 replaced (dependency-ordered table; dates are targets, not gates; new risk line; new fallback that does not assume a frozen protocol); §26: new block "Before D-017, D-018 or D-019 is approved", AB-13, sentence "A blocker is not met because its date has arrived", AB-7 last sentence replaced (old sentence quoted in place), "Not blocking training" line replaced (old line quoted in place); change-history row "0.1 rev. 4" (Approved: **No**).
+- `logs/DECISION_LOG.md`: Status-history row for D-042; new section with the D-042 row (PROPOSED — awaiting explicit approval; "Not approved").
+- `research/reviews/unresolved_questions.md`: Q-069 status cell "Open" → "Open — researcher's in-principle answer (2026-10-29) prepared as D-042 (PROPOSED); awaiting explicit approval." (precedent: Q-032 and D-029). Status value unchanged.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-29_Q-069-RESOLUTION.md`.
+
+**Not changed**: `GOVERNANCE.md`; `CLAUDE.md`; decision statuses other than the new D-042 (D-001, D-016–D-019 and all others unchanged); every other question; screening files; inventory; code; tests; data. Protocol not frozen or activated. **Screening remains inactive.**
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `eca5116`; uncommitted; not staged, not pushed; no PR.

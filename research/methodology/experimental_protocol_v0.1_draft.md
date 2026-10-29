@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Task | PROTOCOL-DRAFT-001 (2026-10-24, Day 11) |
-| Version | **0.1, draft revision 3 (PROTOCOL-EVIDENCE-001, 2026-10-24) — DRAFT for researcher review. Not approved, not frozen, not active.** Revisions 1–3 make only owner-authorized draft edits (change history) |
+| Version | **0.1, draft revision 4 (Q-069-RESOLUTION, 2026-10-29) — DRAFT for researcher review. Not approved, not frozen, not active.** Revisions 1–4 make only owner-authorized draft edits (change history) |
 | Decision it informs | D-019 (freeze the experimental protocol, **PENDING**). It also informs D-013, D-014, D-015, D-016, D-017 and D-018, which are all **PENDING**. This draft does not change any decision status |
 | Governing documents | `GOVERNANCE.md`, `CLAUDE.md`, `research/methodology/research_integrity.md` (draft v1.0, pending, Q-018), `logs/DECISION_LOG.md` |
 | Data evidence | Local, read-only verification of the official NHANES files on 2026-10-24 (§3, Appendix A). The files are in the git-ignored `data/raw/nhanes/`. Nothing participant-level is committed |
@@ -617,25 +617,32 @@ Ten prespecified metrics `[RECOMMENDATION]` (FA-10). Each is computed on interna
 
 ## 23. Milestones to 2026-11-24
 
-`[RECOMMENDATION]` (relates to D-001, proposed). The GOVERNANCE.md §3 schedule ends Stage J on 11-27; a 11-24 target compresses Stage J by 3 days (Q-058).
+`[RECOMMENDATION]` (relates to D-001, proposed; stage order follows D-042, proposed, Q-069). Dates are
+targets, not gates: no gate is treated as passed because its date has arrived. The 2026-11-24 target
+is under review (D-001, Q-013, Q-058); no research requirement is weakened to meet it.
 
-| Dates | Work | Gate |
-|---|---|---|
-| 10-25 → 10-28 | Researcher reviews v0.1. Decisions FA-1 to FA-12, plus D-013, D-014 and D-015. Answers to Q-044 to Q-058. Verify the candidate references into the inventory (literature workflow) | Decisions recorded by the researcher |
-| 10-28 → 10-31 | Protocol v0.2. Authorised code setup: pinned environment, manifest, acquisition and build scripts, leakage tests, `.gitignore` rule | Tests pass; cascade counts reproduced |
-| 11-01 → 11-02 | Protocol v1.0 frozen (D-019 approved by the researcher). Descriptive Table 1 | **D-019 approved; D-014 and the outcome approved** |
-| 11-03 → 11-07 | Stage G: baselines under the frozen protocol (Day 21 onwards) | Runs logged |
-| 11-08 → 11-12 | Stage H: framework implementation and tests | Implementation tested |
-| 11-13 → 11-16 | Stage I: the single temporal-validation run; sensitivity analyses and ablations | All prespecified analyses logged |
-| 11-17 → 11-19 | Stage J: clean-environment re-run; claims register | Re-run reproduces the logged results |
-| 11-19 → 11-24 | Manuscript drafting and researcher review | Draft by 11-24 |
+| Order | Work | Gate or prerequisite | Target |
+|---|---|---|---|
+| 1 | Researcher decisions for screening activation (`research/reviews/screening_activation_decision_brief_D035.md` §8) | D-035 record §6 conditions 2–6 recorded | Q-065 by 11-01; others not fixed |
+| 2 | Screening pilot (D-025, proposed), then screening of the agreed scope (Q-065) and full-text review | Screening activated by the researcher | Not fixed |
+| 3 | Stage C: critical comparison of existing methods | **Stage C gate: comparison reviewed by researcher** | Not fixed |
+| 4 | Stage D: closest-prior-art review, gap matrix, contribution | **Stage D gate: gap + main contribution approved (D-016)** | Not fixed |
+| F | D-013, D-014 and the outcome definition (Stage F gate) | Researcher decisions; D-042 does not fix their timing. Needed before D-017 (its evidence requirement) and before training (AB-3) | Not fixed |
+| P | In parallel with 1–4, preparatory only: protocol v0.2 draft; dataset feasibility documentation (evidence for D-013–D-015); environment setup proposal (D-002); leakage-test design; code scaffolding without fitting a model to real data; Rule S test planning (D-040; execution not before 2026-11-03 and only under an approved test plan, D-040 (7)) | No gate is passed; each edit is authorised as usual | Ongoing |
+| 5 | D-017 (framework) and D-018 (baselines), then D-019 (protocol v1.0 frozen) | Stage C and Stage D gates passed (D-042); D-014 approved (D-017 evidence requirement); researcher approvals | After steps 4 and F |
+| 6 | Stage G: baselines under the frozen protocol | §26 AB-1 to AB-13 met (AB-1: date ≥ 2026-11-03) | After step 5 |
+| 7 | Stages H–J and the manuscript | Gates as in `GOVERNANCE.md` §2 | Under review |
 
 **Risks:**
 - About 1 hour a day of researcher time against roughly 15 decisions.
 - No verified literature yet (AB-7).
 - The RQ5 review is inactive, so the contribution wording must stay limited.
+- Model training cannot start before steps 3–5 are complete. A manuscript with model results by 2026-11-24 is therefore at risk `[HYPOTHESIS]`, not measured.
 
-**Fallback.** If D-019 is not approved by 11-05, the deliverable becomes the frozen protocol plus a descriptive data paper section, without model results.
+**Fallback.** If the Stage C and Stage D gates have not passed in time for the 2026-11-24 target, the
+researcher decides the deliverable (D-001). A possible interim deliverable is the protocol draft, the
+literature review to date and a descriptive data-feasibility section, without model results. The
+protocol is not frozen and no gate is passed to produce it.
 
 ## 24. Decision table
 
@@ -689,6 +696,10 @@ Also recorded in `research/reviews/unresolved_questions.md`.
 - [ ] The remaining D-035 record §6 conditions: Q-040; D-027 and D-024; the remaining R5/D-029 items; screening criteria v1.1 and screening protocol v0.2 frozen as the pilot's `criteria_version`; "the other pilot-blocking items". Condition 1, Q-039, was met by D-036. Separately, the pilot design itself (D-025, Q-026) is still PROPOSED.
 - [ ] D-031 to D-038 stay inactive until then.
 
+**Before D-017, D-018 or D-019 is approved** (D-042, proposed; Q-069):
+- [ ] Stage C gate passed: comparison of existing methods reviewed by the researcher.
+- [ ] Stage D gate passed: gap and main contribution approved (D-016).
+
 **Before model training** (AB = activation blocker):
 - [ ] **AB-1** Date ≥ 2026-11-03 (Day 21; GOVERNANCE.md §2).
 - [ ] **AB-2** D-019 approved by the researcher: protocol frozen and versioned (v1.0), including FA-1 to FA-13.
@@ -696,14 +707,17 @@ Also recorded in `research/reviews/unresolved_questions.md`.
 - [ ] **AB-4** D-015 decided: temporal validation accepted, and the claims limited accordingly.
 - [ ] **AB-5** D-017 and D-018 approved (framework and baselines).
 - [ ] **AB-6** `research_integrity.md` approved (Q-018).
-- [ ] **AB-7** Literature justification: the candidate references (Appendix D) verified into the inventory, and baseline, threshold and metric choices linked to verified records. Otherwise the researcher must explicitly accept the provisional, data-based justification.
+- [ ] **AB-7** Literature justification: the candidate references (Appendix D) verified into the inventory, and baseline, threshold and metric choices linked to verified records. A provisional, data-based justification does not replace the Stage C gate (D-042, proposed). *Revision 4 replaces the revision 3 sentence "Otherwise the researcher must explicitly accept the provisional, data-based justification."*
 - [ ] **AB-8** Q-044 and Q-046 resolved, or the researcher accepts the documented fallback (S-08 as reference). For hs-CRP the fallback is exclusion from the primary sets (CUP-12). Resolving Q-045 is needed only for S-16b. *Revision 3:* Q-060 (within-cycle timing) must also be resolved, or the researcher must accept unadjusted values as the reference (§8.2), before any equation is applied.
 - [ ] **AB-9** Equations re-checked character by character against the official pages.
 - [ ] **AB-10** `.gitignore` rule for participant-level outputs and the `SEQN` guard test (authorization needed). *Revision 1:* implemented under owner authorization (§22). Left open pending researcher review, and because the checks are not exhaustive.
 - [ ] **AB-11** Pinned environment (D-002) with the required packages installed and recorded.
 - [ ] **AB-12** Build script reproduces the §4 cascade counts; leakage tests pass.
+- [ ] **AB-13** Stage C and Stage D gates passed (D-042, proposed; Q-069).
 
-**Not blocking training, but needed before submission:** D-016 (contribution wording) after the RQ5 review; D-020 (journal); Q-055; Q-058.
+A blocker is not met because its date has arrived: AB-1 is necessary, not sufficient.
+
+**Needed before submission (not training blockers):** D-020 (journal); Q-055; Q-058. *Revision 4:* D-016 was removed from this line; under D-042 (proposed) it blocks D-017–D-019 and training (AB-13). The revision 3 text read "Not blocking training, but needed before submission: D-016 (contribution wording) after the RQ5 review; D-020 (journal); Q-055; Q-058."
 
 ## Appendix A. Verified raw files (local manifest, 2026-10-24)
 
@@ -820,3 +834,4 @@ Identifiers come from PubMed connector metadata retrieved on 2026-10-24, where s
 | 0.1 rev. 1 | 2026-10-24 | PROTOCOL-DRAFT-002, owner-authorized draft edits:<br>(1) FA-2 recorded as the owner's preferred proposed outcome, still pending approval and verification of the ADA source; "either laboratory criterion, not a clinical diagnosis" made explicit (§2, §5.1, §24);<br>(2) S-15a and S-15b (exploratory) added, with label counts (§5.3, §19);<br>(3) hs-CRP removed from groups A and B; unresolved conversion documented; conditional S-16a/S-16b (§6.4, §8, §25, Appendix B); counts recomputed (A 21, B 27);<br>(4) period prevalence differences labelled outcome-distribution findings (§5.2, §16);<br>(5) Q-044 documentary evidence and verbatim CDC strings (§8, Appendix B);<br>(6) data-protection safeguards recorded (§22, AB-10);<br>(7) CR-08 identifier recorded, claim still unverified (Appendix D) | **No.** Pending researcher review. No decision status changed |
 | 0.1 rev. 2 | 2026-10-24 | PROTOCOL-DRAFT-003, owner-authorized corrections (Option A):<br>(1) ADA confirmation-rule statement qualified as provisional (§5.1);<br>(2) CDC wording on combining periods quoted from `DEMO_L` ("urged to proceed with caution"), replacing "advises against" (§10);<br>(3) conformal validity guarantee removed; stated as an unverified hypothesis, with coverage measured (§18);<br>(4) median-FPG sentence corrected: v0.1 gave the medians of a broader reference population (103 vs 101), while the analytic samples give 101 vs 100 (§5.2);<br>(5) reproduction script and further safeguards recorded (§22).<br>FA-2 stays a preferred proposed outcome; hs-CRP stays excluded; S-15a/b and S-16a/b unchanged | **No.** Pending researcher review. No decision status changed |
 | 0.1 rev. 3 | 2026-10-24 | PROTOCOL-EVIDENCE-001, primary-source review:<br>(1) ADA verification attempted and **blocked** (source unreachable); the criteria remain unverified (§5.1, CR-08, Q-061);<br>(2) §5.1 makes explicit the laboratory-category vs diagnosis distinction, that the OR rule includes the diabetes range, and the population/outcome consistency check (no definition changed);<br>(3) §8.2 records the official CDC statements on within-cycle instrument/method changes; participant timing cannot be reconstructed (`RIDEXMON` is season only);<br>(4) FA-5 recommendation (unadjusted reference; cycle-level equations as S-09b) proposed for researcher decision; Q-059–Q-061 listed (§25); AB-8 note | **No.** Pending researcher review. No decision status changed |
+| 0.1 rev. 4 | 2026-10-29 | Q-069-RESOLUTION, owner-authorized draft edits (documentation only):<br>(1) §23: the dated table (D-019 frozen 11-01 → 11-02, Stage G from 11-03) replaced by a dependency-ordered table; dates are targets, not gates; D-014/outcome listed separately (timing not fixed by D-042); Rule S limited to test planning before 2026-11-03 (D-040 (7)); the fallback no longer assumes a frozen protocol;<br>(2) §26: new block before D-017/D-018/D-019 approval; AB-13 added; the AB-7 provisional-justification fallback replaced; D-016 removed from "Not blocking training".<br>Follows the researcher's in-principle resolution of Q-069 (D-042, PROPOSED). Protocol not frozen; no decision status changed | **No.** Pending researcher review |

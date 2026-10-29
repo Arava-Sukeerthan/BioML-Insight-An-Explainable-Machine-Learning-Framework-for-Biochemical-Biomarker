@@ -513,3 +513,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Brief `research/reviews/screening_activation_decision_brief_D035.md` created; Q-069 opened; both earlier uncommitted tasks preserved; screening inactive; no decision or question status changed |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted; not pushed |
 | Pull request | None |
+
+### Q-069-RESOLUTION (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label Q-069-RESOLUTION (prompts, 2026-10-29: "Prepare a read-only decision analysis of Q-069"; "I approve the following resolution in principle for Q-069 … First report the intended file changes"; "Proceed with the documentation-only preparation for Q-069 based on the proposal you presented") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Analyse Q-069 read-only; propose a decision-record treatment and protocol corrections; then record D-042 as PROPOSED, keep Q-069 Open with a note, and revise protocol §23/§26 (draft revision 4) |
+| Actual completion status | D-042 recorded (PROPOSED — awaiting explicit approval); Q-069 Open with linking note; protocol draft revision 4 (§23, §26, header, change history); two contradictions in the proposal corrected before editing (Rule S timing; D-014 placement). No decision approved; protocol not frozen; screening inactive |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `eca5116`; uncommitted; not pushed |
+| Pull request | None |
