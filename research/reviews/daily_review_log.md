@@ -268,3 +268,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** off-device storage for both archives; Q-063 (restore the LIT-003 archive and rebuild); Q-064 (verification route).
 - **Recommended next step:** store both archives on separate private media and verify them; then authorise the LIT-003 restore and rebuild.
 - **Researcher decisions:** authorisation of the push, the archive task, the documentation update and one local commit (2026-10-28).
+
+## Day 15 (cont.) — 2026-10-28 — LIT-003-RESTORE
+- **Work completed:** uploaded LIT-003 archive verified (SHA-256 exact match; 208/208 internal checksums; 205 raw files match `MANIFEST.csv` and the committed inventory); 205 raw files restored into empty destinations; `pubrecords.py verify` OK for all 244 raw exports.
+- **Important findings:** the archive's `SHA256SUMS.txt` is identical to the committed copy; its `MANIFEST.csv` is the pre-LIT-005 version and its README an earlier version, so neither was used. The rebuild precondition is now met in this workspace. Off-device backup remains outstanding, and the restored files exist only in the ephemeral container.
+- **Decisions requiring review:** authorise the inventory rebuild; Q-063 status (still Open); off-device storage for both archives; Q-064; D-035 §6 conditions.
+- **Recommended next step:** authorise the inventory rebuild while the restored files are present in this workspace.
+- **Researcher decisions:** authorisation of the verification, the restore and this documentation update (2026-10-28).

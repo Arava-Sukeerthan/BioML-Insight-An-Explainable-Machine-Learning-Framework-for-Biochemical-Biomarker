@@ -1139,3 +1139,23 @@ No decision, question status, raw export, manifest row or search row was changed
 **Status**: archive integrity verified (container and researcher-reported). **Off-device backup / disaster recovery remains outstanding**: one copy outside the container, on one laptop.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3`; documentation committed locally in one researcher-authorised commit (hash in Git history); not pushed; no PR.
+
+## LIT-003-RESTORE — 2026-10-28 — Verification and restoration of the LIT-003 raw exports (no rebuild)
+
+**Prompt objective**: verify the researcher-uploaded LIT-003 archive, then (separately authorised) restore its 205 raw JSON files into empty destinations in `research/literature/raw_exports/` and run `pubrecords.py verify`. No inventory rebuild, no Git operation during the restore.
+
+**Completed (tool output)**
+- Uploaded archive `/root/.claude/uploads/e89f2544-52ab-549f-965c-1d5f571bc462/e9f8022d-LIT-003_raw_exports_2026-10-23.tar.gz`: 3,647,967 bytes, SHA-256 `69e690f06834758aea76bca99ec4699c2abb2dac9aa776798aecf0366bd60c0e` (exact match, checked twice). A first upload was a 0-byte unrelated CSV and was not used.
+- Listing: 211 entries (209 files + 2 directories); no unsafe paths or entry types.
+- Extraction to a fresh scratch directory: `sha256sum -c SHA256SUMS.txt` 208/208 OK; `SHA256SUMS.txt` byte-identical to the committed `archive_contents_SHA256SUMS.txt`; the 205 raw JSON files match `MANIFEST.csv` and `raw_exports_inventory.csv` (0 hash or size mismatches).
+- Restore: 205 files copied byte-for-byte with exclusive create; 0 destination conflicts; each copy re-hashed against the manifest. Archived `MANIFEST.csv`, `README.md` and inventory not used.
+- `pubrecords.py verify`: `OK: all raw exports match MANIFEST.csv` for all 244 manifest files.
+- **Researcher-reported** (not observed): the uploaded copy came from `%USERPROFILE%\Documents\BioML-Insight-Backup\`.
+
+**Modified (documentation, append only)**: `research/literature/preservation/preservation_status.md` (status-history row + restoration section), `logs/PROMPT_LOG.md`, `logs/session_logs/2026-10-28_LIT-005.md`, `research/reviews/daily_review_log.md`, this file.
+
+**Not changed**: raw exports already present, `MANIFEST.csv`, inventory, registry, generated artifacts, protocol, screening criteria, decisions, `unresolved_questions.md`. **Inventory not rebuilt.** Restored files are git-ignored and not committed.
+
+**Status**: all 244 raw exports present and verified in this (ephemeral) workspace; rebuild precondition met. Q-063 remains **Open** (restore done for this workspace; rebuild pending). Off-device backup of both archives remains **outstanding**.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `9bbd847`; documentation uncommitted; no PR.

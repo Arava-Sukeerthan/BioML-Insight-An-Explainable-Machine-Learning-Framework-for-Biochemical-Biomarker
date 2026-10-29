@@ -53,6 +53,7 @@ Composition: 144 PubMed metadata files, 50 PubMed search pages (25 original + 25
 | 2026-10-23 | LIT-003-HOTFIX | PENDING: verified archive created in the container and delivered to the researcher |
 | 2026-10-23 | LIT-003-PRESERVATION-CONFIRMATION (1) | **DOWNLOADED AND CHECKSUM-VERIFIED; DURABLE STORAGE NOT YET CONFIRMED.** The researcher downloaded the archive and verified its SHA-256 on Windows on 2026-10-23 (see the 'Researcher-side verification' section). Durable preservation is complete only once the project owner confirms a second private backup or other durable storage location (Q-011) |
 | 2026-10-23 | LIT-003-PRESERVATION-CONFIRMATION (2) | Archive integrity verified; local redundancy established (2 copies, same computer); off-device backup outstanding |
+| 2026-10-28 | LIT-003-RESTORE | Archive uploaded to the session and verified again; the 205 raw files restored into the workspace's `raw_exports/`; `pubrecords.py verify` OK for all 244 manifest files. Off-device backup still outstanding. Details: section "LIT-003 archive: restoration into the workspace" at the end of this file |
 
 ## Storage options investigated
 | Option | Result |
@@ -131,3 +132,44 @@ Scope: this section covers only the 39 raw export files registered in `raw_expor
 - Only one copy exists outside the container, on one laptop. Disaster-recovery risk stays **open**.
 - Container copy and app attachments: retention not guaranteed.
 - If lost: the 8 PubMed queries (`Q-PM-G1…G8@2026-10-28`) are `[edat]`-capped and can be re-run, but metadata may differ. The alphaXiv ranking (`Q-AX-G9`) is **not** reproducible.
+
+---
+
+## LIT-003 archive: restoration into the workspace (LIT-003-RESTORE, 2026-10-28)
+Scope: the LIT-003 archive described at the top of this file. Earlier entries are unchanged.
+
+| Field | Value |
+|---|---|
+| Source of the uploaded copy | The researcher's copy reported at `%USERPROFILE%\Documents\BioML-Insight-Backup\LIT-003_raw_exports_2026-10-23.tar.gz` (researcher statement), uploaded to the Claude Code session. A first upload attempt produced a 0-byte, unrelated CSV and was not used |
+| Uploaded file (container, outside the repository) | `/root/.claude/uploads/e89f2544-52ab-549f-965c-1d5f571bc462/e9f8022d-LIT-003_raw_exports_2026-10-23.tar.gz` (not copied into the repository) |
+| Size / SHA-256 | 3,647,967 bytes / `69e690f06834758aea76bca99ec4699c2abb2dac9aa776798aecf0366bd60c0e` — **exact match** with the value recorded above (checked twice: verification task and restore task) |
+
+### Verification (tool output, 2026-10-28)
+| Check | Result |
+|---|---|
+| Listing before extraction | 211 entries = 209 regular files + 2 directories (`lit003_raw_exports/`, `lit003_raw_exports/raw_exports/`); no absolute paths, no `..`, no symlinks, hard links or other entry types |
+| Extraction | into a new, empty scratch directory outside the repository; 209 files, 0 symlinks |
+| `sha256sum -c SHA256SUMS.txt` | **208/208 OK**, 0 failures; every extracted file covered |
+| Archive `SHA256SUMS.txt` vs committed `archive_contents_SHA256SUMS.txt` | byte-identical |
+| 205 raw JSON files vs current `raw_exports/MANIFEST.csv` (LIT-003 rows) | 205 = 205; none missing or extra; 0 hash mismatches |
+| 205 raw JSON files vs committed `raw_exports_inventory.csv` | 0 hash mismatches, 0 size mismatches |
+| Archived `MANIFEST.csv` | identical to the committed manifest at `53e419a` (before LIT-005). Not used: the current manifest has 244 rows |
+| Archived `raw_exports_inventory.csv` | identical to the committed file. Not used |
+| Archived `raw_exports/README.md` | an earlier, shorter version of the committed README (notes were appended after the archive was built); passes its checksum. Not used |
+
+### Restoration (tool output, 2026-10-28; researcher-authorised)
+| Item | Result |
+|---|---|
+| Files copied | **205** LIT-003 raw JSON files only, byte-for-byte, into `research/literature/raw_exports/` |
+| Overwrite protection | every destination checked first (0 conflicts); each file written with exclusive create (fails if the file exists); each copy re-hashed against `MANIFEST.csv` |
+| Not copied or changed | `MANIFEST.csv`, `README.md`, `raw_exports_inventory.csv`, `SHA256SUMS.txt`, the archive itself; no existing file modified |
+| `python3 -I scripts/literature/pubrecords.py verify` | `OK: all raw exports match MANIFEST.csv` (exit code 0); the manifest lists **244** files (205 LIT-003 + 39 LIT-005) |
+| Git | restored files are git-ignored (D-010, proposed); working tree clean afterwards |
+| Temporary extraction directories | deleted after each task; the uploaded archive was left in place |
+| Inventory | **not rebuilt**; no generated artifact or registry change |
+
+### What this establishes, and what it does not
+- **Establishes:** the uploaded copy is byte-identical to the archive verified on 2026-10-23; all 244 raw exports in the manifest are now present in this workspace and match their checksums. The precondition for an inventory rebuild (`verify_manifest` passes) is met.
+- **Does not establish:** off-device backup or disaster recovery. The researcher's copies of the LIT-003 archive are reported to be on the same computer; the LIT-005 archive has one copy in that computer's Downloads folder. Both remain **outstanding** for off-device storage.
+- **Workspace copies are not durable:** the restored files exist only in this ephemeral container and would need restoring again in a new workspace.
+- **Q-063:** its first option (restore from the researcher's backup) has been carried out for this workspace. The rebuild it is meant to enable has **not** been done, and Q-063's status in `research/reviews/unresolved_questions.md` is unchanged (**Open**); closing it is the researcher's decision.

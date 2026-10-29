@@ -430,3 +430,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Branch | `claude/eloquent-mccarthy-bqtxr3` from `db84937`; one local commit of 5 documentation files (hash in Git history); not pushed |
 | Pull request | None |
 | Note on the LIT-005 entry above | Its "Branch … at `53e419a`; uncommitted" describes the state when it was written. LIT-005 was later committed as `db84937` and pushed (2026-10-28) |
+
+### LIT-003-RESTORE
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-003-RESTORE (prompts, 2026-10-28: read-only check of the verification procedure; "Please perform verification only" (first upload empty; repeated with the archive); "I authorize the narrowly scoped restoration of the 205 LIT-003 raw JSON files"; "I authorize a documentation-only update recording the successful LIT-003 restoration") |
+| Prompt date | 2026-10-28 (Day 15) |
+| Objective | Verify the uploaded LIT-003 archive; restore the 205 raw files into empty destinations; run `pubrecords.py verify`; record the result |
+| Actual completion status | Archive SHA-256 exact match; 208/208 internal checks; 205/205 hashes match manifest and inventory; 205 restored, 0 conflicts; `verify` OK for 244 files. No rebuild. Q-063 still Open. Documentation updated, uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `9bbd847` (1 ahead of origin); uncommitted |
+| Pull request | None |
