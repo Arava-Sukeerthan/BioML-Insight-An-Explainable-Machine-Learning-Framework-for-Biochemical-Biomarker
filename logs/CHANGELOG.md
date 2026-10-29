@@ -1361,3 +1361,26 @@ Additional, same pattern: `a280e01` (DOCUMENTATION-ONLY-RECONCILIATION; its entr
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted; not staged, not pushed; no PR.
+
+## SCOPE-SCHEDULE-DECISIONS — 2026-10-29 — Owner decisions on Q-002 (D-043), Q-065 (D-044) and the schedule (D-045) recorded (documentation only)
+
+**Prompt objective** (researcher, 2026-10-29): record the researcher's explicit decisions on Q-002 (biomarker scope), Q-065 (screening scope, Option 3) and the project schedule, after verifying the Q-065 count; no screening activation, no experiment authorisation, no change to unrelated decisions. No task ID was assigned; the label is the assistant's. No staging, commit or push.
+
+**Pre-checks**: branch `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`, in sync with `origin`; uncommitted Q-065-DECISION-PACKAGE work (5 files) present and snapshotted (checksums and sizes) before editing. D-043–D-045 unused (D-039 reserved).
+
+**Count verification (before recording)** — `paper_inventory.json` SHA-256 `a509538d…f4a3` and `paper_inventory.csv` `8fc5bea9…6846`, both equal to HEAD. RQ1 = Q-PM-01, Q-PM-02, Q-PM-03 (`search_queries.csv`, column `rq`). Method 1: `jq` set union on the JSON → G 194, Q-PM-02 743, Q-PM-11/12 120, Q-PM-01 434, Q-PM-03 52; priority 1,044; Option 3 **1,470**. Method 2: Python `csv` on the CSV, five-set membership patterns and inclusion–exclusion → **1,470**. Decomposition: 1,044 + 399 (Q-PM-01 outside the priority strand) + 44 (Q-PM-03 outside) − 17 (in both) = 1,470. The package states 399 and 44 but not the 17 overlap; no discrepancy in the total. Metadata of the 1,470: all `not_screened`; 1,460 `partially_verified`, 10 `verified`; 6 `abstract_available = False`; 2 retraction publication types; 0 duplicate PMID/DOI/PMCID; 4 pending dedup pairs touch the set, 1 with both members inside (caveat recorded in D-044). Metadata only; no title or abstract read.
+
+**Modified**
+- `logs/DECISION_LOG.md`: three Status-history rows; new section with D-043 (APPROVED), D-044 (APPROVED — CONDITIONAL, inactive for screening until D-035 record §6 is met), D-045 (APPROVED); attribution "Researcher (owner), 2026-10-29".
+- `research/reviews/unresolved_questions.md`: Q-002 → Answered → D-043; Q-065 → Answered → D-044; Q-013 and Q-058 stay **Open** with notes referring to D-045 (D-001 revision pending pilot evidence).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-29_SCOPE-SCHEDULE-DECISIONS.md`.
+
+**Not changed**: D-001 (PROPOSED), D-005, D-009, D-013–D-020, D-025, D-035, D-042 and every other decision; Q-001, Q-007, Q-033, Q-035 and every other question; `GOVERNANCE.md`; `CLAUDE.md`; `screening_criteria.md` (v1.0 draft; D-043 enters only via v1.1); the experimental protocol (draft revision 5; CUP-11 and §23 wording not updated, see open items); the Q-065 decision package; the inventory and all record fields. **Screening remains inactive**; no training, experiment or dataset work authorised.
+
+**Open items**: protocol CUP-11 ("Target: a defensible manuscript by 2026-11-24") and §23 ("The 2026-11-24 target is under review") predate D-045 and need an owner-authorised protocol revision; `screening_criteria.md` §2.2 still reads "[PROVISIONAL — Q-002]" until v1.1; D-001 revision after the pilot.
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted together with the Q-065-DECISION-PACKAGE work; not staged, not pushed; no PR.

@@ -544,3 +544,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Branch | `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted; not pushed |
 | Pull request | None |
 | Note on the entries above | The Branch fields of SECOND-SOURCE-ACCESS-RECHECK, RESEARCH-AMBITION-D041, SCREENING-ACTIVATION-BRIEF, Q-069-RESOLUTION and D-042-APPROVAL describe the state when written. They were committed as `24f5dfd`, `27c86c0`, `eca5116`, `9aefe42` and `5d92d94`, and pushed to `origin/claude/eloquent-mccarthy-bqtxr3` (times in the CHANGELOG entry for this task) |
+
+### SCOPE-SCHEDULE-DECISIONS (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SCOPE-SCHEDULE-DECISIONS (prompt: "Record the researcher's explicit decisions on Q-002, Q-065, and the project schedule") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Verify the Q-065 Option 3 count; record D-043 (Q-002), D-044 (Q-065) and D-045 (schedule); update question statuses; no screening activation, no experiment authorisation |
+| Actual completion status | 1,470 reproduced by two independent methods; D-043 APPROVED; D-044 APPROVED — CONDITIONAL (inactive for screening); D-045 APPROVED; Q-002 and Q-065 Answered; Q-013, Q-058 Open with notes; D-001 PROPOSED unchanged. Screening inactive |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted; not pushed |
+| Pull request | None |

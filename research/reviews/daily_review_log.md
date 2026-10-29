@@ -332,3 +332,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** Q-065 scope (Options 1–3); Q-002 (biomarker scope), which decides whether Q-PM-01/Q-PM-03 are needed; schedule (D-001, Q-013, Q-058, CUP-11); the commit decision.
 - **Recommended next step:** researcher decisions on Q-002 and Q-065 by 2026-11-01; schedule S1 + S2 (interim deliverable on 11-24; D-001 revised after the pilot).
 - **Researcher decisions:** instruction to prepare the package, documentation only (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — SCOPE-SCHEDULE-DECISIONS
+- **Work completed:** owner decisions recorded: D-043 (Q-002: both metabolomics/lipidomics and routine clinical chemistry, as distinct categories, literature-review scope only); D-044 (Q-065: Option 3, 1,470 unique records, inactive until screening activation); D-045 (2026-11-24 kept as an interim deliverable without promised model results; schedule revised after the pilot).
+- **Important findings:** `[EVIDENCE]` 1,470 reproduced independently (`jq`; CSV five-set inclusion–exclusion): 1,044 + 399 + 44 − 17. One pending dedup pair has both members in scope (count could become 1,469). Protocol CUP-11/§23 and `screening_criteria.md` §2.2 still carry pre-decision wording.
+- **Decisions requiring review:** this diff and the commit decision (together with the Q-065 package); protocol revision for CUP-11/§23; remaining screening-activation items (D-035 record §6 conditions 2–6, including Q-001, Q-033, Q-035); Q-021/Q-064/Q-068.
+- **Recommended next step:** researcher decisions on the remaining D-035 record §6 items (`screening_activation_decision_brief_D035.md` §8, steps 2–6).
+- **Researcher decisions:** Q-002, Q-065 (Option 3) and the schedule decision (2026-10-29).
