@@ -564,3 +564,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | D-029 APPROVED (option (a)); D-046 APPROVED — CONDITIONAL per part (1c returned for confirmation, 1g conditional); D-024 APPROVED — CONDITIONAL; D-027 APPROVED — LIMITED; D-047 APPROVED — CONDITIONAL (inactive), flag PROPOSED; Q-032, Q-040 Answered; Q-070–Q-072 opened. No schema or code change (Q-072 name collision). Screening inactive |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` at `0c85634`; uncommitted; not pushed |
 | Pull request | None |
+
+### Q-070-Q-072-DECISION-PACKAGES (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label Q-070-Q-072-DECISION-PACKAGES (prompt: "Prepare three focused researcher decision packages: Q-070 … Q-071 … Q-072") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Review-and-proposal: evidence, options, recommendation, dependencies and affected files for Q-070, Q-071 and Q-072; no implementation, no approval |
+| Actual completion status | `research/reviews/Q-070-Q-072_decision_packages.md` created; recommendations A/A/A; Q-070–Q-072 Open; no decision, schema, code or protocol change; screening inactive |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `0c85634`; uncommitted; not pushed |
+| Pull request | None |

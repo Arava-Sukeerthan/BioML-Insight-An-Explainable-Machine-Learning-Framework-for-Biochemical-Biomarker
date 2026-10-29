@@ -1409,3 +1409,22 @@ Additional, same pattern: `a280e01` (DOCUMENTATION-ONLY-RECONCILIATION; its entr
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `0c85634`; uncommitted; not staged, not pushed; no PR.
+
+## Q-070-Q-072-DECISION-PACKAGES — 2026-10-29 — Decision packages for Q-070 (calibration wording), Q-071 (comparator flag) and Q-072 (`validation_design` naming) (review only)
+
+**Prompt objective** (researcher, 2026-10-29): prepare focused decision packages for Q-070, Q-071 and Q-072 from the uncommitted Group 1 state; no implementation of schema, build, screening or protocol changes; no approval recorded; no commit or push. No task ID was assigned; the label is the assistant's.
+
+**Pre-checks**: branch `claude/eloquent-mccarthy-bqtxr3` at `0c85634`, in sync with `origin`; nothing staged; the 7 uncommitted R5-GROUP1-DECISIONS files present (D-046, D-047, Q-070–Q-072) and snapshotted before editing.
+
+**Created**: `research/reviews/Q-070-Q-072_decision_packages.md` (evidence tables, options, recommendations, dependencies, files likely to change, response template); `logs/session_logs/2026-10-29_Q-070-Q-072-DECISION-PACKAGES.md`.
+**Modified (append-only)**: `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file.
+
+**Recommendations (not decisions)**: Q-070 option A (D-046 1c plus "calibration-in-the-large" and the D-035 "fully described analysis" wording); Q-071 option A (specification in §2.2) with eight open points; Q-072 option A (`dim_validation_design` for the screening descriptor; `validation_design` stays the extraction field).
+
+**Findings (tool output)**: the only calibration conflict is draft `screening_protocol.md` line 50 ("Brier score" as an example); exemplar scope differs between `screening_criteria.md` line 62 (RQ2–RQ4) and `screening_protocol.md` lines 76 and 122 (RQ2–RQ5); `scope_flags` is unvalidated; `dim_independent_validation` is null for all 3,386 records and `validation_design` holds the extraction sentinel for all 3,386.
+
+**Not changed**: `logs/DECISION_LOG.md`; `research/reviews/unresolved_questions.md` (Q-070–Q-072 stay Open); schemas; code; tests; criteria; screening protocol; experimental protocol; inventory; D-024/D-027 approval scopes. **Screening remains inactive.**
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `0c85634`; uncommitted together with R5-GROUP1-DECISIONS; not staged, not pushed; no PR.

@@ -346,3 +346,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** Q-070 (calibration wording), Q-071 (Q-040 flag definition), Q-072 (`validation_design` naming); D-028/Q-031 (D-024 condition 2); the remaining screening-activation items; the commit decision.
 - **Recommended next step:** researcher answers to Q-070, Q-071 and Q-072.
 - **Researcher decisions:** Q1–Q7 of the group-1 ballot (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — Q-070-Q-072-DECISION-PACKAGES
+- **Work completed:** decision packages for Q-070, Q-071 and Q-072 (`research/reviews/Q-070-Q-072_decision_packages.md`).
+- **Important findings:** `[EVIDENCE]` approved D-035 §2 and D-046 1c agree on the Brier score; only draft `screening_protocol.md` line 50 differs. Exemplar scope differs between criteria (RQ2–RQ4) and screening protocol (RQ2–RQ5). `dim_independent_validation` is empty for all records, so renaming it to `dim_validation_design` loses no values; `validation_design` holds the extraction sentinel for all 3,386 records.
+- **Decisions requiring review:** Q-070 (options A–E), Q-071 (options A–D plus eight open points), Q-072 (options A–C); the commit decision for the Group 1 work and this package.
+- **Recommended next step:** researcher answers on Q-070, Q-072 and Q-071 (with Q-001 for the flag's scope).
+- **Researcher decisions:** instruction to prepare the packages, review only (2026-10-29).
