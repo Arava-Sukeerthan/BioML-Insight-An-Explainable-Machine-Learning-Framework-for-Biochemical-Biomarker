@@ -158,3 +158,36 @@ Recording: [ ] record answered items   [ ] record nothing yet
 3. The decision label and RQ tags of retained comparator records are not documented anywhere.
 4. `scope_flags` values are not validated; any token is accepted.
 5. D-029 and D-046 name the field `validation_design`, which is already the name of an inventory extraction field (Q-072).
+
+---
+
+## 7. Addendum (2026-10-29, Q-070-Q-072-DECISIONS) — Q-071 sub-decision ballot
+
+The owner approved the §2.2 specification **conditionally** (D-049): it is not in force and not implemented until each sub-decision below is decided and recorded. The options and recommendations are assistant proposals `[RECOMMENDATION]`; none is decided. §1–§6 above are unchanged.
+
+| # | Sub-decision | Options | Recommendation and reason | Consequence / dependency |
+|---|---|---|---|---|
+| 2.4-1 | Name of the flag | (a) keep `non_metabolic_near_rq5_comparator`; (b) another name you specify | **(a)**: states the domain (non-metabolic), the comparison group (near-RQ5, D-034) and the role (comparator, not RQ5) | A rename later means changing every row that carries it |
+| 2.4-2 | Title/abstract rule | (a) flag provisionally when `yes` + `unclear` ≥ 3 and the potential-RQ5 rule (≥ 4) is not met → `uncertain`, `needs_human = yes`; (b) count only `yes` ≥ 3 at title/abstract; (c) no flag at title/abstract (non-metabolic records reach full text only as potential RQ5) | **(a)**: abstracts often omit methods (D-046 1d: silence is never `no`); (b) loses records whose components are only implied; (c) excludes three-component records under E4 before full text, which defeats D-047 | (a) sends more records to full text (`[HYPOTHESIS]`: number unknown before screening) |
+| 2.4-3 | Decision label and RQ tags of retained records | (a) `include` with no RQ tag at full text, flag present; (b) `include` with tag `RQ5`; (c) a new decision value | **(a)**: `include` without `rq_tags` is accepted by the build (`pubrecords.py` lines 1141–1142 validate `rq_tags` only when present); (b) could be read as RQ5 qualification; (c) changes the decision values of D-027 part (a), which is approved, and would need a new decision | (a) needs the reporting rule of §2.2 so that tag-less `include` rows are counted separately |
+| 2.4-4 | Complications as the target (§2.1 first E4 bullet, e.g., retinopathy) | (a) treat as non-metabolic for the flag; (b) not eligible for the flag (E4 regardless) | **(a)**: they are outside §2.1 like other E4 targets, so the §2.2 scope covers them without a special case | (b) adds an exception to the scope rule |
+| 2.4-5 | Title-level E4 for records without an abstract (D-046 1d) | (a) a title that names an integrated framework or pipeline blocks title-level E4 → `uncertain`; (b) no change: title-level E4 applies | **(a)**: otherwise a candidate comparator without an abstract is excluded without any component evidence | Affects records without an abstract only: 134 of 3,386 in the inventory, 6 of 1,470 in the D-044 scope `[EVIDENCE: collection_stats.json; read-only count]` |
+| 2.4-6 | Exemplar scope | (a) RQ2–RQ4 (`screening_criteria.md` line 62); (b) RQ2–RQ5 (`screening_protocol.md` lines 76, 122) | **(b)**: `screening_criteria.md` §3 already retains RQ5 records of any domain (line 99), so line 62 is the outlier | Settles the contradiction before v1.1; either answer changes one draft |
+| 2.4-7 | Dependency on Q-001 (disorder scope, Open) | (a) membership follows §2.1 of the criteria version in force; flagged records are re-screened if §2.1 changes (`screening_criteria.md` §4, line 121–122); (b) decide Q-001 before any flag is assigned | **(a) together with (b)**: criteria v1.1 needs Q-001 anyway (pilot-blocking item 7), so no flag can be assigned before Q-001; (a) covers later changes | Q-001 remains a separate decision |
+| 2.4-8 | Validation of `scope_flags` | (a) validate tokens against an approved list in the schema and build (separate implementation authorisation); (b) keep free text | **(a)**: today any string is accepted, so a misspelt flag would silently drop a record from the comparison | (a) is a schema/code change: not made now; needs authorisation and tests |
+
+Response template:
+```
+2.4-1 [ ] a  [ ] b: …      2.4-2 [ ] a  [ ] b  [ ] c      2.4-3 [ ] a  [ ] b  [ ] c
+2.4-4 [ ] a  [ ] b          2.4-5 [ ] a  [ ] b              2.4-6 [ ] a  [ ] b
+2.4-7 [ ] a  [ ] b  [ ] a+b 2.4-8 [ ] a  [ ] b
+```
+
+## 8. Addendum (2026-10-29, Q-070-Q-072-DECISIONS) — Status after the owner's decisions
+| Question | Decision | Status |
+|---|---|---|
+| Q-070 | D-048: §1.2 text | **Answered**; D-048 APPROVED; D-046 line 1c approved with that text |
+| Q-071 | D-049: §2.2 specification | **Open**; D-049 APPROVED — CONDITIONAL (inactive) until 2.4-1 to 2.4-8 are decided; not implemented |
+| Q-072 | D-050: `dim_validation_design` | **Answered**; D-050 APPROVED (field name only); not implemented |
+
+Still pending elsewhere: D-046 line 1g (conditional); D-024 conditions (1) and (3); D-026 "revised by D-029"; criteria v1.1 and protocol v0.2. Screening remains inactive.

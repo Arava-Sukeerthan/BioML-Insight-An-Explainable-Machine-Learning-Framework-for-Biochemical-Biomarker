@@ -1428,3 +1428,27 @@ Additional, same pattern: `a280e01` (DOCUMENTATION-ONLY-RECONCILIATION; its entr
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `0c85634`; uncommitted together with R5-GROUP1-DECISIONS; not staged, not pushed; no PR.
+
+## Q-070-Q-072-DECISIONS — 2026-10-29 — Owner decisions on Q-070 (D-048), Q-071 (D-049, conditional) and Q-072 (D-050) recorded (documentation only)
+
+**Prompt objective** (researcher, 2026-10-29): record Q-070 option A, a conditional approval of the Q-071 comparator-flag concept (subject to all eight sub-decisions; no implementation), and Q-072 option A (`dim_validation_design`, name only); prepare options and recommendations for the eight Q-071 sub-decisions; stop any part that conflicts with an approved decision; no commit or push. No task ID was assigned; the label is the assistant's.
+
+**Pre-checks**: branch `claude/eloquent-mccarthy-bqtxr3` at `0c85634`, in sync with `origin`; nothing staged; the 9 uncommitted files of R5-GROUP1-DECISIONS and Q-070-Q-072-DECISION-PACKAGES present and snapshotted. Next free IDs D-048, Q-073.
+
+**Conflict check**: Q-070 text has the same Brier-score and analytical-chemistry treatment as approved D-035 §2 (no conflict; D-046 part 3 relationship kept). Q-072 renames the field used by approved D-029 and D-046 → recorded as a revision by a new entry (`CLAUDE.md` rule 10), meaning unchanged. Q-071: no approved decision defines the flag; conditional approval represented with the existing status `APPROVED — CONDITIONAL`.
+
+**Recorded**
+- `logs/DECISION_LOG.md`: 5 Status-history rows (D-046 line 1c → APPROVED; D-048, D-049, D-050 new; D-024/D-026 no change); new section with D-048 (**APPROVED**; §1.2 text, verified word-for-word against the package), D-049 (**APPROVED — CONDITIONAL (inactive)** until sub-decisions 2.4-1 to 2.4-8), D-050 (**APPROVED**, field name only). Existing rows unchanged.
+- `research/reviews/unresolved_questions.md`: Q-070 → Answered (D-048); Q-072 → Answered (D-050); Q-071 stays **Open** with a note (D-049 conditional).
+- `research/reviews/Q-070-Q-072_decision_packages.md`: §7 (options and recommendations for the eight Q-071 sub-decisions) and §8 (status) appended; §1–§6 unchanged.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-29_Q-070-Q-072-DECISIONS.md`.
+
+**Correction during the task**: the first write of D-048 contained escaped quotation marks (`\"`); corrected in that row only before validation.
+
+**Not changed**: schemas, `pubrecords.py`, `make_literature_reports.py`, tests, inventory data; `screening_criteria.md`, `screening_protocol.md` (revisions listed in D-048, not made); experimental protocol; `GOVERNANCE.md`; `CLAUDE.md`; D-024 and D-027 scopes; D-046 1g; every other decision or question. **Screening remains inactive**; no dataset preparation, training, experiment or evaluation authorised.
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `0c85634`; uncommitted together with the two earlier tasks; not staged, not pushed; no PR.

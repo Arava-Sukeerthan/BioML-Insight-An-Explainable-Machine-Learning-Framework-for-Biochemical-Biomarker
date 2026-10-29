@@ -353,3 +353,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** Q-070 (options A–E), Q-071 (options A–D plus eight open points), Q-072 (options A–C); the commit decision for the Group 1 work and this package.
 - **Recommended next step:** researcher answers on Q-070, Q-072 and Q-071 (with Q-001 for the flag's scope).
 - **Researcher decisions:** instruction to prepare the packages, review only (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — Q-070-Q-072-DECISIONS
+- **Work completed:** owner decisions recorded: D-048 (`dim_calibration` definition), D-049 (comparator-flag specification, conditional), D-050 (`dim_validation_design`, name only); Q-071 sub-decision ballot (package §7).
+- **Important findings:** `[EVIDENCE]` no conflict with approved decisions; D-050 revises only the field name used by D-029/D-046. D-024 conditions (1) and (3) remain unmet (D-046 1g conditional; D-050 not implemented). `include` without `rq_tags` is accepted by the build (relevant to sub-decision 2.4-3).
+- **Decisions requiring review:** Q-071 sub-decisions 2.4-1 to 2.4-8; D-046 1g condition; the commit decision for the three uncommitted tasks.
+- **Recommended next step:** researcher answers to the eight Q-071 sub-decisions.
+- **Researcher decisions:** Q-070 option A; Q-071 conditional approval; Q-072 option A (2026-10-29).

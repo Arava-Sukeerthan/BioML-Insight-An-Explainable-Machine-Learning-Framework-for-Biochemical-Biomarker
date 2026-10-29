@@ -574,3 +574,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | `research/reviews/Q-070-Q-072_decision_packages.md` created; recommendations A/A/A; Q-070–Q-072 Open; no decision, schema, code or protocol change; screening inactive |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` at `0c85634`; uncommitted; not pushed |
 | Pull request | None |
+
+### Q-070-Q-072-DECISIONS (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label Q-070-Q-072-DECISIONS (prompt: "I have reviewed the Q-070, Q-071 and Q-072 decision packages. My intended choices are …") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Record Q-070 option A, a conditional Q-071 approval and Q-072 option A (name only); prepare the eight Q-071 sub-decision options; no implementation |
+| Actual completion status | D-048 APPROVED; D-049 APPROVED — CONDITIONAL (inactive); D-050 APPROVED (name only); Q-070 and Q-072 Answered; Q-071 Open; package §7–§8 appended; no schema, code or protocol change; screening inactive |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `0c85634`; uncommitted; not pushed |
+| Pull request | None |
