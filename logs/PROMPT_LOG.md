@@ -493,3 +493,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Second-source access re-check: 10 hosts, all CONNECT 403; read-only route counts (2,282 / 964 / 88); verification-rule inconsistency recorded as Q-068 (Open). No search, verification change, rebuild, screening or decision change |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted; not pushed |
 | Pull request | None |
+
+### RESEARCH-AMBITION-D041 (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label RESEARCH-AMBITION-D041 (prompts, 2026-10-29: "We need to make the research ambition for BioML-Insight explicit …" (inspection and proposal); "The researcher wants this ambition reflected clearly in the project" (application)) |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Inspect existing governance; propose, then apply, a research-ambition statement in `CLAUDE.md` and `README.md`; record D-041 as PROPOSED; log the change |
+| Actual completion status | `CLAUDE.md` §1a and README paragraph added; D-041 recorded as PROPOSED with a Status-history row; rule 15 reworded ("input to D-018, which is PENDING") for factual accuracy; no other decision or question changed |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted; not pushed |
+| Pull request | None |

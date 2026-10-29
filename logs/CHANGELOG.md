@@ -1249,3 +1249,23 @@ No decision, question status, raw export, manifest row or search row was changed
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; changes uncommitted, awaiting researcher review; not pushed; no PR.
+
+## RESEARCH-AMBITION-D041 — 2026-10-29 — Research ambition and quality standard in `CLAUDE.md` and `README.md`; D-041 PROPOSED (documentation only)
+
+**Prompt objective** (researcher, 2026-10-29): reflect the ambition of an original, rigorous, reproducible contribution suitable for a reputable journal of an established publisher. Add the proposed wording to `CLAUDE.md` and `README.md`, record D-041 as PROPOSED, and log the change. No task ID was assigned; the label is the assistant's. No staging, commit, push, branch change or PR.
+
+**Conflicts reported before editing (none blocking)**: (1) the proposed rule 15 cited "(D-018)", which would imply D-018 already requires strong, recent baselines; it does not (D-018, PENDING: most-used RQ1 methods, a simple reference model, equal tuning budgets). It was reworded to "input to D-018, which is PENDING". (2) D-011 and D-022 (both PROPOSED) concern rules in `CLAUDE.md`; D-041 is recorded alongside them without changing their status (`CLAUDE.md` rule 10). (3) As with D-022, rules 14–17 are followed as researcher instructions while D-041 is PROPOSED. (4) Rules 14–17 sit in §1a, before §2 (rules 8–13); numbers are kept so existing references stay valid. (5) The tension between the 2026-11-24 manuscript target (protocol CUP-11, D-001 PROPOSED) and the ambition is unresolved and not decided here.
+
+**Modified**
+- `CLAUDE.md`: new section §1a (ambition statement, journal-selection criteria for D-020, rules 14–17), inserted before §2; no existing line changed.
+- `README.md`: "Ambition" paragraph appended to "Research objective"; no existing line changed. The README status block (dated 2026-10-23) was left as it is.
+- `logs/DECISION_LOG.md`: Status-history row for D-041; new section with the D-041 row (PROPOSED, "Not approved").
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-29_RESEARCH-AMBITION-D041.md`.
+
+**Not changed**: `GOVERNANCE.md`; D-001–D-040 (including D-011, D-013–D-020, D-022); question statuses; research question; dataset; protocol; method; baseline set; screening status; inventory; code; tests. The six uncommitted SECOND-SOURCE-ACCESS-RECHECK files are preserved (their existing content is unchanged; three logs were appended to).
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted together with the SECOND-SOURCE-ACCESS-RECHECK changes; not staged, not pushed; no PR.

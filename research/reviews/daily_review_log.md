@@ -297,3 +297,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** Q-021/Q-064 (verification route, including the network change); Q-068; Q-036; Q-065 (due 2026-11-01); D-035 record §6 conditions 2–6.
 - **Recommended next step:** researcher decision on Q-021/Q-064/Q-068, or allow-listing `api.crossref.org` and `www.ebi.ac.uk`; then a scoped verification task for the citation-priority records (`LIT-005_evidence_review.md` §10).
 - **Researcher decisions:** authorisation to resume Stage B with one bounded non-screening task (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — RESEARCH-AMBITION-D041
+- **Work completed:** existing governance inspected for the publication ambition; `CLAUDE.md` §1a (ambition, journal criteria, rules 14–17) and a README "Ambition" paragraph added; D-041 recorded as PROPOSED.
+- **Important findings:** `[EVIDENCE]` most of the requested standards already exist (`GOVERNANCE.md` §1–2; `research_integrity.md` §1–11; D-016, D-018, D-020), but the journal-level ambition, the journal-selection criteria and the four rules were not explicit. `[OPEN]` The 2026-11-24 manuscript target (CUP-11) may conflict with the quality bar; `GOVERNANCE.md` §2 forbids skipping stages to meet the deadline.
+- **Decisions requiring review:** D-041 (approve, amend or reject); D-011/D-022; the schedule (D-001) in view of the ambition; the six SECOND-SOURCE-ACCESS-RECHECK files and this change (commit decision).
+- **Recommended next step:** screening-activation decision brief (D-035 record §6 conditions 2–6; Q-065, due 2026-11-01).
+- **Researcher decisions:** instruction to state the ambition and record D-041 as PROPOSED (2026-10-29).

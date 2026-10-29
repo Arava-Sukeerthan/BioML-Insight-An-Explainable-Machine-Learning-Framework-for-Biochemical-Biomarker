@@ -18,6 +18,23 @@ taken from the BIO-001 prompt. Read both files before every task.
 6. Distinguish verified evidence from hypotheses and recommendations. Label statements `[EVIDENCE]`, `[HYPOTHESIS]`, `[RECOMMENDATION]` or `[OPEN]` (definitions in `GOVERNANCE.md` §1).
 7. A recommendation produced by Claude Code is **not** researcher approval.
 
+## 1a. Research ambition and quality standard
+Added from the researcher's instruction of 2026-10-29 (proposed as D-041).
+
+The project aims at an original, rigorous and reproducible research contribution suitable for
+submission to a reputable, selective journal of an established scholarly publisher. Acceptance is
+an aspiration, not a guaranteed outcome, and never justifies skipping a stage or gate
+(`GOVERNANCE.md` §2). The target journal stays D-020 (PENDING). It is chosen only after the
+contribution and results exist, on scope and readership, recent comparable publications,
+methodological expectations and article types, indexing and reputation verified from reliable
+sources, fees and practical constraints, and fit with the actual contribution — never on prestige alone.
+
+In addition to §1:
+14. Novelty is an evidence-based assessment. Finding no matching paper is not evidence of novelty. The closest prior work, contradicting evidence and work that weakens the proposed contribution are recorded.
+15. Baselines include strong, recent, literature-supported methods, not only simple or weak ones, with equal tuning budgets (input to D-018, which is PENDING; D-018 as proposed already requires equal tuning budgets).
+16. No target performance level (e.g., "≥ 90 %") is promised or pursued. Metrics and statistical procedures are fixed in the approved protocol (D-019) before the confirmatory evaluation; null, negative and failed results are reported.
+17. Independent validation is distinguished from internal splits as defined in `research_integrity.md` §11.
+
 ## 2. Working rules
 8. Preserve the researcher's existing work. Run `git status` first, never discard uncommitted changes, and do not overwrite or delete files without a documented reason. If an equivalent file already exists, update it instead of creating a duplicate.
 9. Record important modifications in `logs/CHANGELOG.md`. Record only work that was actually done. If validation was not performed, say so.
