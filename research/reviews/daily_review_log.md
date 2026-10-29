@@ -290,3 +290,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** review of this diff and whether to commit and push it; a PR for the 8 commits; D-035 record §6 conditions 2–6 and Q-065 (due 2026-11-01); Q-021/Q-064; Q-063 status; the content of D-039.
 - **Recommended next step:** researcher review of the reconciliation diff; then a PR for the unreviewed commits (separate authorisation).
 - **Researcher decisions:** authorisation of the branch switch, the read-only audit and the documentation-only reconciliation (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — SECOND-SOURCE-ACCESS-RECHECK
+- **Work completed:** state verified at `a280e01` (clean, in sync with `origin`); second-source access re-checked for 10 hosts; read-only counts of the records each verification route could reach; `environment_assessment.md` addendum; Q-068 opened.
+- **Important findings:** `[EVIDENCE]` Crossref, doi.org, Europe PMC, E-utilities, PubMed/PMC web, OpenAlex, Semantic Scholar, the arXiv API and diabetesjournals.org are all refused by the network policy (CONNECT 403, 14:50Z). 2,282 of 3,334 `partially_verified` records have a PMCID; 964 PubMed records, including A2 (`P0303`), do not. The 14 `verified` records rest on web-search URL agreement, which `search_strategy.md` §7 does not name as a second source (Q-068). `[OPEN]` No independent bibliographic index is reachable from this environment.
+- **Decisions requiring review:** Q-021/Q-064 (verification route, including the network change); Q-068; Q-036; Q-065 (due 2026-11-01); D-035 record §6 conditions 2–6.
+- **Recommended next step:** researcher decision on Q-021/Q-064/Q-068, or allow-listing `api.crossref.org` and `www.ebi.ac.uk`; then a scoped verification task for the citation-priority records (`LIT-005_evidence_review.md` §10).
+- **Researcher decisions:** authorisation to resume Stage B with one bounded non-screening task (2026-10-29).

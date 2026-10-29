@@ -483,3 +483,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Append-only edits to CHANGELOG, this log and the daily review log; session log `logs/session_logs/2026-10-29_DOCUMENTATION-ONLY-RECONCILIATION.md` created; validation results in that log. DECISION_LOG, unresolved questions and preservation status unchanged |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` at `ffee9ec` (unchanged); changes uncommitted, awaiting researcher review; not pushed |
 | Pull request | None |
+
+### SECOND-SOURCE-ACCESS-RECHECK (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SECOND-SOURCE-ACCESS-RECHECK (prompt: "We are resuming the actual scientific work on BioML-Insight … Resume Stage B: literature research, source verification, and resolution of research-readiness blockers") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Verify state; reconstruct decision and question status; select and run one bounded, non-screening Stage B task under existing approvals |
+| Actual completion status | Second-source access re-check: 10 hosts, all CONNECT 403; read-only route counts (2,282 / 964 / 88); verification-rule inconsistency recorded as Q-068 (Open). No search, verification change, rebuild, screening or decision change |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted; not pushed |
+| Pull request | None |

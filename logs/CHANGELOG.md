@@ -1228,3 +1228,24 @@ No decision, question status, raw export, manifest row or search row was changed
 **Unresolved**: (1) who authorised the `ffee9ec` commit and the pushes of `9bbd847`, `4acfce0` and `ffee9ec`, and when the pushes happened; (2) `collection_workflow.md` §5 versus the `logs/EXPERIMENT_LOG.md` header on where builds are logged (unchanged); (3) Q-063's question text predates the restore and rebuild, and the raw exports are absent from the current container; its status is the researcher's decision; (4) the content of reserved D-039.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `ffee9ec` (unchanged); changes uncommitted, awaiting the researcher's diff review; not pushed; no PR.
+
+## SECOND-SOURCE-ACCESS-RECHECK — 2026-10-29 — Stage B: re-check of second-source verification access (Q-021, Q-064); no search, no verification change
+
+**Prompt objective** (researcher, 2026-10-29: resume Stage B literature research and source verification; perform one bounded, non-screening task under existing approvals). No task ID was assigned; the label is the assistant's. The selected task was a dated re-check of access to independent bibliographic sources, plus a read-only count of which records each route could reach. Its purpose is to give the researcher current evidence for Q-021 and Q-064.
+
+**Why this task was permitted**: it is non-screening, needs no raw exports and no participant-level data, executes no literature search, and changes no decision, question status or inventory. Not chosen: Q-036 spot-check (needs the absent raw exports and the researcher's answer), Q-067 re-request (an open question awaiting the researcher), any verification lookup (depends on Q-021/Q-064), screening (D-035 record §6 conditions 2–6 unmet).
+
+**Completed (tool output)**
+- Proxy status read (`$HTTPS_PROXY/__agentproxy/status`): enabled, not selective.
+- One `curl` request each to 10 hosts (Crossref, doi.org, Europe PMC REST, E-utilities, PubMed web, PMC web, OpenAlex, Semantic Scholar, arXiv API, diabetesjournals.org), 14:50:09–14:50:11Z. All returned `CONNECT tunnel failed, response 403` (network policy). No response body was saved.
+- Read-only counts from `paper_inventory.json`: 3,334 `partially_verified`; of these, 2,282 PubMed records with a PMCID, 964 PubMed records without one (including A2, `P0303`), 88 arXiv records awaiting the transcription spot-check.
+- Found an inconsistency between the verification rule in `search_strategy.md` §7 / `research_plan.md` §6 and the second-source basis of the 14 `verified` records (web-search URL agreement on title and identifier only; `verification_report.md`). Recorded as Q-068; not resolved.
+
+**Modified (append-only)**: `research/setup/environment_assessment.md` (2026-10-29 addendum); `research/reviews/unresolved_questions.md` (new row Q-068, Open); `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`; this file.
+**Created**: `logs/session_logs/2026-10-29_SECOND-SOURCE-ACCESS-RECHECK.md`.
+
+**Not changed**: decisions; existing question statuses (Q-021, Q-036, Q-063–Q-067 Open); `search_queries.csv` (no search executed, so no row); inventory and generated files; raw exports and manifest; code; tests; protocol; criteria; `CLAUDE.md` (its network note "re-checked 2026-10-23" is left as written; the 2026-10-29 result is in `environment_assessment.md`).
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; changes uncommitted, awaiting researcher review; not pushed; no PR.
