@@ -275,3 +275,18 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** authorise the inventory rebuild; Q-063 status (still Open); off-device storage for both archives; Q-064; D-035 §6 conditions.
 - **Recommended next step:** authorise the inventory rebuild while the restored files are present in this workspace.
 - **Researcher decisions:** authorisation of the verification, the restore and this documentation update (2026-10-28).
+
+## Day 16 — 2026-10-29 — LIT-005-REBUILD
+*Added 2026-10-29 in the documentation-only reconciliation; this entry was missing. Source: `logs/session_logs/2026-10-29_LIT-005-REBUILD.md`, the CHANGELOG entry and Git history.*
+- **Work completed:** literature inventory rebuilt with the LIT-005 records (2,979 → 3,386; P2989–P3395), identical to the dry run; correction C2 (`Q-CN-G5@2026-10-28` recorded as `capability_probe`, not `executed`); limitation C1 documented, not fixed. Committed as `ffee9ec`.
+- **Important findings:** `[EVIDENCE]` 0 existing paper IDs changed or merged; 406 new records `partially_verified`, 1 `unverified` (P3383, PMID 31314250, Q-067); all records `not_screened`; new records have no theme labels. Nothing became citable.
+- **Decisions requiring review:** Q-063 status; Q-021/Q-064 verification route; D-035 record §6 conditions; off-device backup of both archives.
+- **Recommended next step (as recorded then):** researcher review and commit decision; push.
+- **Researcher decisions:** authorisation of the rebuild and of corrections C2 and C1; the theme mapping kept unchanged (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — Branch recovery, post-recovery audit, documentation-only reconciliation
+- **Work completed:** the session was moved to `claude/eloquent-mccarthy-bqtxr3` at `ffee9ec` (verified against `origin`; tree clean). A read-only governance audit was carried out. Append-only log reconciliation was done (this entry, CHANGELOG, PROMPT_LOG, a session log). No commit, push or PR.
+- **Important findings:** `[EVIDENCE]` `4acfce0`, `9bbd847` and `ffee9ec` are on `origin/claude/eloquent-mccarthy-bqtxr3`; their push times are not recorded. The branch is 8 commits ahead of the default branch with no PR. D-039 is reserved (2026-10-24) and its content is not in the repository. The raw exports and `data/raw/nhanes/` are absent from this container (`verify`: 244 missing). Inventory 3,386 records; validator PASS (168); tests 69 OK.
+- **Decisions requiring review:** review of this diff and whether to commit and push it; a PR for the 8 commits; D-035 record §6 conditions 2–6 and Q-065 (due 2026-11-01); Q-021/Q-064; Q-063 status; the content of D-039.
+- **Recommended next step:** researcher review of the reconciliation diff; then a PR for the unreviewed commits (separate authorisation).
+- **Researcher decisions:** authorisation of the branch switch, the read-only audit and the documentation-only reconciliation (2026-10-29).

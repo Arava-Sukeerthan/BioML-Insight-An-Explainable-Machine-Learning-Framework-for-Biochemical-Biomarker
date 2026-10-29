@@ -440,3 +440,46 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Archive SHA-256 exact match; 208/208 internal checks; 205/205 hashes match manifest and inventory; 205 restored, 0 conflicts; `verify` OK for 244 files. No rebuild. Q-063 still Open. Documentation updated, uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` at `9bbd847` (1 ahead of origin); uncommitted |
 | Pull request | None |
+
+### LIT-005-REBUILD
+*Added 2026-10-29 in the documentation-only reconciliation; this entry was missing. The prompt text is not in the repository; the fields below come from `logs/session_logs/2026-10-29_LIT-005-REBUILD.md`, the LIT-005-REBUILD CHANGELOG entry and Git history.*
+
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-005-REBUILD (researcher authorisation, 2026-10-29: real inventory rebuild after the copy-based dry run and preflight; later, researcher-authorised corrections C2 and C1) |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Run `pubrecords.py build` and `make_literature_reports.py`; compare with the dry run; stop and roll back on any change to existing records; no screening, no theme-mapping change |
+| Actual completion status | Rebuild 05:44:51Z–05:47:30Z, exit 0/0; inventory 2,979 → 3,386 (P2989–P3395); identical to the dry run; 0 existing IDs changed; schema valid; `verify` OK in that container. C2: `Q-CN-G5@2026-10-28` `row_type` `executed` → `capability_probe`; validator PASS (168 rows). C1 documented, not fixed. No rollback needed |
+| Branch | `claude/eloquent-mccarthy-bqtxr3`; at the time of the CHANGELOG entry at `4acfce0`, uncommitted. Later committed as `ffee9ec55ff346b55136a3d3c532b8dbae70b209` (2026-10-29 06:31:01 UTC). Who authorised the commit is not recorded. It is on `origin` (`git ls-remote`, 2026-10-29); the push time and authorisation are not recorded |
+| Pull request | None |
+| Note on the LIT-003-RESTORE and LIT-005-PRESERVATION entries above | Their Branch fields describe the state when written. LIT-005-PRESERVATION's local commit is `9bbd847`; LIT-003-RESTORE was committed as `4acfce00f84d225f5c3be5480e282524f153598d` (recorded as researcher-authorised in the LIT-005-REBUILD session log). Both are on `origin/claude/eloquent-mccarthy-bqtxr3`; their push times are not recorded |
+
+### Branch recovery (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned (prompt: "Continue the BioML-Insight research project using the verified recovery report from 2026-10-29. … Establish the correct working branch") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Verify that the remote branch `claude/eloquent-mccarthy-bqtxr3` points to `ffee9ec55ff346b55136a3d3c532b8dbae70b209` and the tree is clean; if so, switch the session to it; validate; report; no commit, push, merge or PR |
+| Actual completion status | Preconditions met; local tracking branch created from the fetched remote ref; HEAD `ffee9ec`; tree clean. Query table PASS (168 rows); unit tests 69, OK; `pubrecords.py verify` exit 1 (all 244 raw exports missing, no other problem). No files changed |
+| Branch | `claude/gracious-hopper-rx64za` (`eb79996`) → `claude/eloquent-mccarthy-bqtxr3` (`ffee9ec`); no commit |
+| Pull request | None |
+
+### Post-recovery governance audit (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned (prompt: "Perform a read-only post-recovery governance audit and produce a prioritized list of the next authorized project tasks") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Read-only audit: state, governance files, D-039 gap, logging requirements, decisions and screening prerequisites, Q-021 and Q-063–Q-067, inventory status; prioritised plan; no file changes |
+| Actual completion status | Completed, reported in the conversation. D-039 reserved by the researcher (2026-10-24), content not in the repository; LIT-005-REBUILD missing from this log and the daily review log; commit/push state out of date in CHANGELOG; branch 8 commits ahead of default with no PR; D-035 §6 conditions 2–6 unmet; inventory 3,386 records, CSV hash matches; validator PASS (168); tests 69 OK. No files changed (one `git fetch` of the default branch updated a remote-tracking ref) |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `ffee9ec`; no commit |
+| Pull request | None |
+
+### Documentation-only reconciliation (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned (prompt: "Task: Documentation-Only Reconciliation") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Record the real commit and push state of LIT-003-RESTORE and LIT-005-REBUILD; add the missing LIT-005-REBUILD entries; record the recovery and audit; create a session log; documentation edits and non-destructive validation only |
+| Actual completion status | Append-only edits to CHANGELOG, this log and the daily review log; session log `logs/session_logs/2026-10-29_DOCUMENTATION-ONLY-RECONCILIATION.md` created; validation results in that log. DECISION_LOG, unresolved questions and preservation status unchanged |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `ffee9ec` (unchanged); changes uncommitted, awaiting researcher review; not pushed |
+| Pull request | None |

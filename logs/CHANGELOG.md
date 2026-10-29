@@ -1140,6 +1140,8 @@ No decision, question status, raw export, manifest row or search row was changed
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3`; documentation committed locally in one researcher-authorised commit (hash in Git history); not pushed; no PR.
 
+**Status clarification (2026-10-29, documentation-only reconciliation; appended, the line above is kept as written)**: the line above was true when it was written. The local commit is `9bbd847d7256f1932f5c30f4f285f5189950a77d` (2026-10-28 12:56:35 UTC; subject "docs: record LIT-005 archive preservation status"; the 5 files named in the LIT-005-PRESERVATION section of `logs/session_logs/2026-10-28_LIT-005.md`). It is now on `origin/claude/eloquent-mccarthy-bqtxr3` (evidence: see the reconciliation entry at the end of this file). When it was pushed, and on whose authorisation, is not recorded. No PR.
+
 ## LIT-003-RESTORE — 2026-10-28 — Verification and restoration of the LIT-003 raw exports (no rebuild)
 
 **Prompt objective**: verify the researcher-uploaded LIT-003 archive, then (separately authorised) restore its 205 raw JSON files into empty destinations in `research/literature/raw_exports/` and run `pubrecords.py verify`. No inventory rebuild, no Git operation during the restore.
@@ -1159,6 +1161,8 @@ No decision, question status, raw export, manifest row or search row was changed
 **Status**: all 244 raw exports present and verified in this (ephemeral) workspace; rebuild precondition met. Q-063 remains **Open** (restore done for this workspace; rebuild pending). Off-device backup of both archives remains **outstanding**.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `9bbd847`; documentation uncommitted; no PR.
+
+**Status clarification (2026-10-29, documentation-only reconciliation; appended, the line above is kept as written)**: the line above was true when it was written. This documentation was later committed as `4acfce00f84d225f5c3be5480e282524f153598d` (2026-10-29 04:13:08 UTC; subject "docs: record LIT-003 raw-export restoration and verification"). `logs/session_logs/2026-10-29_LIT-005-REBUILD.md` records that commit as researcher-authorised. It is now on `origin/claude/eloquent-mccarthy-bqtxr3` (evidence: see the reconciliation entry at the end of this file). When it was pushed, and on whose authorisation, is not recorded. No PR.
 
 ## LIT-005-REBUILD — 2026-10-29 — Literature inventory rebuild with the LIT-005 records (no screening)
 
@@ -1193,3 +1197,34 @@ No decision, question status, raw export, manifest row or search row was changed
 **Correction (2026-10-29, LIT-005-REBUILD; researcher-authorised C2 and C1)**: the statements above are kept; these corrections and notes apply.
 - **C2 — blocked Consensus search recorded as executed.** `research/literature/search_queries.csv` row `Q-CN-G5@2026-10-28` (added in LIT-005, commit `db84937`) had `row_type = executed`, although the search never ran: the Consensus connector refused it for quota at 2026-10-28T12:09:07Z (status `blocked_quota`, no result, no export, no manifest row; LIT-005 evidence review §1 and session log). The generated `search_execution_register.md` therefore listed it under "Exact query strings as executed". Corrected: only that row's `row_type` changed to `capability_probe`, matching the 2026-10-23 precedent `LIT003-PROBE-17` (Consensus, `blocked_quota`); query text, date, status, identifiers and all other fields unchanged. `make_literature_reports.py` re-run (no rebuild; `row_type` is read only by the register section): `search_execution_register.md` no longer lists `Q-CN-G5`; the other 12 generated files (inventory CSV/JSON, index, registry, build report, collection stats, dedup review, full-text candidates, verification report, both `.jsonl` files) are byte-identical to before the correction. `validate_search_queries.py`: PASS, 168 rows.
 - **C1 — known display limitation (not fixed).** The dated PubMed rows `Q-PM-G1…G8@2026-10-28` contain the date restriction in their stored query strings (`AND 2015/01/01:2026/10/28[edat]`; `date_limit` = "2015-01-01 to run date (entry date)"). The generated register shows an empty "Date restriction" column and "Filters: none" for these searches because `make_literature_reports.py` looks rows up by the base ID (`Q-PM-G1`), and only the dated `@2026-10-28` rows exist for LIT-005 (the LIT-003 queries also have base-ID planned rows). The report code and query schema were not changed; the register still displays the gap.
+
+**Status clarification (2026-10-29, documentation-only reconciliation; appended, the "Branch / commit / PR" line above is kept as written)**: that line was true when it was written. The rebuild, the C1/C2 corrections and their log entries were later committed as `ffee9ec55ff346b55136a3d3c532b8dbae70b209` (2026-10-29 06:31:01 UTC; subject "data: rebuild literature inventory with LIT-005 records; correct Q-CN-G5 row type"; 11 files: the 8 generated files, `search_queries.csv`, this file and the session log). The repository does not record who authorised this commit. It is the head of `origin/claude/eloquent-mccarthy-bqtxr3` (evidence: see the next entry). When it was pushed, and on whose authorisation, is not recorded. No PR. `logs/PROMPT_LOG.md` and `research/reviews/daily_review_log.md` had no LIT-005-REBUILD entry; both were added in the next entry's task.
+
+## Documentation-only reconciliation — 2026-10-29 — Record the commit and push state of LIT-003-RESTORE, LIT-005-PRESERVATION and LIT-005-REBUILD; record the branch recovery and post-recovery audit (log-only)
+
+**Prompt objective** (researcher, 2026-10-29, "Task: Documentation-Only Reconciliation"; no task ID was assigned, and the label above is taken from the prompt title): carry out the documentation-only reconciliation that the post-recovery governance audit recommended. Documentation edits and non-destructive validation only: no commit, push, branch change, merge, PR, rebuild, restore, screening, experiment, decision change or question-status change.
+
+**Preceding prompts in the same session (2026-10-29), recorded here because each needs a log entry**
+- *Branch recovery*: the researcher authorised switching the session from `claude/gracious-hopper-rx64za` (`eb79996`, the default-branch head) to the existing `claude/eloquent-mccarthy-bqtxr3` if the remote branch pointed to `ffee9ec55ff346b55136a3d3c532b8dbae70b209` and the tree was clean. Both held. The single branch was fetched and a local tracking branch created; no reset, merge, commit or push. Checks: query table PASS (168 rows); unit tests 69, OK; `pubrecords.py verify` exit 1, all 244 raw exports missing and nothing else reported. No files changed.
+- *Post-recovery governance audit* (read-only): it found the D-039 gap intentional (reserved by the researcher on 2026-10-24 for a screening-related proposal whose text is not in the repository). It also found the logging gaps corrected here, that `claude/eloquent-mccarthy-bqtxr3` is 8 commits ahead of the default branch `claude/happy-hawking-rxptfv` with no PR for them, and that D-035 record §6 conditions 2–6 are unmet. Inventory: 3,386 records, CSV SHA-256 matching `collection_stats.json`. No files changed; the only side effect was a `git fetch` of the default branch, which updated a remote-tracking ref inside `.git`.
+
+**Evidence for the commit and push state (observed in this session)**
+- `git log`: `9bbd847` (2026-10-28 12:56:35 UTC), `4acfce0` (2026-10-29 04:13:08 UTC) and `ffee9ec` (2026-10-29 06:31:01 UTC) are consecutive commits on `claude/eloquent-mccarthy-bqtxr3`.
+- `git ls-remote origin refs/heads/claude/eloquent-mccarthy-bqtxr3`: `ffee9ec55ff346b55136a3d3c532b8dbae70b209`. This was observed at the start of the branch recovery and again in this task's preflight. `git merge-base --is-ancestor`: `9bbd847`, `4acfce0` and `db84937` are ancestors of the remote head.
+- The repository does not record when these commits were pushed, by whom, or under which authorisation. The local reflog starts with this session's checkout. The push time is therefore not stated anywhere.
+- GitHub PR listing (read-only, during the audit): the most recent PR is #16 (2026-10-24); no PR has `claude/eloquent-mccarthy-bqtxr3` at these commits as its head.
+
+**Modified (append-only; no existing line changed or removed)**
+- `logs/CHANGELOG.md`: status clarifications after the LIT-005-PRESERVATION, LIT-003-RESTORE and LIT-005-REBUILD entries; this entry.
+- `logs/PROMPT_LOG.md`: detailed entries for LIT-005-REBUILD, the branch recovery, the post-recovery audit and this task. Each includes a note on the earlier entries whose Git status changed.
+- `research/reviews/daily_review_log.md`: Day 16 entries for LIT-005-REBUILD and for the recovery, audit and reconciliation.
+
+**Created**: `logs/session_logs/2026-10-29_DOCUMENTATION-ONLY-RECONCILIATION.md`.
+
+**Not changed**: `logs/DECISION_LOG.md`, `research/reviews/unresolved_questions.md`, `research/literature/preservation/preservation_status.md`, `CLAUDE.md`, `GOVERNANCE.md`, generated inventory files, git-ignored files, code, tests, protocol, criteria. No D-039 entry. No question closed (Q-063 and Q-067 remain Open).
+
+**Validation**: see the session log; the results are recorded there.
+
+**Unresolved**: (1) who authorised the `ffee9ec` commit and the pushes of `9bbd847`, `4acfce0` and `ffee9ec`, and when the pushes happened; (2) `collection_workflow.md` §5 versus the `logs/EXPERIMENT_LOG.md` header on where builds are logged (unchanged); (3) Q-063's question text predates the restore and rebuild, and the raw exports are absent from the current container; its status is the researcher's decision; (4) the content of reserved D-039.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `ffee9ec` (unchanged); changes uncommitted, awaiting the researcher's diff review; not pushed; no PR.
