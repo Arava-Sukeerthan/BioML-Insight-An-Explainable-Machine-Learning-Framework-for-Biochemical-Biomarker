@@ -503,3 +503,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | `CLAUDE.md` §1a and README paragraph added; D-041 recorded as PROPOSED with a Status-history row; rule 15 reworded ("input to D-018, which is PENDING") for factual accuracy; no other decision or question changed |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted; not pushed |
 | Pull request | None |
+
+### SCREENING-ACTIVATION-BRIEF (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SCREENING-ACTIVATION-BRIEF (prompt: "Continue working in the BioML-Insight repository … Phase 2 — Prepare a screening-activation decision brief") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Verify both uncommitted tasks; prepare a documentation-only decision brief for the unmet D-035 record §6 conditions, Q-065, Q-068 and the 2026-11-24 target |
+| Actual completion status | Brief `research/reviews/screening_activation_decision_brief_D035.md` created; Q-069 opened; both earlier uncommitted tasks preserved; screening inactive; no decision or question status changed |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted; not pushed |
+| Pull request | None |

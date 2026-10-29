@@ -1269,3 +1269,21 @@ No decision, question status, raw export, manifest row or search row was changed
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted together with the SECOND-SOURCE-ACCESS-RECHECK changes; not staged, not pushed; no PR.
+
+## SCREENING-ACTIVATION-BRIEF — 2026-10-29 — Decision brief for the unmet D-035 record §6 conditions (documentation only; screening stays inactive)
+
+**Prompt objective** (researcher, 2026-10-29): verify that both uncommitted tasks are intact, then prepare a documentation-only screening-activation decision brief: the five unmet D-035 §6 conditions, the evidence each needs, blockers by kind, Q-065 (due 2026-11-01), the Q-068 verification conflict, the 2026-11-24 target, and next actions in dependency order. No task ID was assigned; the label is the assistant's. No search, screening, verification, training, decision change, staging, commit or push.
+
+**Preflight**: branch `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; nothing staged; no stashes. Both uncommitted tasks (SECOND-SOURCE-ACCESS-RECHECK, RESEARCH-AMBITION-D041) present; checksums and sizes recorded before editing.
+
+**Created**: `research/reviews/screening_activation_decision_brief_D035.md`. No existing brief covered D-035 §6; the file sits with the other decision records in `research/reviews/`.
+**Modified (append-only)**: `research/reviews/unresolved_questions.md` (Q-069, Open: gate order of protocol §23 vs `GOVERNANCE.md` §2); `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`; this file.
+**Created (log)**: `logs/session_logs/2026-10-29_SCREENING-ACTIVATION-BRIEF.md`.
+
+**Findings** (from the records): condition 1 met (D-036); conditions 2–6 unmet. D-031 C1 (R5/D-029) is the only open D-031 condition. No condition needs a network change. The rebuild in pilot-blocking item 8 and the arXiv spot-check in item 6 need the raw exports restored (Q-063). Criteria v1.1 and protocol v0.2 do not exist. Correction to the post-recovery audit report (conversation only, not in the repository): it listed D-032 among PROPOSED decisions. The Status history records D-032 as APPROVED — CONDITIONAL (inactive); its row keeps the original text by convention.
+
+**Not changed**: decision statuses (including D-011, D-013–D-020, D-022, D-041); existing question statuses; `GOVERNANCE.md`; criteria; screening and experimental protocols; schemas; code; tests; inventory; raw exports. **Screening remains inactive.**
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted together with the two earlier tasks; not staged, not pushed; no PR.

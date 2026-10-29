@@ -304,3 +304,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** D-041 (approve, amend or reject); D-011/D-022; the schedule (D-001) in view of the ambition; the six SECOND-SOURCE-ACCESS-RECHECK files and this change (commit decision).
 - **Recommended next step:** screening-activation decision brief (D-035 record §6 conditions 2–6; Q-065, due 2026-11-01).
 - **Researcher decisions:** instruction to state the ambition and record D-041 as PROPOSED (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — SCREENING-ACTIVATION-BRIEF
+- **Work completed:** decision brief for the D-035 record §6 conditions (`research/reviews/screening_activation_decision_brief_D035.md`); Q-069 opened.
+- **Important findings:** `[EVIDENCE]` conditions 2–6 unmet: Q-040; D-024/D-027 approval; R5/D-029 items; criteria v1.1 and protocol v0.2 (not written); the other pilot-blocking items of `final_confirmation_sheet_LIT-004.md`. All need researcher decisions first; none needs a network change; the rebuild and arXiv spot-check need the raw exports restored (Q-063). `[HYPOTHESIS]` A complete, gate-compliant manuscript by 2026-11-24 is unlikely. `[OPEN]` Q-069 (gate order).
+- **Decisions requiring review:** Q-065 (due 2026-11-01); D-001/Q-013/Q-058/Q-069 (schedule); R5 and D-029; Q-040; D-024, D-027, D-028, Q-035; v1 Items 6–9, 13–15; Q-036; Q-063 upload; Q-021/Q-064/Q-068 (citation route); commit decision for the three uncommitted tasks.
+- **Recommended next step:** researcher decisions in the order of the brief's §8, starting with Q-065 and the schedule.
+- **Researcher decisions:** instruction to prepare the brief, documentation only (2026-10-29).
