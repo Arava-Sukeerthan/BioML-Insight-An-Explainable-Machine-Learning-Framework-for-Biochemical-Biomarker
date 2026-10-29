@@ -6,13 +6,13 @@
     "same_title_year_differs_by_1": 3
   },
   "fulltext_review_candidates": 234,
-  "identifier_clusters": 2979,
+  "identifier_clusters": 3386,
   "identifier_conflict_pairs": 3,
   "manual_values_carried_forward": 0,
   "merged_by_title_rule": 0,
-  "paper_inventory_csv_sha256": "6d8fdef6b91800bcf3ea9b66ebfe2123335150482ecf50ec24537af1b1386e64",
+  "paper_inventory_csv_sha256": "8fc5bea9c57f486ea1099f4f9f3902f2537144c0f22af36f1b556a44d4891846",
   "paper_inventory_schema": "valid",
-  "preprints_by_pubmed_type": 39,
+  "preprints_by_pubmed_type": 47,
   "publications_by_theme": {
     "A": 501,
     "B": 743,
@@ -22,32 +22,33 @@
     "F": 141,
     "Q": 250
   },
-  "publications_retained": 2979,
-  "publications_with_abstract": 2860,
-  "publications_with_doi": 2852,
-  "publications_with_pmcid": 2028,
+  "publications_retained": 3386,
+  "publications_with_abstract": 3252,
+  "publications_with_doi": 3245,
+  "publications_with_pmcid": 2305,
   "raw_by_source": {
-    "arxiv": 76,
-    "pubmed": 3413,
+    "arxiv": 91,
+    "pubmed": 3853,
     "web": 54
   },
-  "raw_source_records": 3543,
+  "raw_source_records": 3998,
   "records_requiring_manual_dedup_review": 30,
-  "removed_as_exact_identifier_duplicates": 564,
+  "removed_as_exact_identifier_duplicates": 612,
   "retracted": [
     "P0931",
     "P0939",
-    "P1443"
+    "P1443",
+    "P3370"
   ],
-  "reviews_by_pubmed_type": 433,
+  "reviews_by_pubmed_type": 482,
   "screening_status": {
-    "not_screened": 2979
+    "not_screened": 3386
   },
   "title_based_duplicate_candidates": 12,
   "verification_status": {
     "needs_review": 1,
-    "partially_verified": 2928,
-    "unverified": 36,
+    "partially_verified": 3334,
+    "unverified": 37,
     "verified": 14
   }
 }

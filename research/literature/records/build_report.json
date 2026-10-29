@@ -1,13 +1,13 @@
 {
-  "built_at": "2026-10-24T04:11:54+00:00",
+  "built_at": "2026-10-29T05:47:28+00:00",
   "dedup_review_pairs": 15,
   "duplicate_status": {
-    "merged_duplicates": 438,
+    "merged_duplicates": 471,
     "possible_duplicate_review": 30,
-    "unique": 2511
+    "unique": 2885
   },
-  "manifest_files": 205,
-  "publications": 2979,
+  "manifest_files": 244,
+  "publications": 3386,
   "publications_with_metadata_conflicts": 1,
   "publications_without_stable_registry_key": 0,
   "registry_conflicts": [
@@ -33,10 +33,11 @@
   "retracted": [
     "P0931",
     "P0939",
-    "P1443"
+    "P1443",
+    "P3370"
   ],
   "screening_decision": {
-    "not_screened": 2979
+    "not_screened": 3386
   },
   "search_completeness": {
     "Q-PM-01": {
@@ -113,14 +114,54 @@
       "complete": true,
       "reported_total": 20,
       "unique_pmids_retrieved": 20
+    },
+    "Q-PM-G1": {
+      "complete": true,
+      "reported_total": 44,
+      "unique_pmids_retrieved": 44
+    },
+    "Q-PM-G2": {
+      "complete": true,
+      "reported_total": 27,
+      "unique_pmids_retrieved": 27
+    },
+    "Q-PM-G3": {
+      "complete": true,
+      "reported_total": 33,
+      "unique_pmids_retrieved": 33
+    },
+    "Q-PM-G4": {
+      "complete": true,
+      "reported_total": 68,
+      "unique_pmids_retrieved": 68
+    },
+    "Q-PM-G5": {
+      "complete": true,
+      "reported_total": 1,
+      "unique_pmids_retrieved": 1
+    },
+    "Q-PM-G6": {
+      "complete": true,
+      "reported_total": 21,
+      "unique_pmids_retrieved": 21
+    },
+    "Q-PM-G7": {
+      "complete": true,
+      "reported_total": 2,
+      "unique_pmids_retrieved": 2
+    },
+    "Q-PM-G8": {
+      "complete": true,
+      "reported_total": 244,
+      "unique_pmids_retrieved": 244
     }
   },
-  "source_records": 3543,
-  "source_records_missing_metadata": 0,
+  "source_records": 3998,
+  "source_records_missing_metadata": 1,
   "verification_status": {
     "needs_review": 1,
-    "partially_verified": 2928,
-    "unverified": 36,
+    "partially_verified": 3334,
+    "unverified": 37,
     "verified": 14
   }
 }

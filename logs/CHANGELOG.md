@@ -1159,3 +1159,37 @@ No decision, question status, raw export, manifest row or search row was changed
 **Status**: all 244 raw exports present and verified in this (ephemeral) workspace; rebuild precondition met. Q-063 remains **Open** (restore done for this workspace; rebuild pending). Off-device backup of both archives remains **outstanding**.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `9bbd847`; documentation uncommitted; no PR.
+
+## LIT-005-REBUILD — 2026-10-29 — Literature inventory rebuild with the LIT-005 records (no screening)
+
+**Prompt objective**: researcher-authorised real rebuild (`pubrecords.py build`, then `make_literature_reports.py`) after a copy-based dry run and a preflight; compare with the dry run; stop and roll back on any change to existing paper IDs, merges of existing records, registry-prefix failure, or unexpected metadata or verification-status change. Theme mapping unchanged (researcher choice).
+
+**Pre-checks**: clean tree at `4acfce0`; `pubrecords.py verify` OK (244 raw exports); `validate_search_queries.py` PASS (168 rows); unit tests OK (69 at the 2026-10-29 run); inventory checksum guard passed. Committed baseline exported (`git archive`) to the session scratchpad for comparison.
+
+**Run**: 2026-10-29T05:44:51Z – 05:47:30Z; both scripts exit 0; nothing on stderr.
+
+**Results (tool output)**
+| Item | Result |
+|---|---|
+| Publications / inventory | 2,979 → 3,386; new paper IDs P2989–P3395 (407: 395 PubMed, 12 arXiv) |
+| Registry | 10,785 → 12,268 rows; old rows an unchanged prefix (0 lines removed); 0 old keys re-mapped; new rows dated 2026-10-29 |
+| Existing records | 0 IDs missing or re-mapped; 0 identifier, substantive-field or verification-status changes; no merge of existing records; registry conflicts unchanged (3 known pairs); duplicate-review pairs 15 → 15 |
+| Expected changes to existing records | 43 gained query IDs (40 PMIDs re-found by G1/G2/G4/G8; 3 arXiv records by Q-AX-G9), none removed; 29 of them `unique` → `merged_duplicates` (their own new LIT-005 hit for the same identifier) |
+| New records | 406 `partially_verified`, 1 `unverified` (P3383 = PMID 31314250, no metadata; Q-067); all `not_screened`; `retrieval_themes` empty (G queries not in `THEMES`; mapping unchanged by choice) |
+| Search completeness | G1–G8 complete; no incomplete query |
+| Comparison with the dry run | identical on every compared item |
+| Validation | inventory valid against `paper_inventory.schema.json` (`collection_stats.json`: `valid`); CSV columns identical to the baseline; 0 duplicate PMID/DOI/PMCID/arXiv ID; no abstract column; `verify` OK after the run |
+
+**Modified (generated, uncommitted)**: `paper_inventory.csv`, `paper_inventory.json`, `records/build_report.json`, `records/collection_stats.json`, `records/paper_id_registry.csv` (append only), `records/publications_index.csv`, `search_execution_register.md`, `verification_report.md`. `records/dedup_review.csv` and `fulltext_review_candidates.csv` were rewritten with identical content (no Git change). Created (git-ignored, contain abstracts): `records/source_records.jsonl`, `records/publications.jsonl`.
+
+**Not changed**: raw exports, `MANIFEST.csv`, `search_queries.csv`, code, tests, theme mapping, protocol, screening criteria, decisions, question statuses. No screening; nothing becomes citable (Q-021, Q-064, D-035 §6 still open).
+
+**Logging note**: `research/literature/collection_workflow.md` §5 says to log each build in `logs/EXPERIMENT_LOG.md`; that log's header limits it to experiments, and earlier builds were logged here and in session logs. This build is logged in this file and `logs/session_logs/2026-10-29_LIT-005-REBUILD.md`, as the researcher chose; the discrepancy is unresolved.
+
+**Correction to the preflight report**: it first named 9 generated files; `records/dedup_review.csv` is also written by the build (10 tracked files in total).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `4acfce0`; rebuild and log changes uncommitted for researcher review; not pushed; no PR.
+
+**Correction (2026-10-29, LIT-005-REBUILD; researcher-authorised C2 and C1)**: the statements above are kept; these corrections and notes apply.
+- **C2 — blocked Consensus search recorded as executed.** `research/literature/search_queries.csv` row `Q-CN-G5@2026-10-28` (added in LIT-005, commit `db84937`) had `row_type = executed`, although the search never ran: the Consensus connector refused it for quota at 2026-10-28T12:09:07Z (status `blocked_quota`, no result, no export, no manifest row; LIT-005 evidence review §1 and session log). The generated `search_execution_register.md` therefore listed it under "Exact query strings as executed". Corrected: only that row's `row_type` changed to `capability_probe`, matching the 2026-10-23 precedent `LIT003-PROBE-17` (Consensus, `blocked_quota`); query text, date, status, identifiers and all other fields unchanged. `make_literature_reports.py` re-run (no rebuild; `row_type` is read only by the register section): `search_execution_register.md` no longer lists `Q-CN-G5`; the other 12 generated files (inventory CSV/JSON, index, registry, build report, collection stats, dedup review, full-text candidates, verification report, both `.jsonl` files) are byte-identical to before the correction. `validate_search_queries.py`: PASS, 168 rows.
+- **C1 — known display limitation (not fixed).** The dated PubMed rows `Q-PM-G1…G8@2026-10-28` contain the date restriction in their stored query strings (`AND 2015/01/01:2026/10/28[edat]`; `date_limit` = "2015-01-01 to run date (entry date)"). The generated register shows an empty "Date restriction" column and "Filters: none" for these searches because `make_literature_reports.py` looks rows up by the base ID (`Q-PM-G1`), and only the dated `@2026-10-28` rows exist for LIT-005 (the LIT-003 queries also have base-ID planned rows). The report code and query schema were not changed; the register still displays the gap.
