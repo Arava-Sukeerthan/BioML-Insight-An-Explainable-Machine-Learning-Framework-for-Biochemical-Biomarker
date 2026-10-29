@@ -119,3 +119,12 @@ D-036 (`Q-039_decision_record_D036.md`) answers Q-039. The text above is unchang
 D-037 (`PR10_audit_decisions_D037.md`): the text above is unchanged.
 - **§5 "Coverage group", "`provisional` = any `unclear`" (line 91):** superseded by D-037-A1. The flag is true only when resolving the `unclear` statuses to `yes`/`no` could change the group.
 - **§6 (activation conditions):** not changed. Q-042 is not among them, and D-037-B1 confirms it is not added through D-036.
+
+## 10. Addendum (2026-10-29, R5-GROUP1-DECISIONS, D-046 and D-047)
+The open point in §7 is answered by the owner (D-046 part 3): for RQ5 component statuses, D-035 §2 supersedes the component wording of D-029 (R5) and D-026 (`screening_protocol.md` §2), as already established in `final_confirmation_sheet_LIT-004.md` line 178, `screening_protocol.md` §2a and `RQ5_component_decisions_D032-D034.md` §8. Other uses of those descriptors follow D-029/D-026 as decided in D-046. D-026 stays PROPOSED. The text above is unchanged.
+
+State of the §6 conditions after these decisions (none is treated as met unless stated):
+- Condition 2 (Q-040): decided in principle by D-047; the flag definition is open (Q-071).
+- Condition 3 (D-027 and D-024 approved): **not met**. D-024 is APPROVED — CONDITIONAL and D-027 is APPROVED — LIMITED.
+- Condition 4 (remaining R5/D-029 items): **not met**. D-029 option (a) and R5 lines 1a, 1b, 1d, 1e, 1f are approved; line 1c awaits confirmation (Q-070); line 1g is conditional.
+- Conditions 5 and 6: unchanged (not met). Screening remains inactive.

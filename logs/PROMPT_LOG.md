@@ -554,3 +554,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | 1,470 reproduced by two independent methods; D-043 APPROVED; D-044 APPROVED — CONDITIONAL (inactive for screening); D-045 APPROVED; Q-002 and Q-065 Answered; Q-013, Q-058 Open with notes; D-001 PROPOSED unchanged. Screening inactive |
 | Branch | `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted; not pushed |
 | Pull request | None |
+
+### R5-GROUP1-DECISIONS (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label R5-GROUP1-DECISIONS (prompts, 2026-10-29: read-only governance-readiness audit; read-only group-1 decision ballot; "continue the BioML-Insight research governance workflow … Record the researcher decisions" Q1–Q7) |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Record the owner's decisions on D-029, the R5 lines, the D-035 relationship, Q-032, D-024, D-027 and Q-040; record conflicts; no screening or experimental authorisation |
+| Actual completion status | D-029 APPROVED (option (a)); D-046 APPROVED — CONDITIONAL per part (1c returned for confirmation, 1g conditional); D-024 APPROVED — CONDITIONAL; D-027 APPROVED — LIMITED; D-047 APPROVED — CONDITIONAL (inactive), flag PROPOSED; Q-032, Q-040 Answered; Q-070–Q-072 opened. No schema or code change (Q-072 name collision). Screening inactive |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `0c85634`; uncommitted; not pushed |
+| Pull request | None |

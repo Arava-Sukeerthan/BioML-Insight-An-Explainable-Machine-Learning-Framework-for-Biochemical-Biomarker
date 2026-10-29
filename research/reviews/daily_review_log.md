@@ -339,3 +339,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** this diff and the commit decision (together with the Q-065 package); protocol revision for CUP-11/§23; remaining screening-activation items (D-035 record §6 conditions 2–6, including Q-001, Q-033, Q-035); Q-021/Q-064/Q-068.
 - **Recommended next step:** researcher decisions on the remaining D-035 record §6 items (`screening_activation_decision_brief_D035.md` §8, steps 2–6).
 - **Researcher decisions:** Q-002, Q-065 (Option 3) and the schedule decision (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — R5-GROUP1-DECISIONS
+- **Work completed:** read-only governance-readiness audit and group-1 ballot; owner decisions recorded: D-029 (option (a)), D-046 (R5 lines, Q-032 required set, D-035 relationship), D-024 (conditional), D-027 (limited), D-047 (Q-040 approach); D-035 record §10 addendum.
+- **Important findings:** `[EVIDENCE]` `validation_design` already names an inventory extraction field (LIT-002), so D-029 option (a) cannot be implemented without a naming decision (Q-072). Approved D-035 §2 already treats a Brier score alone as `unclear`; draft `screening_protocol.md` v0.1 §2 still lists it as an example. D-035 record §6 conditions 3 and 4 remain **not met** (D-024 conditional, D-027 limited, R5 line 1c awaiting confirmation).
+- **Decisions requiring review:** Q-070 (calibration wording), Q-071 (Q-040 flag definition), Q-072 (`validation_design` naming); D-028/Q-031 (D-024 condition 2); the remaining screening-activation items; the commit decision.
+- **Recommended next step:** researcher answers to Q-070, Q-071 and Q-072.
+- **Researcher decisions:** Q1–Q7 of the group-1 ballot (2026-10-29).

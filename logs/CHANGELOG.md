@@ -1384,3 +1384,28 @@ Additional, same pattern: `a280e01` (DOCUMENTATION-ONLY-RECONCILIATION; its entr
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted together with the Q-065-DECISION-PACKAGE work; not staged, not pushed; no PR.
+
+## R5-GROUP1-DECISIONS — 2026-10-29 — Owner decisions on R5/D-029, Q-032, the D-035 relationship, D-024, D-027 and Q-040 recorded (documentation only; no schema or code change)
+
+**Prompt objective** (researcher, 2026-10-29): record the researcher's decisions Q1–Q7 of the group-1 ballot; update schemas only where necessary and consistent; record conflicts instead of overriding approved decisions; no screening activation, dataset, training, experiment or evaluation; no commit or push. No task ID was assigned; the label is the assistant's.
+
+**Pre-checks**: branch `claude/eloquent-mccarthy-bqtxr3` at `0c85634`, in sync with `origin`, clean tree. Next free IDs D-046 and Q-070 (D-039 reserved).
+
+**Findings before editing (tool output)**
+- `research/literature/schemas/paper_inventory.schema.json` already defines `validation_design` as an **extraction** field (sentinel "REQUIRES FULL-TEXT REVIEW", commit `eee92c1`, LIT-002); the build copies screening descriptors into the inventory (`pubrecords.py` lines 60–71: `dim_independent_validation` with `external/temporal/internal_only/unclear`). D-029 option (a) uses the same name for a screening descriptor → recorded as Q-072; **no schema or code change made**.
+- Approved D-035 §2 already treats "A Brier score alone" as insufficient (`unclear`); the reworded calibration line follows it. Draft `screening_protocol.md` v0.1 §2 (line 50) still lists "Brier score" as a calibration example; not edited (to be replaced in v0.2).
+- The R5 RQ5-ambiguity bullet on feature selection is outdated: D-032 added `dim_feature_selection`.
+
+**Recorded**
+- `logs/DECISION_LOG.md`: Status-history rows for D-029 (→ **APPROVED (option (a))**), D-024 (→ **APPROVED — CONDITIONAL**, three conditions), D-027 (→ **APPROVED — LIMITED**: parts (a), (c) and required columns), D-026 (no status change; relationships recorded), D-046 (new) and D-047 (new); notes under the two affected tables; new section with D-046 (**APPROVED — CONDITIONAL** per part; line 1c MODIFIED and returned for confirmation, line 1g conditional) and D-047 (**APPROVED — CONDITIONAL (inactive)**; flag definition PROPOSED). Rows of D-024, D-026, D-027 and D-029 kept unchanged (D-032 precedent).
+- `research/reviews/unresolved_questions.md`: Q-032 → Answered (D-029, D-046); Q-040 → Answered (D-047); new Q-070 (confirm calibration wording), Q-071 (approve flag definition), Q-072 (`validation_design` name collision), all Open.
+- `research/reviews/Q-041_decision_record_D035.md`: §10 addendum (answers the §7 open point; states that §6 conditions 3 and 4 are still not met).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-29_R5-GROUP1-DECISIONS.md`.
+
+**Not changed**: schemas, `pubrecords.py`, tests, inventory, generated files; `screening_criteria.md`; `screening_protocol.md`; the experimental protocol (draft revision 5); `GOVERNANCE.md`; `CLAUDE.md`; D-028/Q-031, Q-034, Q-035, A-6 and every other decision or question. **Screening remains inactive**; no dataset preparation, training, experiment or evaluation authorised.
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `0c85634`; uncommitted; not staged, not pushed; no PR.
