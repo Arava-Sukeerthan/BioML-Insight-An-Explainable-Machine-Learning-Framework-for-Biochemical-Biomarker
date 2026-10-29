@@ -1331,3 +1331,33 @@ No decision, question status, raw export, manifest row or search row was changed
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `9aefe42`; uncommitted; not staged, not pushed; no PR.
+
+## Q-065-DECISION-PACKAGE — 2026-10-29 — Q-065 scope and schedule decision package; audit-trail reconciliation of commits and pushes (documentation only)
+
+**Prompt objective** (researcher, 2026-10-29): prepare a researcher-reviewable decision package for Q-065 with the schedule analysis (D-001, Q-013, Q-058, CUP-11 under D-042); compute the priority-strand counts from committed metadata only, with an independent check; reconcile the audit trail for commits `24f5dfd`, `27c86c0`, `eca5116`, `9aefe42`, `5d92d94`. No task ID was assigned; the label is the assistant's. No screening, labelling, searches, downloads, training, decision change, staging, commit or push.
+
+**Preceding request (same session, not executed)**: a request to commit the 11 LIT-005-REBUILD files was interrupted by the researcher. That commit already exists as `ffee9ec` and is on `origin`; nothing was staged or committed.
+
+**Created**: `research/reviews/Q-065_decision_package.md`; `logs/session_logs/2026-10-29_Q-065-DECISION-PACKAGE.md`.
+**Modified (append-only)**: `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`; this file.
+
+**Results (computed from `paper_inventory.json`, SHA-256 `a509538d…f4a3`, metadata fields only)**: G-1…G-7 194; Q-PM-02 743; Q-PM-11/12 120; overlaps 10 (G ∩ Q-PM-02), 0 (G ∩ Q-PM-11/12), 3 (Q-PM-02 ∩ Q-PM-11/12), 0 (all three); union **1,044**. Confirmed independently on `paper_inventory.csv` (membership-pattern counting) and with `jq`. Alternative scope sizes: priority + remaining RQ1 strands (Q-PM-01, Q-PM-03) 1,470; entire inventory 3,386. No title or abstract was read; no record was sampled or labelled.
+
+**Audit-trail reconciliation (verified from Git; earlier entries kept as written)**
+The CHANGELOG and PROMPT_LOG entries for SECOND-SOURCE-ACCESS-RECHECK, RESEARCH-AMBITION-D041, SCREENING-ACTIVATION-BRIEF, Q-069-RESOLUTION and D-042-APPROVAL say "uncommitted" and "not pushed". That was true when each was written. Their later state:
+
+| Commit | Commit time (UTC) | Subject | Pushed (remote-tracking reflog, "update by push") |
+|---|---|---|---|
+| `24f5dfd6ef1c526acc67fc585864f22faa7d8766` | 2026-10-29 15:12:36 | docs: record literature access re-check | with `eca5116`, 2026-10-29 15:13:15 (`a280e01..eca5116`) |
+| `27c86c0469c5d615c038d0e10b1283b27a5c44f5` | 2026-10-29 15:12:50 | docs: document research ambition and D-041 proposal | with `eca5116`, 2026-10-29 15:13:15 |
+| `eca5116319dc5af3f0968c1195a7c3e99469f704` | 2026-10-29 15:13:07 | docs: add screening activation decision brief | 2026-10-29 15:13:15 |
+| `9aefe42aca800769d2c089ad5de60aa82be00991` | 2026-10-29 15:28:07 | docs: record Q-069 resolution proposal | 2026-10-29 15:29:25 (`eca5116..9aefe42`) |
+| `5d92d94286a0a8257222a662241b016c545618d5` | 2026-10-29 15:36:38 | docs: record D-042 approval | 2026-10-29 15:40:56 (`9aefe42..5d92d94`) |
+
+Additional, same pattern: `a280e01` (DOCUMENTATION-ONLY-RECONCILIATION; its entry says "not pushed") was pushed at 2026-10-29 14:47:14 (`ffee9ec..a280e01`). Evidence: `git log`; `git reflog show --date=iso origin/claude/eloquent-mccarthy-bqtxr3`; `git merge-base --is-ancestor` (all six on `origin/claude/eloquent-mccarthy-bqtxr3`); `git ls-remote` → `5d92d94`. Commits and pushes were made in this session on the researcher's explicit authorisation (three commits + push; then commit, push; then commit, push). No PR exists for these commits.
+
+**Not changed**: Q-065 (Open); every decision status; every question status; `GOVERNANCE.md`; `CLAUDE.md`; the protocol (draft revision 5, not approved); inventory and generated files; code; tests. **Screening remains inactive.**
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted; not staged, not pushed; no PR.

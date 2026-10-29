@@ -325,3 +325,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** this diff and the commit decision; D-001/CUP-11 (11-24 target); the screening-activation decisions (`screening_activation_decision_brief_D035.md` §8), starting with Q-065 (due 2026-11-01); Q-021/Q-064/Q-068.
 - **Recommended next step:** researcher decisions on Q-065 and the schedule (D-001, Q-013, Q-058).
 - **Researcher decisions:** explicit approval of D-042 as written (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — Q-065-DECISION-PACKAGE
+- **Work completed:** read-only audit; metadata-only priority-strand counts with an independent check; `research/reviews/Q-065_decision_package.md` (scope options, schedule options, recommendation); audit-trail reconciliation of the commits and pushes made on 2026-10-29.
+- **Important findings:** `[EVIDENCE]` priority strand union 1,044 records (194 / 743 / 120; overlaps 10 / 0 / 3). D-018's documented evidence ("methods most used in the included RQ1 studies") covers Q-PM-01, Q-PM-02 and Q-PM-03, but the priority strand contains only Q-PM-02; priority + remaining RQ1 strands = 1,470. No screening rate has been measured; all durations are `[HYPOTHESIS]`. `[OPEN]` Q-065 (due 2026-11-01), Q-001, Q-002.
+- **Decisions requiring review:** Q-065 scope (Options 1–3); Q-002 (biomarker scope), which decides whether Q-PM-01/Q-PM-03 are needed; schedule (D-001, Q-013, Q-058, CUP-11); the commit decision.
+- **Recommended next step:** researcher decisions on Q-002 and Q-065 by 2026-11-01; schedule S1 + S2 (interim deliverable on 11-24; D-001 revised after the pilot).
+- **Researcher decisions:** instruction to prepare the package, documentation only (2026-10-29).
