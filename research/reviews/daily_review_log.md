@@ -339,3 +339,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** this diff and the commit decision (together with the Q-065 package); protocol revision for CUP-11/§23; remaining screening-activation items (D-035 record §6 conditions 2–6, including Q-001, Q-033, Q-035); Q-021/Q-064/Q-068.
 - **Recommended next step:** researcher decisions on the remaining D-035 record §6 items (`screening_activation_decision_brief_D035.md` §8, steps 2–6).
 - **Researcher decisions:** Q-002, Q-065 (Option 3) and the schedule decision (2026-10-29).
+
+## Day 17 — 2026-10-30 — D-051-GOVERNANCE-APPROVAL
+- **Work completed:** D-051 recorded: the owner's approval of the exact `GOVERNANCE.md` §2 Rule S sentence added in `c843230`; one Status-history row; task logs.
+- **Important findings:** `[EVIDENCE]` the sentence is byte-identical at `c843230` and `0c85634`; D-051 was unused on every branch and in history before recording.
+- **Decisions requiring review:** this change set and the commit decision; the push to the PR-1 branch; the PR #17 description update; the NHANES acknowledgement and D-040 comments; proposals on D-040 scope, "F-A software" and NHANES-derived values (not approved).
+- **Recommended next step:** researcher review of this change set; if authorised, commit on the PR-1 branch (Option A); PR #17 to be merged with a merge commit, not a squash.
+- **Researcher decisions:** approval of the exact `GOVERNANCE.md` §2 sentence (2026-10-30), limited to that sentence: "This approval applies only to that sentence. It does not amend D-040 or authorize test planning, test code, environment specification or creation, package installation, synthetic verification, experiments, or model training. Each such activity requires separate explicit authorization."

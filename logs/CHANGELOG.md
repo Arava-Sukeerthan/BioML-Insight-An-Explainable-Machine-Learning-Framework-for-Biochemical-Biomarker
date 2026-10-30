@@ -1384,3 +1384,21 @@ Additional, same pattern: `a280e01` (DOCUMENTATION-ONLY-RECONCILIATION; its entr
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted together with the Q-065-DECISION-PACKAGE work; not staged, not pushed; no PR.
+
+## D-051-GOVERNANCE-APPROVAL — 2026-10-30 — Owner approval of the `GOVERNANCE.md` §2 Rule S sentence recorded as D-051 (documentation only)
+
+**Context**: the PR #17 merge-readiness review (2026-10-30) found that the D-040 records do not settle whether the conditional approval of D-040 satisfies the `GOVERNANCE.md` rule "It must not be changed without a DECISION_LOG entry approved by the researcher". The researcher asked for a separate entry on the PR-1 branch before PR #17 is merged (Option A of the review) and approved the exact sentence on 2026-10-30.
+
+**Modified**
+- `logs/DECISION_LOG.md`: one Status-history row; new section with D-051 (APPROVED; Researcher (owner), 2026-10-30), quoting the approved sentence and the researcher's scope statement verbatim. D-040 and every other entry unchanged.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-30_D-051-GOVERNANCE-APPROVAL.md`.
+
+**Not changed**: `GOVERNANCE.md` (the approved sentence is unchanged); `CLAUDE.md`; D-040 and all other decisions; all questions; the protocol (draft revision 5, not approved, not frozen, not active); schemas; inventory; scripts; tests. **Screening remains inactive.** No test planning, test code, environment specification or creation, package installation, synthetic verification, experiment or model training; NHANES data not accessed.
+
+**Not recorded (proposals only, not approved)**: D-040 scope after the merge; a definition of "F-A software" before any Rule S test plan; the restriction on NHANES-derived values in synthetic work.
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: prepared for `claude/eloquent-mccarthy-bqtxr3-part1` on top of `0c85634` (PR #17); uncommitted when written; not pushed.
