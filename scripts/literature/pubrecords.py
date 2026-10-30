@@ -789,7 +789,186 @@ def merge_cluster(members):
     return primary, pub, provenance, conflicts
 
 
-def auto_verification(members, conflicts):
+# --------------------------------------------------------------------------------------------
+# Second-source verification (D-064, answers Q-068)
+# --------------------------------------------------------------------------------------------
+# A publication is `verified` only when an eligible second source -- independent of the
+# authoritative record by recorded provenance, and spot-checked if transcribed -- agrees with it
+# on title, first author, year, venue and a shared persistent identifier. Missing fields are
+# insufficient evidence, never conflicts; a conflict with any eligible source gives needs_review.
+# Independence classifications and eligibility reasons are reported at report level only (A6).
+ARXIV_HOSTS = {"arxiv.org", "www.arxiv.org", "export.arxiv.org", "alphaxiv.org", "www.alphaxiv.org"}
+ID_TYPES = ("pmid", "doi", "pmcid", "arxiv_id")
+REQUIRED_FIELDS = ("title", "first_author", "year", "venue", "identifier")
+FIRST_AUTHOR_UNRELIABLE = "first-author comparison not reliable"
+
+
+def normalize_venue(venue):
+    """Unicode, case, punctuation, ampersand and whitespace normalisation only. Abbreviations are
+    never expanded: an abbreviated and a full journal title stay different."""
+    if not venue:
+        return ""
+    t = unicodedata.normalize("NFKD", strip_markup(venue))
+    t = "".join(ch for ch in t if not unicodedata.combining(ch)).casefold()
+    t = t.replace("&", " and ")
+    t = re.sub(r"[^\w\s]|_", " ", t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def _first_author(authors):
+    for a in authors or []:
+        if a.get("last_name") or a.get("collective_name") or a.get("name"):
+            return a
+    return None
+
+
+def compare_first_author(a_authors, b_authors):
+    """Returns (outcome, reason); outcome is agree / conflict / review / missing (D-064, D2)."""
+    ka, kb = first_author_key(a_authors), first_author_key(b_authors)
+    if not ka or not kb:
+        return "missing", "first author absent"
+    fa, fb = _first_author(a_authors), _first_author(b_authors)
+    coll_a = bool(fa.get("collective_name")) and not fa.get("last_name")
+    coll_b = bool(fb.get("collective_name")) and not fb.get("last_name")
+    if coll_a != coll_b:
+        return "review", FIRST_AUTHOR_UNRELIABLE + " (collective vs personal author)"
+    if ka == kb:
+        return "agree", None
+    if ka.endswith(kb) or kb.endswith(ka) or ka.startswith(kb) or kb.startswith(ka):
+        return "review", FIRST_AUTHOR_UNRELIABLE + " (compound or particle surname)"
+    return "conflict", "first author differs"
+
+
+def compare_identifiers(a, b):
+    """By type: every shared type must match; at least one shared type is required."""
+    shared = [t for t in ID_TYPES if a.get(t) and b.get(t)]
+    mismatched = [t for t in shared if a[t] != b[t]]
+    if mismatched:
+        return "conflict", "identifier differs: " + ", ".join(mismatched)
+    if not shared:
+        return "missing", "no shared identifier type"
+    return "agree", None
+
+
+def compare_required_fields(a, b):
+    """Field-by-field outcome between the authoritative record a and a second source b."""
+    out = {}
+    ta, tb = normalize_title(a.get("title")), normalize_title(b.get("title"))
+    out["title"] = (("missing", "title absent") if not ta or not tb else
+                    ("agree", None) if ta == tb else ("conflict", "title differs"))
+    out["first_author"] = compare_first_author(a.get("authors"), b.get("authors"))
+    ya, yb = a.get("year"), b.get("year")
+    out["year"] = (("missing", "year absent") if ya is None or yb is None else
+                   ("agree", None) if ya == yb else ("conflict", "year differs"))
+    va, vb = normalize_venue(a.get("journal")), normalize_venue(b.get("journal"))
+    out["venue"] = (("missing", "venue absent") if not va or not vb else
+                    ("agree", None) if va == vb else ("conflict", "venue differs"))
+    out["identifier"] = compare_identifiers(a, b)
+    return out
+
+
+def _url_parts(url):
+    if not url:
+        return "", ""
+    m = re.match(r"(?i)^[a-z][a-z0-9+.-]*://([^/?#:]+)(?::\d+)?([^?#]*)", str(url).strip())
+    return (m.group(1).lower(), m.group(2)) if m else ("", "")
+
+
+def source_provider(m):
+    """The repository that holds the underlying record, from recorded source and URL only."""
+    s = m["source"]
+    if s in ("pubmed", "arxiv", "europepmc", "crossref", "consensus", "semantic_scholar"):
+        return s
+    host, path = _url_parts(m.get("source_url"))
+    if host in ARXIV_HOSTS:
+        return "arxiv"
+    if host == "pubmed.ncbi.nlm.nih.gov":
+        return "pubmed"
+    if host == "pmc.ncbi.nlm.nih.gov" or (host == "www.ncbi.nlm.nih.gov" and path.lower().startswith("/pmc")):
+        return "pmc"
+    if host == "europepmc.org" or host.endswith(".europepmc.org"):
+        return "europepmc"
+    if s == "publisher_site":
+        return "publisher:" + (host or "unknown")
+    return f"{s}:{host}" if host else s
+
+
+# retrieval routes whose output is saved without transcription (collection_workflow.md §2,
+# routes A and B; D-023): script retrieval via E-utilities and verbatim PubMed-connector output
+RETRIEVAL_ROUTES = {"eutils_api", "pubmed_connector"}
+
+
+def _recorded_provenance(m):
+    """Retrieved through a recorded non-transcription route, or transcribed with a passed
+    spot-check. A non-transcribed record from any other or a missing route does not qualify."""
+    if m["transcribed"]:
+        return m["transcription_check"] == "passed"
+    return m.get("route") in RETRIEVAL_ROUTES
+
+
+def _url_only(m):
+    orig = m.get("original") or {}
+    return (isinstance(orig, dict) and orig.get("identifiers_parsed_from_url") is True
+            and not (m.get("authors") and m.get("year") is not None and m.get("journal")))
+
+
+def source_independence(a, c):
+    """(value, basis) with value independent / not_independent / undetermined (D-064 table)."""
+    pa, pc = source_provider(a), source_provider(c)
+    if _url_only(c):
+        return "not_independent", "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)"
+    if pa == pc:
+        return "not_independent", f"same underlying repository ({pa})"
+    pair = {pa, pc}
+    if pair == {"pubmed", "europepmc"}:
+        epmc = a if pa == "europepmc" else c
+        if str((epmc.get("original") or {}).get("source", "")).upper() == "MED":
+            return "not_independent", "Europe PMC MED record copies PubMed"
+        return "undetermined", "Europe PMC record without a recorded independent origin"
+    if pair == {"pubmed", "pmc"}:
+        return "undetermined", "PubMed vs PMC is undetermined by default (D-064)"
+    other = pc if pa == "pubmed" else pa if pc == "pubmed" else None
+    if other is not None and (other == "crossref" or other.startswith("publisher:")):
+        if _recorded_provenance(a) and _recorded_provenance(c):
+            return "independent", f"PubMed vs {other} with recorded retrieval or checked transcription"
+        return "undetermined", f"PubMed vs {other} without recorded retrieval or checked transcription"
+    if "consensus" in pair:
+        return "undetermined", "Consensus record without a recorded underlying source"
+    return "undetermined", f"unclassified source relationship ({pa} vs {pc})"
+
+
+def evaluate_second_sources(auth, candidates):
+    """Classify, check eligibility and compare every candidate against the authoritative record."""
+    rows = []
+    for c in sorted(candidates, key=lambda m: m["source_record_id"]):
+        value, basis = source_independence(auth, c)
+        row = {"source_record_id": c["source_record_id"], "source": c["source"],
+               "provider": source_provider(c), "independence": value, "independence_basis": basis}
+        if value != "independent":
+            row.update(eligible=False, eligibility_reason=f"independence {value}", result="ineligible")
+        elif c["transcribed"] and c["transcription_check"] != "passed":
+            row.update(eligible=False, eligibility_reason="transcribed, spot-check not passed",
+                       result="ineligible")
+        else:
+            fields = compare_required_fields(auth, c)
+            outcomes = {f: o for f, (o, _) in fields.items()}
+            row.update(eligible=True, eligibility_reason="eligible",
+                       fields={f: {"outcome": o, "reason": r} for f, (o, r) in fields.items()})
+            if "conflict" in outcomes.values():
+                row["result"] = "conflict"
+            elif "review" in outcomes.values():
+                row["result"] = "review"
+            elif "missing" in outcomes.values():
+                row["result"] = "insufficient"
+            else:
+                row["result"] = "agrees"
+        rows.append(row)
+    return {"authoritative_source_record_id": auth["source_record_id"], "candidates": rows}
+
+
+def auto_verification(members, conflicts, details=None):
+    """Bibliographic verification status (collection_workflow.md §4.3; D-064). When `details` is a
+    dict, the second-source evaluation is written into it for report-level output only."""
     hard = {c["field"] for c in conflicts} & {"title", "year", "doi", "pmid"}
     if hard:
         return "needs_review", "conflicting " + ", ".join(sorted(hard))
@@ -804,9 +983,35 @@ def auto_verification(members, conflicts):
     trusted_auth = [m for m in auth if not m["transcribed"] or m["transcription_check"] == "passed"]
     if not trusted_auth:
         return "partially_verified", "authoritative record is transcribed and not yet spot-checked"
-    if len(sources) >= 2:
-        return "verified", "consistent in sources: " + ", ".join(sorted(sources))
-    return "partially_verified", "single source: " + ", ".join(sorted(sources))
+    if len(sources) < 2:
+        return "partially_verified", "single source: " + ", ".join(sorted(sources))
+    primary = sorted(trusted_auth, key=_source_rank)[0]
+    evaluation = evaluate_second_sources(
+        primary, [m for m in members if m is not primary and not m["metadata_missing"]])
+    if details is not None:
+        details.update(evaluation)
+    cands = evaluation["candidates"]
+    conflicted = [r for r in cands if r["result"] == "conflict"]
+    review = [r for r in cands if r["result"] == "review"]
+    if conflicted:
+        fields = sorted({f for r in conflicted for f, v in r["fields"].items() if v["outcome"] == "conflict"})
+        return "needs_review", ("conflict with independent second source: " + ", ".join(fields)
+                                + " (" + ", ".join(r["source_record_id"] for r in conflicted) + ")")
+    if review:
+        reasons = sorted({v["reason"] for r in review for v in r["fields"].values() if v["outcome"] == "review"})
+        return "needs_review", "; ".join(reasons) + " (" + ", ".join(r["source_record_id"] for r in review) + ")"
+    agree = [r for r in cands if r["result"] == "agrees"]
+    if agree:
+        return "verified", ("independent second source agrees on all required fields: "
+                            + ", ".join(sorted({r["provider"] for r in agree})))
+    why = []
+    for r in cands:
+        if r["result"] == "insufficient":
+            missing = [f for f, v in r["fields"].items() if v["outcome"] == "missing"]
+            why.append(f"{r['provider']} lacks {', '.join(missing)}")
+        else:
+            why.append(f"{r['provider']} {r['eligibility_reason']}")
+    return "partially_verified", "no qualifying independent second source: " + "; ".join(sorted(set(why)))
 
 
 def full_text_hint(pub):
@@ -903,14 +1108,20 @@ def build(lit_dir, today=None, check_schema=True):
             uniq_review.append(r)
 
     pubs = []
+    second_source_rows = []      # D-064 report-level evaluation (A6: not stored in publication records)
     for c, idx in enumerate(clusters):
         members = [records[i] for i in idx]
         primary, pub, prov, conflicts = merge_cluster(members)
         pid = ids[c]
-        status, note = auto_verification(members, conflicts)
+        vdetails = {}
+        status, note = auto_verification(members, conflicts, vdetails)
+        auto_status = status
         if pid in overrides:
             status = overrides[pid]["verification_status"]
             note = f"manual override by {overrides[pid].get('reviewer','?')} on {overrides[pid].get('date','?')}: {overrides[pid].get('note','')}"
+        if vdetails.get("candidates"):
+            second_source_rows.append({"paper_id": pid, "verification_status": status,
+                                       "automatic_status": auto_status, **vdetails})
         sc = screening.get(pid)
         ft = fulltext.get(pid)
         if pid in review_by_pid:
@@ -953,6 +1164,25 @@ def build(lit_dir, today=None, check_schema=True):
 
     if check_schema:
         validate_outputs(records, pubs)
+
+    # status changes against the previous build output, read before it is overwritten
+    prev_path = rec_dir / "publications.jsonl"
+    prev_status = {}
+    if prev_path.exists():
+        with open(prev_path) as f:
+            for line in f:
+                if line.strip():
+                    q = json.loads(line)
+                    prev_status[q["paper_id"]] = q.get("verification_status")
+    status_changes = {
+        "previous_build_available": prev_path.exists(),
+        "changed": [{"paper_id": p["paper_id"], "previous": prev_status[p["paper_id"]],
+                     "current": p["verification_status"], "note": p["verification_note"]}
+                    for p in pubs if p["paper_id"] in prev_status
+                    and prev_status[p["paper_id"]] != p["verification_status"]],
+        "new_publications": sum(1 for p in pubs if p["paper_id"] not in prev_status),
+        "removed_publications": sorted(set(prev_status) - {p["paper_id"] for p in pubs}),
+    }
 
     with open(rec_dir / "source_records.jsonl", "w") as f:
         for r in sorted(records, key=lambda r: r["source_record_id"]):
@@ -1002,6 +1232,14 @@ def build(lit_dir, today=None, check_schema=True):
         "screening_decision": _count(p["screening_decision"] for p in pubs),
         "publications_without_stable_registry_key": sum(
             1 for c in clusters if not any(record_keys(records[i]) for i in c)),
+        "verification_second_sources": {
+            "rule": "D-064",
+            "independence": _count(r["independence"] for p in second_source_rows for r in p["candidates"]),
+            "eligibility": _count(r["eligibility_reason"] for p in second_source_rows for r in p["candidates"]),
+            "results": _count(r["result"] for p in second_source_rows for r in p["candidates"]),
+            "publications": second_source_rows,
+        },
+        "verification_status_changes": status_changes,
     }
     with open(rec_dir / "build_report.json", "w") as f:
         json.dump(report, f, indent=2, sort_keys=True)

@@ -654,3 +654,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | D-064 APPROVED (takes effect at the next authorised build); Q-068 Answered; §4.3 split into approved policy (pending implementation) and current-build rules; no code, test, schema, data or status change |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `ee0d7de`; uncommitted when written; not pushed |
 | Pull request | None for this task (PR #17 unchanged by it) |
+
+### D-064-STEP-B (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label D-064-STEP-B (researcher prompt 2026-10-30: "I authorize Step B only", with D2, D3, D4 confirmed) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Implement D-064 in `pubrecords.py` and `make_literature_reports.py`; add and update synthetic tests; no build |
+| Actual completion status | Implemented; `tests/literature` 87 OK (69 existing incl. 1 authorised modification + 18 new); no build, no data or status change |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `5cd9fc3`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |

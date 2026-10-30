@@ -1539,3 +1539,17 @@ Explicit researcher approval of the near-equal allocation (B 8, A 8, untagged 8,
 **Not changed**: code (`pubrecords.py`, `make_literature_reports.py`), tests, schemas, inventory and generated reports (incl. `verification_report.md`), verification statuses, D-044 scope and snapshot, criteria and protocol drafts, screening status (INACTIVE). Steps B, C, D not authorised.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `ee0d7de`; uncommitted when written; not pushed.
+
+## D-064-STEP-B — 2026-10-30 — D-064 implemented in code and tests (no build)
+
+**Context**: researcher authorisation of Step B with decisions D2 (first-author rules), D3 (modify `test_spot_check_upgrades_verification`; add a negative Consensus test) and D4 (no "arXiv" venue).
+
+**Modified**
+- `scripts/literature/pubrecords.py`: new `normalize_venue`, `compare_first_author`, `compare_identifiers`, `compare_required_fields`, `source_provider`, `source_independence`, `evaluate_second_sources`; `auto_verification` applies D-064 after the unchanged existing checks; `build()` writes report-level `verification_second_sources` and `verification_status_changes` into `build_report.json`. `merge_cluster`, `deduplicate`, `normalize_journal` and the schemas are unchanged; publication records gain no field.
+- `scripts/literature/make_literature_reports.py`: D-064 rule text replaces the old web-second-source sentence; new sections "Second-source evaluation (D-064; report-level only)" and "Verification status changes since the previous build".
+- `tests/literature/test_pubrecords.py`: `test_spot_check_upgrades_verification` now uses a synthetic, checked Crossref source; new `test_consensus_without_underlying_source_does_not_verify`; new classes `TestD064Helpers` (6 tests) and `TestD064Build` (11 tests). All fixtures synthetic.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; session log `2026-10-30_D-064-STEP-B.md` (new).
+
+**Not changed**: inventory, generated reports, `records/`, verification statuses, raw exports and manifest, schemas, D-044 snapshot, criteria/protocol drafts, screening (INACTIVE). No build run.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `5cd9fc3`; uncommitted when written; not pushed.

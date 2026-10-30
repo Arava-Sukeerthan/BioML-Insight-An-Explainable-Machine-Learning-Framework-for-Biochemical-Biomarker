@@ -329,8 +329,9 @@ def main(argv=None):
     v += ["", "## Reasons", "", "| Status | Reason | Publications |", "|---|---|---|"]
     v += [f"| {s} | {r} | {c} |" for (s, r), c in sorted(notes.items())]
     v += ["", "## Records with status `verified`", "",
-          "Second source = a web-search result whose URL carried the same DOI or PMCID and whose title did not "
-          "conflict. Agreement covers title and identifier only.", "",
+          "Rule D-064 (answers Q-068): the authoritative record agrees on title, first author, year, venue and a "
+          "shared persistent identifier with a second source that is independent by recorded provenance and, if "
+          "transcribed, spot-checked. Web rows carrying only a title and a URL-parsed identifier do not qualify.", "",
           "| Paper ID | PMID | DOI | Sources |", "|---|---|---|---|"]
     v += [f"| {p['paper_id']} | {p['pmid']} | {p['doi']} | {', '.join(p['source_databases'])} |"
           for p in pubs if p["verification_status"] == "verified"]
@@ -338,6 +339,32 @@ def main(argv=None):
     v += [f"| {p['paper_id']} | {p['verification_note']} | "
           f"{'; '.join(c['field'] + ': ' + ' / '.join(str(x['value']) for x in c['values']) for c in p['metadata_conflicts'])} |"
           for p in pubs if p["verification_status"] == "needs_review" or p["metadata_conflicts"]]
+    ss = report.get("verification_second_sources") or {}
+    v += ["", "## Second-source evaluation (D-064; report-level only)", "",
+          "Classifications and eligibility reasons are reported here only; they are not stored in publication "
+          "records. Only `independent` second sources are eligible.", ""]
+    if ss:
+        for key, label in (("independence", "Independence"), ("eligibility", "Eligibility"), ("results", "Result")):
+            v += [f"| {label} | Candidate second sources |", "|---|---|"]
+            v += [f"| {k} | {n} |" for k, n in sorted((ss.get(key) or {}).items())] + [""]
+        v += ["| Paper ID | Status | Second source | Provider | Independence | Basis | Eligibility | Result |",
+              "|---|---|---|---|---|---|---|---|"]
+        v += [f"| {p['paper_id']} | {p['verification_status']} | {r['source_record_id']} | {r['provider']} | "
+              f"{r['independence']} | {r['independence_basis']} | {r['eligibility_reason']} | {r['result']} |"
+              for p in ss.get("publications", []) for r in p["candidates"]]
+    else:
+        v += ["No second-source evaluation in this build report."]
+    sc = report.get("verification_status_changes") or {}
+    v += ["", "## Verification status changes since the previous build", ""]
+    if not sc:
+        v += ["Not recorded in this build report."]
+    elif not sc.get("previous_build_available"):
+        v += ["No previous build output was available for comparison."]
+    else:
+        v += [f"- Changed: {len(sc.get('changed', []))}; new publications: {sc.get('new_publications', 0)}; "
+              f"removed: {len(sc.get('removed_publications', []))}", "",
+              "| Paper ID | Previous | Current | Note |", "|---|---|---|---|"]
+        v += [f"| {c['paper_id']} | {c['previous']} | {c['current']} | {c['note']} |" for c in sc.get("changed", [])]
     v += ["", "## Retracted publications (PubMed publication type)", "", "| Paper ID | PMID | Title |", "|---|---|---|"]
     v += [f"| {p['paper_id']} | {p['pmid']} | {p['title']} |" for p in pubs if p["retracted"]]
     v += ["", "## Field completeness (as returned by the sources; nothing filled in by hand)", "",

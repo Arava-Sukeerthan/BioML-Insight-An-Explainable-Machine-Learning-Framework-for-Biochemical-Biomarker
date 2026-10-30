@@ -409,3 +409,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** commit and push of Step A; Step B (implementation and tests), Step C (rebuild), Step D (screening activation).
 - **Recommended next step:** review the Step A diff; then authorise the commit.
 - **Researcher decisions:** D-064 approved with A5 = `needs_review` and A6 = report-level only (2026-10-30); Step A authorised.
+
+## Day 17 (cont.) — 2026-10-30 — D-064-STEP-B
+- **Work completed:** D-064 implemented in code with report-level output; tests added and the authorised test updated.
+- **Important findings:** `[EVIDENCE]` 87 literature tests pass on synthetic fixtures. `[OPEN]` effect on real records is not demonstrated until an authorised Step C build.
+- **Decisions requiring review:** the Step B diff; commit/push authorisation; Step C (rebuild).
+- **Recommended next step:** review the diff; then authorise the commit.
+- **Researcher decisions:** Step B authorised with D2, D3, D4 (2026-10-30).
