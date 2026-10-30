@@ -10,7 +10,7 @@
   "identifier_conflict_pairs": 3,
   "manual_values_carried_forward": 0,
   "merged_by_title_rule": 0,
-  "paper_inventory_csv_sha256": "8fc5bea9c57f486ea1099f4f9f3902f2537144c0f22af36f1b556a44d4891846",
+  "paper_inventory_csv_sha256": "a63e08ce35ec81911399a06427924f2e430e5b1ccf11dc01a234462f09b11699",
   "paper_inventory_schema": "valid",
   "preprints_by_pubmed_type": 47,
   "publications_by_theme": {
@@ -47,8 +47,7 @@
   "title_based_duplicate_candidates": 12,
   "verification_status": {
     "needs_review": 1,
-    "partially_verified": 3334,
-    "unverified": 37,
-    "verified": 14
+    "partially_verified": 3348,
+    "unverified": 37
   }
 }
