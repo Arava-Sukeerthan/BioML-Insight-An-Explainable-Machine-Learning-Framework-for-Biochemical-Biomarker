@@ -574,3 +574,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Both archives verified (size, SHA-256, per-file); 244/244 raw files restored; `pubrecords.py verify` OK; LIT-005 listing and inventory created; preservation record and Q-063 status note updated. Q-063 Open; backup independence and Drive approval open; no inventory build |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `ec52627`; uncommitted when written; not pushed |
 | Pull request | None for this task (PR #17 unchanged by it) |
+
+### LIT-PRESERVATION-GDRIVE (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label LIT-PRESERVATION-GDRIVE (prompt 2026-10-30: record the reported Google Drive approval) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record only what the available evidence supports about the reported Google Drive approval; list missing approval details; keep Q-063 open; do not mark preservation complete |
+| Actual completion status | Approval recorded as researcher-reported; approver, date, scope and conditions listed as not recorded; physical-device backup outstanding; Q-063 Open |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `78e4269`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |

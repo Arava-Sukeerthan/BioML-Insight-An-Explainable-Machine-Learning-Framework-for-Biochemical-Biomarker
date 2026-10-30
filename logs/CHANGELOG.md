@@ -1426,3 +1426,18 @@ Additional, same pattern: `a280e01` (DOCUMENTATION-ONLY-RECONCILIATION; its entr
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `ec52627`; uncommitted when written; not pushed.
+
+## LIT-PRESERVATION-GDRIVE — 2026-10-30 — Google Drive approval recorded as researcher-reported (documentation only)
+
+**Context**: the researcher reported on 2026-10-30 that explicit approval has been obtained from "the project owner or supervisor" to use their personal Google Drive for research archives, and that both archives are in a private folder in the researcher's personal Google Drive. Neither the approval details nor the Drive copies were verified by the assistant.
+
+**Modified**
+- `research/literature/preservation/preservation_status.md`: one status-history row each for LIT-003 and LIT-005; new final section "Google Drive copies: approval reported (2026-10-30)" with four parts: researcher-reported approval; approval details not yet recorded or verified; archive integrity verification (assistant-observed vs researcher-reported); the unresolved backup-requirement decision.
+- `research/reviews/unresolved_questions.md`: Q-063 status cell only (Google Drive clause); status still Open.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries. `logs/session_logs/2026-10-30_LIT-PRESERVATION-GDRIVE.md`: new.
+
+**Not changed**: earlier preservation entries; `MANIFEST.csv`, `README.md`, the restored raw files and the archives; decisions (no DECISION_LOG entry: approver, date, scope and conditions not recorded); protocol; screening status (inactive). Google Drive not accessed. Preservation not marked complete; backup on a separate physical device outstanding.
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `78e4269`; uncommitted when written; not pushed.

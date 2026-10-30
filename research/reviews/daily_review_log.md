@@ -353,3 +353,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** this change set and the commit decision; Google Drive approval; a separate-device backup; Q-063 closure.
 - **Recommended next step:** researcher review of the diff; then a commit if authorised.
 - **Researcher decisions:** authorisation of phases V1, V2+V3, V4 and V5 (2026-10-30); Google Drive check reported by the researcher (not observed).
+
+## Day 17 (cont.) — 2026-10-30 — LIT-PRESERVATION-GDRIVE
+- **Work completed:** the researcher-reported Google Drive approval and the Drive folder recorded in `preservation_status.md` and the Q-063 status note.
+- **Important findings:** `[EVIDENCE]` (researcher-reported) explicit approval of the researcher's personal Google Drive for research archives; both archives in a private Drive folder. `[OPEN]` approver ("project owner or supervisor"), date, scope and conditions not recorded; no backup on a separate physical device.
+- **Decisions requiring review:** supply the missing approval details; whether a DECISION_LOG entry is wanted; whether the Drive copy meets the off-device requirement or a physical-device backup is still required; Q-063 closure.
+- **Recommended next step:** researcher review of the diff; then a commit if authorised.
+- **Researcher decisions:** Google Drive approval reported (2026-10-30); details pending.

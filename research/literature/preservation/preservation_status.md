@@ -55,6 +55,7 @@ Composition: 144 PubMed metadata files, 50 PubMed search pages (25 original + 25
 | 2026-10-23 | LIT-003-PRESERVATION-CONFIRMATION (2) | Archive integrity verified; local redundancy established (2 copies, same computer); off-device backup outstanding |
 | 2026-10-28 | LIT-003-RESTORE | Archive uploaded to the session and verified again; the 205 raw files restored into the workspace's `raw_exports/`; `pubrecords.py verify` OK for all 244 manifest files. Off-device backup still outstanding. Details: section "LIT-003 archive: restoration into the workspace" at the end of this file |
 | 2026-10-30 | LIT-PRESERVATION-V1-V5 | Uploaded copy verified (size and SHA-256 match); 205/205 raw files match `MANIFEST.csv`; 4 companion files match committed records (not restored); restoration repeated, `pubrecords.py verify` OK (exit 0). Off-device backup and Google Drive approval still outstanding. Details: section "LIT-003 and LIT-005: verification and restoration (V1–V4, 2026-10-30)" at the end of this file |
+| 2026-10-30 | LIT-PRESERVATION-GDRIVE | Researcher reports that explicit approval to use their personal Google Drive for research archives has been obtained and that this archive is in a private folder in the researcher's personal Google Drive (not observed by the assistant; approver, approval date, scope and conditions not recorded). Backup on a separate physical device still outstanding; preservation **not** complete. Details: section "Google Drive copies: approval reported (2026-10-30)" at the end of this file |
 
 ## Storage options investigated
 | Option | Result |
@@ -129,6 +130,7 @@ Scope: this section covers only the 39 raw export files registered in `raw_expor
 | 2026-10-28 | LIT-005-PRESERVATION (archive) | Archive created and verified in the container; delivered to the researcher |
 | 2026-10-28 | LIT-005-PRESERVATION (confirmation) | Researcher reports the downloaded copy's SHA-256 matches exactly. Archive integrity verified; one copy outside the container (Windows Downloads); off-device backup outstanding |
 | 2026-10-30 | LIT-PRESERVATION-V1-V5 | First machine-observed check of a copy from outside the build container: size and SHA-256 match; archive safety checks passed; 39/39 raw files match `MANIFEST.csv`; first restoration from the archive, `pubrecords.py verify` OK (exit 0); per-file listing and inventory prepared as `LIT-005_archive_contents_SHA256SUMS.txt` and `LIT-005_raw_exports_inventory.csv`, awaiting commit. Off-device backup and Google Drive approval still outstanding. Details: section at the end of this file |
+| 2026-10-30 | LIT-PRESERVATION-GDRIVE | Researcher reports that explicit approval to use their personal Google Drive for research archives has been obtained and that this archive is in a private folder in the researcher's personal Google Drive (not observed by the assistant; approver, approval date, scope and conditions not recorded). Backup on a separate physical device still outstanding; preservation **not** complete. Details: section "Google Drive copies: approval reported (2026-10-30)" at the end of this file |
 
 ### Outstanding risks (LIT-005)
 - Only one copy exists outside the container, on one laptop. Disaster-recovery risk stays **open**.
@@ -219,3 +221,34 @@ Both were generated from the archive members read in memory and checked against 
 - **Establishes:** both uploaded copies are byte-identical to the recorded archives; both archives' contents match the committed `MANIFEST.csv`; restoration from both archives works, which was tested for LIT-005 for the first time; LIT-005 now has per-file evidence comparable to LIT-003's, prepared in this change set and awaiting commit.
 - **Does not establish:** a backup on a separate physical device (none recorded); approval of Google Drive as project storage (line "Researcher's Google Drive" above still says not approved; no later decision); durability of the restored files, which exist only in this ephemeral container; an inventory rebuild.
 - **Q-063:** still **Open**. Restoration was repeated and verified in this workspace; its question text about LIT-005 records predates the rebuild in `ffee9ec` (see the Q-063 status note).
+
+---
+
+## Google Drive copies: approval reported (2026-10-30)
+Scope: records the researcher's report of 2026-10-30 (LIT-PRESERVATION-GDRIVE). Earlier entries are unchanged, including the row "Researcher's Google Drive" under "Storage options investigated" and the statement in the V1–V4 section that Google Drive approval was not recorded; this section is the later record. The assistant did not access Google Drive.
+
+### 1. Researcher-reported approval (not observed by the assistant)
+| Item | Recorded value |
+|---|---|
+| Approval | The researcher reports that explicit approval has been obtained "from the project owner or supervisor" to use the researcher's personal Google Drive for research archives (report of 2026-10-30) |
+| Copies | The LIT-003 archive (SHA-256 `69e690f0…0c0e`) and the LIT-005 archive (SHA-256 `7b7d4674…6ea1`) |
+| Location | A private folder in the researcher's personal Google Drive (reported; the folder name is not recorded in this public repository) |
+
+### 2. Approval details not yet recorded or independently verified
+None of the following is recorded in the project records, and the assistant has not verified the approval itself:
+- **Approver:** name or role. The report says "project owner or supervisor" and does not say which.
+- **Approval date.**
+- **Form and wording** of the approval, and where it is kept (the content need not be committed).
+- **Scope:** these two archives only, or all raw literature exports; whether it explicitly covers files containing PubMed abstracts (D-010, PROPOSED; Q-011).
+- **Conditions:** for example access restriction (owner-only, not shared), retention or deletion at project end, any institutional data policy.
+
+### 3. Archive integrity verification
+| Copy | Evidence | Type |
+|---|---|---|
+| Archive copies uploaded to the session on 2026-10-30 | Size and SHA-256 match the recorded values; per-file contents match `MANIFEST.csv` (section "LIT-003 and LIT-005: verification and restoration (V1–V4, 2026-10-30)") | Observed by the assistant (tool output) |
+| Copies in Google Drive | Downloaded back and matched the local originals in PowerShell; no hash values supplied | Reported by the researcher; **not** accessed or verified by the assistant |
+
+### 4. Unresolved: does the cloud copy satisfy the backup requirements?
+- `[OPEN]` The earlier "Remaining step" lists "a private, access-restricted cloud folder" as one option for the off-device copy; Q-063's status note lists a backup on a separate physical device as outstanding. Whether the Google Drive copy satisfies the project's backup requirements, or a separate physical-device backup is still required, is the researcher's decision and has not been made.
+- Until then this record treats the physical-device backup as **outstanding**. No status here is changed to PRESERVED; preservation is **not** complete.
+- **Q-063** and **Q-011:** still **Open**. No DECISION_LOG entry was made.
