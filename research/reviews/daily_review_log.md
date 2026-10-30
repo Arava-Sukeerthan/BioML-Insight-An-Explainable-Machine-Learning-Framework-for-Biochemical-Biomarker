@@ -402,3 +402,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** implementation and rebuild authorisation; freeze of v1.1/v0.2.
 - **Recommended next step:** authorise the implementation task (scope list first).
 - **Researcher decisions:** D-063 approved (2026-10-30); commit and push authorised.
+
+## Day 17 (cont.) — 2026-10-30 — Q-068-DECISION
+- **Work completed:** D-064 recorded; Q-068 answered; `collection_workflow.md` §4.3 aligned (policy vs current build).
+- **Important findings:** `[EVIDENCE]` the 14 `verified` records rest on web rows without author, year or venue (Q-068 investigation). `[HYPOTHESIS]` at the next authorised build they become `partially_verified`, and P2870/P2941 stay `partially_verified`; to be demonstrated by that build.
+- **Decisions requiring review:** commit and push of Step A; Step B (implementation and tests), Step C (rebuild), Step D (screening activation).
+- **Recommended next step:** review the Step A diff; then authorise the commit.
+- **Researcher decisions:** D-064 approved with A5 = `needs_review` and A6 = report-level only (2026-10-30); Step A authorised.

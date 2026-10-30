@@ -644,3 +644,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | D-063 APPROVED — CONDITIONAL (inactive); Q-073 Answered; 17 files committed and pushed (see git history for the hash) |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` |
 | Pull request | Branch is the head of PR #17; PR description not edited |
+
+### Q-068-DECISION (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label Q-068-DECISION (researcher prompt 2026-10-30: "Approve D-064 with A5 = needs_review and A6 = report-level only. Authorize Step A only.") |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Step A only: record D-064, answer Q-068, align `collection_workflow.md` §4.3, update task logs |
+| Actual completion status | D-064 APPROVED (takes effect at the next authorised build); Q-068 Answered; §4.3 split into approved policy (pending implementation) and current-build rules; no code, test, schema, data or status change |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `ee0d7de`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |

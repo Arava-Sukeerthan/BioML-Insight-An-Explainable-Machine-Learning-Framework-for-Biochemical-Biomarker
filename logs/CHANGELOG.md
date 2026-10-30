@@ -1525,3 +1525,17 @@ Additional, same pattern: `a280e01` (DOCUMENTATION-ONLY-RECONCILIATION; its entr
 ## Q-073-DECISION — 2026-10-30 — D-063 pilot allocation approved (conditional, inactive)
 
 Explicit researcher approval of the near-equal allocation (B 8, A 8, untagged 8, F 8, C 7, E 7, D 7, Q 7; seed 4004; fixed stratum order; deterministic draw; inventory hash). Recorded as D-063 (APPROVED — CONDITIONAL, inactive) revising D-025's allocation; Q-073 Answered; protocol v0.2 §7, §10, §11 and criteria v1.1 §9, §10 updated (still DRAFT). No sample generated; screening INACTIVE. Committed in the preservation commit of the same day (17 files).
+
+## Q-068-DECISION — 2026-10-30 — D-064 recorded (Step A: decision and documentation only)
+
+**Context**: explicit researcher approval: "Approve D-064 with A5 = needs_review and A6 = report-level only. Authorize Step A only."
+
+**Modified**
+- `logs/DECISION_LOG.md`: new section with D-064 (APPROVED; takes effect at the next authorised build) and one Status history row.
+- `research/reviews/unresolved_questions.md`: Q-068 → Answered (D-064); question text unchanged.
+- `research/literature/collection_workflow.md` §4.3: new §4.3.1 (approved D-064 policy, implementation pending); existing table kept as §4.3.2 (rules of the current build).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries; `logs/session_logs/2026-10-30_Q-068-DECISION.md` (new).
+
+**Not changed**: code (`pubrecords.py`, `make_literature_reports.py`), tests, schemas, inventory and generated reports (incl. `verification_report.md`), verification statuses, D-044 scope and snapshot, criteria and protocol drafts, screening status (INACTIVE). Steps B, C, D not authorised.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `ee0d7de`; uncommitted when written; not pushed.
