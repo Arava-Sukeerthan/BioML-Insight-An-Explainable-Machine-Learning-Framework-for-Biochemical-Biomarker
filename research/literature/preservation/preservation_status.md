@@ -54,6 +54,7 @@ Composition: 144 PubMed metadata files, 50 PubMed search pages (25 original + 25
 | 2026-10-23 | LIT-003-PRESERVATION-CONFIRMATION (1) | **DOWNLOADED AND CHECKSUM-VERIFIED; DURABLE STORAGE NOT YET CONFIRMED.** The researcher downloaded the archive and verified its SHA-256 on Windows on 2026-10-23 (see the 'Researcher-side verification' section). Durable preservation is complete only once the project owner confirms a second private backup or other durable storage location (Q-011) |
 | 2026-10-23 | LIT-003-PRESERVATION-CONFIRMATION (2) | Archive integrity verified; local redundancy established (2 copies, same computer); off-device backup outstanding |
 | 2026-10-28 | LIT-003-RESTORE | Archive uploaded to the session and verified again; the 205 raw files restored into the workspace's `raw_exports/`; `pubrecords.py verify` OK for all 244 manifest files. Off-device backup still outstanding. Details: section "LIT-003 archive: restoration into the workspace" at the end of this file |
+| 2026-10-30 | LIT-PRESERVATION-V1-V5 | Uploaded copy verified (size and SHA-256 match); 205/205 raw files match `MANIFEST.csv`; 4 companion files match committed records (not restored); restoration repeated, `pubrecords.py verify` OK (exit 0). Off-device backup and Google Drive approval still outstanding. Details: section "LIT-003 and LIT-005: verification and restoration (V1–V4, 2026-10-30)" at the end of this file |
 
 ## Storage options investigated
 | Option | Result |
@@ -127,6 +128,7 @@ Scope: this section covers only the 39 raw export files registered in `raw_expor
 |---|---|---|
 | 2026-10-28 | LIT-005-PRESERVATION (archive) | Archive created and verified in the container; delivered to the researcher |
 | 2026-10-28 | LIT-005-PRESERVATION (confirmation) | Researcher reports the downloaded copy's SHA-256 matches exactly. Archive integrity verified; one copy outside the container (Windows Downloads); off-device backup outstanding |
+| 2026-10-30 | LIT-PRESERVATION-V1-V5 | First machine-observed check of a copy from outside the build container: size and SHA-256 match; archive safety checks passed; 39/39 raw files match `MANIFEST.csv`; first restoration from the archive, `pubrecords.py verify` OK (exit 0); per-file listing and inventory prepared as `LIT-005_archive_contents_SHA256SUMS.txt` and `LIT-005_raw_exports_inventory.csv`, awaiting commit. Off-device backup and Google Drive approval still outstanding. Details: section at the end of this file |
 
 ### Outstanding risks (LIT-005)
 - Only one copy exists outside the container, on one laptop. Disaster-recovery risk stays **open**.
@@ -173,3 +175,47 @@ Scope: the LIT-003 archive described at the top of this file. Earlier entries ar
 - **Does not establish:** off-device backup or disaster recovery. The researcher's copies of the LIT-003 archive are reported to be on the same computer; the LIT-005 archive has one copy in that computer's Downloads folder. Both remain **outstanding** for off-device storage.
 - **Workspace copies are not durable:** the restored files exist only in this ephemeral container and would need restoring again in a new workspace.
 - **Q-063:** its first option (restore from the researcher's backup) has been carried out for this workspace. The rebuild it is meant to enable has **not** been done, and Q-063's status in `research/reviews/unresolved_questions.md` is unchanged (**Open**); closing it is the researcher's decision.
+
+---
+
+## LIT-003 and LIT-005: verification and restoration (V1–V4, 2026-10-30)
+Scope: both archives, verified and restored in one session under the researcher-authorised phases V1 (archive checksums), V2 (LIT-005 listing and safety checks), V3 (LIT-005 temporary extraction and per-file check) and V4 (restoration of both and full `verify`). Earlier entries are unchanged. Paths of the uploaded copies and temporary directories were session-local and are not storage locations.
+
+### Directly observed in this session (tool output, 2026-10-30)
+| Check | LIT-003 | LIT-005 |
+|---|---|---|
+| Uploaded copy: size | 3,647,967 bytes (expected 3,647,967): match | 479,473 bytes (expected 479,473): match |
+| Uploaded copy: SHA-256 | `69e690f06834758aea76bca99ec4699c2abb2dac9aa776798aecf0366bd60c0e`: match | `7b7d4674426c7581839b970cad37e21251ade0bf22d295814ac542bd7ec96ea1`: match |
+| Archive entries (listed without extraction) | 211: 209 regular files and 2 directories under `lit003_raw_exports/`, as recorded by LIT-003-RESTORE | 39 regular files, all at `research/literature/raw_exports/<raw_file>` |
+| Safety checks | 0 absolute paths, `..` components, links, duplicates or unexpected entries | Same; file mode 0644, owner and group 0 |
+| Per-file check after extraction into temporary directories outside the repository (`tarfile`, `filter="data"`) | 205/205 raw files match `MANIFEST.csv`; 0 mismatched, missing or unexpected | 39/39 raw files match `MANIFEST.csv`; 0 mismatched, missing or unexpected |
+| Companion files (LIT-003 only; verified, **not restored**) | `SHA256SUMS.txt` byte-identical to `archive_contents_SHA256SUMS.txt`; archived `raw_exports/MANIFEST.csv` and `raw_exports/README.md` equal the versions committed in `b48adde`; `raw_exports_inventory.csv` equals the committed file | — |
+| Restoration into `research/literature/raw_exports/` | 205 files created | 39 files created |
+| Archive after the session | Size and SHA-256 unchanged | Size and SHA-256 unchanged |
+
+Restoration method: every destination checked first (0 conflicts); each file written with exclusive create (mode `xb`) from its verified extracted copy and re-hashed against `MANIFEST.csv`. `MANIFEST.csv` and `README.md` were not written and stayed byte-identical. Temporary extraction directories were removed after the successful verification.
+
+### Combined verification
+| Item | Result |
+|---|---|
+| Raw files restored | **244/244** (205 LIT-003 + 39 LIT-005) |
+| `PYTHONDONTWRITEBYTECODE=1 python3 -I -B scripts/literature/pubrecords.py verify` | exit code **0**; output `OK: all raw exports match MANIFEST.csv` |
+| Tracked working tree | clean (the 244 restored files are git-ignored) |
+| Inventory | **not rebuilt**; no `pubrecords.py build`, `make_literature_reports.py` or other derived-record generation |
+
+### New evidence prepared in this change set (LIT-005)
+| File | Content | SHA-256 of the file |
+|---|---|---|
+| `LIT-005_archive_contents_SHA256SUMS.txt` | 39 lines in `sha256sum` format: per-file SHA-256 and the archive entry path, sorted by path. Archive entry path = repository path. **Per-file checksums only**; the archive-level checksum stays in the table above | `26462b91f954e415b410eeeb2720f47fda39e8b1fac7c3ce0affcaf0bcb5ea60` |
+| `LIT-005_raw_exports_inventory.csv` | 39 rows, same columns as `raw_exports_inventory.csv` (LIT-003): path, file type, size, SHA-256, search ID, source, route and retrieval time (from `MANIFEST.csv`), manifest check | `3ea1922a4666fff0a46481c8741556776d8dac454f5fcdc029f3719289b38e49` |
+
+Both were generated from the archive members read in memory and checked against the restored files and the committed `MANIFEST.csv` (39/39 equal three ways; every file parses as JSON). They replace nothing: the companion files of 2026-10-28 (`LIT-005_SHA256SUMS.txt`, `LIT-005_archive_manifest.csv`) were never committed and are not reproduced here.
+
+### Reported by the researcher (not observed by the assistant)
+- 2026-10-30: both archives were downloaded back from Google Drive and matched their local originals in PowerShell. No hash values were supplied.
+- The D: and E: drives on the researcher's computer are partitions of the same physical disk, so copies on them are not independent backups.
+
+### What this establishes, and what it does not
+- **Establishes:** both uploaded copies are byte-identical to the recorded archives; both archives' contents match the committed `MANIFEST.csv`; restoration from both archives works, which was tested for LIT-005 for the first time; LIT-005 now has per-file evidence comparable to LIT-003's, prepared in this change set and awaiting commit.
+- **Does not establish:** a backup on a separate physical device (none recorded); approval of Google Drive as project storage (line "Researcher's Google Drive" above still says not approved; no later decision); durability of the restored files, which exist only in this ephemeral container; an inventory rebuild.
+- **Q-063:** still **Open**. Restoration was repeated and verified in this workspace; its question text about LIT-005 records predates the rebuild in `ffee9ec` (see the Q-063 status note).

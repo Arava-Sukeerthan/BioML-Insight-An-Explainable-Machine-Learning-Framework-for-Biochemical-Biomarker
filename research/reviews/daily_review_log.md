@@ -346,3 +346,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** this change set and the commit decision; the push to the PR-1 branch; the PR #17 description update; the NHANES acknowledgement and D-040 comments; proposals on D-040 scope, "F-A software" and NHANES-derived values (not approved).
 - **Recommended next step:** researcher review of this change set; if authorised, commit on the PR-1 branch (Option A); PR #17 to be merged with a merge commit, not a squash.
 - **Researcher decisions:** approval of the exact `GOVERNANCE.md` §2 sentence (2026-10-30), limited to that sentence: "This approval applies only to that sentence. It does not amend D-040 or authorize test planning, test code, environment specification or creation, package installation, synthetic verification, experiments, or model training. Each such activity requires separate explicit authorization."
+
+## Day 17 (cont.) — 2026-10-30 — LIT-PRESERVATION-V1-V5
+- **Work completed:** both raw-export archives verified (archive checksums; LIT-005 listing and safety checks; per-file checks); all 244 raw files restored into `raw_exports/` with exclusive create; `pubrecords.py verify` OK; LIT-005 per-file listing and inventory created; preservation record and Q-063 status note updated.
+- **Important findings:** `[EVIDENCE]` 205/205 LIT-003 and 39/39 LIT-005 files match `MANIFEST.csv`; first restoration from the LIT-005 archive succeeded; the LIT-003 archive's README and MANIFEST equal the `b48adde` versions. `[OPEN]` no backup on a separate physical device; Google Drive not approved as project storage; restored files exist only in this workspace.
+- **Decisions requiring review:** this change set and the commit decision; Google Drive approval; a separate-device backup; Q-063 closure.
+- **Recommended next step:** researcher review of the diff; then a commit if authorised.
+- **Researcher decisions:** authorisation of phases V1, V2+V3, V4 and V5 (2026-10-30); Google Drive check reported by the researcher (not observed).

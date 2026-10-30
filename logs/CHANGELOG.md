@@ -1402,3 +1402,27 @@ Additional, same pattern: `a280e01` (DOCUMENTATION-ONLY-RECONCILIATION; its entr
 **Validation**: see the session log.
 
 **Branch / commit / PR**: prepared for `claude/eloquent-mccarthy-bqtxr3-part1` on top of `0c85634` (PR #17); uncommitted when written; not pushed.
+
+## LIT-PRESERVATION-V1-V5 — 2026-10-30 — LIT-003 and LIT-005 archives verified and restored; LIT-005 per-file evidence prepared in this change set (documentation and evidence only)
+
+**Context**: the preservation audits of 2026-10-30 concluded "Preservation evidence partially established; closure pending". The researcher uploaded both archives and authorised V1 (archive checksums), V2 (LIT-005 listing and safety checks), V3 (LIT-005 temporary extraction and per-file check), V4 (restoration of both and full `verify`) and V5 (this documentation and the LIT-005 listing), each separately.
+
+**Created**
+- `research/literature/preservation/LIT-005_archive_contents_SHA256SUMS.txt`: 39 per-file SHA-256 lines (archive entry paths), sorted.
+- `research/literature/preservation/LIT-005_raw_exports_inventory.csv`: 39 rows, same columns as the LIT-003 `raw_exports_inventory.csv`.
+- `logs/session_logs/2026-10-30_LIT-PRESERVATION-V1-V5.md`.
+
+**Modified**
+- `research/literature/preservation/preservation_status.md`: one status-history row each for LIT-003 and LIT-005; new final section with the V1–V4 results, the new evidence files, and the researcher-reported Google Drive check (not observed).
+- `research/reviews/unresolved_questions.md`: Q-063 status cell only ("Open — partly addressed", with what remains); question text and status unchanged in substance (still Open).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Results (tool output)**: LIT-003 3,647,967 bytes, SHA-256 `69e690f0…0c0e`, 205/205 raw files match `MANIFEST.csv`, 4 companion files match committed records (not restored); LIT-005 479,473 bytes, SHA-256 `7b7d4674…6ea1`, safety checks passed, 39/39 match; 244/244 restored with exclusive create; `pubrecords.py verify` exit 0, `OK: all raw exports match MANIFEST.csv`; `MANIFEST.csv` and `README.md` unchanged; archives unchanged.
+
+**Not changed**: `MANIFEST.csv`, `README.md`, `archive_contents_SHA256SUMS.txt`, `raw_exports_inventory.csv`, the inventory and all generated records (no build), decisions, protocol, screening status (inactive). The 244 restored raw files are git-ignored and exist only in this workspace.
+
+**Open**: backup on a separate physical device; Google Drive approval as project storage; Q-063 closure (researcher).
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `ec52627`; uncommitted when written; not pushed.

@@ -564,3 +564,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | D-051 APPROVED (Researcher (owner), 2026-10-30); five-file change set prepared for review. D-040 and all other entries unchanged; screening inactive |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` on top of `0c85634`; uncommitted when written; not pushed |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open; not merged |
+
+### LIT-PRESERVATION-V1-V5 (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label LIT-PRESERVATION-V1-V5 (prompts 2026-10-30: preservation audits; verification plan; authorised phases V1, V2+V3, V4 and V5) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Verify both literature archives, test restoration, commit LIT-005 per-file evidence, and record the results without closing open preservation questions |
+| Actual completion status | Both archives verified (size, SHA-256, per-file); 244/244 raw files restored; `pubrecords.py verify` OK; LIT-005 listing and inventory created; preservation record and Q-063 status note updated. Q-063 Open; backup independence and Drive approval open; no inventory build |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `ec52627`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
