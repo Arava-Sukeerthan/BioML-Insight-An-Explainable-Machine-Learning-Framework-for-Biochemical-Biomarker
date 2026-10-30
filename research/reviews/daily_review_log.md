@@ -360,3 +360,45 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** supply the missing approval details; whether a DECISION_LOG entry is wanted; whether the Drive copy meets the off-device requirement or a physical-device backup is still required; Q-063 closure.
 - **Recommended next step:** researcher review of the diff; then a commit if authorised.
 - **Researcher decisions:** Google Drive approval reported (2026-10-30); details pending.
+
+## Day 17 (cont.) — 2026-10-30 — Q-011-OPTION-B and SCREENING-READINESS-RECHECK
+- **Work completed:** Q-011 option (b) and the researcher-reported Drive-copy hashes recorded; screening readiness re-checked against D-035 §6 (brief §11).
+- **Important findings:** `[EVIDENCE]` (researcher-reported) Drive copies' SHA-256 equal the recorded values. `[EVIDENCE]` D-035 §6 conditions 2–6 unmet; screening not authorised; 3,386 records `not_screened`. `[OPEN]` approval date and wording; D-010 confirmation; a 2026-11-02 interim deliverable is not recorded (D-045 retains 2026-11-24).
+- **Decisions requiring review:** D-010 confirmation; R5/D-029 and Q-032; Q-040; D-024/D-027/D-028/Q-035; v1 Items 6–9, 13–15 and the pilot screener; Q-036; Q-021/Q-064/Q-068.
+- **Recommended next step:** one researcher decision session on brief §11.3 steps 1–4.
+- **Researcher decisions:** Q-011 option (b) selected (2026-10-30); D-010 confirmation pending.
+
+## Day 17 (cont.) — 2026-10-30 — D-010-APPROVAL
+- **Work completed:** D-010 recorded as APPROVED under Q-011 option (b); Q-011 Answered.
+- **Important findings:** `[EVIDENCE]` explicit researcher approval of D-010 (2026-10-30). `[OPEN]` date and wording of the WhatsApp approval; who "the project owner" is; PRESERVED status (researcher decision); Q-063.
+- **Decisions requiring review:** PRESERVED status; Q-063 closure; brief §11.3 steps 1–4.
+- **Recommended next step:** researcher review of the change set; then a commit if authorised.
+- **Researcher decisions:** D-010 approved (2026-10-30).
+
+## Day 17 (cont.) — 2026-10-30 — SCREENING-PREREQ-DECISIONS
+- **Work completed:** researcher selections recorded (D-055–D-057, D-027 limited, D-008; Q-036 answered); recommendations and approval request in `screening_prerequisites_decision_package.md`.
+- **Important findings:** `[EVIDENCE]` D-035 §6 conditions 1–2 met; 3–6 unmet. `[RECOMMENDATION]` the R5 "RQ5 ambiguity" line needs a MODIFY to align with D-031, D-034, D-035 G2 and D-055 (route to full text at ≥ 3 of 5 counting `unclear`), and A-2's E4 clause needs a MODIFY for D-055.
+- **Decisions requiring review:** the §5 approval request (Q-035, D-028, D-029/R5, Q-032, D-024, Q-007, D-025, A-1–A-6); commit and push.
+- **Recommended next step:** owner answers to the §5 approval request; in parallel, the authorised arXiv spot-check.
+- **Researcher decisions:** Q-040, Q-001, Q-033, D-027, Q-036 (a+b), D-008 (2026-10-30).
+
+## Day 17 (cont.) — 2026-10-30 — SCREENING-PREREQ-DECISIONS-2
+- **Work completed:** delegated decisions recorded (D-058–D-060 and status changes); arXiv spot-check run; criteria v1.1 and protocol v0.2 drafted.
+- **Important findings:** `[EVIDENCE]` arXiv spot-check 25/25 match (5 files). `[EVIDENCE]` inside the D-044 scope the D-025 pilot allocation cannot be applied (no arXiv/web records; Q 8, D 13; 173 untagged) → Q-073. `[OPEN]` OPEN-1 flag name, OPEN-2 tier; implementation and rebuild; MANIFEST recording of the spot-check.
+- **Decisions requiring review:** freeze of v1.1/v0.2 (with OPEN-1, OPEN-2, Q-073); authorisation for implementation, rebuild and `set-check`; Q-034; commit and push.
+- **Recommended next step:** researcher review of the two drafts and Q-073.
+- **Researcher decisions:** delegated selection of the recommended options (2026-10-30).
+
+## Day 17 (cont.) — 2026-10-30 — SCREENING-PREREQ-DECISIONS-3
+- **Work completed:** D-061 (flag name) and D-062 (tier rule) recorded; Q-073 recommendation; spot-check written to `MANIFEST.csv`; drafts updated and cross-checked.
+- **Important findings:** `[EVIDENCE]` `set-check` changes only the target manifest row (dry run). `[EVIDENCE]` all cited decision IDs exist. `[OPEN]` Q-073; a rebuild will change the D-044 inventory hash; P2870/P2941 may become `verified` at the next build (Q-068).
+- **Decisions requiring review:** Q-073; authorisation to commit, then to implement and rebuild; v1.1/v0.2 freeze.
+- **Recommended next step:** approve Q-073 and authorise a commit.
+- **Researcher decisions:** none new (delegated selection applied to OPEN-1/OPEN-2).
+
+## Day 17 (cont.) — 2026-10-30 — Q-073-DECISION
+- **Work completed:** D-063 recorded; 17-file preservation commit.
+- **Important findings:** `[EVIDENCE]` allocation fits every stratum (Q 7 of 8 eligible; D 7 of 13).
+- **Decisions requiring review:** implementation and rebuild authorisation; freeze of v1.1/v0.2.
+- **Recommended next step:** authorise the implementation task (scope list first).
+- **Researcher decisions:** D-063 approved (2026-10-30); commit and push authorised.

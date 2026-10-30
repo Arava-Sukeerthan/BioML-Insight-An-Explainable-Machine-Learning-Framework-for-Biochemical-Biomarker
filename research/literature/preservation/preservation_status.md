@@ -56,6 +56,7 @@ Composition: 144 PubMed metadata files, 50 PubMed search pages (25 original + 25
 | 2026-10-28 | LIT-003-RESTORE | Archive uploaded to the session and verified again; the 205 raw files restored into the workspace's `raw_exports/`; `pubrecords.py verify` OK for all 244 manifest files. Off-device backup still outstanding. Details: section "LIT-003 archive: restoration into the workspace" at the end of this file |
 | 2026-10-30 | LIT-PRESERVATION-V1-V5 | Uploaded copy verified (size and SHA-256 match); 205/205 raw files match `MANIFEST.csv`; 4 companion files match committed records (not restored); restoration repeated, `pubrecords.py verify` OK (exit 0). Off-device backup and Google Drive approval still outstanding. Details: section "LIT-003 and LIT-005: verification and restoration (V1–V4, 2026-10-30)" at the end of this file |
 | 2026-10-30 | LIT-PRESERVATION-GDRIVE | Researcher reports that explicit approval to use their personal Google Drive for research archives has been obtained and that this archive is in a private folder in the researcher's personal Google Drive (not observed by the assistant; approver, approval date, scope and conditions not recorded). Backup on a separate physical device still outstanding; preservation **not** complete. Details: section "Google Drive copies: approval reported (2026-10-30)" at the end of this file |
+| 2026-10-30 | Q-011-OPTION-B | Researcher selected Q-011 option (b): a private folder in the researcher's personal Google Drive is designated as the off-device backup location. Researcher reports the copy downloaded back from Google Drive has SHA-256 `69e690f06834758aea76bca99ec4699c2abb2dac9aa776798aecf0366bd60c0e`, equal to the recorded value (not observed by the assistant). Approval reported as given by the project owner via WhatsApp (date and wording not recorded). **Not** changed to PRESERVED: approval date and wording and the D-010 confirmation are outstanding (D-010 approved later the same day; see the final section). Details: section "Off-device backup designated (Q-011 option (b), 2026-10-30)" at the end of this file |
 
 ## Storage options investigated
 | Option | Result |
@@ -131,6 +132,7 @@ Scope: this section covers only the 39 raw export files registered in `raw_expor
 | 2026-10-28 | LIT-005-PRESERVATION (confirmation) | Researcher reports the downloaded copy's SHA-256 matches exactly. Archive integrity verified; one copy outside the container (Windows Downloads); off-device backup outstanding |
 | 2026-10-30 | LIT-PRESERVATION-V1-V5 | First machine-observed check of a copy from outside the build container: size and SHA-256 match; archive safety checks passed; 39/39 raw files match `MANIFEST.csv`; first restoration from the archive, `pubrecords.py verify` OK (exit 0); per-file listing and inventory prepared as `LIT-005_archive_contents_SHA256SUMS.txt` and `LIT-005_raw_exports_inventory.csv`, awaiting commit. Off-device backup and Google Drive approval still outstanding. Details: section at the end of this file |
 | 2026-10-30 | LIT-PRESERVATION-GDRIVE | Researcher reports that explicit approval to use their personal Google Drive for research archives has been obtained and that this archive is in a private folder in the researcher's personal Google Drive (not observed by the assistant; approver, approval date, scope and conditions not recorded). Backup on a separate physical device still outstanding; preservation **not** complete. Details: section "Google Drive copies: approval reported (2026-10-30)" at the end of this file |
+| 2026-10-30 | Q-011-OPTION-B | Researcher selected Q-011 option (b): a private folder in the researcher's personal Google Drive is designated as the off-device backup location. Researcher reports the copy downloaded back from Google Drive has SHA-256 `7b7d4674426c7581839b970cad37e21251ade0bf22d295814ac542bd7ec96ea1`, equal to the recorded value (not observed by the assistant). Approval reported as given by the project owner via WhatsApp (date and wording not recorded). **Not** changed to PRESERVED: approval date and wording and the D-010 confirmation are outstanding (D-010 approved later the same day; see the final section). Details: section "Off-device backup designated (Q-011 option (b), 2026-10-30)" at the end of this file |
 
 ### Outstanding risks (LIT-005)
 - Only one copy exists outside the container, on one laptop. Disaster-recovery risk stays **open**.
@@ -252,3 +254,40 @@ None of the following is recorded in the project records, and the assistant has 
 - `[OPEN]` The earlier "Remaining step" lists "a private, access-restricted cloud folder" as one option for the off-device copy; Q-063's status note lists a backup on a separate physical device as outstanding. Whether the Google Drive copy satisfies the project's backup requirements, or a separate physical-device backup is still required, is the researcher's decision and has not been made.
 - Until then this record treats the physical-device backup as **outstanding**. No status here is changed to PRESERVED; preservation is **not** complete.
 - **Q-063** and **Q-011:** still **Open**. No DECISION_LOG entry was made.
+
+---
+
+## Off-device backup designated (Q-011 option (b), 2026-10-30)
+Scope: records the researcher's prompt of 2026-10-30 (Q-011-OPTION-B). Earlier entries, including the section above, are unchanged; this section is the later record. The assistant did not access Google Drive or the approval message.
+
+### 1. Researcher decision
+- The researcher **selected Q-011 option (b)** and designated a private folder in the researcher's personal Google Drive as the **off-device backup location** for the raw literature exports. Option (b), as written in `research/reviews/owner_review_ballot_LIT-004.md` (Item 12), reads: "Approve D-010 and name another private storage location."
+- This answers the `[OPEN]` point in the previous section (part 4): the private cloud copy is accepted by the researcher as the off-device backup. A separate physical-device copy is **not** required by this selection; none exists, and one remains possible as extra protection.
+
+### 2. Reported approval (not observed by the assistant)
+| Item | Recorded value |
+|---|---|
+| Approver | The project owner (researcher's report; no name recorded) |
+| Channel | WhatsApp (researcher's report; the message was not seen by the assistant and is not stored in the repository) |
+| Reported scope | "all literature exports, including files containing supplementary extracts" (researcher's wording, 2026-10-30) |
+| Approval date | **Not provided** |
+| Approval wording | **Not provided** |
+| Conditions (access, retention, institutional policy) | **None reported**; not recorded |
+
+### 3. Archive integrity of the Google Drive copies (reported by the researcher)
+| Archive | SHA-256 reported for the copy downloaded from Google Drive | Recorded value | Result |
+|---|---|---|---|
+| LIT-003 | `69e690f06834758aea76bca99ec4699c2abb2dac9aa776798aecf0366bd60c0e` | same | equal (comparison of the reported value with the record) |
+| LIT-005 | `7b7d4674426c7581839b970cad37e21251ade0bf22d295814ac542bd7ec96ea1` | same | equal (comparison of the reported value with the record) |
+
+The values were supplied by the researcher; the assistant did not observe the command or the Drive copies. The assistant-observed verification of the session copies (V1–V4 section) is unchanged.
+
+### 4. Status
+- **Established (researcher-reported):** an off-device copy of both archives exists in a private cloud folder designated by the researcher, with reported SHA-256 equal to the recorded values.
+- **Not complete:** the status is **not** changed to PRESERVED. Outstanding: (1) the approval date and wording (a short paraphrase or quotation is enough; the message itself need not be committed); (2) a one-line researcher confirmation that selecting option (b) approves D-010 as written, so that D-010 can be recorded as approved and Q-011 answered (D-010 stays **PROPOSED** and Q-011 stays **Open** until then); (3) whether "the project owner" is the researcher (repository records use "Researcher (owner)" for one person) or another person.
+- **Q-063:** still **Open** (see its status note).
+
+### 5. D-010 approval (D-010-APPROVAL, later on 2026-10-30)
+- The researcher approved D-010 explicitly: "I explicitly approve D-010 under Q-011 Option B, designating my private personal Google Drive folder as the off-device backup location for the literature exports, subject to the applicable governance requirements and outstanding preservation checks." Recorded in `logs/DECISION_LOG.md` (D-010 **APPROVED**; Status history row D-010-APPROVAL). Q-011 is **Answered**. Item (2) of part 4 is resolved.
+- Still outstanding: item (1), the date and wording of the project owner's WhatsApp approval; item (3), who "the project owner" is relative to the researcher; and the researcher's decision whether the status may now be changed to PRESERVED (the earlier "Steps for the researcher", item 5, names the storage location and the checksum result as the inputs; both are now reported). The status stays **not** PRESERVED until the researcher decides.
+- **Q-063:** still **Open**.

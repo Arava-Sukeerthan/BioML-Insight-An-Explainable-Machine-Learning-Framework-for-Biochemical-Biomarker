@@ -584,3 +584,63 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Approval recorded as researcher-reported; approver, date, scope and conditions listed as not recorded; physical-device backup outstanding; Q-063 Open |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `78e4269`; uncommitted when written; not pushed |
 | Pull request | None for this task (PR #17 unchanged by it) |
+
+### Q-011-OPTION-B and SCREENING-READINESS-RECHECK (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant labels Q-011-OPTION-B (Part A) and SCREENING-READINESS-RECHECK (Part B) (prompt 2026-10-30: accelerate toward a 2026-11-02 interim deliverable) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record the researcher's Q-011 option (b) selection and reported approval; determine whether screening may start; if not, give the exact prerequisites and the smallest unblocking path |
+| Actual completion status | Option (b) and Drive-copy hashes recorded (researcher-reported); D-010 PROPOSED, Q-011 and Q-063 Open, not PRESERVED. Screening not authorised (D-035 §6 conditions 2–6 unmet); no screening done; unblocking path in brief §11 |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### D-010-APPROVAL (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label D-010-APPROVAL (researcher prompt 2026-10-30: explicit approval of D-010 under Q-011 option (b)) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record the explicit D-010 approval |
+| Actual completion status | D-010 APPROVED (Researcher (owner), 2026-10-30); Q-011 Answered; Q-063 Open; preservation not PRESERVED |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### SCREENING-PREREQ-DECISIONS (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SCREENING-PREREQ-DECISIONS (prompt 2026-10-30: record selections, recommend remaining decisions, activation table, critical path) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record researcher-selected choices under the recording rules; recommend the remaining methodological decisions; review the six D-035 §6 conditions; plan the critical path |
+| Actual completion status | D-055–D-057 recorded; D-027 APPROVED (limited); D-008 APPROVED — CONDITIONAL; Q-001/Q-008/Q-033/Q-036/Q-040 Answered; D-012/D-023 PROPOSED; recommendations and approval request prepared; conditions 1–2 met, 3–6 unmet; screening INACTIVE |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### SCREENING-PREREQ-DECISIONS-2 (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SCREENING-PREREQ-DECISIONS-2 (prompt 2026-10-30: record delegated decisions, run arXiv spot-check, draft criteria v1.1 and protocol v0.2) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record the recommended options as researcher-approved (conditional where prerequisites are unmet); run the Q-036 spot-check; draft v1.1/v0.2 with traceability |
+| Actual completion status | D-058–D-060 recorded; D-009/D-024/D-025/D-028/D-029 approved (conditional or not implemented); D-012/D-023 approved after a 25/25 spot-check; Q-073 opened; drafts written, not frozen; D-035 §6 conditions 1–4 met at decision level, 5–6 unmet; screening INACTIVE |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### SCREENING-PREREQ-DECISIONS-3 (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SCREENING-PREREQ-DECISIONS-3 (prompt 2026-10-30: OPEN-1, OPEN-2, Q-073, spot-check recording, implementation readiness, draft review) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Settle the open draft items; record the spot-check if `set-check` is safe; assess implementation; review the drafts |
+| Actual completion status | D-061, D-062 APPROVED — CONDITIONAL (effective at freeze); Q-073 recommendation, Open; spot-check recorded in `MANIFEST.csv` (5 rows); implementation not started (prerequisites in package §6.3); drafts consistent with decision records; screening INACTIVE |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### Q-073-DECISION and preservation commit (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label Q-073-DECISION (prompt 2026-10-30: approve D-063; commit the 17 reviewed files; push if the remote has not advanced) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record D-063; preserve the decision-and-evidence work in one commit |
+| Actual completion status | D-063 APPROVED — CONDITIONAL (inactive); Q-073 Answered; 17 files committed and pushed (see git history for the hash) |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` |
+| Pull request | Branch is the head of PR #17; PR description not edited |

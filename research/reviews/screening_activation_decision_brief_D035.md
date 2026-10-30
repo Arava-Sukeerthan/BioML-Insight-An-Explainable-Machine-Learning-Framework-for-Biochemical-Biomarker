@@ -129,3 +129,46 @@ Item numbers are those of `final_confirmation_sheet_LIT-004.md`, "Pilot-blocking
 
 ## 10. Unresolved questions referenced
 Q-001, Q-002, Q-007, Q-008, Q-013, Q-021, Q-022, Q-026, Q-032, Q-033, Q-035, Q-036, Q-040, Q-058, Q-063, Q-064, Q-065, Q-068 (all Open), and Q-069 (new, Open; added with this brief).
+
+## 11. Status update — 2026-10-30 (SCREENING-READINESS-RECHECK)
+Added 2026-10-30 at the researcher's request to accelerate the review toward an interim deliverable on 2026-11-02. Sections 1–10 are unchanged as the record of 2026-10-29. **Nothing is activated, approved or decided by this section.**
+
+### 11.1 What changed since 2026-10-29 `[EVIDENCE]`
+| Item | Then | Now |
+|---|---|---|
+| Q-065 (screening scope) | Open | Answered → **D-044** (APPROVED — CONDITIONAL, inactive for screening): 1,470 records; takes effect only after D-035 §6 is met |
+| Q-069 (stage order) | Open | Answered → **D-042** (APPROVED): Stage C and Stage D gates before D-017–D-019 and training; "screening remains inactive" |
+| Schedule | D-001 PROPOSED | **D-045** (APPROVED): 2026-11-24 retained as an interim deliverable date; no model results promised; schedule revised after the pilot. A 2026-11-02 interim deliverable is **not** recorded in `DECISION_LOG.md` |
+| Raw exports (§1 fact 5) | Absent | **Restored** in this workspace (244/244; `pubrecords.py verify` OK, 2026-10-30). Q-063 Open; the files exist only in this workspace |
+| Inventory | 3,386 `not_screened` | Unchanged: 3,386 `not_screened`; verification 14 `verified`, 3,334 `partially_verified`, 37 `unverified`, 1 `needs_review`; `paper_inventory.json` SHA-256 `a509538d…f4a3` (equal to the D-044 value) |
+
+### 11.2 D-035 §6 conditions now
+| # | Condition | State |
+|---|---|---|
+| 1 | Q-039 | **Met** (D-036) |
+| 2 | Q-040 decided | **Unmet** (Q-040 Open) |
+| 3 | D-027 and D-024 approved | **Unmet** (both PROPOSED) |
+| 4 | Remaining R5/D-029 items decided | **Unmet** (D-029 PROPOSED; Q-032 Open) |
+| 5 | `screening_criteria.md` v1.1 and protocol v0.2 frozen | **Unmet** (not written) |
+| 6 | Other pilot-blocking items (§3) | **Unmet**; item 6 (arXiv spot-check, Q-036) and item 8 (implementation and rebuild) no longer need an archive upload, because the raw exports are restored in this workspace |
+
+**Conclusion:** screening is **not** authorised under current governance (D-035 §6; D-044 "inactive for screening"; D-042 item 4). No record may be screened, labelled or sampled for the pilot yet.
+
+### 11.3 Smallest unblocking path `[RECOMMENDATION]`
+| Order | Action | Who | Governance record | Unblocks |
+|---|---|---|---|---|
+| 1 | Decide R5 lines and the D-029 option; answer Q-032 | Researcher | D-029, Q-032; `final_confirmation_sheet_LIT-004.md` R5 | Condition 4; D-031 C1; items 1–2 |
+| 2 | Answer Q-040 | Researcher | Q-040; D-034 | Condition 2 |
+| 3 | Approve or amend D-024 and D-027; decide D-028 and Q-035 | Researcher | D-024, D-027, D-028, Q-035 | Condition 3; item 3 |
+| 4 | Record v1 Items 6–9, 13–15 and the pilot screener arrangement (second screener or a recorded single-screener decision) | Researcher | Q-001, Q-033, Q-007/D-009, D-008/Q-008, D-025/Q-026 | Item 7; pilot feasibility |
+| 5 | Decide Q-036; then the arXiv spot-check via the alphaXiv connector, using the restored raw exports | Researcher, then assistant when authorised | Q-036; D-012, D-023, Q-022 | Item 6 |
+| 6 | Implement D-028/D-029/`biomarker_class`/scope flags with tests; rebuild (no paper-ID change) while the raw exports are still in this workspace | Assistant when authorised | Item 8 | Item 8 |
+| 7 | Draft criteria v1.1 and protocol v0.2 with approved wording only; researcher approves and freezes; record activation | Assistant drafts; researcher freezes | Condition 5; item 9 | Pilot (D-025), then screening of the 1,470 D-044 records |
+| Parallel | Decide Q-021, Q-064, Q-068 | Researcher | — | Citation (not screening) |
+
+Steps 1–4 are documentation-only researcher decisions with prepared options in `owner_review_ballot_LIT-004.md`, `final_confirmation_sheet_LIT-004.md` and `proposed_owner_responses_LIT-004.md`. They can be taken in one session.
+
+### 11.4 What a 2026-11-02 interim deliverable can honestly contain `[RECOMMENDATION]`
+- Recorded decisions from steps 1–4, and drafts of criteria v1.1 and protocol v0.2 (step 7 drafting), if the decisions are made in time.
+- Search and inventory documentation already in the repository (3,386 records; 1,470 in the D-044 scope; verification counts above).
+- **Not** screening results, included-study counts, a Stage C comparison, a gap or novelty claim, citable references (Q-021/Q-064/Q-068 open), or any model result.

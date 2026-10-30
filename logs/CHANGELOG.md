@@ -1441,3 +1441,87 @@ Additional, same pattern: `a280e01` (DOCUMENTATION-ONLY-RECONCILIATION; its entr
 **Validation**: see the session log.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `78e4269`; uncommitted when written; not pushed.
+
+## Q-011-OPTION-B and SCREENING-READINESS-RECHECK — 2026-10-30 — off-device backup designated; screening readiness re-checked (documentation only)
+
+**Context**: the researcher selected Q-011 option (b) (private Google Drive folder as the off-device backup), reported the project owner's approval via WhatsApp (date and wording not provided) and supplied the SHA-256 values of the Drive copies; and asked whether screening can start before a 2026-11-02 interim deliverable.
+
+**Modified**
+- `research/literature/preservation/preservation_status.md`: one status-history row each for LIT-003 and LIT-005; new final section "Off-device backup designated (Q-011 option (b), 2026-10-30)". Status not changed to PRESERVED.
+- `research/reviews/unresolved_questions.md`: Q-011 and Q-063 status cells (update notes); both still Open.
+- `research/reviews/screening_activation_decision_brief_D035.md`: new §11 (dated status update; §1–§10 unchanged).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries. `logs/session_logs/2026-10-30_Q-011-OPTION-B_SCREENING-READINESS.md`: new.
+
+**Not changed**: `DECISION_LOG.md` (D-010 stays PROPOSED pending a one-line confirmation that option (b) approves it as written); screening status (INACTIVE; D-035 §6 conditions 2–6 unmet); protocol, criteria, scope, inventory, raw exports. No screening, sampling, labelling, experiment or training. Google Drive and the approval message not accessed.
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed.
+
+## D-010-APPROVAL — 2026-10-30 — D-010 approved under Q-011 option (b) (decision record)
+
+**Context**: explicit researcher approval (2026-10-30): "I explicitly approve D-010 under Q-011 Option B, designating my private personal Google Drive folder as the off-device backup location for the literature exports, subject to the applicable governance requirements and outstanding preservation checks."
+
+**Modified**
+- `logs/DECISION_LOG.md`: D-010 row Status and "Approved by" cells (PROPOSED → **APPROVED**, as for D-042); one Status history row (D-010-APPROVAL); one note line after the first table. Decision text and rationale unchanged.
+- `research/reviews/unresolved_questions.md`: Q-011 → **Answered** (D-010); Q-011 and Q-063 update notes adjusted; Q-063 still Open.
+- `research/literature/preservation/preservation_status.md`: Q-011-OPTION-B rows annotated; part 5 added to the final section. Not PRESERVED.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; session log `2026-10-30_Q-011-OPTION-B_SCREENING-READINESS.md` (addendum).
+
+**Not changed**: other decisions; screening (INACTIVE); protocol; inventory; raw exports.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed.
+
+## SCREENING-PREREQ-DECISIONS — 2026-10-30 — researcher selections recorded; recommendations and approval request for the remaining screening prerequisites
+
+**Context**: the researcher's prompt of 2026-10-30 stated selections on Q-040, Q-001, Q-033, D-027, Q-036 and D-008 (Q-011/D-010 were recorded earlier the same day) and asked for evidence-based recommendations on the remaining choices.
+
+**Created**
+- `research/reviews/screening_prerequisites_decision_package.md`: recorded selections; recommendations on Q-035, D-028, D-029/R5/Q-032, D-024, Q-007, D-025, A-1–A-6; D-035 §6 activation table; critical path; approval request.
+- `logs/session_logs/2026-10-30_SCREENING-PREREQ-DECISIONS.md`.
+
+**Modified**
+- `logs/DECISION_LOG.md`: new section with D-055 (Q-040), D-056 (Q-001), D-057 (Q-033), all APPROVED — CONDITIONAL (inactive for screening); D-027 → APPROVED (limited) and D-008 → APPROVED — CONDITIONAL, Status and "Approved by" cells updated in place; Status history rows, including D-012/D-023 unchanged (PROPOSED until the arXiv spot-check passes).
+- `research/reviews/unresolved_questions.md`: Q-001, Q-008, Q-033, Q-036, Q-040 → Answered.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Not changed**: screening (INACTIVE; D-035 §6 conditions 3–6 unmet); protocol, criteria, scope (D-044), inventory; D-013–D-020; Q-063. No spot-check, screening, experiment or training.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed.
+
+## SCREENING-PREREQ-DECISIONS-2 — 2026-10-30 — remaining screening decisions recorded; arXiv spot-check passed; criteria v1.1 and protocol v0.2 drafted
+
+**Context**: the researcher delegated the selection of the recommended options (`screening_prerequisites_decision_package.md` §2), authorised their recording, and asked for the Q-036 arXiv spot-check and drafts of criteria v1.1 and protocol v0.2.
+
+**Created**
+- `research/literature/reviews/arxiv_transcription_spot_check_2026-10-30.md` and `.csv`: 25/25 sampled records match in 5/5 files (seeded sample, ≥ 10 %, min 5 per file).
+- `research/literature/screening_criteria_v1.1_draft.md`, `research/literature/screening_protocol_v0.2_draft.md`: drafts, not frozen; v1.0 and v0.1 unchanged.
+- `logs/session_logs/2026-10-30_SCREENING-PREREQ-DECISIONS-2.md`.
+
+**Modified**
+- `logs/DECISION_LOG.md`: new D-058 (Q-035), D-059 (A-1–A-6), D-060 (R5, Q-032); D-009, D-024, D-025, D-028, D-029 approved (conditional/not implemented as stated); D-012, D-023 approved (spot-check passed); D-026 revised by D-029; Status history rows; D-030 unchanged.
+- `research/reviews/unresolved_questions.md`: Q-007, Q-026, Q-032, Q-035 answered; Q-034 proposed resolution noted (Open); new Q-073 (pilot strata in the D-044 scope).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Not changed**: `MANIFEST.csv` (spot-check outcome not yet recorded there), raw exports, inventory, schemas, code, `screening_criteria.md` v1.0, `screening_protocol.md` v0.1, scope (D-044), protocol, D-013–D-020. Screening INACTIVE; no sample.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed.
+
+## SCREENING-PREREQ-DECISIONS-3 — 2026-10-30 — OPEN-1/OPEN-2 settled; Q-073 recommendation; arXiv spot-check recorded in MANIFEST.csv
+
+**Modified**
+- `logs/DECISION_LOG.md`: new D-061 (flag `non_metabolic_rq5_candidate`) and D-062 (RQ5 tier rule), both APPROVED — CONDITIONAL (effective at the v1.1 freeze); Status history rows (D-025 unchanged pending Q-073; D-012 spot-check recorded).
+- `research/literature/raw_exports/MANIFEST.csv`: `transcription_check=passed` and a note for Q-AX-01…05 only (`pubrecords.py set-check`; dry run on a copy first; `verify` OK).
+- `research/reviews/unresolved_questions.md`: Q-073 recommendation (near-equal allocation), still Open.
+- `research/literature/screening_criteria_v1.1_draft.md`, `screening_protocol_v0.2_draft.md`: OPEN-1/OPEN-2 resolved, Q-073 recommendation, spot-check status; still DRAFT.
+- `research/literature/reviews/arxiv_transcription_spot_check_2026-10-30.md`: recording status.
+- `research/reviews/screening_prerequisites_decision_package.md`: §6 review summary and implementation readiness.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; session log `2026-10-30_SCREENING-PREREQ-DECISIONS-3.md` (new).
+
+**Not done**: implementation and rebuild (reasons in the package §6.3); no build run; no freeze; screening INACTIVE.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed.
+
+## Q-073-DECISION — 2026-10-30 — D-063 pilot allocation approved (conditional, inactive)
+
+Explicit researcher approval of the near-equal allocation (B 8, A 8, untagged 8, F 8, C 7, E 7, D 7, Q 7; seed 4004; fixed stratum order; deterministic draw; inventory hash). Recorded as D-063 (APPROVED — CONDITIONAL, inactive) revising D-025's allocation; Q-073 Answered; protocol v0.2 §7, §10, §11 and criteria v1.1 §9, §10 updated (still DRAFT). No sample generated; screening INACTIVE. Committed in the preservation commit of the same day (17 files).
