@@ -685,6 +685,8 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted when written; not pushed |
 | Pull request | None for this task |
 
+> **Update (2026-10-31, T1-A-PR-REFERENCE).** The "Branch" and "Pull request" rows above were accurate when written (the work was then uncommitted and unpushed). This work, together with the T1-A-FOLLOW-UP changes, was committed as `d1aaceb` ("Implement literature T1-A validation safeguards"), pushed to `claude/eloquent-mccarthy-bqtxr3-part1`, and is included in **PR #17** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17 — open, not merged. This note records the PR reference only; it does not indicate approval.
+
 ### T1-A-FOLLOW-UP (2026-10-31)
 | Field | Value |
 |---|---|
@@ -694,3 +696,5 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Implemented; `tests/literature` 122 OK (113 before); protected files unchanged; Q-077 opened; uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted when written; not pushed |
 | Pull request | None for this task |
+
+> **Update (2026-10-31, T1-A-PR-REFERENCE).** The "Branch" and "Pull request" rows above were accurate when written (the work was then uncommitted and unpushed). This work, together with T1-A, was committed as `d1aaceb` ("Implement literature T1-A validation safeguards"), pushed to `claude/eloquent-mccarthy-bqtxr3-part1`, and is included in **PR #17** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17 — open, not merged. This note records the PR reference only; it does not indicate approval.

@@ -1589,6 +1589,8 @@ Explicit researcher approval of the near-equal allocation (B 8, A 8, untagged 8,
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted when written; not pushed.
 
+> **Update (2026-10-31, T1-A-PR-REFERENCE).** The line above was accurate when written. This work, together with T1-A-FOLLOW-UP, was committed as `d1aaceb` ("Implement literature T1-A validation safeguards"), pushed to `claude/eloquent-mccarthy-bqtxr3-part1`, and is included in **PR #17** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17 — open, not merged. This note records the PR reference only; it does not indicate approval.
+
 ## T1-A-FOLLOW-UP — 2026-10-31 — Q-076(a)–(d) owner directions implemented (no build)
 
 **Context**: researcher prompt 2026-10-31 with owner directions on Q-076: (a) all-ignored source types → `unknown`; (b) arXiv rule on the primary source database; (c) reject non-null hand-edited `publication_type` values that differ from the derived value, include the field in the CSV-versus-JSON check, allow nulls from earlier inventories; (d) exclude retracted records from the full-text candidate list by token membership; recognised types take precedence over unrecognised ones. Q-074 and Q-075 stay open. No DECISION_LOG entry or status change.
@@ -1605,3 +1607,5 @@ Explicit researcher approval of the near-equal allocation (B 8, A 8, untagged 8,
 **Not changed**: inventory, `records/`, generated reports, raw exports, MANIFEST, registry, D-044 snapshot, criteria/protocol drafts, decision statuses, the 13-value mapping. No build, screening, pilot, freeze or experiment.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted (together with T1-A); not pushed.
+
+> **Update (2026-10-31, T1-A-PR-REFERENCE).** The line above was accurate when written. This work, together with T1-A, was committed as `d1aaceb` ("Implement literature T1-A validation safeguards"), pushed to `claude/eloquent-mccarthy-bqtxr3-part1`, and is included in **PR #17** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17 — open, not merged. This note records the PR reference only; it does not indicate approval.

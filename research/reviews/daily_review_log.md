@@ -437,3 +437,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** the combined T1-A diff; commit/push; whether to record the T1-A and Q-076 directions in DECISION_LOG; Q-074, Q-075, Q-077; T2.
 - **Recommended next step:** review the diff; authorise commit and push; then T2 separately.
 - **Researcher decisions:** Q-076(a)–(d) and mapping-precedence directions given (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — T1-A-PR-REFERENCE
+- **Work completed:** documentation-only correction: dated update notes added under the T1-A and T1-A-FOLLOW-UP entries in `logs/PROMPT_LOG.md` and `logs/CHANGELOG.md`, recording that the work was committed as `d1aaceb`, pushed, and is included in PR #17 (open, not merged). The original entries are kept unchanged.
+- **Important findings:** `[EVIDENCE]` the original "None for this task" / "uncommitted … not pushed" statements were accurate when written; PR #17 already contained `d1aaceb` when its description was updated on 2026-10-31.
+- **Decisions requiring review:** none new. Q-074, Q-075, Q-076 (owner directions implemented; no DECISION_LOG entry), Q-077 and T2 remain as before.
+- **Recommended next step:** review PR #17; decide on Q-075 before the v1.1 freeze; authorise T2 separately when ready.
+- **Researcher decisions:** documentation-only correction authorised (Option B, 2026-10-31).
