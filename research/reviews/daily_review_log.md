@@ -458,3 +458,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** the documentation diff; commit/push; later, separately: validator/schema/test implementation of the approved vocabulary; the pre-existing D-068 omission in the criteria header.
 - **Recommended next step:** review the diff; authorise commit and push separately.
 - **Researcher decisions:** Decisions A–D approved and co-occurrence deferred; recording of D-069 authorised (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — PR17-DESCRIPTION-UPDATE
+- **Work completed:** PR #17 description updated (only the description) to cover 29 commits, including `e64ce8f` (D-068) and `81875c3` (D-069); read back from GitHub and compared with the approved text; this task recorded in the audit logs.
+- **Important findings:** `[EVIDENCE]` the repository default branch and the PR #17 base are both `claude/happy-hawking-rxptfv` (`eb79996`), so "onto the default branch" and the merge instructions were accurate. `[EVIDENCE]` the published body matches the approved text except the final trailing newline; the title is unchanged; PR open, not merged, head `81875c3`. `[OPEN]` Q-042, Q-075 remainder, Q-076 recording, Q-077; PR title still describes the original 2026-10-24 to 2026-10-30 scope.
+- **Decisions requiring review:** this documentation diff and its commit/push; PR #17 title; later, separately: D-069 validator implementation, Stage-0 exemption bounding, G1/G2 and the v1.1 freeze, T2, PR-2.
+- **Recommended next step:** review the diff; authorise commit and push separately.
+- **Researcher decisions:** PR #17 description update authorised (2026-10-31); recording of the update authorised (2026-10-31).

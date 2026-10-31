@@ -1644,3 +1644,21 @@ Explicit researcher approval of the near-equal allocation (B 8, A 8, untagged 8,
 **Validation**: see the session log (during editing: exact-match edit assertions, per-file line counts, historical decision rows and other questions compared with HEAD, SHA-256 baseline of `research/`, `scripts/` and `tests/`, whitespace checks; full diff reviewed afterwards in the independent audit). No tests run (no executable change).
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `e64ce8f` (1 commit ahead of `origin`, unpushed); uncommitted when written; not pushed. The branch is the head of PR #17; the PR is not changed by this task.
+
+## PR17-DESCRIPTION-UPDATE — 2026-10-31 — PR #17 description updated for commits 28–29 (D-068, D-069); task recorded (documentation only)
+
+**Context**: researcher authorisation, 2026-10-31, to update the description of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) with the reviewed proposal (default and base branch verified as `claude/happy-hawking-rxptfv`; the only change to the earlier proposal was naming that branch in the first summary sentence); then a separate authorisation, 2026-10-31, to record that completed update in the audit logs. Commit and push of this record are not authorised by this task.
+
+**Done on GitHub (PR description only)**
+- PR #17 description replaced with the approved text. It now covers 29 commits (head `81875c3`), adds commit rows 28 (`e64ce8f`, D-068) and 29 (`81875c3`, D-069), the updated size (82 files, +38,364/−3,958), D-068 and D-069 sections, and the updated governance status, checks and reviewer items (Q-042, Q-075 remainder, Q-076, Q-077 and the unfixed discrepancies kept open; screening INACTIVE; criteria v1.1 not frozen; T2 and the D-069 validator change not authorised).
+- Read-back: the published body was fetched from the GitHub API and compared programmatically with the approved text: identical except for the final trailing newline, which GitHub does not store (24,302 vs 24,303 characters). GitHub `updated_at` after the update: 2026-10-31T08:55:37Z.
+- State after the update: title unchanged; open; not draft; not merged; mergeable state `clean`; head `81875c301fcddd0afc36959b45eb65c4a2af8aed`; base `claude/happy-hawking-rxptfv` at `eb79996`; 29 commits.
+
+**Modified (this record)**
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; new `logs/session_logs/2026-10-31_PR17-DESCRIPTION-UPDATE.md`.
+
+**Not changed**: PR title, state, base, reviewers, labels, assignees, milestone, comments and reviews; no approval or merge; no branch, commit or push during the description update; `DECISION_LOG.md`, `unresolved_questions.md`, criteria and protocol drafts, code, schemas, tests, data, inventory and generated reports. No PR-2, T2, screening, retrieval, build, experiment or test run. This entry records only the description update of 2026-10-31 (08:55 UTC); it does not reconstruct earlier description updates.
+
+**Validation**: see the session log, sections "Preflight" and "Verification (read-back)" (approved-text diff against the previously published body; programmatic read-back comparison; `git status` clean at `81875c3` after the update). No tests run (no executable change).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `81875c3` (= `origin`); this record uncommitted when written; not pushed. The branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged.

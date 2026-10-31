@@ -718,3 +718,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | D-069 recorded (APPROVED — CONDITIONAL, inactive); Q-075 "Open — partly addressed"; criteria v1.1 draft aligned (still a draft); task logs updated; uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `e64ce8f` (1 commit ahead of `origin`); uncommitted when written; not pushed |
 | Pull request | Branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged; PR not changed by this task |
+
+### PR17-DESCRIPTION-UPDATE (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PR17-DESCRIPTION-UPDATE (researcher prompts 2026-10-31: proposal review with verification of the default and base branch; "I authorize you to update the description of GitHub PR #17 using the complete corrected proposed description from your latest report."; then authorisation of a separate documentation-only task to record the completed update) |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Update only the PR #17 description to cover commits 28–29 (D-068, D-069), verify it by read-back, then record the update in the audit logs; no title, state, comment, review, branch, commit, push, merge, PR-2 or T2 |
+| Actual completion status | PR #17 description updated; read-back identical to the approved text except the final trailing newline (not stored by GitHub); title unchanged; PR open, not merged; task logs updated; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `81875c3` (= `origin`); uncommitted when written; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): description updated by this task (GitHub `updated_at` 2026-10-31T08:55:37Z); title, state and all other PR fields unchanged; open, not merged |
