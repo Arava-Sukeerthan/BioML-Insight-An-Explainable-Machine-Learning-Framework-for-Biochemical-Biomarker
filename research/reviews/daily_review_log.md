@@ -423,3 +423,17 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** commit and push of this recording; T1 authorisation.
 - **Recommended next step:** review the diff; authorise commit and push separately.
 - **Researcher decisions:** final T0 wording approved and recording authorised (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — T1-A
+- **Work completed:** approved screening fields and validation (D-028 2d, D-060 (1)/(6), D-058), controlled `scope_flags` tokens (D-057, D-061) and the D-028 `publication_type` mapping implemented in code, schemas and tests; inventory field `screening_validation_design` added beside the unchanged extraction field `validation_design`.
+- **Important findings:** `[EVIDENCE]` 113 literature tests pass on synthetic fixtures; protected files unchanged; committed inventory and publication records still validate against the new schemas. `[EVIDENCE]` read-only preview of the mapping on the current records: 0 unmapped source types. `[OPEN]` Q-074 (missing-abstract enforcement), Q-075 (unresolved `scope_flags` tokens; draft v1.1 §6 lists tokens the validator now rejects), Q-076 (implementation interpretations and a pre-existing retracted-candidate check).
+- **Decisions requiring review:** the T1-A diff; commit/push authorisation; Q-075 before the v1.1 freeze; T2 authorisation.
+- **Recommended next step:** review the diff and Q-074–Q-076; then authorise commit, and T2 separately.
+- **Researcher decisions:** T1-A authorised with owner directions 1–12 (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — T1-A-FOLLOW-UP
+- **Work completed:** Q-076 owner directions implemented: retracted records excluded from the full-text candidate list by token membership; hand-edited `publication_type` values rejected (JSON and CSV) with nothing written, nulls from earlier inventories accepted; tests for all-ignored types, precedence over unrecognised types and the primary-source arXiv rule.
+- **Important findings:** `[EVIDENCE]` 122 literature tests pass; mutation checks show the new tests fail on the old code. `[EVIDENCE]` no current record is affected by (a), (b) or (d). `[OPEN]` Q-077: the edit guard will also stop a run after a legitimate extension of the mapping table.
+- **Decisions requiring review:** the combined T1-A diff; commit/push; whether to record the T1-A and Q-076 directions in DECISION_LOG; Q-074, Q-075, Q-077; T2.
+- **Recommended next step:** review the diff; authorise commit and push; then T2 separately.
+- **Researcher decisions:** Q-076(a)–(d) and mapping-precedence directions given (2026-10-31).

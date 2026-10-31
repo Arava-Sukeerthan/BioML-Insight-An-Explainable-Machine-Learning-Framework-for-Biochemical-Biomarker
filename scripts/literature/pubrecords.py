@@ -57,18 +57,27 @@ SCREENING_STAGE_ORDER = {"title_abstract": 1, "full_text": 2}
 # research/literature/schemas/screening_decision.schema.json (checked by a unit test).
 SCREENING_REQUIRED = ["paper_id", "stage", "decision", "reason_code", "screener", "date", "justification"]
 SCREENING_OPTIONAL = ["rq_tags", "tier", "scope_flags", "record_type", "dim_explainability",
-                      "dim_uncertainty", "dim_calibration", "dim_independent_validation",
-                      "criteria_version", "needs_human", "dim_feature_selection", "dim_classification"]
+                      "dim_uncertainty", "dim_calibration", "validation_design",
+                      "criteria_version", "needs_human", "dim_feature_selection", "dim_classification",
+                      "biomarker_class"]
+# Screening columns that are no longer accepted (T1-A). dim_independent_validation is replaced by
+# validation_design (D-029 as specified in D-060); its values are never converted automatically.
+RETIRED_SCREENING_COLUMNS = ("dim_independent_validation",)
 SCREENING_DECISIONS = ("include", "exclude", "uncertain", "abstract_only")   # "not_screened" = no row
 SCREENING_ENUMS = {
     "stage": ("title_abstract", "full_text"),
     "decision": SCREENING_DECISIONS,
     "tier": ("", "1", "2", "3"),
-    "record_type": ("", "original", "methodological", "software", "guideline", "review_lead", "preprint", "notice"),
+    # D-028 2d: preprint/notice removed (bibliographic facts now held by publication_type)
+    "record_type": ("", "original", "methodological", "software", "guideline", "review_lead", "other"),
     "dim_explainability": ("", "yes", "no", "unclear"),
     "dim_uncertainty": ("", "yes", "no", "unclear"),
     "dim_calibration": ("", "yes", "no", "unclear"),
-    "dim_independent_validation": ("", "external", "temporal", "internal_only", "unclear"),
+    # D-060 (1): strongest stated validation design
+    "validation_design": ("", "external", "temporal", "internal_only", "none", "not_applicable", "unclear"),
+    # D-058 (Q-035)
+    "biomarker_class": ("", "metabolomics_lipidomics", "newborn_screening_msms", "routine_chemistry",
+                        "mixed_both", "other", "unclear"),
     "needs_human": ("", "yes", "no"),
     # D-032 (APPROVED - CONDITIONAL, inactive for screening until its dependencies are met):
     # RQ5 feature/biomarker-selection component
@@ -83,6 +92,43 @@ RQ5_COMPONENT_FIELDS = {"feature_selection": "dim_feature_selection", "classific
                         "explainability": "dim_explainability", "calibration": "dim_calibration",
                         "uncertainty": "dim_uncertainty"}
 RQ5_RECORDED_FIELDS = list(RQ5_COMPONENT_FIELDS.values())
+# D-060 (6): required for include/uncertain at title/abstract; optional for exclude; rows written by
+# the Stage-0 rule (screener=rule:stage0) are exempt. Not applied to full-text rows.
+TITLE_ABSTRACT_REQUIRED = ("rq_tags", "record_type", "biomarker_class", "dim_explainability",
+                           "dim_uncertainty", "dim_calibration", "validation_design")
+STAGE0_SCREENER = "rule:stage0"
+# scope_flags tokens a screener may enter (semicolon-separated): D-057 and D-061 (D-061 takes effect
+# only when screening_criteria v1.1 is frozen; accepting the token activates nothing). Other tokens
+# need a separate owner decision. "retracted" is derived by the build, never entered by hand.
+SCOPE_FLAG_TOKENS = ("scope_pending_proteomics", "non_metabolic_rq5_candidate")
+BUILD_DERIVED_SCOPE_FLAGS = ("retracted",)
+# D-028 2a: publication_type is derived only from source metadata, first match wins. Table: ballot
+# Item 2 (research/reviews/owner_review_ballot_LIT-004.md), same as decision_reconciliation_LIT-004.md
+# section 2.2. Row "preprint" also matches when the publication's source database is arXiv (D-028 2b).
+# No URL or DOI-prefix rules (D-028 2c). Extensions only by a logged change.
+PUBLICATION_TYPE_MAP = (
+    ("retraction_notice", ("Retraction of Publication",)),
+    ("expression_of_concern", ("Expression of Concern",)),
+    ("erratum_or_correction", ("Published Erratum", "Correction")),
+    ("study_protocol", ("Clinical Trial Protocol",)),
+    ("dataset", ("Dataset",)),
+    ("preprint", ("Preprint",)),
+    ("review", ("Review", "Systematic Review", "Scoping Review", "Meta-Analysis", "Evidence Synthesis")),
+    ("guideline_or_consensus", ("Guideline", "Practice Guideline", "Consensus Statement")),
+    ("editorial_comment_letter", ("Editorial", "Comment", "Letter", "News")),
+    ("conference_paper", ("Conference Proceedings", "Congress")),
+    ("journal_article", ("Journal Article",)),
+)
+# Kept verbatim in source_publication_types but not used for the class. "Retracted Publication" only
+# sets the retracted flag: a retracted article is not a retraction notice.
+PUBLICATION_TYPES_IGNORED = frozenset({
+    "Research Support, N.I.H., Extramural", "Research Support, N.I.H., Intramural",
+    "Research Support, Non-U.S. Gov't", "Research Support, U.S. Gov't, Non-P.H.S.",
+    "Research Support, U.S. Gov't, P.H.S.", "Validation Study", "Multicenter Study", "Comparative Study",
+    "Observational Study", "Randomized Controlled Trial", "Clinical Trial", "Clinical Trial, Phase I",
+    "Clinical Trial, Phase II", "Clinical Trial, Phase III", "Evaluation Study", "English Abstract",
+    "Historical Article", "Video-Audio Media", "Retracted Publication"})
+PUBLICATION_TYPES = tuple(v for v, _ in PUBLICATION_TYPE_MAP) + ("unknown", "other")
 RESEARCHER = "researcher"   # screener value for the researcher (screening_protocol.md section 6)
 REASON_CODE = re.compile(r"E(1[0-2]|[1-9])")
 RQ_TAGS = re.compile(r"(RQ[1-6])(;RQ[1-6])*")
@@ -1130,11 +1176,12 @@ def build(lit_dir, today=None, check_schema=True):
             dup = "merged_duplicates"
         else:
             dup = "unique"
+        source_dbs = sorted({m["source"] for m in members},
+                            key=lambda s: SOURCE_PRIORITY.index(s) if s in SOURCE_PRIORITY else 99)
         pubs.append({
             "paper_id": pid,
             **pub,
-            "source_databases": sorted({m["source"] for m in members},
-                                       key=lambda s: SOURCE_PRIORITY.index(s) if s in SOURCE_PRIORITY else 99),
+            "source_databases": source_dbs,
             "source_urls": sorted({m["source_url"] for m in members if m.get("source_url")}),
             "primary_source_record_id": primary["source_record_id"],
             "field_provenance": prov,
@@ -1159,6 +1206,7 @@ def build(lit_dir, today=None, check_schema=True):
             "rq5_coverage_group": rq5_groups.get(pid, (None, None))[0],
             "rq5_coverage_provisional": rq5_groups.get(pid, (None, None))[1],
             "retracted": any("Retracted Publication" in (m.get("publication_types") or []) for m in members),
+            "publication_type": derive_publication_type(pub.get("publication_types"), source_dbs),
         })
     pubs.sort(key=lambda p: int(p["paper_id"][1:]))
 
@@ -1229,6 +1277,10 @@ def build(lit_dir, today=None, check_schema=True):
         "registry_conflicts": [{"kept": k, "also": v} for k, v in reg_conflicts],
         "search_completeness": completeness,
         "retracted": [p["paper_id"] for p in pubs if p["retracted"]],
+        # D-028: unrecognised source types (publication_type "other" when nothing else matched);
+        # the build does not fail; the mapping table is extended only by a logged change
+        "unmapped_publication_types": _count(t for p in pubs
+                                             for t in unmapped_publication_types(p["publication_types"])),
         "screening_decision": _count(p["screening_decision"] for p in pubs),
         "publications_without_stable_registry_key": sum(
             1 for c in clusters if not any(record_keys(records[i]) for i in c)),
@@ -1244,6 +1296,27 @@ def build(lit_dir, today=None, check_schema=True):
     with open(rec_dir / "build_report.json", "w") as f:
         json.dump(report, f, indent=2, sort_keys=True)
     return report
+
+
+def unmapped_publication_types(source_types):
+    """Source types that are neither in PUBLICATION_TYPE_MAP nor in PUBLICATION_TYPES_IGNORED."""
+    known = {t for _, names in PUBLICATION_TYPE_MAP for t in names} | PUBLICATION_TYPES_IGNORED
+    return sorted({t for t in (source_types or []) if t and t not in known})
+
+
+def derive_publication_type(source_types, source_databases):
+    """D-028 publication_type from source metadata only (first match wins).
+    source_types: the publication-level source types (as kept in source_publication_types);
+    source_databases: the publication's source databases, field-priority source first.
+    No class-bearing type: "other" if an unrecognised type is present (it is also reported as
+    unmapped), otherwise "unknown" (no type at all, or only types not used for the class).
+    Never looks at URLs, DOIs or titles."""
+    types = list(source_types or [])
+    arxiv = bool(source_databases) and source_databases[0] == "arxiv"
+    for value, names in PUBLICATION_TYPE_MAP:
+        if any(t in names for t in types) or (value == "preprint" and arxiv):
+            return value
+    return "other" if unmapped_publication_types(types) else "unknown"
 
 
 def _component_statuses(row):
@@ -1340,6 +1413,24 @@ def derive_rq5_coverage_group(statuses):
     return group, provisional
 
 
+def scope_flag_errors(value):
+    """Problems in a manually entered scope_flags value (semicolon-separated tokens; empty = none).
+    Values are reported, never corrected."""
+    if value == "":
+        return []
+    errors = []
+    for tok in value.split(";"):
+        if tok == "":
+            errors.append(f"scope_flags={value!r}: empty token")
+        elif tok != tok.strip():
+            errors.append(f"scope_flags={value!r}: token {tok!r} has leading or trailing whitespace")
+        elif tok in BUILD_DERIVED_SCOPE_FLAGS:
+            errors.append(f"scope_flags={value!r}: {tok!r} is derived by the build and cannot be entered")
+        elif tok not in SCOPE_FLAG_TOKENS:
+            errors.append(f"scope_flags={value!r}: token {tok!r} not in {SCOPE_FLAG_TOKENS}")
+    return errors
+
+
 def load_screening_decisions(lit_dir):
     """Read and validate screening/decisions.csv. Any invalid row stops the build (no row is
     silently dropped). Returns the rows as dicts (all columns as strings)."""
@@ -1350,12 +1441,17 @@ def load_screening_decisions(lit_dir):
         reader = csv.DictReader(f)
         cols = reader.fieldnames or []
         missing = [c for c in SCREENING_REQUIRED if c not in cols]
-        unknown = [c for c in cols if c not in SCREENING_REQUIRED + SCREENING_OPTIONAL]
-        if missing or unknown:
-            raise ValueError(f"{path}: missing columns {missing}, unknown columns {unknown}")
-        rows = [{k: (v or "").strip() for k, v in r.items()} for r in reader]
+        retired = [c for c in cols if c in RETIRED_SCREENING_COLUMNS]
+        unknown = [c for c in cols if c not in SCREENING_REQUIRED + SCREENING_OPTIONAL + retired]
+        if missing or unknown or retired:
+            raise ValueError(f"{path}: missing columns {missing}, unknown columns {unknown}"
+                             + (f", retired columns {retired} (dim_independent_validation is replaced by "
+                                "validation_design, D-029/D-060; values are not converted: record "
+                                "validation_design instead)" if retired else ""))
+        raw = list(reader)
+        rows = [{k: (v or "").strip() for k, v in r.items()} for r in raw]
     errors = []
-    for n, r in enumerate(rows, start=2):
+    for n, (r, r_raw) in enumerate(zip(rows, raw), start=2):
         for k in SCREENING_OPTIONAL:
             r.setdefault(k, "")
         where = f"line {n} ({r['paper_id'] or '?'})"
@@ -1378,6 +1474,13 @@ def load_screening_decisions(lit_dir):
             errors.append(f"{where}: date must be YYYY-MM-DD")
         if r["rq_tags"] and not RQ_TAGS.fullmatch(r["rq_tags"]):
             errors.append(f"{where}: rq_tags must be like RQ1;RQ3")
+        # checked on the value as written (before stripping), so padded tokens are reported, not fixed
+        errors += [f"{where}: {e}" for e in scope_flag_errors(r_raw.get("scope_flags") or "")]
+        if (r["stage"] == "title_abstract" and r["decision"] in ("include", "uncertain")
+                and r["screener"] != STAGE0_SCREENER):
+            absent = [k for k in TITLE_ABSTRACT_REQUIRED if not r[k]]
+            if absent:
+                errors.append(f"{where}: {r['decision']} at title_abstract requires {absent} (D-060 (6))")
     if errors:
         raise ValueError(f"{path}: invalid screening decisions:\n  " + "\n  ".join(errors))
     return rows

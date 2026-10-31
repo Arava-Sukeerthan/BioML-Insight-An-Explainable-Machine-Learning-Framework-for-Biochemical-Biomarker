@@ -43,18 +43,21 @@ EXTRACTION_FIELDS = ["research_problem", "disorder", "population", "dataset", "s
 INV_COLS = ["paper_id", "title", "authors", "year", "venue", "doi", "pmid", "arxiv_id", "url", "pmcid",
             "source_db", "query_ids", "retrieved_on", "verification_status", "verification_note",
             "screening_status", "screening_stage", "exclusion_reason", "publication_type", "rq_tags", "tier",
-            "scope_flags", "record_type", "dim_explainability", "dim_uncertainty", "dim_calibration",
-            "dim_independent_validation", "dim_feature_selection", "dim_classification", "screener",
+            "scope_flags", "record_type", "biomarker_class", "dim_explainability", "dim_uncertainty",
+            "dim_calibration", "dim_independent_validation", "screening_validation_design",
+            "dim_feature_selection", "dim_classification", "screener",
             "screening_date", "screening_justification",
             "source_publication_types", "abstract_available", "full_text_availability", "retrieval_themes",
             "preliminary_relevance", "extraction_status"] + EXTRACTION_FIELDS + ["notes"]
 
 
 # Fields filled by people (extraction). A rebuild carries their existing values forward instead
-# of resetting them (LIT-004-WORKFLOW-FIXES).
-MANUAL_FIELDS = EXTRACTION_FIELDS + ["extraction_status", "publication_type"]
-MANUAL_DEFAULTS = {**{k: SENTINEL for k in EXTRACTION_FIELDS}, "extraction_status": "not_extracted",
-                   "publication_type": None}
+# of resetting them (LIT-004-WORKFLOW-FIXES). publication_type is not one of them: it is derived
+# by the build from source metadata (D-028); a hand-edited value stops the run (DERIVED_GUARDED).
+MANUAL_FIELDS = EXTRACTION_FIELDS + ["extraction_status"]
+MANUAL_DEFAULTS = {**{k: SENTINEL for k in EXTRACTION_FIELDS}, "extraction_status": "not_extracted"}
+# Generated fields that a hand edit must not change silently: checked, never carried forward.
+DERIVED_GUARDED = ["publication_type"]
 YEAR_NOTE = "year not returned by the source (0 = missing)"   # generated, not a manual note
 
 
@@ -80,13 +83,22 @@ def manual_values(lit):
                                 or r.get("notes", "") not in ("", YEAR_NOTE) for r in rows.values()):
             raise SystemExit("paper_inventory.csv has manual values but paper_inventory.json is missing "
                              "(nothing written)")
-        diff = sorted(f"{pid}:{k}" for pid, r in previous.items() for k in MANUAL_FIELDS + ["notes"]
+        diff = sorted(f"{pid}:{k}" for pid, r in previous.items() for k in MANUAL_FIELDS + ["notes"] + DERIVED_GUARDED
                       if pid in rows and k in rows[pid] and _csv_text(r.get(k)) != rows[pid][k])
         diff += sorted(f"{pid}:(row only in one file)" for pid in set(rows) ^ set(previous)) if previous else []
         if diff:
             raise SystemExit("paper_inventory.csv and paper_inventory.json disagree on manual fields; "
                              "copy the edits into the JSON file first (nothing written): "
                              + ", ".join(diff[:20]) + (" ..." if len(diff) > 20 else ""))
+    # publication_type is derived (D-028), never hand-edited: a stored value must equal the value derived
+    # from the same row's source types and source database. null = inventory built before T1-A.
+    edited = sorted(pid for pid, r in previous.items() if r.get("publication_type") is not None
+                    and r["publication_type"] != pr.derive_publication_type(
+                        (r.get("source_publication_types") or "").split(";"), [r.get("source_db")]))
+    if edited:
+        raise SystemExit("paper_inventory.json: publication_type differs from the value derived from "
+                         "source_publication_types/source_db (D-028; not hand-editable); restore or clear "
+                         "it (nothing written): " + ", ".join(edited[:20]) + (" ..." if len(edited) > 20 else ""))
     out = {}
     for pid, r in previous.items():
         v = {k: r.get(k) for k in MANUAL_FIELDS if k in r and r.get(k) != MANUAL_DEFAULTS[k]}
@@ -188,13 +200,18 @@ def main(argv=None):
             "retrieved_on": min(s["search_timestamp"] for s in p["search_provenance"])[:10],
             "verification_status": p["verification_status"], "verification_note": p["verification_note"],
             "screening_status": p["screening_decision"], "screening_stage": p["screening_stage"],
-            "exclusion_reason": p["exclusion_reason"], "publication_type": None,
+            "exclusion_reason": p["exclusion_reason"], "publication_type": p["publication_type"],
             "rq_tags": sd.get("rq_tags"), "tier": int(sd["tier"]) if sd.get("tier") else None,
             "scope_flags": ";".join(x for x in (["retracted"] if p["retracted"] else [])
                                     + ((sd.get("scope_flags") or "").split(";")) if x) or None,
-            "record_type": sd.get("record_type"), "dim_explainability": sd.get("dim_explainability"),
+            "record_type": sd.get("record_type"), "biomarker_class": sd.get("biomarker_class"),
+            "dim_explainability": sd.get("dim_explainability"),
             "dim_uncertainty": sd.get("dim_uncertainty"), "dim_calibration": sd.get("dim_calibration"),
-            "dim_independent_validation": sd.get("dim_independent_validation"),
+            # retired screening column (D-029/D-060): always empty; the column is removed at T2
+            "dim_independent_validation": None,
+            # screening descriptor validation_design (D-060); kept apart from the extraction field
+            # validation_design (D-024), which stays in EXTRACTION_FIELDS
+            "screening_validation_design": sd.get("validation_design"),
             "dim_feature_selection": sd.get("dim_feature_selection"),
             "dim_classification": sd.get("dim_classification"),
             "screener": sd.get("screener"), "screening_date": sd.get("date"),
@@ -242,7 +259,7 @@ def main(argv=None):
             reasons.append("retrieved by an integrated-framework query (theme F, closest-prior-art candidate)")
         if len(th & {"C", "D", "E"}) >= 2:
             reasons.append("retrieved by >=2 of themes C/D/E")
-        if not reasons or r["scope_flags"] == "retracted":
+        if not reasons or "retracted" in (r["scope_flags"] or "").split(";"):
             continue
         cand.append({"paper_id": r["paper_id"], "title": r["title"], "year": r["year"], "pmid": r["pmid"],
                      "doi": r["doi"], "arxiv_id": r["arxiv_id"], "retrieval_themes": r["retrieval_themes"],

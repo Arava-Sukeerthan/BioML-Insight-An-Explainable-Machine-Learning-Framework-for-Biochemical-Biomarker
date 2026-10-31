@@ -674,3 +674,23 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Recorded in `DECISION_LOG.md`, `unresolved_questions.md` and the `GOVERNANCE.md` Stage B row; task logs updated; uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `b81c4e7`; uncommitted when written; not pushed |
 | Pull request | None for this task (PR #17 unchanged by it) |
+
+### T1-A (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | T1-A (researcher prompt 2026-10-31: "Implement Approved Literature Schema and Validation Changes", owner directions 1–12) |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Implement D-028, D-029/D-060, D-058 and the approved `scope_flags` tokens (D-057, D-061) in code, schemas and tests; no build, screening, freeze or commit |
+| Actual completion status | Implemented; `tests/literature` 113 OK (90 before); protected-file hashes unchanged; no build; Q-074–Q-076 opened; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted when written; not pushed |
+| Pull request | None for this task |
+
+### T1-A-FOLLOW-UP (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | T1-A follow-up (researcher prompt 2026-10-31: "Implement a narrowly scoped T1-A follow-up", owner directions 1–7 on Q-076) |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Implement Q-076(a)–(d) directions and the mapping-precedence direction in code and tests; no build, commit or push |
+| Actual completion status | Implemented; `tests/literature` 122 OK (113 before); protected files unchanged; Q-077 opened; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted when written; not pushed |
+| Pull request | None for this task |

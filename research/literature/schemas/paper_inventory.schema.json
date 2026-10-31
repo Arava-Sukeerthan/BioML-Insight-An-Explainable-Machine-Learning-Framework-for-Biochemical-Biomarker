@@ -129,15 +129,22 @@
           "null"
         ],
         "enum": [
-          "original_research",
-          "methodological",
-          "software_framework",
-          "guideline",
-          "review_lead",
-          "preprint_original",
+          "retraction_notice",
+          "expression_of_concern",
+          "erratum_or_correction",
+          "study_protocol",
+          "dataset",
+          "preprint",
+          "review",
+          "guideline_or_consensus",
+          "editorial_comment_letter",
+          "conference_paper",
+          "journal_article",
+          "unknown",
           "other",
           null
-        ]
+        ],
+        "description": "Derived by the build from source metadata only (D-028 2a-2c; first match wins; never hand-edited). null only in inventories generated before T1-A"
       },
       "rq_tags": {
         "type": [
@@ -163,7 +170,8 @@
           "string",
           "null"
         ],
-        "description": "e.g. scope_pending; lr_only; prognostic; abstract_only; expression_of_concern"
+        "pattern": "^((retracted|scope_pending_proteomics|non_metabolic_rq5_candidate)(;(retracted|scope_pending_proteomics|non_metabolic_rq5_candidate))*)?$",
+        "description": "Semicolon-separated. 'retracted' is derived by the build (PubMed Retracted Publication); the other tokens come from the latest screening decision (scope_pending_proteomics D-057; non_metabolic_rq5_candidate D-061)"
       },
       "disorder": {
         "type": [
@@ -382,14 +390,55 @@
           "string",
           "null"
         ],
-        "description": "From the latest screening decision (screening/decisions.csv)"
+        "description": "Retired screening column (replaced by validation_design, D-029/D-060); always null. Removed from the inventory at T2"
+      },
+      "screening_validation_design": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "enum": [
+          "external",
+          "temporal",
+          "internal_only",
+          "none",
+          "not_applicable",
+          "unclear",
+          null
+        ],
+        "description": "Screening descriptor validation_design from the latest screening decision (D-060 (1)). Distinct from the extraction field validation_design (D-024), which is not changed"
       },
       "record_type": {
         "type": [
           "string",
           "null"
         ],
-        "description": "From the latest screening decision (screening/decisions.csv)"
+        "enum": [
+          "original",
+          "methodological",
+          "software",
+          "guideline",
+          "review_lead",
+          "other",
+          null
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv); D-028 2d"
+      },
+      "biomarker_class": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "enum": [
+          "metabolomics_lipidomics",
+          "newborn_screening_msms",
+          "routine_chemistry",
+          "mixed_both",
+          "other",
+          "unclear",
+          null
+        ],
+        "description": "From the latest screening decision (screening/decisions.csv); D-058"
       },
       "screener": {
         "type": [

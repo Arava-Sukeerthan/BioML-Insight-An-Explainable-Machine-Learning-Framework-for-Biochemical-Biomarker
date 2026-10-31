@@ -417,6 +417,11 @@
     "retracted": {
       "type": "boolean"
     },
+    "publication_type": {
+      "type": "string",
+      "enum": ["retraction_notice", "expression_of_concern", "erratum_or_correction", "study_protocol", "dataset", "preprint", "review", "guideline_or_consensus", "editorial_comment_letter", "conference_paper", "journal_article", "unknown", "other"],
+      "description": "D-028 2a-2c: derived by the build from publication_types (and source database arXiv) only, first match wins; never hand-edited. Written by every build from T1-A on; absent from records built earlier, so not listed in required until the T2 rebuild"
+    },
     "screening_details": {
       "type": [
         "object",
@@ -467,6 +472,13 @@
             "null"
           ]
         },
+        "biomarker_class": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "D-058"
+        },
         "dim_explainability": {
           "type": [
             "string",
@@ -501,7 +513,15 @@
           "type": [
             "string",
             "null"
-          ]
+          ],
+          "description": "Retired screening column (replaced by validation_design, D-029/D-060); no longer written. Removed from this schema at T2"
+        },
+        "validation_design": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Screening descriptor (D-060 (1)); shown in the inventory as screening_validation_design"
         },
         "criteria_version": {
           "type": [

@@ -1567,3 +1567,41 @@ Explicit researcher approval of the near-equal allocation (B 8, A 8, untagged 8,
 **Not changed**: Q-020, Q-021, Q-063, Q-064; other decisions; search inventory and register; code, tests, schemas, inventory and generated outputs; criteria and protocol drafts; screening (INACTIVE).
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `b81c4e7`; uncommitted when written; not pushed.
+
+## T1-A — 2026-10-31 — Approved screening-schema and validation changes implemented in code, schemas and tests (no build)
+
+**Context**: researcher task T1-A (2026-10-31) with owner directions 1–12: inventory field `screening_validation_design` for the screening descriptor; extraction field `validation_design` unchanged; `dim_independent_validation` retired from screening input without value mapping (removal from generated outputs and their schemas deferred to T2); manual `scope_flags` tokens limited to `scope_pending_proteomics` and `non_metabolic_rq5_candidate`; `retracted` stays build-derived; no software enforcement of the D-060 (2) missing-abstract rule; descriptor requirement only for title/abstract `include`/`uncertain` rows, Stage-0 rows exempt. Governing decisions: D-028 (2a–2d), D-029 as specified in D-060, D-057, D-058, D-061.
+
+**Modified**
+- `scripts/literature/pubrecords.py`: screening columns and enums (`record_type` per D-028 2d; `validation_design` per D-060 (1); `biomarker_class` per D-058); `RETIRED_SCREENING_COLUMNS` (clear error, no conversion); D-060 (6) required-descriptor check for title/abstract `include`/`uncertain` rows with the `rule:stage0` exemption; controlled `scope_flags` validator (`scope_flag_errors`, checked on the value as written); D-028 mapping (`PUBLICATION_TYPE_MAP`, `PUBLICATION_TYPES_IGNORED`, `derive_publication_type`, `unmapped_publication_types`); `publication_type` written to publication records and `unmapped_publication_types` to the build report.
+- `scripts/literature/make_literature_reports.py`: inventory columns `biomarker_class` and `screening_validation_design`; `publication_type` taken from the build and removed from the manual fields; `dim_independent_validation` written as null until T2.
+- `research/literature/schemas/screening_decision.schema.json`, `paper_inventory.schema.json`, `publication_record.schema.json`: aligned with the code (enums, column order, controlled `scope_flags` pattern, 13-value `publication_type`, `screening_details` keys); `scope_flags` description no longer lists `abstract_only` or `expression_of_concern`; extraction field `validation_design` unchanged.
+- `tests/literature/test_screening_and_ids.py`: fixtures completed with SYNTHETIC D-060 (6) descriptors where the test subject is not the descriptors; RQ5 tests that leave method descriptors blank at title/abstract now use `exclude` rows (their assertions are unchanged); `test_optional_descriptor_columns` uses `validation_design`/`screening_validation_design`; manual-value tests use extraction fields instead of `publication_type`; new `test_publication_type_is_derived_not_manual`; publication-schema test allows the retired key until T2.
+- `tests/literature/test_t1a_schema_validation.py` (new, 22 tests, synthetic fixtures only).
+- `research/reviews/unresolved_questions.md`: Q-074, Q-075, Q-076 added (Open).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; new `logs/session_logs/2026-10-31_T1-A.md`.
+
+**Validation**: `python3 -I -m unittest discover -s tests/literature` (run with `-B`, `PYTHONDONTWRITEBYTECODE=1`): 113 tests, OK (baseline before T1-A: 90, OK). Protected files (306: all of `research/` except `schemas/`, incl. ignored raw exports, plus `DECISION_LOG.md`, `GOVERNANCE.md`, `CLAUDE.md`) hashed before and after the code/test work: identical. Committed inventory (3,386 rows) and `publications.jsonl` (3,386) validate against the new schemas (read-only check). `git -c core.whitespace=cr-at-eol diff --check`: exit 0.
+
+**Not changed**: inventory, `records/`, `build_report.json`, generated reports, raw exports and `MANIFEST.csv`, registry, D-044 snapshot, criteria/protocol drafts, decision statuses. No build, screening, pilot, freeze or experiment.
+
+**T2 (requires separate authorisation)**: rebuild under the Step C safeguards; then remove `dim_independent_validation` from `INV_COLS`, the inventory schema and the publication schema `screening_details` (with `RETIRED_SCREENING_COLUMNS` kept for input rejection) and list `publication_type` as required in the publication schema.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted when written; not pushed.
+
+## T1-A-FOLLOW-UP — 2026-10-31 — Q-076(a)–(d) owner directions implemented (no build)
+
+**Context**: researcher prompt 2026-10-31 with owner directions on Q-076: (a) all-ignored source types → `unknown`; (b) arXiv rule on the primary source database; (c) reject non-null hand-edited `publication_type` values that differ from the derived value, include the field in the CSV-versus-JSON check, allow nulls from earlier inventories; (d) exclude retracted records from the full-text candidate list by token membership; recognised types take precedence over unrecognised ones. Q-074 and Q-075 stay open. No DECISION_LOG entry or status change.
+
+**Modified**
+- `scripts/literature/make_literature_reports.py`: `DERIVED_GUARDED` (`publication_type`) added to the CSV-versus-JSON comparison in `manual_values`; new check in `manual_values` (runs before any output is written) that stops with nothing written when a non-null `publication_type` differs from `pr.derive_publication_type` on the same row's `source_publication_types`/`source_db`; candidate filter uses `"retracted" in (scope_flags or "").split(";")`.
+- `tests/literature/test_screening_and_ids.py`: `test_publication_type_is_derived_not_manual` now expects rejection with outputs unchanged (it previously expected the edit to be overwritten).
+- `tests/literature/test_t1a_schema_validation.py`: new classes `TestFollowUpQ076` (3), `TestFollowUpPublicationTypeEdits` (4), `TestFollowUpRetractedCandidates` (2); synthetic fixtures only.
+- `research/reviews/unresolved_questions.md`: Q-076 status cell (owner directions; implemented; no decision entry); new Q-077 (guard versus a future mapping-table extension).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; `logs/session_logs/2026-10-31_T1-A.md` (follow-up section).
+
+**Validation**: `PYTHONDONTWRITEBYTECODE=1 python3 -I -B -m unittest discover -s tests/literature`: 122 tests, OK (113 before the follow-up). Mutation checks on a scratchpad copy: restoring the old exact-equality filter fails `test_retracted_with_other_flag_excluded_and_theme_record_kept`; disabling the guard fails 3 tests. Protected files unchanged (see session log). `git -c core.whitespace=cr-at-eol diff --check`: exit 0.
+
+**Not changed**: inventory, `records/`, generated reports, raw exports, MANIFEST, registry, D-044 snapshot, criteria/protocol drafts, decision statuses, the 13-value mapping. No build, screening, pilot, freeze or experiment.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted (together with T1-A); not pushed.
