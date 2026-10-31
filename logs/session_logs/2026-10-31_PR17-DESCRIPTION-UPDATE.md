@@ -12,7 +12,7 @@
 One `update_pull_request` call with the `body` field only (no title, state, base, reviewers or other field).
 
 ## Verification (read-back)
-- Fetched with the GitHub MCP `pull_request_read` and from the public GitHub API; compared programmatically with the approved file: identical except the final trailing newline, which GitHub does not store (24,302 vs 24,303 characters).
+- Fetched with the GitHub MCP `pull_request_read` (inspected manually) and from the public GitHub API; the API copy was compared programmatically with the approved file: identical except the final trailing newline, which GitHub does not store (24,302 vs 24,303 characters).
 - After the update: title unchanged ("PR-1 of 2: protocol draft v0.1 rev. 5, D-040, LIT-005 inventory rebuild and governance records (2026-10-24 to 2026-10-30)"); open; not draft; not merged; mergeable state `clean`; head `81875c3`; base `claude/happy-hawking-rxptfv` at `eb79996`; 29 commits; 1 existing comment (unchanged); `updated_at` 2026-10-31T08:55:37Z.
 - Local repository after the update: `git status` clean at `81875c3`.
 
