@@ -416,3 +416,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** the Step B diff; commit/push authorisation; Step C (rebuild).
 - **Recommended next step:** review the diff; then authorise the commit.
 - **Researcher decisions:** Step B authorised with D2, D3, D4 (2026-10-30).
+
+## Day 18 — 2026-10-31 — T0-GOVERNANCE-DECISIONS
+- **Work completed:** D-065 (Stage A, executed search), D-066 (Stage B interpretation) and D-067 (Stage B governance row) recorded; Q-022 answered; D-005, D-006, D-007 approved as executed with limitations.
+- **Important findings:** `[EVIDENCE]` search reconciliation: 56 planned (26 executed, 30 not searched) + 9 LIT-005 executions = 35 recorded executions; re-fetches (15), capability probes (32) and pilot counts (30) are not searches. `[OPEN]` D-035 §6 conditions 5–6 (freeze; screening-schema implementation, tests, rebuild).
+- **Decisions requiring review:** commit and push of this recording; T1 authorisation.
+- **Recommended next step:** review the diff; authorise commit and push separately.
+- **Researcher decisions:** final T0 wording approved and recording authorised (2026-10-31).

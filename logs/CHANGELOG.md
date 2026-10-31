@@ -1553,3 +1553,17 @@ Explicit researcher approval of the near-equal allocation (B 8, A 8, untagged 8,
 **Not changed**: inventory, generated reports, `records/`, verification statuses, raw exports and manifest, schemas, D-044 snapshot, criteria/protocol drafts, screening (INACTIVE). No build run.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `5cd9fc3`; uncommitted when written; not pushed.
+
+## T0-GOVERNANCE-DECISIONS — 2026-10-31 — D-065, D-066, D-067 recorded; Q-022 answered; GOVERNANCE.md Stage B row amended
+
+**Context**: researcher approval (2026-10-31) of the final T0 wording and authorisation to record it. Commit and push are not authorised by this task.
+
+**Modified**
+- `logs/DECISION_LOG.md`: new section with D-065 (Q-022: 35 recorded search executions approved as executed with limitations; 30 planned searches not searched), D-066 (Stage B interpretation) and D-067 (Stage B governance amendment), all APPROVED; D-005, D-006, D-007 status and "Approved by" cells → APPROVED as executed with documented limitations (texts unchanged); four Status history rows.
+- `GOVERNANCE.md` §2: Stage B row only (D-067).
+- `research/reviews/unresolved_questions.md`: Q-022 → Answered (D-065).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; new `logs/session_logs/2026-10-31_T0-GOVERNANCE-DECISIONS.md`.
+
+**Not changed**: Q-020, Q-021, Q-063, Q-064; other decisions; search inventory and register; code, tests, schemas, inventory and generated outputs; criteria and protocol drafts; screening (INACTIVE).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `b81c4e7`; uncommitted when written; not pushed.

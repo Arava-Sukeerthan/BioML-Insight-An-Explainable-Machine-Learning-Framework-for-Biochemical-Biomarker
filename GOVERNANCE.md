@@ -31,7 +31,7 @@ DECISION_LOG entry approved by the researcher.
 | Stage | Content | Exit criterion (gate) |
 |---|---|---|
 | A | Research setup, literature-search design | Search strategy approved |
-| B | Literature collection, source verification | Inventory built; every entry verified against a bibliographic source |
+| B | Literature collection, source verification | Inventory built; every entry has a verification classification under DECISION_LOG D-064. Citation eligibility remains governed by the approved research-plan and verification requirements. Screening permissions under DECISION_LOG D-066 apply only after screening activation under D-035 §6; passing this gate does not itself activate screening. |
 | C | Critical comparison of existing methods | Comparison reviewed by researcher |
 | D | Research gap and feasibility | Gap + main contribution approved |
 | E | Framework design, experimental protocol | Protocol approved (frozen before modelling) |

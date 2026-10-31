@@ -664,3 +664,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Implemented; `tests/literature` 87 OK (69 existing incl. 1 authorised modification + 18 new); no build, no data or status change |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `5cd9fc3`; uncommitted when written; not pushed |
 | Pull request | None for this task (PR #17 unchanged by it) |
+
+### T0-GOVERNANCE-DECISIONS (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | Assistant label T0-GOVERNANCE-DECISIONS (researcher prompts 2026-10-31: T0 drafting authorised; final package approved; "The researcher authorizes recording these approved decisions in the repository.") |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Record D-065, D-066, D-067, the Q-022 answer and the D-005/D-006/D-007 status changes as approved; no commit, push or T1 |
+| Actual completion status | Recorded in `DECISION_LOG.md`, `unresolved_questions.md` and the `GOVERNANCE.md` Stage B row; task logs updated; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `b81c4e7`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
