@@ -104,7 +104,7 @@ Record (within the D-044 scope)
 ```
 * **When in doubt, include at Stage 1.** Exclusion requires a positive reason stated in the title/abstract.
 * **Silence is never `no`** (D-060 (2)): absence of mention is not evidence that a method is absent.
-* **Missing abstract** (6 records in the D-044 scope): method descriptors and `validation_design` = `unclear`; decision `uncertain` unless a title-level Stage-0, E1 or E4 reason applies (D-059 A-6; D-060 (2)).
+* **Missing abstract** (title/abstract stage only; 6 records in the D-044 scope; D-060 (2) as amended by D-068; D-059 A-6): `uncertain` → full text, unless a Stage-0 rule exclusion (E5/E7, from source publication types) applies or the title alone clearly meets E1 as worded in the frozen §1, including its RQ limitations. **E4 is not applied because an abstract is missing.** Method descriptors and `validation_design` = `unclear`; `biomarker_class` = `unclear` unless explicitly supported by the title. All five preliminary component statuses are `unclear` with justification "no abstract". `rq_tags` (RQs the record could inform) and `record_type` are provisional and are confirmed or corrected at full text. No RQ5-based tier (§5; D-068 (7)). Missing information never gives `yes`, `include` or a confirmed classification. A record whose abstract was *not retrieved* is not treated as having an *unavailable* abstract; retrieval comes first where feasible (D-068 (8), (9)). Enforced by the screener with researcher review of every such decision (D-068 (10)).
 * **RQ5 routing** (D-060 (4)): at title/abstract, descriptors are triage only and never count toward D-031/D-034 (D-035 G2). A record goes to full text (`uncertain`, `needs_human=yes`) if counting its `unclear` components as `yes` would give **three or more** of the five components, including records retained under D-055. Coverage groups use full-text-confirmed statuses only.
 * **Human-review triggers** (`needs_human=yes`, D-060 (3)): (1) a term with two possible meanings not settled by the abstract ("calibration", "ensemble", "interpretable", "validation cohort"); (2) an otherwise RQ4-eligible record with `validation_design=unclear`; (3) any record routed under the RQ5 rule above; (4) a record without an abstract retained as `uncertain`; (5) any descriptor disagreement between the two pilot screeners.
 * Uncertain records go forward to full text; they are never silently dropped.
@@ -117,7 +117,7 @@ Record (within the D-044 scope)
 | 2 | Methodological papers for RQ2–RQ4; RQ1-eligible studies addressing exactly one of the three aspects |
 | 3 | Other RQ1-eligible studies (coded from the abstract; full text read for a random sample only) |
 
-**RQ5 tier rule (D-062, title/abstract only).** For records to which the D-060 (4) routing rule is applied, preliminary statuses are recorded for all five components (`dim_feature_selection`, `dim_classification` with written justification, and the three method descriptors). y = `yes` count, u = `unclear` count: y + u ≥ 4 → Tier 1; y + u = 3 → Tier 2 (full text guaranteed by D-060 (4)) unless another Tier 1 criterion applies; y + u ≤ 2 → no RQ5-based tier. The highest applicable tier is recorded. Tiers do not apply at full text.
+**RQ5 tier rule (D-062, title/abstract only).** For records to which the D-060 (4) routing rule is applied, preliminary statuses are recorded for all five components (`dim_feature_selection`, `dim_classification` with written justification, and the three method descriptors). y = `yes` count, u = `unclear` count: y + u ≥ 4 → Tier 1; y + u = 3 → Tier 2 (full text guaranteed by D-060 (4)) unless another Tier 1 criterion applies; y + u ≤ 2 → no RQ5-based tier. The highest applicable tier is recorded. Tiers do not apply at full text. **Records without an abstract** receive no RQ5-based tier: their five preliminary statuses are `unclear` with justification "no abstract", and they are read at full text (D-068 (7)).
 
 ## 6. Screening record format (D-027 limited; D-059 A-5; D-028; D-029; D-058; D-060)
 One file, `research/literature/screening/decisions.csv`, with `stage` = `title_abstract` / `full_text` (D-027).
@@ -134,7 +134,7 @@ One file, `research/literature/screening/decisions.csv`, with `stage` = `title_a
 | `scope_flags` | When applicable | `scope_pending`, `scope_pending_proteomics`, `lr_only`, `prognostic`, `non_metabolic_method_exemplar`, `non_metabolic_rq5_candidate` | D-055, D-056, D-057, D-061 |
 | `tier`, `needs_human`, `criteria_version` | `tier` for `include`; `needs_human` per §4 triggers; `criteria_version` always once frozen | — | D-060 (3) |
 
-Exceptions: Stage-0 rule rows (`screener=rule:stage0`) need only the always-required columns. `exclude` rows may leave descriptors empty. `publication_type` is derived by the build from source metadata via the D-028 mapping table (never hand-edited; arXiv → `preprint`; no URL/DOI-prefix rules). The schema currently names `dim_independent_validation`; it is replaced by `validation_design` when D-029 is implemented (implementation pending).
+Exceptions: Stage-0 rule rows (`screener=rule:stage0`; only `exclude` rows with E5 or E7, D-068 (5)) need only the always-required columns. `exclude` rows may leave descriptors empty. `publication_type` is derived by the build from source metadata via the D-028 mapping table (never hand-edited; arXiv → `preprint`; no URL/DOI-prefix rules). The schema currently names `dim_independent_validation`; it is replaced by `validation_design` when D-029 is implemented (implementation pending).
 
 ## 7. Pilot and audit
 * **Pilot:** `screening_protocol_v0.2_draft.md` §7 (D-025, A-1). The v1.0 §7 pilot (first 30 PMIDs of Q-PM-01 and Q-PM-09) is **replaced** once this version is frozen and A-1's conditions are met.
@@ -153,8 +153,8 @@ Primary disorder (D-013), primary dataset, outcome definition (D-014), evaluatio
 | §2.1 | Main list approved; pending conditions kept | D-056 | APPROVED — CONDITIONAL (inactive) |
 | §2.2 | Two strands; NBS MS/MS with metabolomics; proteomics pending; `biomarker_class` | D-043; D-057; D-058 | APPROVED; APPROVED — CONDITIONAL (inactive) |
 | §3 RQ5 | ≥ 4 of 5 components; evidence standard; coverage groups; researcher verification; D-055 retention | D-031–D-038; D-055 | APPROVED — CONDITIONAL (inactive) |
-| §4 | Silence ≠ `no`; missing abstracts; RQ5 routing; triggers | D-060 (2)–(4); D-059 (A-6); D-035 G2, G3 | APPROVED — CONDITIONAL (inactive) |
-| §5 | RQ5 tier rule | D-031; D-060; D-062 | APPROVED — CONDITIONAL; D-062 effective at freeze |
+| §4 | Silence ≠ `no`; missing abstracts; RQ5 routing; triggers | D-060 (2) as amended by D-068, (3), (4); D-059 (A-6); D-068; D-035 G2, G3 | APPROVED — CONDITIONAL (inactive) |
+| §5 | RQ5 tier rule | D-031; D-060; D-062 (not applied without an abstract, D-068 (7)) | APPROVED — CONDITIONAL; D-062 and D-068 (7) effective at freeze |
 | §6 | One file, required/optional columns, new fields, exemptions | D-027 (limited); D-059 (A-5); D-028; D-029; D-058; D-060 (6) | APPROVED / APPROVED — CONDITIONAL; implementation pending |
 | §7 | Pilot replaced; audit; allocation | D-025; D-059 (A-1); D-063; D-008 | APPROVED — CONDITIONAL (inactive) |
 | §1 I-C1–I-C4, E1, E2, E7, E9–E11, §2.3, RQ1–RQ4, RQ6 | Unchanged | — | — |
@@ -165,3 +165,4 @@ Primary disorder (D-013), primary dataset, outcome definition (D-014), evaluatio
 | OPEN-1 | Name of the D-055 flag | Settled: D-061 (`non_metabolic_rq5_candidate`), effective at freeze |
 | OPEN-2 | Tier for records routed only as possible `near_rq5` | Settled: D-062 (Tier 2 rule), effective at freeze |
 | Q-073 | Pilot stratification inside the D-044 scope | Settled: D-063 (near-equal allocation), conditional and inactive |
+| Q-074 | Missing-abstract rule and its enforcement | Settled: D-068 (amends D-060 (2) and the application of D-062), conditional and inactive. At the freeze: verify the Stage-0 type list against its approved source (G1) and fix the E1 wording (G2) |

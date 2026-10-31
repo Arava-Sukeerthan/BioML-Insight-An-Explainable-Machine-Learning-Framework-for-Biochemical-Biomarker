@@ -1609,3 +1609,22 @@ Explicit researcher approval of the near-equal allocation (B 8, A 8, untagged 8,
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted (together with T1-A); not pushed.
 
 > **Update (2026-10-31, T1-A-PR-REFERENCE).** The line above was accurate when written. This work, together with T1-A, was committed as `d1aaceb` ("Implement literature T1-A validation safeguards"), pushed to `claude/eloquent-mccarthy-bqtxr3-part1`, and is included in **PR #17** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17 — open, not merged. This note records the PR reference only; it does not indicate approval.
+
+## Q-074-DECISION — 2026-10-31 — D-068 recorded (missing-abstract rule); Q-074 answered (documentation only)
+
+**Context**: researcher agreement to the Q-074 decision brief and consolidated proposal (incl. G1–G3) and explicit authorisation, 2026-10-31, to record D-068 and apply the agreed documentation-only changes. Commit and push are not authorised by this task.
+
+**Modified**
+- `logs/DECISION_LOG.md`: new section with D-068 (APPROVED — CONDITIONAL, inactive for screening; amends D-060 (2) "Stage-0/E1/E4" → "Stage-0/E1" and the application of D-062; clarifies D-059 A-6, D-060 (4) and the D-060 (6) Stage-0 exemption); four Status history rows. The D-059, D-060 and D-062 rows are unchanged.
+- `research/reviews/unresolved_questions.md`: Q-074 status cell → Answered (D-068); question text unchanged.
+- `research/literature/screening_criteria_v1.1_draft.md` (still DRAFT, not frozen): §4 missing-abstract bullet, §5 tier note, §6 Stage-0 exception, §9 traceability rows (§4, §5), §10 Q-074 row.
+- `research/literature/screening_protocol_v0.2_draft.md` (still DRAFT, not frozen): governing-decision list, §1 "Without abstract" row, §3 missing-abstract row and Stage-0 paragraph, §7 missing-abstract review row, §8 expansion review.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; new `logs/session_logs/2026-10-31_Q-074-DECISION.md`.
+
+**Not changed**: code, scripts, tests, schemas, configuration, inventory, registry, manifest, generated reports; D-008, D-025, D-029, D-035, D-058, D-059, D-060, D-061, D-062 statuses; Q-075, Q-076, Q-077. No screening activation, freeze, T2, retrieval or data acquisition. The current code does **not** enforce the D-068 (5) Stage-0 restriction (see session log).
+
+**Validation**: diff inspected; `git -c core.whitespace=cr-at-eol diff --check`; no tests run (no executable change).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `753a1bc`; uncommitted when written; not pushed. The branch is the head of PR #17.
+
+**Follow-up correction (2026-10-31, Option (i), researcher-selected after the independent review)**: D-068 (6), the missing-abstract bullet of `screening_criteria_v1.1_draft.md` and the missing-abstract row of `screening_protocol_v0.2_draft.md` were aligned so that, for records without an abstract: method descriptors and `validation_design` remain `unclear`; `biomarker_class` may take a value only when explicitly supported by the title; all five preliminary component statuses remain `unclear`, justified by "no abstract"; no RQ5-based tier applies; `rq_tags` and `record_type` remain provisional until full-text assessment. This resolves the inconsistency between D-068 (6), which had allowed title-supported values for the method descriptors, and D-068 (7), which sets all five component statuses (three of which are those descriptors) to `unclear`. No other policy changed; both drafts stay unfrozen and screening stays inactive. Checks performed: diff of the three files inspected; text search confirming the title exception now appears only for `biomarker_class`; D-025, D-029, D-035, D-058, D-059, D-060, D-061 and D-062 rows compared with HEAD (unchanged); `git diff --check` exit 0. Uncommitted; not pushed.

@@ -444,3 +444,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** none new. Q-074, Q-075, Q-076 (owner directions implemented; no DECISION_LOG entry), Q-077 and T2 remain as before.
 - **Recommended next step:** review PR #17; decide on Q-075 before the v1.1 freeze; authorise T2 separately when ready.
 - **Researcher decisions:** documentation-only correction authorised (Option B, 2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — Q-074-DECISION
+- **Work completed:** D-068 recorded: missing-abstract rule for title/abstract triage; D-060 (2) amended (no E4 without an abstract); no RQ5-based tier without an abstract (D-062 application); Stage-0 exemption bounded to E5/E7 exclusions; *not retrieved* vs *unavailable*; human enforcement with researcher review of every such decision. Q-074 answered; v1.1/v0.2 drafts aligned (not frozen).
+- **Important findings:** `[EVIDENCE]` D-060 (2) and D-060 (4)/D-061 conflicted on E4 for records without an abstract; resolved conservatively by amendment. `[EVIDENCE]` the current code exempts any `screener=rule:stage0` row from the D-060 (6) check; it does not yet match D-068 (5). `[OPEN]` at the v1.1 freeze: verify the Stage-0 type list against its approved source (G1) and fix the E1 wording (G2).
+- **Decisions requiring review:** the documentation diff; commit/push; later, separately: Stage-0 code bounding, retrieval-status representation, pilot-report tooling; Q-075 and the v1.1 freeze.
+- **Recommended next step:** review the diff; authorise commit and push separately.
+- **Researcher decisions:** Q-074 proposal agreed (incl. G1–G3); recording of D-068 authorised (2026-10-31).

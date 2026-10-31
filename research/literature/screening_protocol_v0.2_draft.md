@@ -7,7 +7,7 @@
 | Replaces | `screening_protocol.md` v0.1 only when the researcher approves and freezes this text together with `screening_criteria_v1.1_draft.md` as the pilot's `criteria_version` (D-035 record §6, condition 5). v0.1 is kept unchanged |
 | Screening status | **INACTIVE.** No record has been screened, labelled or sampled. No pilot sample exists |
 | Scope of claims | The protocol does not assume that the BioML-Insight framework is new or better. Screening describes the existing evidence; any research gap is decided later (Stage D, D-016) from verified, screened evidence |
-| Governing decisions | As in criteria v1.1 §9, plus D-008, D-010, D-012/D-023, D-025, D-042, D-044, D-045, D-061, D-062, D-063. Traced in §11 |
+| Governing decisions | As in criteria v1.1 §9, plus D-008, D-010, D-012/D-023, D-025, D-042, D-044, D-045, D-061, D-062, D-063, D-068. Traced in §11 |
 
 ---
 
@@ -16,7 +16,7 @@
 |---|---|---|
 | Records to screen | **1,470** publication records (D-044 scope) | `paper_inventory.json` SHA-256 `a509538dc5e1cf41cd7a4e180ed17df86f6d4cd83a7d227abea073f1689af4a3`; re-counted 2026-10-30 from `paper_inventory.csv` query IDs |
 | Q-PM-02 | All 743 records, all inside the 1,470 (D-009) | Inventory check 2026-10-30 |
-| Without abstract | 6 records in scope (`abstract_available=False`) | Inventory check 2026-10-30 |
+| Without abstract | 6 records in scope (`abstract_available=False`); before screening each is to be classed as *not retrieved* or *unavailable*, and retrieval completed where feasible under separate authorisation (D-068 (8), (9)) | Inventory check 2026-10-30 |
 | Abstracts | Only in the git-ignored build output (`records/publications.jsonl`, D-010); restorable from the verified archives (`preservation/preservation_status.md`) | — |
 | Retrieval themes | Context only: retrieval by a theme's query is not evidence that a paper addresses that theme. 173 in-scope records (LIT-005 G-queries) carry no theme | Inventory check 2026-10-30 |
 | Not in scope | 1,916 inventory records outside D-044: neither screened nor excluded; the reduced scope is reported | D-044 |
@@ -50,9 +50,9 @@ Five components, `yes` only for a qualifying procedure applied with a documented
 | Biochemical vs imaging-/genetics-only inputs | §2.2; multi-omics with a substantive metabolomics layer eligible (`uncertain` if unclear whether metabolites enter the model) | D-043; D-057 |
 | Original vs reviews, notices, retractions, duplicates | Reviews: `review_lead` only. Errata → Stage 0 E5. Retractions → Stage 0 E7. Duplicates → E8 only after a recorded decision; A-4 deferred (D-030), both records of a pair screened | D-059 |
 | RQ5 routing | ≥ 3 possible components counting `unclear` → `uncertain`, `needs_human=yes`, full text | D-060 (4) |
-| Missing abstract | descriptors `unclear`; `uncertain` unless a title-level Stage-0/E1/E4 reason | D-060 (2); D-059 A-6 |
+| Missing abstract (title/abstract only) | `uncertain` → full text unless Stage-0 E5/E7 or a title-level E1 (frozen wording); **no E4**; method descriptors and `validation_design` `unclear`; `biomarker_class` `unclear` unless the title explicitly supports it; all five preliminary component statuses `unclear` ("no abstract"); `rq_tags`/`record_type` provisional; no RQ5-based tier | D-060 (2) as amended by D-068; D-059 A-6 |
 
-**Stage 0 (automatic, counted, reversible):** PubMed types *Editorial*, *Comment*, *News*, *Published Erratum* → E5; *Retracted Publication* → E7; letters are not auto-excluded. Rows carry `screener=rule:stage0`. All Stage-0 decisions are listed in the pilot report.
+**Stage 0 (automatic, counted, reversible):** PubMed types *Editorial*, *Comment*, *News*, *Published Erratum* → E5; *Retracted Publication* → E7; letters are not auto-excluded. Rows carry `screener=rule:stage0`, which is used only on `exclude` rows with E5 or E7 from source publication types (D-068 (5); list to be verified against its approved source at the freeze). All Stage-0 decisions are listed in the pilot report.
 
 ## 4. Possible duplicates and versions
 Unchanged from v0.1 §4: no pair decision exists; both records are screened; pairs are listed in the pilot report. A-4 and D-030 are deferred/proposed. E8 only after a recorded decision.
@@ -81,10 +81,12 @@ E1–E12 as in criteria v1.1 §1 (numbering unchanged; schema pattern `^E(1[0-2]
 | Pass | κ (3-level) ≥ 0.60 **and** no record excluded by one screener and included by the other without adjudicated agreement **and** fewer than 3 disagreements on any single code |
 | If not passed | Disagreements reviewed together; criteria clarified (new version); second pilot of 40 new records, same strata rule, next seed |
 | Outputs | `screening/pilot_sample.csv` (IDs, stratum, seed), `pilot_decisions_assistant.csv`, `pilot_decisions_researcher.csv`, `pilot_report.md` (metrics computed by script) |
+| Missing-abstract review | The researcher reviews every title/abstract decision on a record without an abstract; such records are listed separately in `pilot_report.md` with *not retrieved* / *unavailable* status (D-068 (10)) |
 
 ## 8. Expansion and audit
 * Only after a passed pilot and researcher approval: remaining D-044 records in batches of about 300.
 * **Audit (D-008):** after the first two expansion batches, the researcher blind-audits 25 `include` + 25 `exclude`; κ < 0.60 or a wrongful exclusion → criteria clarification and re-screening of affected records. Selected 2026-10-30; **not performed**.
+* **Missing-abstract review (D-068 (10)):** in every expansion batch, every title/abstract decision on a record without an abstract is reviewed by the researcher, in addition to the D-008 audit.
 
 ## 9. Verification and citation (unchanged requirements)
 Screening may use `partially_verified` records; only `verified` records may be **cited** (`research_plan.md` §6). The arXiv transcription spot-check passed for the 5 LIT-003 arXiv files (2026-10-30) and is recorded in `MANIFEST.csv` (`transcription_check=passed`). It used the same connector, so it is not independent metadata verification; `verified` additionally needs a second agreeing source, and whether a web result counts is Q-068 (open). At the next build, 2 of the 76 records (P2870, P2941; also retrieved by Q-WS-02/Q-WS-04) could become `verified` under the current rule if their web members carry metadata (not checkable in this workspace); this should be reviewed with Q-068 before any citation. Q-AX-G9 and web files remain unchecked.

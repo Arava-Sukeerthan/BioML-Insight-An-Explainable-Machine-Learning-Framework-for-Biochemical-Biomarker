@@ -698,3 +698,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Pull request | None for this task |
 
 > **Update (2026-10-31, T1-A-PR-REFERENCE).** The "Branch" and "Pull request" rows above were accurate when written (the work was then uncommitted and unpushed). This work, together with T1-A, was committed as `d1aaceb` ("Implement literature T1-A validation safeguards"), pushed to `claude/eloquent-mccarthy-bqtxr3-part1`, and is included in **PR #17** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17 — open, not merged. This note records the PR reference only; it does not indicate approval.
+
+### Q-074-DECISION (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | Q-074-DECISION (researcher prompts 2026-10-31: Q-074 evidence review, decision brief and consolidated proposal; agreement incl. A1–A4 and G1–G3; "The researcher has explicitly authorized recording D-068 and applying the agreed documentation-only changes.") |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Record D-068, answer Q-074, align the v1.1/v0.2 drafts; documentation only; no code, freeze, screening, T2, commit or push |
+| Actual completion status | D-068 recorded (APPROVED — CONDITIONAL, inactive); Q-074 Answered; drafts updated (still drafts); task logs updated; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `753a1bc`; uncommitted when written; not pushed |
+| Pull request | Branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged; PR not changed by this task |
