@@ -43,7 +43,20 @@ SOURCE_PRIORITY = ["pubmed", "europepmc", "crossref", "arxiv", "semantic_scholar
 AUTHORITATIVE_SOURCES = {"pubmed", "europepmc", "crossref", "arxiv"}
 ROUTE_PRIORITY = ["eutils_api", "pubmed_connector", "structured_transcription"]
 ROUTES = {"eutils_esearch", "eutils_efetch", "pubmed_connector_search",
-          "pubmed_connector_metadata", "structured_transcription"}
+          "pubmed_connector_metadata", "structured_transcription", "crossref_works"}
+# Crossref verification lookups (WP2): one raw /works/{DOI} response per authorised pilot paper,
+# registered under query ID "VERIFY-CR-<paper_id>" with manifest route "crossref_works". They are
+# second-source evidence for D-064 only: they never become search provenance, never fill or override
+# publication metadata, never create a paper ID and attach only to the one existing publication that
+# carries the same normalised DOI and is listed in records/verification_pilot.csv.
+VERIFY_PREFIX = "VERIFY-CR-"
+CROSSREF_ROUTE = "crossref_works"          # manifest route
+CROSSREF_SOURCE_ROUTE = "crossref_api"     # source-record route
+# Which Crossref date field supplies the publication year is a PENDING researcher decision (options:
+# "published-print"; "issued"; "published-print" then "published-online"). Until it is decided the
+# Crossref year stays empty, so a Crossref record is "insufficient" on the year and cannot by itself
+# make a publication `verified` (D-064 (5), (7)). Set only by a recorded decision.
+CROSSREF_YEAR_FIELDS = None
 MANIFEST_COLS = ["raw_file", "sha256", "query_id", "source", "route", "endpoint_or_tool",
                  "request_json", "retrieved_at", "n_items", "transcribed", "transcription_check",
                  "notes"]
@@ -318,6 +331,44 @@ def parse_efetch_xml(xml_bytes):
     return out
 
 
+def crossref_year(message, fields=None):
+    """Year from a Crossref message using the date fields in `fields` (first present wins).
+    Returns None while the field choice is undecided (CROSSREF_YEAR_FIELDS is None)."""
+    fields = CROSSREF_YEAR_FIELDS if fields is None else fields
+    for field in fields or ():
+        parts = ((message.get(field) or {}).get("date-parts") or [[None]])[0] or [None]
+        year = parse_year(parts[0])
+        if year is not None:
+            return year
+    return None
+
+
+def parse_crossref_work(message):
+    """The `message` object of one Crossref /works/{DOI} response (verification lookups only).
+    Raises ValueError when the message is malformed. Abstract, publication types and language are
+    not taken; the whole message is kept verbatim in `original`."""
+    if not isinstance(message, dict):
+        raise ValueError("Crossref response has no 'message' object")
+    doi = normalize_doi(message.get("DOI"))
+    if not doi:
+        raise ValueError("Crossref message has no valid DOI")
+    m = _empty_meta()
+    titles = [t for t in message.get("title") or [] if isinstance(t, str) and t.strip()]
+    m["title"] = strip_markup(titles[0]) if titles else None
+    authors = [a for a in message.get("author") or [] if isinstance(a, dict)]
+    firsts = [a for a in authors if a.get("sequence") == "first"]
+    if firsts and authors[0] is not firsts[0]:
+        authors = [firsts[0]] + [a for a in authors if a is not firsts[0]]
+    m["authors"] = [({"last_name": a.get("family"), "fore_name": a.get("given")} if a.get("family")
+                     else {"collective_name": a.get("name")}) for a in authors if a.get("family") or a.get("name")]
+    m["year"] = crossref_year(message)
+    venues = [v for v in message.get("container-title") or [] if isinstance(v, str) and v.strip()]
+    m["journal"] = strip_markup(venues[0]) if venues else None
+    m["doi"] = doi
+    m["original"] = message
+    return m
+
+
 def parse_transcribed_record(rec):
     """Records typed into a structured JSON file from a non-JSON tool (Consensus, alphaXiv, web).
     Expected keys: title, authors (list of 'Last, First' strings or dicts), year, journal, doi,
@@ -556,6 +607,17 @@ def build_source_records(lit_dir, rows):
         elif route == "structured_transcription":
             for i, rec in enumerate(_load_raw_json(lit_dir, row).get("records", [])):
                 direct.append((row, i + 1, parse_transcribed_record(rec)))
+        elif route == CROSSREF_ROUTE:
+            if not row["query_id"].startswith(VERIFY_PREFIX) or row["source"] != "crossref":
+                raise RuntimeError(f"{row['raw_file']}: route {CROSSREF_ROUTE} is for Crossref verification "
+                                   f"lookups registered as {VERIFY_PREFIX}<paper_id> only")
+            try:
+                doc = _load_raw_json(lit_dir, row)
+                meta = parse_crossref_work(doc.get("message") if isinstance(doc, dict) else None)
+            except ValueError as e:   # includes json.JSONDecodeError
+                raise RuntimeError(f"{row['raw_file']}: malformed Crossref response ({e}); malformed "
+                                   "responses must never be registered") from None
+            direct.append((row, 1, meta))
 
     records = []
 
@@ -570,7 +632,8 @@ def build_source_records(lit_dir, rows):
         r.update({
             "source_record_id": rid,
             "source": row["source"],
-            "route": ("eutils_api" if row["route"].startswith("eutils") else
+            "route": (CROSSREF_SOURCE_ROUTE if row["route"] == CROSSREF_ROUTE else
+                      "eutils_api" if row["route"].startswith("eutils") else
                       "pubmed_connector" if row["route"].startswith("pubmed_connector") else
                       "structured_transcription"),
             "query_id": row["query_id"],
@@ -762,7 +825,12 @@ def load_registry(path):
     return reg
 
 
-def assign_ids(clusters, records, registry_path, today):
+def _preview_ids(clusters, records, registry_path):
+    """The paper IDs assign_ids would give, without writing the registry."""
+    return assign_ids(clusters, records, registry_path, "preview", write=False)
+
+
+def assign_ids(clusters, records, registry_path, today, write=True):
     reg = load_registry(registry_path)
     used = [int(v[1:]) for v in reg.values() if re.fullmatch(r"P\d+", v)]
     nxt = max(used, default=0) + 1
@@ -789,7 +857,7 @@ def assign_ids(clusters, records, registry_path, today):
                 reg[k] = pid
                 new_rows.append({"key": k, "paper_id": pid, "first_seen": today})
         out[c] = pid
-    if new_rows:
+    if new_rows and write:
         new = not Path(registry_path).exists()
         with open(registry_path, "a", newline="") as f:
             w = csv.DictWriter(f, fieldnames=["key", "paper_id", "first_seen"])
@@ -896,8 +964,11 @@ def compare_identifiers(a, b):
     return "agree", None
 
 
-def compare_required_fields(a, b):
-    """Field-by-field outcome between the authoritative record a and a second source b."""
+def compare_required_fields(a, b, venue_map=None):
+    """Field-by-field outcome between the authoritative record a and a second source b.
+    venue_map: frozenset of (authoritative venue, second-source venue) pairs, both already
+    normalised with normalize_venue, from records/venue_mappings.csv (explicit reviewed mapping,
+    D-064 (3)); exact pairs only, never fuzzy."""
     out = {}
     ta, tb = normalize_title(a.get("title")), normalize_title(b.get("title"))
     out["title"] = (("missing", "title absent") if not ta or not tb else
@@ -908,7 +979,9 @@ def compare_required_fields(a, b):
                    ("agree", None) if ya == yb else ("conflict", "year differs"))
     va, vb = normalize_venue(a.get("journal")), normalize_venue(b.get("journal"))
     out["venue"] = (("missing", "venue absent") if not va or not vb else
-                    ("agree", None) if va == vb else ("conflict", "venue differs"))
+                    ("agree", None) if va == vb else
+                    ("agree", "explicit reviewed venue mapping") if venue_map and (va, vb) in venue_map else
+                    ("conflict", "venue differs"))
     out["identifier"] = compare_identifiers(a, b)
     return out
 
@@ -940,8 +1013,10 @@ def source_provider(m):
 
 
 # retrieval routes whose output is saved without transcription (collection_workflow.md §2,
-# routes A and B; D-023): script retrieval via E-utilities and verbatim PubMed-connector output
-RETRIEVAL_ROUTES = {"eutils_api", "pubmed_connector"}
+# routes A and B; D-023): script retrieval via E-utilities and verbatim PubMed-connector output.
+# crossref_api: script retrieval of Crossref /works/{DOI}, raw response saved byte for byte with its
+# SHA-256 in the manifest (recorded retrieval, D-064 (1), (10)); used as second-source evidence only.
+RETRIEVAL_ROUTES = {"eutils_api", "pubmed_connector", CROSSREF_SOURCE_ROUTE}
 
 
 def _recorded_provenance(m):
@@ -983,7 +1058,7 @@ def source_independence(a, c):
     return "undetermined", f"unclassified source relationship ({pa} vs {pc})"
 
 
-def evaluate_second_sources(auth, candidates):
+def evaluate_second_sources(auth, candidates, venue_map=None):
     """Classify, check eligibility and compare every candidate against the authoritative record."""
     rows = []
     for c in sorted(candidates, key=lambda m: m["source_record_id"]):
@@ -996,7 +1071,7 @@ def evaluate_second_sources(auth, candidates):
             row.update(eligible=False, eligibility_reason="transcribed, spot-check not passed",
                        result="ineligible")
         else:
-            fields = compare_required_fields(auth, c)
+            fields = compare_required_fields(auth, c, venue_map)
             outcomes = {f: o for f, (o, _) in fields.items()}
             row.update(eligible=True, eligibility_reason="eligible",
                        fields={f: {"outcome": o, "reason": r} for f, (o, r) in fields.items()})
@@ -1012,9 +1087,11 @@ def evaluate_second_sources(auth, candidates):
     return {"authoritative_source_record_id": auth["source_record_id"], "candidates": rows}
 
 
-def auto_verification(members, conflicts, details=None):
+def auto_verification(members, conflicts, details=None, venue_map=None):
     """Bibliographic verification status (collection_workflow.md §4.3; D-064). When `details` is a
-    dict, the second-source evaluation is written into it for report-level output only."""
+    dict, the second-source evaluation is written into it for report-level output only.
+    Crossref verification records (route crossref_api) are second-source candidates only: they are
+    never the authoritative record."""
     hard = {c["field"] for c in conflicts} & {"title", "year", "doi", "pmid"}
     if hard:
         return "needs_review", "conflicting " + ", ".join(sorted(hard))
@@ -1022,6 +1099,7 @@ def auto_verification(members, conflicts, details=None):
         return "unverified", "no metadata retrieved"
     sources = {m["source"] for m in members if not m["metadata_missing"]}
     auth = [m for m in members if m["source"] in AUTHORITATIVE_SOURCES and not m["metadata_missing"]
+            and m.get("route") != CROSSREF_SOURCE_ROUTE
             and (m.get("pmid") or m.get("doi") or m.get("arxiv_id"))]
     if not auth:
         return "unverified", "no authoritative index record with a persistent identifier"
@@ -1033,7 +1111,7 @@ def auto_verification(members, conflicts, details=None):
         return "partially_verified", "single source: " + ", ".join(sorted(sources))
     primary = sorted(trusted_auth, key=_source_rank)[0]
     evaluation = evaluate_second_sources(
-        primary, [m for m in members if m is not primary and not m["metadata_missing"]])
+        primary, [m for m in members if m is not primary and not m["metadata_missing"]], venue_map)
     if details is not None:
         details.update(evaluation)
     cands = evaluation["candidates"]
@@ -1075,6 +1153,77 @@ def _read_csv(path):
         return list(csv.DictReader(f))
 
 
+VENUE_MAPPING_COLS = ("authoritative_venue", "second_source_venue", "basis", "reviewer", "date")
+
+
+def load_venue_mappings(rec_dir):
+    """records/venue_mappings.csv: explicit, reviewed venue pairs (D-064 (3)). Every row needs all
+    columns; pairs are compared after normalize_venue only (no fuzzy matching). Returns a frozenset of
+    normalised (authoritative, second-source) pairs. Raises ValueError (nothing is written) on an
+    incomplete, duplicated or pointless row."""
+    rows = _read_csv(Path(rec_dir) / "venue_mappings.csv")
+    pairs, errors = set(), []
+    for n, r in enumerate(rows, start=2):
+        if any(not (r.get(c) or "").strip() for c in VENUE_MAPPING_COLS):
+            errors.append(f"line {n}: every column of {', '.join(VENUE_MAPPING_COLS)} is required")
+            continue
+        pair = (normalize_venue(r["authoritative_venue"]), normalize_venue(r["second_source_venue"]))
+        if pair[0] == pair[1]:
+            errors.append(f"line {n}: the two venues are already equal after normalisation")
+        elif pair in pairs:
+            errors.append(f"line {n}: duplicate mapping")
+        pairs.add(pair)
+    if errors:
+        raise ValueError("records/venue_mappings.csv: " + "; ".join(errors))
+    return frozenset(pairs)
+
+
+def attach_verification_records(ver, records, clusters, ids, rows, rec_dir):
+    """Attach Crossref verification records to existing publications. Each record must carry the
+    DOI it was requested for, that DOI must belong to exactly one existing publication, that
+    publication must be the paper ID named in the request, and the paper ID must be listed in
+    records/verification_pilot.csv. Anything else stops the build (nothing written).
+    Returns {cluster index: [verification records]}."""
+    if not ver:
+        return {}
+    pilot = {r["paper_id"].strip() for r in _read_csv(Path(rec_dir) / "verification_pilot.csv")
+             if (r.get("paper_id") or "").strip()}
+    requests = {r["raw_file"]: json.loads(r["request_json"] or "{}") for r in rows if r["route"] == CROSSREF_ROUTE}
+    query_ids = {r["raw_file"]: r["query_id"] for r in rows if r["route"] == CROSSREF_ROUTE}
+    by_doi = {}
+    for c, idx in enumerate(clusters):
+        for i in idx:
+            if records[i].get("doi"):
+                by_doi.setdefault(records[i]["doi"], set()).add(c)
+    out, errors = {}, []
+    for v in sorted(ver, key=lambda r: r["source_record_id"]):
+        req = requests.get(v["raw_file"], {})
+        want_pid = req.get("paper_id")
+        want_doi = normalize_doi(req.get("doi"))
+        where = f"{v['raw_file']} ({want_pid})"
+        if query_ids.get(v["raw_file"]) != VERIFY_PREFIX + str(want_pid):
+            errors.append(f"{where}: query ID does not name the requested paper ID")
+            continue
+        if not want_doi or want_doi != v["doi"]:
+            errors.append(f"{where}: returned DOI {v['doi']} differs from requested DOI {want_doi}")
+            continue
+        cs = by_doi.get(v["doi"], set())
+        if len(cs) != 1:
+            errors.append(f"{where}: DOI {v['doi']} matches {len(cs)} existing publications (exactly one required)")
+            continue
+        (c,) = cs
+        if ids[c] != want_pid:
+            errors.append(f"{where}: DOI {v['doi']} belongs to {ids[c]}, not to the requested paper ID")
+            continue
+        if want_pid not in pilot:
+            errors.append(f"{where}: paper ID not listed in records/verification_pilot.csv")
+            continue
+        out.setdefault(c, []).append(v)
+    if errors:
+        raise RuntimeError("Crossref verification records cannot be attached (nothing written): " + "; ".join(errors))
+    return out
+
+
 def build(lit_dir, today=None, check_schema=True):
     lit_dir = Path(lit_dir)
     today = today or dt.date.today().isoformat()
@@ -1085,6 +1234,11 @@ def build(lit_dir, today=None, check_schema=True):
     if problems:
         raise RuntimeError("; ".join(problems))
     records, completeness = build_source_records(lit_dir, rows)
+    # Crossref verification records take no part in deduplication, paper-ID assignment, metadata
+    # merging or search provenance; they are attached afterwards as second-source evidence only.
+    verification_records = [r for r in records if r["route"] == CROSSREF_SOURCE_ROUTE]
+    records = [r for r in records if r["route"] != CROSSREF_SOURCE_ROUTE]
+    venue_map = load_venue_mappings(rec_dir)
 
     # manual dedup decisions are keyed by paper_id -> map back through the registry
     registry = load_registry(rec_dir / "paper_id_registry.csv")
@@ -1106,7 +1260,14 @@ def build(lit_dir, today=None, check_schema=True):
             different.add(frozenset((a, b)))
 
     clusters, review = deduplicate(records, same)
+    # checked before the registry is touched: an unattachable verification record stops the build
+    # with nothing written (assign_ids only appends registry rows for new keys of base records)
+    ids_preview = {}
+    if verification_records:
+        ids_preview, _ = _preview_ids(clusters, records, rec_dir / "paper_id_registry.csv")
+        attach_verification_records(verification_records, records, clusters, ids_preview, rows, rec_dir)
     ids, reg_conflicts = assign_ids(clusters, records, rec_dir / "paper_id_registry.csv", today)
+    attached = attach_verification_records(verification_records, records, clusters, ids, rows, rec_dir)
     cluster_of = {i: c for c, idx in enumerate(clusters) for i in idx}
 
     screening_rows = load_screening_decisions(lit_dir)
@@ -1160,7 +1321,9 @@ def build(lit_dir, today=None, check_schema=True):
         primary, pub, prov, conflicts = merge_cluster(members)
         pid = ids[c]
         vdetails = {}
-        status, note = auto_verification(members, conflicts, vdetails)
+        # attached Crossref records are second-source candidates only; everything else in this
+        # publication record (fields, provenance, sources, query IDs, timestamps) comes from `members`
+        status, note = auto_verification(members + attached.get(c, []), conflicts, vdetails, venue_map)
         auto_status = status
         if pid in overrides:
             status = overrides[pid]["verification_status"]
@@ -1211,7 +1374,7 @@ def build(lit_dir, today=None, check_schema=True):
     pubs.sort(key=lambda p: int(p["paper_id"][1:]))
 
     if check_schema:
-        validate_outputs(records, pubs)
+        validate_outputs(records + verification_records, pubs)
 
     # status changes against the previous build output, read before it is overwritten
     prev_path = rec_dir / "publications.jsonl"
@@ -1233,7 +1396,7 @@ def build(lit_dir, today=None, check_schema=True):
     }
 
     with open(rec_dir / "source_records.jsonl", "w") as f:
-        for r in sorted(records, key=lambda r: r["source_record_id"]):
+        for r in sorted(records + verification_records, key=lambda r: r["source_record_id"]):
             f.write(json.dumps(r, ensure_ascii=False, sort_keys=True) + "\n")
     with open(rec_dir / "publications.jsonl", "w") as f:
         for p in pubs:
@@ -1293,6 +1456,15 @@ def build(lit_dir, today=None, check_schema=True):
         },
         "verification_status_changes": status_changes,
     }
+    if verification_records or venue_map:
+        report["crossref_verification"] = {
+            "year_fields": list(CROSSREF_YEAR_FIELDS) if CROSSREF_YEAR_FIELDS else None,
+            "verification_records": len(verification_records),
+            "attached": [{"paper_id": ids[c], "source_record_id": v["source_record_id"], "doi": v["doi"],
+                          "raw_file": v["raw_file"], "raw_sha256": v["raw_sha256"]}
+                         for c in sorted(attached, key=lambda c: ids[c]) for v in attached[c]],
+            "venue_mappings": len(venue_map),
+        }
     with open(rec_dir / "build_report.json", "w") as f:
         json.dump(report, f, indent=2, sort_keys=True)
     return report

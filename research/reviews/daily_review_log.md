@@ -465,3 +465,20 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** this documentation diff and its commit/push; PR #17 title; later, separately: D-069 validator implementation, Stage-0 exemption bounding, G1/G2 and the v1.1 freeze, T2, PR-2.
 - **Recommended next step:** review the diff; authorise commit and push separately.
 - **Researcher decisions:** PR #17 description update authorised (2026-10-31); recording of the update authorised (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — PR17-DESCRIPTION-UPDATE-2
+- **Work completed:** PR #17 description body updated for the pushed commits `dcaa741` and `e0dd690` and verified by public-API read-back (31 commits, HEAD `e0dd690`, 83 files, +38,426/−3,958). The audit-log entries were drafted for researcher review; no repository file had been modified when the proposal was prepared.
+- **Important findings:** `[EVIDENCE]` the published body matches `body_v4.md` except the final newline; title and other PR fields unchanged; PR open, not merged. `[OPEN]` Q-042, Q-075 remainder, Q-076 recording, Q-077; PR title still describes the original 2026-10-24 to 2026-10-30 scope. Committing and pushing these audit entries would advance the branch beyond the 31-commit snapshot (HEAD `e0dd690`) currently described in PR #17, making the description's commit count and HEAD reference stale. This task does not update the PR description again.
+- **Decisions requiring review:** the drafted entries; any subsequent commit and push; PR #17 title; later, separately: D-069 validator implementation, Stage-0 exemption bounding, G1/G2 and the v1.1 freeze, T2, PR-2.
+- **Recommended next step:** review the drafted entries; authorise any subsequent commit and push separately.
+- **Researcher decisions:** publication of the reviewed description authorised (2026-10-31); preparation of this audit record authorised (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — PRESERVATION-FIRST
+- **Work completed:** the uncommitted work of 2026-10-31 was inspected and preserved without content change in one local commit: D-070 to D-077; Q-075 and Q-078 to Q-080; the draft revisions; the Crossref and NHANES safeguards with their tests; the PR17-DESCRIPTION-UPDATE-2 records. Not pushed.
+- **Important findings:**
+  - `[EVIDENCE]` only the expected files differed from HEAD, and DECISION_LOG had insertions only; check results are in the session log.
+  - `[OPEN]` audit defects not fixed: Crossref save/registration atomicity, parser shape checks and route restriction; NHANES E3 missing values, name-only predictor checks and index-only fold checks.
+  - `[OPEN]` per-task log entries for the decision series, the implementation and the audits are missing (gap recorded, not backfilled).
+- **Decisions requiring review:** fetch and push; the branch discrepancy; the PR #17 description; authorisation of defect fixes, Workstream C and the D-068 (5) reading; the freeze.
+- **Recommended next step:** review the local commit; decide fetch/push separately; then a defect-correction package.
+- **Researcher decisions:** Option A, preservation first; governance-log entries, inclusion of the four previously protected files and a local commit authorised; push not authorised (all 2026-10-31).

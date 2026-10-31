@@ -134,6 +134,8 @@ def author_string(authors):
 def dedup_stats(lit_dir):
     rows = pr.read_manifest(lit_dir)
     records, _ = pr.build_source_records(lit_dir, rows)
+    # Crossref verification lookups are not retrieved hits: they never count in collection statistics
+    records = [r for r in records if r["route"] != pr.CROSSREF_SOURCE_ROUTE]
     n = len(records)
     # identifier-only clustering (same as step 1 of pr.deduplicate, without the title rules)
     uf = pr._UF(n)
@@ -289,7 +291,8 @@ def main(argv=None):
     queries = {r["query_id"]: r for r in csv.DictReader(open(lit / "search_queries.csv", newline=""))}
     by_q = collections.defaultdict(list)
     for m in manifest:
-        if m["query_id"] != "META":
+        # Crossref verification lookups (VERIFY-CR-*) are not searches and are listed separately below
+        if m["query_id"] != "META" and not m["query_id"].startswith(pr.VERIFY_PREFIX):
             by_q[m["query_id"]].append(m)
     comp = report["search_completeness"]
     lines = ["# Search Execution Register", "",
@@ -326,6 +329,11 @@ def main(argv=None):
                   f"`get_article_metadata`, {sum(int(m['n_items']) for m in meta)} article objects "
                   f"({min(m['retrieved_at'] for m in meta)} to {max(m['retrieved_at'] for m in meta)}); "
                   "responses saved verbatim by the harness, not transcribed."]
+    verify = [m for m in manifest if m["query_id"].startswith(pr.VERIFY_PREFIX)]
+    if verify:
+        lines += ["", f"Second-source verification lookups (not searches): {len(verify)} Crossref `/works/{{DOI}}` "
+                  f"responses ({min(m['retrieved_at'] for m in verify)} to {max(m['retrieved_at'] for m in verify)}), "
+                  "saved verbatim and used only as D-064 second-source evidence for the authorised pilot."]
     lines += ["", "## Exact query strings as executed", ""]
     for r in queries.values():
         if r["row_type"] == "executed":

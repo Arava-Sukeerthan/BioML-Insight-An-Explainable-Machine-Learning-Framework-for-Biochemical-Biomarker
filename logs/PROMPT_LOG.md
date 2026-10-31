@@ -728,3 +728,23 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | PR #17 description updated; read-back identical to the approved text except the final trailing newline (not stored by GitHub); title unchanged; PR open, not merged; task logs updated; uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `81875c3` (= `origin`); uncommitted when written; not pushed |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): description updated by this task (GitHub `updated_at` 2026-10-31T08:55:37Z); title, state and all other PR fields unchanged; open, not merged |
+
+### PR17-DESCRIPTION-UPDATE-2 (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PR17-DESCRIPTION-UPDATE-2 (researcher prompts 2026-10-31: read-only audit and reconciliation proposal for the PR #17 description; publication of the reviewed `body_v4.md` authorised; preparation of this audit record for review) |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Update only the PR #17 description body for `dcaa741` and `e0dd690`, verify by read-back, and draft the audit record; no title or other PR field, merge, PR-2 or T2 |
+| Actual completion status | PR #17 description body updated (previously completed); public-API read-back matched `body_v4.md` except the final newline (not stored by GitHub); title and other PR fields unchanged; PR open, not merged; audit-log entries drafted for review, not applied |
+| Branch | Branch at time of review: `claude/eloquent-mccarthy-bqtxr3-part1` at `e0dd690` (= `origin`); working tree clean. Proposed audit-log changes exist only in the scratchpad and have not been applied to repository files. |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): description body updated (previously completed); at the last verification head `e0dd690`; base `claude/happy-hawking-rxptfv` at `eb79996`; 31 commits; 83 files; +38,426/−3,958; open, not merged |
+
+### PRESERVATION-FIRST (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PRESERVATION-FIRST (researcher prompts 2026-10-31: "proceed with Option A: Preservation First"; then the explicit decisions: governance logs YES, protected files and local commit YES, push NO) |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Inspect and preserve the existing uncommitted decision, draft, safeguard and log work in one local commit on the current branch, with append-only task documentation. No defect fixes, Workstream C, new decisions, screening, sampling, freeze, external access, training, fetch, push or PR change |
+| Actual completion status | Inspection completed; existing work unchanged and matching the reviewed state; append-only log entries and the session log added; 17 files committed in one local preservation commit (hash reported to the researcher); not pushed; not fetched. Checks: see `logs/session_logs/2026-10-31_PRESERVATION-FIRST.md` |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1`; parent `e0dd690` (= local tracking ref, not fetched); not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged. Its description (31 commits, HEAD `e0dd690`) will be stale if this commit is pushed |

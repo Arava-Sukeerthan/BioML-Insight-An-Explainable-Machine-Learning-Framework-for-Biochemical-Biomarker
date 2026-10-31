@@ -1662,3 +1662,68 @@ Explicit researcher approval of the near-equal allocation (B 8, A 8, untagged 8,
 **Validation**: see the session log, sections "Preflight" and "Verification (read-back)" (approved-text diff against the previously published body; programmatic read-back comparison; `git status` clean at `81875c3` after the update). No tests run (no executable change).
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `81875c3` (= `origin`); this record uncommitted when written; not pushed. The branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged.
+
+## PR17-DESCRIPTION-UPDATE-2 — 2026-10-31 — PR #17 description updated for commits 30–31 (documentation only)
+
+**Context**: researcher prompts 2026-10-31: read-only audit and reconciliation proposal for the PR #17 description after `dcaa741` and `e0dd690` were pushed; one researcher-specified wording change; authorisation to publish the reviewed text (`body_v4.md`); then preparation of this audit record for review. Applying, committing and pushing this record each need separate authorisation.
+
+**Previously completed on GitHub (PR description body only)**
+- PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) description body updated for commits `dcaa741` and `e0dd690`: commit rows 30 and 31, head, size totals and Checks. Governance sections, decision statuses and open questions unchanged: screening INACTIVE; screening criteria v1.1 and protocol v0.2 remain drafts, not frozen.
+- Read-back: the published body was fetched from the public GitHub API and compared programmatically with `body_v4.md`: matched except the final newline, which GitHub does not store.
+- At the last verification: title and other PR fields unchanged; open; not merged; head `e0dd690`; base `claude/happy-hawking-rxptfv` at `eb79996`; 31 commits; 83 files; +38,426/−3,958.
+- No tests, builds, screening, retrieval or experiments were run for the PR-description update.
+
+**Proposed audit-log changes (drafted for review; not applied to repository files when drafted)**: append-only entries in this file, `logs/PROMPT_LOG.md` and `research/reviews/daily_review_log.md`; new `logs/session_logs/2026-10-31_PR17-DESCRIPTION-UPDATE-2.md`.
+
+**Not changed**: earlier audit entries; `DECISION_LOG.md`, `unresolved_questions.md`, criteria and protocol drafts, code, schemas, tests, data, inventory and generated reports. No approval, merge, PR-2 or T2.
+
+**Branch / commit / PR**: branch at time of review `claude/eloquent-mccarthy-bqtxr3-part1` at `e0dd690` (= `origin`), working tree clean; this record drafted for review, uncommitted and not pushed when written. The branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged. Committing and pushing these audit entries would advance the branch beyond the 31-commit snapshot (HEAD `e0dd690`) currently described in PR #17, making the description's commit count and HEAD reference stale. This task does not update the PR description again.
+
+## PRESERVATION-FIRST — 2026-10-31 — preservation commit of uncommitted decision, draft and safeguard work (no content change)
+
+**Context**: researcher prompts 2026-10-31 ("Option A: Preservation First", then explicit decisions: governance-log entries authorised; the four previously protected files may be committed with their existing content; no fetch and no push). Preserves existing uncommitted work in one local commit before any defect correction. Excludes defect fixes, Workstream C, schema or token changes, new scientific decisions, screening, sampling, freeze, external access, model training and PR changes.
+
+**Preserved without content change (written by earlier tasks on 2026-10-31, uncommitted until this commit)**:
+- `logs/DECISION_LOG.md` (insertions only): D-070 to D-073 (H1-H8-DECISIONS); D-074 (Q-080-PROPOSAL, then approval); D-075 (Q-078-DECISION); D-076 (Q-079-DECISION); D-077 (PILOT-SAMPLING-DECISION); status-history rows, including the D-063 F1-PILOT-FRAME row.
+- `research/reviews/unresolved_questions.md`: Q-075 answered; Q-078, Q-079 and Q-080 added and answered.
+- `research/literature/screening_criteria_v1.1_draft.md` and `research/literature/screening_protocol_v0.2_draft.md`: revisions for D-070 to D-077. Both remain drafts, **not frozen**.
+- Crossref second-source verification lookups (Workstream A, researcher prompt 2026-10-31):
+  - modified: `scripts/literature/pubrecords.py`, `scripts/literature/make_literature_reports.py`, `research/literature/schemas/source_record.schema.json`;
+  - new: `scripts/literature/fetch_crossref.py`, `tests/literature/test_crossref_verification.py`.
+  - The fetcher has never contacted Crossref.
+- NHANES leakage and eligibility safeguards (Workstream B, same prompt):
+  - new: `scripts/nhanes/safeguards.py`, `tests/nhanes/test_safeguards.py`;
+  - `scripts/run_checks.sh` now runs the NHANES tests.
+  - Synthetic fixtures only; no data file read.
+- The PR17-DESCRIPTION-UPDATE-2 entries in this file, `logs/PROMPT_LOG.md` and `research/reviews/daily_review_log.md`, and `logs/session_logs/2026-10-31_PR17-DESCRIPTION-UPDATE-2.md`. Byte-identical to the reviewed versions; their wording describes the state when they were drafted.
+
+**Added by this task**: this entry; the PRESERVATION-FIRST entries in `logs/PROMPT_LOG.md` and `research/reviews/daily_review_log.md`; `logs/session_logs/2026-10-31_PRESERVATION-FIRST.md`.
+
+**Validation**:
+- Inspection: hash comparison of all 144 tracked files with the snapshot taken before Workstreams A and B showed that only the four Workstream A/B files had changed.
+- The decision files, both drafts and the four log files match the hashes recorded earlier in the session.
+- `logs/DECISION_LOG.md` diff: 71 insertions, 0 deletions.
+- Checks: see the session log, section "Checks".
+
+**Known unresolved (not fixed; out of scope)**, from the independent read-only audit of 2026-10-31:
+- **Crossref:** saving the raw file and registering it in the manifest are not atomic; the parser accepts wrongly shaped `title`/`container-title` values; `VERIFY-CR-` query IDs are not restricted to the `crossref_works` route; title markup inside words can produce false title conflicts.
+- **NHANES:** `eligibility_cascade` E3 treats a missing value or a text value as "in the file"; predictor checks go by column name only; fold checks go by row index only.
+- **Integration:** the NHANES safeguards are not integrated into any pipeline.
+- **Drafts:** protocol v0.2 line 10 does not list D-077, and line 83 does not name the inventory SHA-256 and the sampling script. Left unchanged by this task.
+
+**Open decisions**: Crossref year field; pilot list and venue-mapping policy; the reading of D-068 (5) for the validator; authorisation of defect fixes, Workstream C and T2; the criteria v1.1 / protocol v0.2 freeze (D-035 record §6 conditions 5 and 6 unmet); Q-044, Q-046, Q-047, Q-050, Q-055, Q-060, Q-061 (open); D-013 to D-020 (pending).
+
+**Not done**: no content of any preserved file changed; no decision status changed; no screening, sampling, freeze, external API call, data download, T2, model training or PR change; no fetch, no push.
+
+**Logging gap (recorded, not backfilled)**: no CHANGELOG, PROMPT_LOG or daily-review entries exist for:
+- the individual 2026-10-31 decision tasks (H1-H8-DECISIONS, Q-080-PROPOSAL, D-074 approval, Q-078-DECISION, Q-079-DECISION, F1-PILOT-FRAME, PILOT-SAMPLING-DECISION; the task IDs are as cited in `logs/DECISION_LOG.md`);
+- the Workstream A/B implementation;
+- the read-only analyses and the independent audit of 2026-10-31.
+
+No session logs exist for them either. This entry records that the work exists and is preserved; it does not replace those records.
+
+**Branch / commit / PR**:
+- Branch `claude/eloquent-mccarthy-bqtxr3-part1`, parent commit `e0dd690`. This entry is part of the local preservation commit; its hash is reported to the researcher, because an entry cannot contain its own commit hash.
+- Not pushed: no push authorisation. Not fetched: the local tracking ref (`e0dd690`) may not reflect the remote.
+- This session's standing instructions name a different development branch (`claude/gracious-hopper-rx64za`). The researcher directed that the current branch be used; the discrepancy is left for a separate decision.
+- The branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged, not changed by this task.
