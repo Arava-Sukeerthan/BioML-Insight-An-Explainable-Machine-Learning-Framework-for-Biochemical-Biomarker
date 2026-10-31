@@ -1,13 +1,13 @@
 {
-  "built_at": "2026-10-24T04:11:54+00:00",
+  "built_at": "2026-10-30T18:21:54+00:00",
   "dedup_review_pairs": 15,
   "duplicate_status": {
-    "merged_duplicates": 438,
+    "merged_duplicates": 471,
     "possible_duplicate_review": 30,
-    "unique": 2511
+    "unique": 2885
   },
-  "manifest_files": 205,
-  "publications": 2979,
+  "manifest_files": 244,
+  "publications": 3386,
   "publications_with_metadata_conflicts": 1,
   "publications_without_stable_registry_key": 0,
   "registry_conflicts": [
@@ -33,10 +33,11 @@
   "retracted": [
     "P0931",
     "P0939",
-    "P1443"
+    "P1443",
+    "P3370"
   ],
   "screening_decision": {
-    "not_screened": 2979
+    "not_screened": 3386
   },
   "search_completeness": {
     "Q-PM-01": {
@@ -113,14 +114,421 @@
       "complete": true,
       "reported_total": 20,
       "unique_pmids_retrieved": 20
+    },
+    "Q-PM-G1": {
+      "complete": true,
+      "reported_total": 44,
+      "unique_pmids_retrieved": 44
+    },
+    "Q-PM-G2": {
+      "complete": true,
+      "reported_total": 27,
+      "unique_pmids_retrieved": 27
+    },
+    "Q-PM-G3": {
+      "complete": true,
+      "reported_total": 33,
+      "unique_pmids_retrieved": 33
+    },
+    "Q-PM-G4": {
+      "complete": true,
+      "reported_total": 68,
+      "unique_pmids_retrieved": 68
+    },
+    "Q-PM-G5": {
+      "complete": true,
+      "reported_total": 1,
+      "unique_pmids_retrieved": 1
+    },
+    "Q-PM-G6": {
+      "complete": true,
+      "reported_total": 21,
+      "unique_pmids_retrieved": 21
+    },
+    "Q-PM-G7": {
+      "complete": true,
+      "reported_total": 2,
+      "unique_pmids_retrieved": 2
+    },
+    "Q-PM-G8": {
+      "complete": true,
+      "reported_total": 244,
+      "unique_pmids_retrieved": 244
     }
   },
-  "source_records": 3543,
-  "source_records_missing_metadata": 0,
+  "source_records": 3998,
+  "source_records_missing_metadata": 1,
+  "verification_second_sources": {
+    "eligibility": {
+      "independence not_independent": 22
+    },
+    "independence": {
+      "not_independent": 22
+    },
+    "publications": [
+      {
+        "authoritative_source_record_id": "SR-Q-PM-01_2026-10-23_search_00-00050",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "same underlying repository (pubmed)",
+            "provider": "pubmed",
+            "result": "ineligible",
+            "source": "pubmed",
+            "source_record_id": "SR-Q-PM-04_2026-10-23_search_00-00079"
+          },
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "same underlying repository (pubmed)",
+            "provider": "pubmed",
+            "result": "ineligible",
+            "source": "pubmed",
+            "source_record_id": "SR-Q-PM-05_2026-10-23_search_00-00048"
+          },
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "web:link.springer.com",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-01_2026-10-23-00001"
+          }
+        ],
+        "paper_id": "P0069",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-01_2026-10-23_search_00-00163",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "pmc",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-05_2026-10-23-00007"
+          }
+        ],
+        "paper_id": "P0181",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-01_2026-10-23_search_01-00237",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "pmc",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-05_2026-10-23-00008"
+          }
+        ],
+        "paper_id": "P0450",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-01_2026-10-23_search_01-00253",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "pmc",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-05_2026-10-23-00001"
+          }
+        ],
+        "paper_id": "P0466",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-01_2026-10-23_search_01-00297",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "same underlying repository (pubmed)",
+            "provider": "pubmed",
+            "result": "ineligible",
+            "source": "pubmed",
+            "source_record_id": "SR-Q-PM-04_2026-10-23_search_01-00349"
+          },
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "pmc",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-RP-03_2026-10-23-00005"
+          }
+        ],
+        "paper_id": "P0510",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-01_2026-10-23_search_01-00319",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "pmc",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-01_2026-10-23-00007"
+          }
+        ],
+        "paper_id": "P0532",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-01_2026-10-23_search_01-00335",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "same underlying repository (pubmed)",
+            "provider": "pubmed",
+            "result": "ineligible",
+            "source": "pubmed",
+            "source_record_id": "SR-Q-PM-04_2026-10-23_search_01-00370"
+          },
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "same underlying repository (pubmed)",
+            "provider": "pubmed",
+            "result": "ineligible",
+            "source": "pubmed",
+            "source_record_id": "SR-Q-PM-05_2026-10-23_search_01-00292"
+          },
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "pmc",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-05_2026-10-23-00009"
+          }
+        ],
+        "paper_id": "P0548",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-01_2026-10-23_search_01-00367",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "pmc",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-05_2026-10-23-00006"
+          }
+        ],
+        "paper_id": "P0580",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-01_2026-10-23_search_01-00395",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "pmc",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-RP-03_2026-10-23-00002"
+          }
+        ],
+        "paper_id": "P0608",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-04_2026-10-23_search_00-00180",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "same underlying repository (pubmed)",
+            "provider": "pubmed",
+            "result": "ineligible",
+            "source": "pubmed",
+            "source_record_id": "SR-Q-PM-11_2026-10-23_search_00-00062"
+          },
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "web:link.springer.com",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-01_2026-10-23-00005"
+          }
+        ],
+        "paper_id": "P1342",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-04_2026-10-23_search_01-00256",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "pmc",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-01_2026-10-23-00004"
+          }
+        ],
+        "paper_id": "P1410",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-04_2026-10-23_search_01-00272",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "pmc",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-01_2026-10-23-00002"
+          }
+        ],
+        "paper_id": "P1424",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-04_2026-10-23_search_01-00296",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "pmc",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-01_2026-10-23-00006"
+          }
+        ],
+        "paper_id": "P1444",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-PM-04_2026-10-23_search_01-00355",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)",
+            "provider": "web:pubs.acs.org",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-05_2026-10-23-00005"
+          }
+        ],
+        "paper_id": "P1490",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-AX-01_2026-10-23-00004",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "same underlying repository (arxiv)",
+            "provider": "arxiv",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-02_2026-10-23-00009"
+          }
+        ],
+        "paper_id": "P2870",
+        "verification_status": "partially_verified"
+      },
+      {
+        "authoritative_source_record_id": "SR-Q-AX-05_2026-10-23-00013",
+        "automatic_status": "partially_verified",
+        "candidates": [
+          {
+            "eligibility_reason": "independence not_independent",
+            "eligible": false,
+            "independence": "not_independent",
+            "independence_basis": "same underlying repository (arxiv)",
+            "provider": "arxiv",
+            "result": "ineligible",
+            "source": "web",
+            "source_record_id": "SR-Q-WS-04_2026-10-23-00009"
+          }
+        ],
+        "paper_id": "P2941",
+        "verification_status": "partially_verified"
+      }
+    ],
+    "results": {
+      "ineligible": 22
+    },
+    "rule": "D-064"
+  },
   "verification_status": {
     "needs_review": 1,
-    "partially_verified": 2928,
-    "unverified": 36,
-    "verified": 14
+    "partially_verified": 3348,
+    "unverified": 37
+  },
+  "verification_status_changes": {
+    "changed": [],
+    "new_publications": 3386,
+    "previous_build_available": false,
+    "removed_publications": []
   }
 }

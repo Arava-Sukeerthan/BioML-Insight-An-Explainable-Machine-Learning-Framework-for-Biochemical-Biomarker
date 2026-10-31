@@ -1,0 +1,26 @@
+raw_file,records_in_file,sample_size,rank,arxiv_id,title_match,year_match,published_date_match,refetch_route,result
+Q-AX-01_2026-10-23.json,13,5,5,2509.15349,True,True,True,discover_papers rerun + get_paper_content stamp v1 18 Sep 2025,match
+Q-AX-01_2026-10-23.json,13,5,6,2605.12917,True,True,True,discover_papers rerun + answer_pdf_queries stamp v1 13 May 2026,match
+Q-AX-01_2026-10-23.json,13,5,7,2609.10333,True,True,True,discover_papers rerun,match
+Q-AX-01_2026-10-23.json,13,5,8,2606.24959,True,True,True,discover_papers rerun,match
+Q-AX-01_2026-10-23.json,13,5,13,2603.05423,True,True,True,discover_papers rerun,match
+Q-AX-02_2026-10-23.json,18,5,5,2602.24230,True,True,True,discover_papers rerun,match
+Q-AX-02_2026-10-23.json,18,5,6,2605.30188,True,True,True,discover_papers rerun,match
+Q-AX-02_2026-10-23.json,18,5,10,2509.02279,True,True,True,discover_papers rerun,match
+Q-AX-02_2026-10-23.json,18,5,13,2511.03685,True,True,True,discover_papers rerun,match
+Q-AX-02_2026-10-23.json,18,5,16,2607.16344,True,True,True,discover_papers rerun,match
+Q-AX-03_2026-10-23.json,16,5,4,2603.07348,True,True,True,discover_papers rerun,match
+Q-AX-03_2026-10-23.json,16,5,7,2607.22984,True,True,True,discover_papers rerun,match
+Q-AX-03_2026-10-23.json,16,5,10,2103.11163,True,True,True,discover_papers rerun,match
+Q-AX-03_2026-10-23.json,16,5,13,2607.23412,True,True,True,discover_papers rerun,match
+Q-AX-03_2026-10-23.json,16,5,15,2303.04862,True,True,True,discover_papers rerun,match
+Q-AX-04_2026-10-23.json,15,5,2,2605.15154,True,True,True,discover_papers rerun,match
+Q-AX-04_2026-10-23.json,15,5,4,2603.05024,True,True,True,discover_papers rerun,match
+Q-AX-04_2026-10-23.json,15,5,9,2604.02532,True,True,True,discover_papers rerun,match
+Q-AX-04_2026-10-23.json,15,5,14,2607.14315,True,True,True,discover_papers rerun,match
+Q-AX-04_2026-10-23.json,15,5,15,2607.09649,True,True,True,answer_pdf_queries stamp v1 10 Jul 2026 (not in rerun listing),match
+Q-AX-05_2026-10-23.json,14,5,1,2607.02103,True,True,True,discover_papers rerun,match
+Q-AX-05_2026-10-23.json,14,5,4,2604.24201,True,True,True,discover_papers rerun,match
+Q-AX-05_2026-10-23.json,14,5,7,2602.17364,True,True,True,discover_papers rerun,match
+Q-AX-05_2026-10-23.json,14,5,8,2603.19141,True,True,True,discover_papers rerun,match
+Q-AX-05_2026-10-23.json,14,5,14,2605.31014,True,True,True,discover_papers rerun,match

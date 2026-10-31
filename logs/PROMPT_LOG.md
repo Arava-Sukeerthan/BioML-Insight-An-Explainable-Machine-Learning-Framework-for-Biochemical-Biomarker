@@ -337,3 +337,394 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Pull request | None; owner to decide (CLAUDE.md §3.5) |
 
 > **Correction (2026-10-24, GOV-PR15-MERGE-RECORD).** The GOV-PR13-14-MERGE-RECORD entry above shows the branch as "local … not pushed" and "Pull request: None". Both were correct when written. Verified now: **PR #15** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/15 — base `claude/happy-hawking-rxptfv` (`694b389`) ← head `gov-pr13-14-merge-record` (`4af0acb`); merged (`5c7d455`, parents `694b389`, `4af0acb`; 08:03:26 UTC, `Arava-Sukeerthan`). Details: CHANGELOG, GOV-PR15-MERGE-RECORD.
+
+### PROTOCOL-DRAFT-001
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PROTOCOL-DRAFT-001 (prompt: "prepare a rigorous research protocol draft for review. Do not start model training or evaluation") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Draft protocol v0.1 for the NHANES laboratory-defined dysglycaemia study, separating confirmed user preferences, provisional choices, decisions requiring approval, unresolved technical questions and activation blockers |
+| Actual completion status | Draft created and checked. **Not approved, not frozen.** Awaiting researcher review |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` (local, reset to default `eb79996` with no unique commits on either side); uncommitted; not pushed |
+| Pull request | None (owner prompt: no push, no PR) |
+
+### PROTOCOL-DRAFT-002
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PROTOCOL-DRAFT-002 (prompt: owner-authorized FA-2 preference, hs-CRP exclusion, draft-only edits, data-protection safeguards and tests) |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Apply the three authorized draft-level changes and add data-protection safeguards with tests; no approvals, no activation |
+| Actual completion status | Draft rev. 1, `.gitignore` rules and tests done and checked (69 + 6 tests OK). FA-2 **not approved**; Q-044, Q-045 and Q-059 open |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` (local); uncommitted; not pushed |
+| Pull request | None (owner prompt: no commit, push or PR) |
+
+### PROTOCOL-DRAFT-003
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PROTOCOL-DRAFT-003 (prompt: "Option A: make the specified corrections, improve reproducibility and data protection, run the relevant checks, and then commit and push") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Protocol wording corrections, a reproducible aggregate-count script, stronger data protection and tests; commit and push the reviewed changes |
+| Actual completion status | Edits and checks done (see CHANGELOG). Commit and push recorded in Git history and the final task report. FA-2 and the protocol **not approved** |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` → `origin/claude/eloquent-mccarthy-bqtxr3` (explicit push with upstream) |
+| Pull request | None opened in this task |
+
+### PROTOCOL-EVIDENCE-001
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PROTOCOL-EVIDENCE-001 (prompt: "review primary-source evidence for the proposed dysglycaemia outcome and the unresolved NHANES laboratory-comparability questions") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Verify the ADA criteria (official article) and the CDC hs-CRP/triglyceride documentation; record findings in the draft and logs |
+| Actual completion status | CDC review done. **ADA verification blocked** (source unreachable; Q-061). Protocol rev. 3 records the findings; no status changed |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` (from `a4a2955`); changes uncommitted (prompt: no commit or push) |
+| Pull request | None |
+
+### PROTOCOL-COMMIT-001
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PROTOCOL-COMMIT-001 (prompt: "Final Review, Commit, and Push Approved Protocol Changes") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Review, check, commit and push the PROTOCOL-EVIDENCE-001 changes to the working branch only; S-09b stays proposed |
+| Actual completion status | See CHANGELOG and the final task report (commit hash in Git history) |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` → `origin/claude/eloquent-mccarthy-bqtxr3`; default branch not touched |
+| Pull request | None |
+
+### GOV-D040-RULE-S
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | GOV-D040-RULE-S (prompt: "I confirm the following decisions for BioML-Insight … authorize Claude Code to perform the specified local documentation edits only") |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Record D-040 (Rule S and Synthetic Verification Exemption) and the approved cross-references K1–K4; create the synthetic verification log header; update the task logs |
+| Actual completion status | D-040 recorded as APPROVED — CONDITIONAL (inactive); K1–K4 edits made in the working tree, uncommitted; activation not recorded (Q-062). No test, environment, data or model work |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` (from `6deaac5`); changes uncommitted (owner: local working-tree edits only; no commit, push, PR or remote contact) |
+| Pull request | None |
+
+### GOV-D040-ACTIVATION
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | GOV-D040-ACTIVATION (prompts: "resolve Q-062 using Option 1" and "proceed with the following decisions and restrictions" — activation label Option (a), Q-062 closure, follow-up documentation) |
+| Prompt date | 2026-10-24 (Day 11) |
+| Objective | Commit the GOV-D040-RULE-S changes (one authorized local commit); record D-040's activation; close Q-062; update the task logs |
+| Actual completion status | Commit `c84323016c77b78b0cfb7ce6378a4adf91d515bb` (10 files). D-040 activation recorded: APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230). Q-062 Closed. Activation does not authorize synthetic verification |
+| Branch | `claude/eloquent-mccarthy-bqtxr3`: `c843230` committed locally, not pushed (1 ahead of origin); the activation edits are uncommitted (no further commit authorized) |
+| Pull request | None |
+| Correction (2026-10-24) | Owner instruction: Q-062's status label changed from "Closed" to **"Answered"** (documented status value). Decision text and commit reference unchanged. Uncommitted |
+| Correction (2026-10-24, timeline) | Owner-approved Q-062 wording: K1–K4 satisfied in the documentation committed in `c84323016c77b78b0cfb7ce6378a4adf91d515bb`; the activation entry was recorded afterwards, outside that commit. Then one owner-authorized local commit of the 6 GOV-D040-ACTIVATION files (hash in Git history); not pushed |
+
+### LIT-005
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-005 (prompt: "We are continuing BioML-Insight on October 28, 2026 … Continue the literature survey through a focused, reproducible search and verification workflow") |
+| Prompt date | 2026-10-28 (Day 15) |
+| Objective | Named searches G-1…G-8 (PubMed), alphaXiv SHAP-stability/class-conditional conformal search, Consensus G-5 if available; verification; transcript-derived notes for 2026-10-24; synthesis, gap matrix, contribution recommendation; no screening |
+| Actual completion status | 8 PubMed + 1 alphaXiv searches executed and logged; Consensus blocked (quota); 39 raw files registered; evidence review written; no reference newly verified (second sources blocked); inventory not rebuilt (LIT-003 raw exports missing, Q-063); screening not started |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `53e419a`; uncommitted |
+| Pull request | None |
+
+### LIT-005-PRESERVATION
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-005-PRESERVATION (prompts, 2026-10-28: push authorisation for `db84937`; "Perform a strictly scoped preservation task for the 39 raw export files associated with LIT-005"; request to re-send the archive; "documentation-only task" to update `preservation_status.md`; "continue the BioML-Insight LIT-005 preservation workflow") |
+| Prompt date | 2026-10-28 (Day 15) |
+| Objective | Push the LIT-005 commit; archive and verify the 39 LIT-005 raw exports; deliver them; record the researcher's checksum confirmation; complete the `CLAUDE.md` §3 logs |
+| Actual completion status | `db84937` pushed (fast-forward). Archive created (39 files, SHA-256 `7b7d4674…6ea1`), verified 39/39 after extraction, delivered twice. Researcher reports a matching SHA-256 for the Downloads copy (researcher statement). `preservation_status.md` updated. Off-device backup outstanding |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` from `db84937`; one local commit of 5 documentation files (hash in Git history); not pushed |
+| Pull request | None |
+| Note on the LIT-005 entry above | Its "Branch … at `53e419a`; uncommitted" describes the state when it was written. LIT-005 was later committed as `db84937` and pushed (2026-10-28) |
+
+### LIT-003-RESTORE
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-003-RESTORE (prompts, 2026-10-28: read-only check of the verification procedure; "Please perform verification only" (first upload empty; repeated with the archive); "I authorize the narrowly scoped restoration of the 205 LIT-003 raw JSON files"; "I authorize a documentation-only update recording the successful LIT-003 restoration") |
+| Prompt date | 2026-10-28 (Day 15) |
+| Objective | Verify the uploaded LIT-003 archive; restore the 205 raw files into empty destinations; run `pubrecords.py verify`; record the result |
+| Actual completion status | Archive SHA-256 exact match; 208/208 internal checks; 205/205 hashes match manifest and inventory; 205 restored, 0 conflicts; `verify` OK for 244 files. No rebuild. Q-063 still Open. Documentation updated, uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `9bbd847` (1 ahead of origin); uncommitted |
+| Pull request | None |
+
+### LIT-005-REBUILD
+*Added 2026-10-29 in the documentation-only reconciliation; this entry was missing. The prompt text is not in the repository; the fields below come from `logs/session_logs/2026-10-29_LIT-005-REBUILD.md`, the LIT-005-REBUILD CHANGELOG entry and Git history.*
+
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | LIT-005-REBUILD (researcher authorisation, 2026-10-29: real inventory rebuild after the copy-based dry run and preflight; later, researcher-authorised corrections C2 and C1) |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Run `pubrecords.py build` and `make_literature_reports.py`; compare with the dry run; stop and roll back on any change to existing records; no screening, no theme-mapping change |
+| Actual completion status | Rebuild 05:44:51Z–05:47:30Z, exit 0/0; inventory 2,979 → 3,386 (P2989–P3395); identical to the dry run; 0 existing IDs changed; schema valid; `verify` OK in that container. C2: `Q-CN-G5@2026-10-28` `row_type` `executed` → `capability_probe`; validator PASS (168 rows). C1 documented, not fixed. No rollback needed |
+| Branch | `claude/eloquent-mccarthy-bqtxr3`; at the time of the CHANGELOG entry at `4acfce0`, uncommitted. Later committed as `ffee9ec55ff346b55136a3d3c532b8dbae70b209` (2026-10-29 06:31:01 UTC). Who authorised the commit is not recorded. It is on `origin` (`git ls-remote`, 2026-10-29); the push time and authorisation are not recorded |
+| Pull request | None |
+| Note on the LIT-003-RESTORE and LIT-005-PRESERVATION entries above | Their Branch fields describe the state when written. LIT-005-PRESERVATION's local commit is `9bbd847`; LIT-003-RESTORE was committed as `4acfce00f84d225f5c3be5480e282524f153598d` (recorded as researcher-authorised in the LIT-005-REBUILD session log). Both are on `origin/claude/eloquent-mccarthy-bqtxr3`; their push times are not recorded |
+
+### Branch recovery (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned (prompt: "Continue the BioML-Insight research project using the verified recovery report from 2026-10-29. … Establish the correct working branch") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Verify that the remote branch `claude/eloquent-mccarthy-bqtxr3` points to `ffee9ec55ff346b55136a3d3c532b8dbae70b209` and the tree is clean; if so, switch the session to it; validate; report; no commit, push, merge or PR |
+| Actual completion status | Preconditions met; local tracking branch created from the fetched remote ref; HEAD `ffee9ec`; tree clean. Query table PASS (168 rows); unit tests 69, OK; `pubrecords.py verify` exit 1 (all 244 raw exports missing, no other problem). No files changed |
+| Branch | `claude/gracious-hopper-rx64za` (`eb79996`) → `claude/eloquent-mccarthy-bqtxr3` (`ffee9ec`); no commit |
+| Pull request | None |
+
+### Post-recovery governance audit (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned (prompt: "Perform a read-only post-recovery governance audit and produce a prioritized list of the next authorized project tasks") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Read-only audit: state, governance files, D-039 gap, logging requirements, decisions and screening prerequisites, Q-021 and Q-063–Q-067, inventory status; prioritised plan; no file changes |
+| Actual completion status | Completed, reported in the conversation. D-039 reserved by the researcher (2026-10-24), content not in the repository; LIT-005-REBUILD missing from this log and the daily review log; commit/push state out of date in CHANGELOG; branch 8 commits ahead of default with no PR; D-035 §6 conditions 2–6 unmet; inventory 3,386 records, CSV hash matches; validator PASS (168); tests 69 OK. No files changed (one `git fetch` of the default branch updated a remote-tracking ref) |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `ffee9ec`; no commit |
+| Pull request | None |
+
+### Documentation-only reconciliation (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned (prompt: "Task: Documentation-Only Reconciliation") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Record the real commit and push state of LIT-003-RESTORE and LIT-005-REBUILD; add the missing LIT-005-REBUILD entries; record the recovery and audit; create a session log; documentation edits and non-destructive validation only |
+| Actual completion status | Append-only edits to CHANGELOG, this log and the daily review log; session log `logs/session_logs/2026-10-29_DOCUMENTATION-ONLY-RECONCILIATION.md` created; validation results in that log. DECISION_LOG, unresolved questions and preservation status unchanged |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `ffee9ec` (unchanged); changes uncommitted, awaiting researcher review; not pushed |
+| Pull request | None |
+
+### SECOND-SOURCE-ACCESS-RECHECK (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SECOND-SOURCE-ACCESS-RECHECK (prompt: "We are resuming the actual scientific work on BioML-Insight … Resume Stage B: literature research, source verification, and resolution of research-readiness blockers") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Verify state; reconstruct decision and question status; select and run one bounded, non-screening Stage B task under existing approvals |
+| Actual completion status | Second-source access re-check: 10 hosts, all CONNECT 403; read-only route counts (2,282 / 964 / 88); verification-rule inconsistency recorded as Q-068 (Open). No search, verification change, rebuild, screening or decision change |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted; not pushed |
+| Pull request | None |
+
+### RESEARCH-AMBITION-D041 (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label RESEARCH-AMBITION-D041 (prompts, 2026-10-29: "We need to make the research ambition for BioML-Insight explicit …" (inspection and proposal); "The researcher wants this ambition reflected clearly in the project" (application)) |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Inspect existing governance; propose, then apply, a research-ambition statement in `CLAUDE.md` and `README.md`; record D-041 as PROPOSED; log the change |
+| Actual completion status | `CLAUDE.md` §1a and README paragraph added; D-041 recorded as PROPOSED with a Status-history row; rule 15 reworded ("input to D-018, which is PENDING") for factual accuracy; no other decision or question changed |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted; not pushed |
+| Pull request | None |
+
+### SCREENING-ACTIVATION-BRIEF (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SCREENING-ACTIVATION-BRIEF (prompt: "Continue working in the BioML-Insight repository … Phase 2 — Prepare a screening-activation decision brief") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Verify both uncommitted tasks; prepare a documentation-only decision brief for the unmet D-035 record §6 conditions, Q-065, Q-068 and the 2026-11-24 target |
+| Actual completion status | Brief `research/reviews/screening_activation_decision_brief_D035.md` created; Q-069 opened; both earlier uncommitted tasks preserved; screening inactive; no decision or question status changed |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted; not pushed |
+| Pull request | None |
+
+### Q-069-RESOLUTION (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label Q-069-RESOLUTION (prompts, 2026-10-29: "Prepare a read-only decision analysis of Q-069"; "I approve the following resolution in principle for Q-069 … First report the intended file changes"; "Proceed with the documentation-only preparation for Q-069 based on the proposal you presented") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Analyse Q-069 read-only; propose a decision-record treatment and protocol corrections; then record D-042 as PROPOSED, keep Q-069 Open with a note, and revise protocol §23/§26 (draft revision 4) |
+| Actual completion status | D-042 recorded (PROPOSED — awaiting explicit approval); Q-069 Open with linking note; protocol draft revision 4 (§23, §26, header, change history); two contradictions in the proposal corrected before editing (Rule S timing; D-014 placement). No decision approved; protocol not frozen; screening inactive |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `eca5116`; uncommitted; not pushed |
+| Pull request | None |
+
+### D-042-APPROVAL (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label D-042-APPROVAL (prompt: "I explicitly approve D-042 exactly as currently written in `logs/DECISION_LOG.md`. Please record my approval …") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Record the explicit approval of D-042; mark Q-069 Answered; update only references made stale by the approval |
+| Actual completion status | D-042 APPROVED (status and "Approved by" cells; decision text unchanged; Status-history row; note); Q-069 Answered → D-042; protocol draft revision 5 (five reference updates; not approved, not frozen). No other decision or question status changed; no gate passed; screening inactive |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `9aefe42`; uncommitted; not pushed |
+| Pull request | None |
+
+### Q-065-DECISION-PACKAGE (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label Q-065-DECISION-PACKAGE (prompts, 2026-10-29: a read-only audit "recommend the next authorized non-coding research task"; an interrupted request to commit the LIT-005-REBUILD files (already committed as `ffee9ec`; nothing done); "Prepare a researcher-reviewable decision package for Q-065, together with the related schedule analysis") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Metadata-only priority-strand counts with independent validation; decision package for Q-065 and the schedule; append-only audit-trail reconciliation of commits and pushes |
+| Actual completion status | Package `research/reviews/Q-065_decision_package.md` created; union 1,044 (194 / 743 / 120; overlaps 10 / 0 / 3 / 0), confirmed by two implementations and `jq`; push facts for `24f5dfd`, `27c86c0`, `eca5116`, `9aefe42`, `5d92d94` (and `a280e01`) recorded from the remote-tracking reflog. Q-065 Open; no decision changed; no screening |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted; not pushed |
+| Pull request | None |
+| Note on the entries above | The Branch fields of SECOND-SOURCE-ACCESS-RECHECK, RESEARCH-AMBITION-D041, SCREENING-ACTIVATION-BRIEF, Q-069-RESOLUTION and D-042-APPROVAL describe the state when written. They were committed as `24f5dfd`, `27c86c0`, `eca5116`, `9aefe42` and `5d92d94`, and pushed to `origin/claude/eloquent-mccarthy-bqtxr3` (times in the CHANGELOG entry for this task) |
+
+### SCOPE-SCHEDULE-DECISIONS (2026-10-29)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SCOPE-SCHEDULE-DECISIONS (prompt: "Record the researcher's explicit decisions on Q-002, Q-065, and the project schedule") |
+| Prompt date | 2026-10-29 (Day 16) |
+| Objective | Verify the Q-065 Option 3 count; record D-043 (Q-002), D-044 (Q-065) and D-045 (schedule); update question statuses; no screening activation, no experiment authorisation |
+| Actual completion status | 1,470 reproduced by two independent methods; D-043 APPROVED; D-044 APPROVED — CONDITIONAL (inactive for screening); D-045 APPROVED; Q-002 and Q-065 Answered; Q-013, Q-058 Open with notes; D-001 PROPOSED unchanged. Screening inactive |
+| Branch | `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted; not pushed |
+| Pull request | None |
+
+### D-051-GOVERNANCE-APPROVAL (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label D-051-GOVERNANCE-APPROVAL (prompts 2026-10-30: PR #17 merge-readiness review; preparation of D-051; owner approval of the exact sentence and finalisation of the change set) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record the owner's approval of the exact `GOVERNANCE.md` §2 Rule S sentence (commit `c843230`) as D-051, approving that sentence only |
+| Actual completion status | D-051 APPROVED (Researcher (owner), 2026-10-30); five-file change set prepared for review. D-040 and all other entries unchanged; screening inactive |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` on top of `0c85634`; uncommitted when written; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open; not merged |
+
+### LIT-PRESERVATION-V1-V5 (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label LIT-PRESERVATION-V1-V5 (prompts 2026-10-30: preservation audits; verification plan; authorised phases V1, V2+V3, V4 and V5) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Verify both literature archives, test restoration, commit LIT-005 per-file evidence, and record the results without closing open preservation questions |
+| Actual completion status | Both archives verified (size, SHA-256, per-file); 244/244 raw files restored; `pubrecords.py verify` OK; LIT-005 listing and inventory created; preservation record and Q-063 status note updated. Q-063 Open; backup independence and Drive approval open; no inventory build |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `ec52627`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### LIT-PRESERVATION-GDRIVE (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label LIT-PRESERVATION-GDRIVE (prompt 2026-10-30: record the reported Google Drive approval) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record only what the available evidence supports about the reported Google Drive approval; list missing approval details; keep Q-063 open; do not mark preservation complete |
+| Actual completion status | Approval recorded as researcher-reported; approver, date, scope and conditions listed as not recorded; physical-device backup outstanding; Q-063 Open |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `78e4269`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### Q-011-OPTION-B and SCREENING-READINESS-RECHECK (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant labels Q-011-OPTION-B (Part A) and SCREENING-READINESS-RECHECK (Part B) (prompt 2026-10-30: accelerate toward a 2026-11-02 interim deliverable) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record the researcher's Q-011 option (b) selection and reported approval; determine whether screening may start; if not, give the exact prerequisites and the smallest unblocking path |
+| Actual completion status | Option (b) and Drive-copy hashes recorded (researcher-reported); D-010 PROPOSED, Q-011 and Q-063 Open, not PRESERVED. Screening not authorised (D-035 §6 conditions 2–6 unmet); no screening done; unblocking path in brief §11 |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### D-010-APPROVAL (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label D-010-APPROVAL (researcher prompt 2026-10-30: explicit approval of D-010 under Q-011 option (b)) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record the explicit D-010 approval |
+| Actual completion status | D-010 APPROVED (Researcher (owner), 2026-10-30); Q-011 Answered; Q-063 Open; preservation not PRESERVED |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### SCREENING-PREREQ-DECISIONS (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SCREENING-PREREQ-DECISIONS (prompt 2026-10-30: record selections, recommend remaining decisions, activation table, critical path) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record researcher-selected choices under the recording rules; recommend the remaining methodological decisions; review the six D-035 §6 conditions; plan the critical path |
+| Actual completion status | D-055–D-057 recorded; D-027 APPROVED (limited); D-008 APPROVED — CONDITIONAL; Q-001/Q-008/Q-033/Q-036/Q-040 Answered; D-012/D-023 PROPOSED; recommendations and approval request prepared; conditions 1–2 met, 3–6 unmet; screening INACTIVE |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### SCREENING-PREREQ-DECISIONS-2 (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SCREENING-PREREQ-DECISIONS-2 (prompt 2026-10-30: record delegated decisions, run arXiv spot-check, draft criteria v1.1 and protocol v0.2) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record the recommended options as researcher-approved (conditional where prerequisites are unmet); run the Q-036 spot-check; draft v1.1/v0.2 with traceability |
+| Actual completion status | D-058–D-060 recorded; D-009/D-024/D-025/D-028/D-029 approved (conditional or not implemented); D-012/D-023 approved after a 25/25 spot-check; Q-073 opened; drafts written, not frozen; D-035 §6 conditions 1–4 met at decision level, 5–6 unmet; screening INACTIVE |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### SCREENING-PREREQ-DECISIONS-3 (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label SCREENING-PREREQ-DECISIONS-3 (prompt 2026-10-30: OPEN-1, OPEN-2, Q-073, spot-check recording, implementation readiness, draft review) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Settle the open draft items; record the spot-check if `set-check` is safe; assess implementation; review the drafts |
+| Actual completion status | D-061, D-062 APPROVED — CONDITIONAL (effective at freeze); Q-073 recommendation, Open; spot-check recorded in `MANIFEST.csv` (5 rows); implementation not started (prerequisites in package §6.3); drafts consistent with decision records; screening INACTIVE |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### Q-073-DECISION and preservation commit (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label Q-073-DECISION (prompt 2026-10-30: approve D-063; commit the 17 reviewed files; push if the remote has not advanced) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Record D-063; preserve the decision-and-evidence work in one commit |
+| Actual completion status | D-063 APPROVED — CONDITIONAL (inactive); Q-073 Answered; 17 files committed and pushed (see git history for the hash) |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` |
+| Pull request | Branch is the head of PR #17; PR description not edited |
+
+### Q-068-DECISION (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label Q-068-DECISION (researcher prompt 2026-10-30: "Approve D-064 with A5 = needs_review and A6 = report-level only. Authorize Step A only.") |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Step A only: record D-064, answer Q-068, align `collection_workflow.md` §4.3, update task logs |
+| Actual completion status | D-064 APPROVED (takes effect at the next authorised build); Q-068 Answered; §4.3 split into approved policy (pending implementation) and current-build rules; no code, test, schema, data or status change |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `ee0d7de`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### D-064-STEP-B (2026-10-30)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | No task ID assigned; assistant label D-064-STEP-B (researcher prompt 2026-10-30: "I authorize Step B only", with D2, D3, D4 confirmed) |
+| Prompt date | 2026-10-30 (Day 17) |
+| Objective | Implement D-064 in `pubrecords.py` and `make_literature_reports.py`; add and update synthetic tests; no build |
+| Actual completion status | Implemented; `tests/literature` 87 OK (69 existing incl. 1 authorised modification + 18 new); no build, no data or status change |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `5cd9fc3`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### T0-GOVERNANCE-DECISIONS (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | Assistant label T0-GOVERNANCE-DECISIONS (researcher prompts 2026-10-31: T0 drafting authorised; final package approved; "The researcher authorizes recording these approved decisions in the repository.") |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Record D-065, D-066, D-067, the Q-022 answer and the D-005/D-006/D-007 status changes as approved; no commit, push or T1 |
+| Actual completion status | Recorded in `DECISION_LOG.md`, `unresolved_questions.md` and the `GOVERNANCE.md` Stage B row; task logs updated; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `b81c4e7`; uncommitted when written; not pushed |
+| Pull request | None for this task (PR #17 unchanged by it) |
+
+### T1-A (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | T1-A (researcher prompt 2026-10-31: "Implement Approved Literature Schema and Validation Changes", owner directions 1–12) |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Implement D-028, D-029/D-060, D-058 and the approved `scope_flags` tokens (D-057, D-061) in code, schemas and tests; no build, screening, freeze or commit |
+| Actual completion status | Implemented; `tests/literature` 113 OK (90 before); protected-file hashes unchanged; no build; Q-074–Q-076 opened; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted when written; not pushed |
+| Pull request | None for this task |
+
+> **Update (2026-10-31, T1-A-PR-REFERENCE).** The "Branch" and "Pull request" rows above were accurate when written (the work was then uncommitted and unpushed). This work, together with the T1-A-FOLLOW-UP changes, was committed as `d1aaceb` ("Implement literature T1-A validation safeguards"), pushed to `claude/eloquent-mccarthy-bqtxr3-part1`, and is included in **PR #17** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17 — open, not merged. This note records the PR reference only; it does not indicate approval.
+
+### T1-A-FOLLOW-UP (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | T1-A follow-up (researcher prompt 2026-10-31: "Implement a narrowly scoped T1-A follow-up", owner directions 1–7 on Q-076) |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Implement Q-076(a)–(d) directions and the mapping-precedence direction in code and tests; no build, commit or push |
+| Actual completion status | Implemented; `tests/literature` 122 OK (113 before); protected files unchanged; Q-077 opened; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted when written; not pushed |
+| Pull request | None for this task |
+
+> **Update (2026-10-31, T1-A-PR-REFERENCE).** The "Branch" and "Pull request" rows above were accurate when written (the work was then uncommitted and unpushed). This work, together with T1-A, was committed as `d1aaceb` ("Implement literature T1-A validation safeguards"), pushed to `claude/eloquent-mccarthy-bqtxr3-part1`, and is included in **PR #17** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17 — open, not merged. This note records the PR reference only; it does not indicate approval.
+
+### Q-074-DECISION (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | Q-074-DECISION (researcher prompts 2026-10-31: Q-074 evidence review, decision brief and consolidated proposal; agreement incl. A1–A4 and G1–G3; "The researcher has explicitly authorized recording D-068 and applying the agreed documentation-only changes.") |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Record D-068, answer Q-074, align the v1.1/v0.2 drafts; documentation only; no code, freeze, screening, T2, commit or push |
+| Actual completion status | D-068 recorded (APPROVED — CONDITIONAL, inactive); Q-074 Answered; drafts updated (still drafts); task logs updated; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `753a1bc`; uncommitted when written; not pushed |
+| Pull request | Branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged; PR not changed by this task |
+
+### Q-075-DECISION (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | Q-075-DECISION (researcher prompts 2026-10-31: Q-075 review and decision proposal; approval of Decisions A–D with co-occurrence deferred; final audit; "I authorize Claude to record the audited Q-075 decision as D-069 using the corrected wording in the final audit report.") |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Record D-069, update Q-075 (partly addressed), align criteria v1.1 draft; documentation only; no protocol, code, schema, test, data, freeze, screening, commit or push |
+| Actual completion status | D-069 recorded (APPROVED — CONDITIONAL, inactive); Q-075 "Open — partly addressed"; criteria v1.1 draft aligned (still a draft); task logs updated; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `e64ce8f` (1 commit ahead of `origin`); uncommitted when written; not pushed |
+| Pull request | Branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged; PR not changed by this task |
+
+### PR17-DESCRIPTION-UPDATE (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PR17-DESCRIPTION-UPDATE (researcher prompts 2026-10-31: proposal review with verification of the default and base branch; "I authorize you to update the description of GitHub PR #17 using the complete corrected proposed description from your latest report."; then authorisation of a separate documentation-only task to record the completed update) |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Update only the PR #17 description to cover commits 28–29 (D-068, D-069), verify it by read-back, then record the update in the audit logs; no title, state, comment, review, branch, commit, push, merge, PR-2 or T2 |
+| Actual completion status | PR #17 description updated; read-back identical to the approved text except the final trailing newline (not stored by GitHub); title unchanged; PR open, not merged; task logs updated; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `81875c3` (= `origin`); uncommitted when written; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): description updated by this task (GitHub `updated_at` 2026-10-31T08:55:37Z); title, state and all other PR fields unchanged; open, not merged |

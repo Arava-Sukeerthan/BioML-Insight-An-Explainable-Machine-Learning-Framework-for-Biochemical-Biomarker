@@ -57,18 +57,27 @@ SCREENING_STAGE_ORDER = {"title_abstract": 1, "full_text": 2}
 # research/literature/schemas/screening_decision.schema.json (checked by a unit test).
 SCREENING_REQUIRED = ["paper_id", "stage", "decision", "reason_code", "screener", "date", "justification"]
 SCREENING_OPTIONAL = ["rq_tags", "tier", "scope_flags", "record_type", "dim_explainability",
-                      "dim_uncertainty", "dim_calibration", "dim_independent_validation",
-                      "criteria_version", "needs_human", "dim_feature_selection", "dim_classification"]
+                      "dim_uncertainty", "dim_calibration", "validation_design",
+                      "criteria_version", "needs_human", "dim_feature_selection", "dim_classification",
+                      "biomarker_class"]
+# Screening columns that are no longer accepted (T1-A). dim_independent_validation is replaced by
+# validation_design (D-029 as specified in D-060); its values are never converted automatically.
+RETIRED_SCREENING_COLUMNS = ("dim_independent_validation",)
 SCREENING_DECISIONS = ("include", "exclude", "uncertain", "abstract_only")   # "not_screened" = no row
 SCREENING_ENUMS = {
     "stage": ("title_abstract", "full_text"),
     "decision": SCREENING_DECISIONS,
     "tier": ("", "1", "2", "3"),
-    "record_type": ("", "original", "methodological", "software", "guideline", "review_lead", "preprint", "notice"),
+    # D-028 2d: preprint/notice removed (bibliographic facts now held by publication_type)
+    "record_type": ("", "original", "methodological", "software", "guideline", "review_lead", "other"),
     "dim_explainability": ("", "yes", "no", "unclear"),
     "dim_uncertainty": ("", "yes", "no", "unclear"),
     "dim_calibration": ("", "yes", "no", "unclear"),
-    "dim_independent_validation": ("", "external", "temporal", "internal_only", "unclear"),
+    # D-060 (1): strongest stated validation design
+    "validation_design": ("", "external", "temporal", "internal_only", "none", "not_applicable", "unclear"),
+    # D-058 (Q-035)
+    "biomarker_class": ("", "metabolomics_lipidomics", "newborn_screening_msms", "routine_chemistry",
+                        "mixed_both", "other", "unclear"),
     "needs_human": ("", "yes", "no"),
     # D-032 (APPROVED - CONDITIONAL, inactive for screening until its dependencies are met):
     # RQ5 feature/biomarker-selection component
@@ -83,6 +92,43 @@ RQ5_COMPONENT_FIELDS = {"feature_selection": "dim_feature_selection", "classific
                         "explainability": "dim_explainability", "calibration": "dim_calibration",
                         "uncertainty": "dim_uncertainty"}
 RQ5_RECORDED_FIELDS = list(RQ5_COMPONENT_FIELDS.values())
+# D-060 (6): required for include/uncertain at title/abstract; optional for exclude; rows written by
+# the Stage-0 rule (screener=rule:stage0) are exempt. Not applied to full-text rows.
+TITLE_ABSTRACT_REQUIRED = ("rq_tags", "record_type", "biomarker_class", "dim_explainability",
+                           "dim_uncertainty", "dim_calibration", "validation_design")
+STAGE0_SCREENER = "rule:stage0"
+# scope_flags tokens a screener may enter (semicolon-separated): D-057 and D-061 (D-061 takes effect
+# only when screening_criteria v1.1 is frozen; accepting the token activates nothing). Other tokens
+# need a separate owner decision. "retracted" is derived by the build, never entered by hand.
+SCOPE_FLAG_TOKENS = ("scope_pending_proteomics", "non_metabolic_rq5_candidate")
+BUILD_DERIVED_SCOPE_FLAGS = ("retracted",)
+# D-028 2a: publication_type is derived only from source metadata, first match wins. Table: ballot
+# Item 2 (research/reviews/owner_review_ballot_LIT-004.md), same as decision_reconciliation_LIT-004.md
+# section 2.2. Row "preprint" also matches when the publication's source database is arXiv (D-028 2b).
+# No URL or DOI-prefix rules (D-028 2c). Extensions only by a logged change.
+PUBLICATION_TYPE_MAP = (
+    ("retraction_notice", ("Retraction of Publication",)),
+    ("expression_of_concern", ("Expression of Concern",)),
+    ("erratum_or_correction", ("Published Erratum", "Correction")),
+    ("study_protocol", ("Clinical Trial Protocol",)),
+    ("dataset", ("Dataset",)),
+    ("preprint", ("Preprint",)),
+    ("review", ("Review", "Systematic Review", "Scoping Review", "Meta-Analysis", "Evidence Synthesis")),
+    ("guideline_or_consensus", ("Guideline", "Practice Guideline", "Consensus Statement")),
+    ("editorial_comment_letter", ("Editorial", "Comment", "Letter", "News")),
+    ("conference_paper", ("Conference Proceedings", "Congress")),
+    ("journal_article", ("Journal Article",)),
+)
+# Kept verbatim in source_publication_types but not used for the class. "Retracted Publication" only
+# sets the retracted flag: a retracted article is not a retraction notice.
+PUBLICATION_TYPES_IGNORED = frozenset({
+    "Research Support, N.I.H., Extramural", "Research Support, N.I.H., Intramural",
+    "Research Support, Non-U.S. Gov't", "Research Support, U.S. Gov't, Non-P.H.S.",
+    "Research Support, U.S. Gov't, P.H.S.", "Validation Study", "Multicenter Study", "Comparative Study",
+    "Observational Study", "Randomized Controlled Trial", "Clinical Trial", "Clinical Trial, Phase I",
+    "Clinical Trial, Phase II", "Clinical Trial, Phase III", "Evaluation Study", "English Abstract",
+    "Historical Article", "Video-Audio Media", "Retracted Publication"})
+PUBLICATION_TYPES = tuple(v for v, _ in PUBLICATION_TYPE_MAP) + ("unknown", "other")
 RESEARCHER = "researcher"   # screener value for the researcher (screening_protocol.md section 6)
 REASON_CODE = re.compile(r"E(1[0-2]|[1-9])")
 RQ_TAGS = re.compile(r"(RQ[1-6])(;RQ[1-6])*")
@@ -789,7 +835,186 @@ def merge_cluster(members):
     return primary, pub, provenance, conflicts
 
 
-def auto_verification(members, conflicts):
+# --------------------------------------------------------------------------------------------
+# Second-source verification (D-064, answers Q-068)
+# --------------------------------------------------------------------------------------------
+# A publication is `verified` only when an eligible second source -- independent of the
+# authoritative record by recorded provenance, and spot-checked if transcribed -- agrees with it
+# on title, first author, year, venue and a shared persistent identifier. Missing fields are
+# insufficient evidence, never conflicts; a conflict with any eligible source gives needs_review.
+# Independence classifications and eligibility reasons are reported at report level only (A6).
+ARXIV_HOSTS = {"arxiv.org", "www.arxiv.org", "export.arxiv.org", "alphaxiv.org", "www.alphaxiv.org"}
+ID_TYPES = ("pmid", "doi", "pmcid", "arxiv_id")
+REQUIRED_FIELDS = ("title", "first_author", "year", "venue", "identifier")
+FIRST_AUTHOR_UNRELIABLE = "first-author comparison not reliable"
+
+
+def normalize_venue(venue):
+    """Unicode, case, punctuation, ampersand and whitespace normalisation only. Abbreviations are
+    never expanded: an abbreviated and a full journal title stay different."""
+    if not venue:
+        return ""
+    t = unicodedata.normalize("NFKD", strip_markup(venue))
+    t = "".join(ch for ch in t if not unicodedata.combining(ch)).casefold()
+    t = t.replace("&", " and ")
+    t = re.sub(r"[^\w\s]|_", " ", t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def _first_author(authors):
+    for a in authors or []:
+        if a.get("last_name") or a.get("collective_name") or a.get("name"):
+            return a
+    return None
+
+
+def compare_first_author(a_authors, b_authors):
+    """Returns (outcome, reason); outcome is agree / conflict / review / missing (D-064, D2)."""
+    ka, kb = first_author_key(a_authors), first_author_key(b_authors)
+    if not ka or not kb:
+        return "missing", "first author absent"
+    fa, fb = _first_author(a_authors), _first_author(b_authors)
+    coll_a = bool(fa.get("collective_name")) and not fa.get("last_name")
+    coll_b = bool(fb.get("collective_name")) and not fb.get("last_name")
+    if coll_a != coll_b:
+        return "review", FIRST_AUTHOR_UNRELIABLE + " (collective vs personal author)"
+    if ka == kb:
+        return "agree", None
+    if ka.endswith(kb) or kb.endswith(ka) or ka.startswith(kb) or kb.startswith(ka):
+        return "review", FIRST_AUTHOR_UNRELIABLE + " (compound or particle surname)"
+    return "conflict", "first author differs"
+
+
+def compare_identifiers(a, b):
+    """By type: every shared type must match; at least one shared type is required."""
+    shared = [t for t in ID_TYPES if a.get(t) and b.get(t)]
+    mismatched = [t for t in shared if a[t] != b[t]]
+    if mismatched:
+        return "conflict", "identifier differs: " + ", ".join(mismatched)
+    if not shared:
+        return "missing", "no shared identifier type"
+    return "agree", None
+
+
+def compare_required_fields(a, b):
+    """Field-by-field outcome between the authoritative record a and a second source b."""
+    out = {}
+    ta, tb = normalize_title(a.get("title")), normalize_title(b.get("title"))
+    out["title"] = (("missing", "title absent") if not ta or not tb else
+                    ("agree", None) if ta == tb else ("conflict", "title differs"))
+    out["first_author"] = compare_first_author(a.get("authors"), b.get("authors"))
+    ya, yb = a.get("year"), b.get("year")
+    out["year"] = (("missing", "year absent") if ya is None or yb is None else
+                   ("agree", None) if ya == yb else ("conflict", "year differs"))
+    va, vb = normalize_venue(a.get("journal")), normalize_venue(b.get("journal"))
+    out["venue"] = (("missing", "venue absent") if not va or not vb else
+                    ("agree", None) if va == vb else ("conflict", "venue differs"))
+    out["identifier"] = compare_identifiers(a, b)
+    return out
+
+
+def _url_parts(url):
+    if not url:
+        return "", ""
+    m = re.match(r"(?i)^[a-z][a-z0-9+.-]*://([^/?#:]+)(?::\d+)?([^?#]*)", str(url).strip())
+    return (m.group(1).lower(), m.group(2)) if m else ("", "")
+
+
+def source_provider(m):
+    """The repository that holds the underlying record, from recorded source and URL only."""
+    s = m["source"]
+    if s in ("pubmed", "arxiv", "europepmc", "crossref", "consensus", "semantic_scholar"):
+        return s
+    host, path = _url_parts(m.get("source_url"))
+    if host in ARXIV_HOSTS:
+        return "arxiv"
+    if host == "pubmed.ncbi.nlm.nih.gov":
+        return "pubmed"
+    if host == "pmc.ncbi.nlm.nih.gov" or (host == "www.ncbi.nlm.nih.gov" and path.lower().startswith("/pmc")):
+        return "pmc"
+    if host == "europepmc.org" or host.endswith(".europepmc.org"):
+        return "europepmc"
+    if s == "publisher_site":
+        return "publisher:" + (host or "unknown")
+    return f"{s}:{host}" if host else s
+
+
+# retrieval routes whose output is saved without transcription (collection_workflow.md §2,
+# routes A and B; D-023): script retrieval via E-utilities and verbatim PubMed-connector output
+RETRIEVAL_ROUTES = {"eutils_api", "pubmed_connector"}
+
+
+def _recorded_provenance(m):
+    """Retrieved through a recorded non-transcription route, or transcribed with a passed
+    spot-check. A non-transcribed record from any other or a missing route does not qualify."""
+    if m["transcribed"]:
+        return m["transcription_check"] == "passed"
+    return m.get("route") in RETRIEVAL_ROUTES
+
+
+def _url_only(m):
+    orig = m.get("original") or {}
+    return (isinstance(orig, dict) and orig.get("identifiers_parsed_from_url") is True
+            and not (m.get("authors") and m.get("year") is not None and m.get("journal")))
+
+
+def source_independence(a, c):
+    """(value, basis) with value independent / not_independent / undetermined (D-064 table)."""
+    pa, pc = source_provider(a), source_provider(c)
+    if _url_only(c):
+        return "not_independent", "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)"
+    if pa == pc:
+        return "not_independent", f"same underlying repository ({pa})"
+    pair = {pa, pc}
+    if pair == {"pubmed", "europepmc"}:
+        epmc = a if pa == "europepmc" else c
+        if str((epmc.get("original") or {}).get("source", "")).upper() == "MED":
+            return "not_independent", "Europe PMC MED record copies PubMed"
+        return "undetermined", "Europe PMC record without a recorded independent origin"
+    if pair == {"pubmed", "pmc"}:
+        return "undetermined", "PubMed vs PMC is undetermined by default (D-064)"
+    other = pc if pa == "pubmed" else pa if pc == "pubmed" else None
+    if other is not None and (other == "crossref" or other.startswith("publisher:")):
+        if _recorded_provenance(a) and _recorded_provenance(c):
+            return "independent", f"PubMed vs {other} with recorded retrieval or checked transcription"
+        return "undetermined", f"PubMed vs {other} without recorded retrieval or checked transcription"
+    if "consensus" in pair:
+        return "undetermined", "Consensus record without a recorded underlying source"
+    return "undetermined", f"unclassified source relationship ({pa} vs {pc})"
+
+
+def evaluate_second_sources(auth, candidates):
+    """Classify, check eligibility and compare every candidate against the authoritative record."""
+    rows = []
+    for c in sorted(candidates, key=lambda m: m["source_record_id"]):
+        value, basis = source_independence(auth, c)
+        row = {"source_record_id": c["source_record_id"], "source": c["source"],
+               "provider": source_provider(c), "independence": value, "independence_basis": basis}
+        if value != "independent":
+            row.update(eligible=False, eligibility_reason=f"independence {value}", result="ineligible")
+        elif c["transcribed"] and c["transcription_check"] != "passed":
+            row.update(eligible=False, eligibility_reason="transcribed, spot-check not passed",
+                       result="ineligible")
+        else:
+            fields = compare_required_fields(auth, c)
+            outcomes = {f: o for f, (o, _) in fields.items()}
+            row.update(eligible=True, eligibility_reason="eligible",
+                       fields={f: {"outcome": o, "reason": r} for f, (o, r) in fields.items()})
+            if "conflict" in outcomes.values():
+                row["result"] = "conflict"
+            elif "review" in outcomes.values():
+                row["result"] = "review"
+            elif "missing" in outcomes.values():
+                row["result"] = "insufficient"
+            else:
+                row["result"] = "agrees"
+        rows.append(row)
+    return {"authoritative_source_record_id": auth["source_record_id"], "candidates": rows}
+
+
+def auto_verification(members, conflicts, details=None):
+    """Bibliographic verification status (collection_workflow.md §4.3; D-064). When `details` is a
+    dict, the second-source evaluation is written into it for report-level output only."""
     hard = {c["field"] for c in conflicts} & {"title", "year", "doi", "pmid"}
     if hard:
         return "needs_review", "conflicting " + ", ".join(sorted(hard))
@@ -804,9 +1029,35 @@ def auto_verification(members, conflicts):
     trusted_auth = [m for m in auth if not m["transcribed"] or m["transcription_check"] == "passed"]
     if not trusted_auth:
         return "partially_verified", "authoritative record is transcribed and not yet spot-checked"
-    if len(sources) >= 2:
-        return "verified", "consistent in sources: " + ", ".join(sorted(sources))
-    return "partially_verified", "single source: " + ", ".join(sorted(sources))
+    if len(sources) < 2:
+        return "partially_verified", "single source: " + ", ".join(sorted(sources))
+    primary = sorted(trusted_auth, key=_source_rank)[0]
+    evaluation = evaluate_second_sources(
+        primary, [m for m in members if m is not primary and not m["metadata_missing"]])
+    if details is not None:
+        details.update(evaluation)
+    cands = evaluation["candidates"]
+    conflicted = [r for r in cands if r["result"] == "conflict"]
+    review = [r for r in cands if r["result"] == "review"]
+    if conflicted:
+        fields = sorted({f for r in conflicted for f, v in r["fields"].items() if v["outcome"] == "conflict"})
+        return "needs_review", ("conflict with independent second source: " + ", ".join(fields)
+                                + " (" + ", ".join(r["source_record_id"] for r in conflicted) + ")")
+    if review:
+        reasons = sorted({v["reason"] for r in review for v in r["fields"].values() if v["outcome"] == "review"})
+        return "needs_review", "; ".join(reasons) + " (" + ", ".join(r["source_record_id"] for r in review) + ")"
+    agree = [r for r in cands if r["result"] == "agrees"]
+    if agree:
+        return "verified", ("independent second source agrees on all required fields: "
+                            + ", ".join(sorted({r["provider"] for r in agree})))
+    why = []
+    for r in cands:
+        if r["result"] == "insufficient":
+            missing = [f for f, v in r["fields"].items() if v["outcome"] == "missing"]
+            why.append(f"{r['provider']} lacks {', '.join(missing)}")
+        else:
+            why.append(f"{r['provider']} {r['eligibility_reason']}")
+    return "partially_verified", "no qualifying independent second source: " + "; ".join(sorted(set(why)))
 
 
 def full_text_hint(pub):
@@ -903,14 +1154,20 @@ def build(lit_dir, today=None, check_schema=True):
             uniq_review.append(r)
 
     pubs = []
+    second_source_rows = []      # D-064 report-level evaluation (A6: not stored in publication records)
     for c, idx in enumerate(clusters):
         members = [records[i] for i in idx]
         primary, pub, prov, conflicts = merge_cluster(members)
         pid = ids[c]
-        status, note = auto_verification(members, conflicts)
+        vdetails = {}
+        status, note = auto_verification(members, conflicts, vdetails)
+        auto_status = status
         if pid in overrides:
             status = overrides[pid]["verification_status"]
             note = f"manual override by {overrides[pid].get('reviewer','?')} on {overrides[pid].get('date','?')}: {overrides[pid].get('note','')}"
+        if vdetails.get("candidates"):
+            second_source_rows.append({"paper_id": pid, "verification_status": status,
+                                       "automatic_status": auto_status, **vdetails})
         sc = screening.get(pid)
         ft = fulltext.get(pid)
         if pid in review_by_pid:
@@ -919,11 +1176,12 @@ def build(lit_dir, today=None, check_schema=True):
             dup = "merged_duplicates"
         else:
             dup = "unique"
+        source_dbs = sorted({m["source"] for m in members},
+                            key=lambda s: SOURCE_PRIORITY.index(s) if s in SOURCE_PRIORITY else 99)
         pubs.append({
             "paper_id": pid,
             **pub,
-            "source_databases": sorted({m["source"] for m in members},
-                                       key=lambda s: SOURCE_PRIORITY.index(s) if s in SOURCE_PRIORITY else 99),
+            "source_databases": source_dbs,
             "source_urls": sorted({m["source_url"] for m in members if m.get("source_url")}),
             "primary_source_record_id": primary["source_record_id"],
             "field_provenance": prov,
@@ -948,11 +1206,31 @@ def build(lit_dir, today=None, check_schema=True):
             "rq5_coverage_group": rq5_groups.get(pid, (None, None))[0],
             "rq5_coverage_provisional": rq5_groups.get(pid, (None, None))[1],
             "retracted": any("Retracted Publication" in (m.get("publication_types") or []) for m in members),
+            "publication_type": derive_publication_type(pub.get("publication_types"), source_dbs),
         })
     pubs.sort(key=lambda p: int(p["paper_id"][1:]))
 
     if check_schema:
         validate_outputs(records, pubs)
+
+    # status changes against the previous build output, read before it is overwritten
+    prev_path = rec_dir / "publications.jsonl"
+    prev_status = {}
+    if prev_path.exists():
+        with open(prev_path) as f:
+            for line in f:
+                if line.strip():
+                    q = json.loads(line)
+                    prev_status[q["paper_id"]] = q.get("verification_status")
+    status_changes = {
+        "previous_build_available": prev_path.exists(),
+        "changed": [{"paper_id": p["paper_id"], "previous": prev_status[p["paper_id"]],
+                     "current": p["verification_status"], "note": p["verification_note"]}
+                    for p in pubs if p["paper_id"] in prev_status
+                    and prev_status[p["paper_id"]] != p["verification_status"]],
+        "new_publications": sum(1 for p in pubs if p["paper_id"] not in prev_status),
+        "removed_publications": sorted(set(prev_status) - {p["paper_id"] for p in pubs}),
+    }
 
     with open(rec_dir / "source_records.jsonl", "w") as f:
         for r in sorted(records, key=lambda r: r["source_record_id"]):
@@ -999,13 +1277,46 @@ def build(lit_dir, today=None, check_schema=True):
         "registry_conflicts": [{"kept": k, "also": v} for k, v in reg_conflicts],
         "search_completeness": completeness,
         "retracted": [p["paper_id"] for p in pubs if p["retracted"]],
+        # D-028: unrecognised source types (publication_type "other" when nothing else matched);
+        # the build does not fail; the mapping table is extended only by a logged change
+        "unmapped_publication_types": _count(t for p in pubs
+                                             for t in unmapped_publication_types(p["publication_types"])),
         "screening_decision": _count(p["screening_decision"] for p in pubs),
         "publications_without_stable_registry_key": sum(
             1 for c in clusters if not any(record_keys(records[i]) for i in c)),
+        "verification_second_sources": {
+            "rule": "D-064",
+            "independence": _count(r["independence"] for p in second_source_rows for r in p["candidates"]),
+            "eligibility": _count(r["eligibility_reason"] for p in second_source_rows for r in p["candidates"]),
+            "results": _count(r["result"] for p in second_source_rows for r in p["candidates"]),
+            "publications": second_source_rows,
+        },
+        "verification_status_changes": status_changes,
     }
     with open(rec_dir / "build_report.json", "w") as f:
         json.dump(report, f, indent=2, sort_keys=True)
     return report
+
+
+def unmapped_publication_types(source_types):
+    """Source types that are neither in PUBLICATION_TYPE_MAP nor in PUBLICATION_TYPES_IGNORED."""
+    known = {t for _, names in PUBLICATION_TYPE_MAP for t in names} | PUBLICATION_TYPES_IGNORED
+    return sorted({t for t in (source_types or []) if t and t not in known})
+
+
+def derive_publication_type(source_types, source_databases):
+    """D-028 publication_type from source metadata only (first match wins).
+    source_types: the publication-level source types (as kept in source_publication_types);
+    source_databases: the publication's source databases, field-priority source first.
+    No class-bearing type: "other" if an unrecognised type is present (it is also reported as
+    unmapped), otherwise "unknown" (no type at all, or only types not used for the class).
+    Never looks at URLs, DOIs or titles."""
+    types = list(source_types or [])
+    arxiv = bool(source_databases) and source_databases[0] == "arxiv"
+    for value, names in PUBLICATION_TYPE_MAP:
+        if any(t in names for t in types) or (value == "preprint" and arxiv):
+            return value
+    return "other" if unmapped_publication_types(types) else "unknown"
 
 
 def _component_statuses(row):
@@ -1102,6 +1413,24 @@ def derive_rq5_coverage_group(statuses):
     return group, provisional
 
 
+def scope_flag_errors(value):
+    """Problems in a manually entered scope_flags value (semicolon-separated tokens; empty = none).
+    Values are reported, never corrected."""
+    if value == "":
+        return []
+    errors = []
+    for tok in value.split(";"):
+        if tok == "":
+            errors.append(f"scope_flags={value!r}: empty token")
+        elif tok != tok.strip():
+            errors.append(f"scope_flags={value!r}: token {tok!r} has leading or trailing whitespace")
+        elif tok in BUILD_DERIVED_SCOPE_FLAGS:
+            errors.append(f"scope_flags={value!r}: {tok!r} is derived by the build and cannot be entered")
+        elif tok not in SCOPE_FLAG_TOKENS:
+            errors.append(f"scope_flags={value!r}: token {tok!r} not in {SCOPE_FLAG_TOKENS}")
+    return errors
+
+
 def load_screening_decisions(lit_dir):
     """Read and validate screening/decisions.csv. Any invalid row stops the build (no row is
     silently dropped). Returns the rows as dicts (all columns as strings)."""
@@ -1112,12 +1441,17 @@ def load_screening_decisions(lit_dir):
         reader = csv.DictReader(f)
         cols = reader.fieldnames or []
         missing = [c for c in SCREENING_REQUIRED if c not in cols]
-        unknown = [c for c in cols if c not in SCREENING_REQUIRED + SCREENING_OPTIONAL]
-        if missing or unknown:
-            raise ValueError(f"{path}: missing columns {missing}, unknown columns {unknown}")
-        rows = [{k: (v or "").strip() for k, v in r.items()} for r in reader]
+        retired = [c for c in cols if c in RETIRED_SCREENING_COLUMNS]
+        unknown = [c for c in cols if c not in SCREENING_REQUIRED + SCREENING_OPTIONAL + retired]
+        if missing or unknown or retired:
+            raise ValueError(f"{path}: missing columns {missing}, unknown columns {unknown}"
+                             + (f", retired columns {retired} (dim_independent_validation is replaced by "
+                                "validation_design, D-029/D-060; values are not converted: record "
+                                "validation_design instead)" if retired else ""))
+        raw = list(reader)
+        rows = [{k: (v or "").strip() for k, v in r.items()} for r in raw]
     errors = []
-    for n, r in enumerate(rows, start=2):
+    for n, (r, r_raw) in enumerate(zip(rows, raw), start=2):
         for k in SCREENING_OPTIONAL:
             r.setdefault(k, "")
         where = f"line {n} ({r['paper_id'] or '?'})"
@@ -1140,6 +1474,13 @@ def load_screening_decisions(lit_dir):
             errors.append(f"{where}: date must be YYYY-MM-DD")
         if r["rq_tags"] and not RQ_TAGS.fullmatch(r["rq_tags"]):
             errors.append(f"{where}: rq_tags must be like RQ1;RQ3")
+        # checked on the value as written (before stripping), so padded tokens are reported, not fixed
+        errors += [f"{where}: {e}" for e in scope_flag_errors(r_raw.get("scope_flags") or "")]
+        if (r["stage"] == "title_abstract" and r["decision"] in ("include", "uncertain")
+                and r["screener"] != STAGE0_SCREENER):
+            absent = [k for k in TITLE_ABSTRACT_REQUIRED if not r[k]]
+            if absent:
+                errors.append(f"{where}: {r['decision']} at title_abstract requires {absent} (D-060 (6))")
     if errors:
         raise ValueError(f"{path}: invalid screening decisions:\n  " + "\n  ".join(errors))
     return rows

@@ -28,6 +28,27 @@ def web_rows(*titles_urls):
     return {"records": [{"title": t, "url": u} for t, u in titles_urls]}
 
 
+# SYNTHETIC descriptor values for tests whose subject is not the descriptors themselves (T1-A).
+# D-060 (6) requires these columns for include/uncertain rows at title_abstract.
+D060_SYNTHETIC = {"rq_tags": "RQ1", "record_type": "original", "biomarker_class": "metabolomics_lipidomics",
+                  "dim_explainability": "unclear", "dim_uncertainty": "unclear", "dim_calibration": "unclear",
+                  "validation_design": "unclear"}
+
+
+def needs_d060(rec):
+    return (rec.get("stage") == "title_abstract" and rec.get("decision") in ("include", "uncertain")
+            and rec.get("screener") != pr.STAGE0_SCREENER)
+
+
+def with_d060(rows, header=None):
+    """Append the D-060 (6) columns missing from header; include/uncertain title_abstract rows get
+    the synthetic values above, all other rows stay empty. Returns (rows, header)."""
+    header = list(header or pr.SCREENING_REQUIRED)
+    add = [c for c in pr.TITLE_ABSTRACT_REQUIRED if c not in header]
+    out = [list(r) + [D060_SYNTHETIC[c] if needs_d060(dict(zip(header, r))) else "" for c in add] for r in rows]
+    return out, header + add
+
+
 class WebFixture(Fixture):
     """Standard synthetic fixture plus web-search records that have no identifier and no year."""
 
@@ -128,7 +149,8 @@ class TestStableIds(unittest.TestCase):
 
     def test_screening_decision_follows_its_record_after_new_data(self):
         pid = self.fx.web_ids()["https://example.org/web/2"]
-        self.fx.write_decisions([[pid, "title_abstract", "uncertain", "", "assistant", "2026-10-15", "test"]])
+        self.fx.write_decisions(*with_d060([[pid, "title_abstract", "uncertain", "", "assistant", "2026-10-15",
+                                             "test"]]))
         self.fx.reg(write_json(self.fx.lit, "Q-TEST-WS_2026-10-02.json", {}, web_rows(
             ("SYNTHETIC yet another web-only record", "https://example.org/web/7"),
         )), "Q-TEST-WS", "web", "structured_transcription", 1)
@@ -186,12 +208,12 @@ class TestScreeningRecords(unittest.TestCase):
 
     def test_every_status_persists_into_publications_and_inventory(self):
         a, b, c, d = self.ids[:4]
-        self.fx.write_decisions([
+        self.fx.write_decisions(*with_d060([
             [a, "title_abstract", "include", "", "assistant", "2026-10-15", ""],
             [b, "title_abstract", "exclude", "E3", "assistant", "2026-10-15", "no predictive model"],
             [c, "title_abstract", "uncertain", "", "assistant", "2026-10-15", "scope unclear"],
             [d, "full_text", "abstract_only", "", "assistant", "2026-10-15", ""],
-        ])
+        ]))
         self.fx.build(today="2026-10-15")
         st = self.status_of()
         self.assertEqual(st[a], ("include", "title_abstract", None))
@@ -220,27 +242,33 @@ class TestScreeningRecords(unittest.TestCase):
     def test_optional_descriptor_columns(self):
         a = self.ids[0]
         self.fx.write_decisions(
-            [[a, "title_abstract", "include", "", "assistant", "2026-10-15", "", "RQ1;RQ3", "2", "",
-              "original", "yes", "no", "unclear", "external", "v0.1", "no"]],
+            [[a, "title_abstract", "include", "", "assistant", "2026-10-15", "", "RQ1;RQ3", "2",
+              "scope_pending_proteomics", "original", "yes", "no", "unclear", "external", "v0.1", "no",
+              "routine_chemistry"]],
             header=pr.SCREENING_REQUIRED + ["rq_tags", "tier", "scope_flags", "record_type",
                                             "dim_explainability", "dim_uncertainty", "dim_calibration",
-                                            "dim_independent_validation", "criteria_version", "needs_human"])
+                                            "validation_design", "criteria_version", "needs_human",
+                                            "biomarker_class"])
         self.fx.build(today="2026-10-15")
         self.fx.reports()
         row = self.fx.inventory()[a]
-        self.assertEqual((row["rq_tags"], row["tier"], row["record_type"], row["dim_independent_validation"]),
-                         ("RQ1;RQ3", 2, "original", "external"))
+        self.assertEqual((row["rq_tags"], row["tier"], row["record_type"], row["screening_validation_design"],
+                          row["biomarker_class"], row["scope_flags"]),
+                         ("RQ1;RQ3", 2, "original", "external", "routine_chemistry", "scope_pending_proteomics"))
+        # the extraction field of the same name is separate and keeps its sentinel (D-024)
+        self.assertEqual(row["validation_design"], mlr.SENTINEL)
+        self.assertIsNone(row["dim_independent_validation"])         # retired; column removed at T2
 
     def test_feature_selection_descriptor(self):
         # D-032: optional dim_feature_selection column (yes/no/unclear); files without it stay valid.
         # Title/abstract rows: a full-text row must record all component statuses (D-035, G5)
         a, b, c = self.ids[:3]
         header = pr.SCREENING_REQUIRED + ["dim_feature_selection"]
-        self.fx.write_decisions([
+        self.fx.write_decisions(*with_d060([
             [a, "title_abstract", "include", "", "assistant", "2026-10-15", "", "yes"],
             [b, "title_abstract", "uncertain", "", "assistant", "2026-10-15", "selection not reported", "unclear"],
             [c, "title_abstract", "include", "", "assistant", "2026-10-15", "", ""],
-        ], header=header)
+        ], header))
         self.fx.build(today="2026-10-15")
         details = {p["paper_id"]: p["screening_details"] for p in self.fx.pubs()}
         self.assertEqual(details[a]["dim_feature_selection"], "yes")
@@ -251,8 +279,8 @@ class TestScreeningRecords(unittest.TestCase):
         self.assertEqual((inv[a]["dim_feature_selection"], inv[c]["dim_feature_selection"]), ("yes", None))
         for bad in ("maybe", "Yes", "true"):
             with self.subTest(bad):
-                self.fx.write_decisions([[a, "title_abstract", "include", "", "assistant", "2026-10-15", "", bad]],
-                                        header=header)
+                self.fx.write_decisions(*with_d060([[a, "title_abstract", "include", "", "assistant",
+                                                     "2026-10-15", "", bad]], header))
                 with self.assertRaises(ValueError):
                     self.fx.build(today="2026-10-16")
         # unscreened records carry no component value
@@ -261,10 +289,10 @@ class TestScreeningRecords(unittest.TestCase):
 
     def test_latest_stage_wins(self):
         a = self.ids[0]
-        self.fx.write_decisions([
+        self.fx.write_decisions(*with_d060([
             [a, "full_text", "exclude", "E5", "assistant", "2026-10-16", "full text: no biomarkers"],
             [a, "title_abstract", "include", "", "assistant", "2026-10-15", ""],
-        ])
+        ]))
         self.fx.build(today="2026-10-16")
         self.assertEqual(self.status_of()[a], ("exclude", "full_text", "E5"))
 
@@ -315,7 +343,8 @@ class TestScreeningRecords(unittest.TestCase):
     def test_orphan_paper_id_raises_and_writes_nothing(self):
         pubs = self.fx.lit / "records" / "publications.jsonl"
         before = pubs.read_bytes()
-        self.fx.write_decisions([["P9999", "title_abstract", "include", "", "assistant", "2026-10-15", ""]])
+        self.fx.write_decisions(*with_d060([["P9999", "title_abstract", "include", "", "assistant", "2026-10-15",
+                                              ""]]))
         with self.assertRaises(RuntimeError):
             self.fx.build(today="2026-10-15")
         self.assertEqual(pubs.read_bytes(), before)
@@ -347,8 +376,10 @@ class TestSchemaConsistency(unittest.TestCase):
     def test_publication_schema_matches_code(self):
         pub = json.load(open(REPO / "research" / "literature" / "schemas" / "publication_record.schema.json"))
         props = pub["properties"]
+        # retired screening columns stay listed (always null) until the T2 rebuild removes them
         self.assertEqual(set(props["screening_details"]["properties"]),
-                         set(["screener", "date", "justification"] + pr.SCREENING_OPTIONAL))
+                         set(["screener", "date", "justification"] + pr.SCREENING_OPTIONAL
+                             + list(pr.RETIRED_SCREENING_COLUMNS)))
         for stage in ("preliminary", "confirmed"):
             with self.subTest(stage):
                 statuses = props["rq5_components"]["properties"][stage]["properties"]["statuses"]["properties"]
@@ -376,17 +407,36 @@ class TestInventoryRebuild(unittest.TestCase):
         inv = json.load(open(inv_path))
         inv[0]["disorder"] = "SYNTHETIC disorder (test)"
         inv[0]["extraction_status"] = "extracted"
-        inv[0]["publication_type"] = "original_research"
+        inv[0]["validation_design"] = "SYNTHETIC extracted validation design (test)"
         pid = inv[0]["paper_id"]
         json.dump(inv, open(inv_path, "w"))
         self.fx.build(today="2026-10-15")
         self.fx.reports()
         row = self.fx.inventory()[pid]
-        self.assertEqual((row["disorder"], row["extraction_status"], row["publication_type"]),
-                         ("SYNTHETIC disorder (test)", "extracted", "original_research"))
+        self.assertEqual((row["disorder"], row["extraction_status"], row["validation_design"]),
+                         ("SYNTHETIC disorder (test)", "extracted", "SYNTHETIC extracted validation design (test)"))
+        self.assertIsNone(row["screening_validation_design"])       # not screened: screening descriptor empty
         self.assertEqual(row["models"], mlr.SENTINEL)
         stats = json.load(open(self.fx.lit / "records" / "collection_stats.json"))
         self.assertEqual(stats["manual_values_carried_forward"], 3)
+
+    def test_publication_type_is_derived_not_manual(self):
+        # D-028 2a: publication_type is not a manual field and is never carried forward; a hand edit
+        # that differs from the derived value stops the run with nothing written (Q-076(c) direction)
+        self.assertNotIn("publication_type", mlr.MANUAL_FIELDS)
+        inv_path = self.fx.lit / "paper_inventory.json"
+        inv = json.load(open(inv_path))
+        pid, derived = inv[0]["paper_id"], inv[0]["publication_type"]
+        self.assertIn(derived, pr.PUBLICATION_TYPES)
+        self.assertNotEqual(derived, "review")
+        inv[0]["publication_type"] = "review"
+        json.dump(inv, open(inv_path, "w"))
+        before = {n: (self.fx.lit / n).read_bytes() for n in
+                  ("paper_inventory.json", "paper_inventory.csv", "records/collection_stats.json")}
+        with self.assertRaises(SystemExit) as cm:
+            self.fx.reports()
+        self.assertIn(pid, str(cm.exception))
+        self.assertEqual({n: (self.fx.lit / n).read_bytes() for n in before}, before)
 
     def test_manual_values_for_missing_paper_id_stop_the_report(self):
         inv_path = self.fx.lit / "paper_inventory.json"
@@ -437,7 +487,7 @@ class TestIntegrity(unittest.TestCase):
             rows.append([p["paper_id"], "title_abstract", d, "E12" if d == "exclude" else "", "assistant",
                          "2026-10-15", "test" if d != "include" else ""])
             expect[p["paper_id"]] = (d, sorted(s["source_record_id"] for s in p["search_provenance"]))
-        self.fx.write_decisions(rows)
+        self.fx.write_decisions(*with_d060(rows))
         # new data merging into an existing record (900000003 again, another query) and a new record
         self.fx.reg(write_json(self.fx.lit, "Q-TEST-B_search_01.json", {}, {
             "pmids": ["900000003"], "total_count": 2}), "Q-TEST-B", "pubmed", "pubmed_connector_search", 1,
@@ -484,7 +534,8 @@ class TestIntegrity(unittest.TestCase):
         import jsonschema
         path = self.fx.lit / "paper_inventory.json"
         inv = json.load(open(path))
-        inv[0]["publication_type"] = "SYNTHETIC invalid type"
+        # publication_type is derived since T1-A (D-028), so a schema-constrained manual field is used
+        inv[0]["sample_size"] = "SYNTHETIC invalid sample size"
         json.dump(inv, open(path, "w"))
         before = path.read_bytes(), (self.fx.lit / "paper_inventory.csv").read_bytes()
         with self.assertRaises((jsonschema.ValidationError, SystemExit)):
@@ -507,7 +558,8 @@ class TestIntegrity(unittest.TestCase):
 
     def test_not_screened_and_uncertain_are_distinct_everywhere(self):
         ids = sorted(p["paper_id"] for p in self.fx.pubs())
-        self.fx.write_decisions([[ids[0], "title_abstract", "uncertain", "", "assistant", "2026-10-15", "x"]])
+        self.fx.write_decisions(*with_d060([[ids[0], "title_abstract", "uncertain", "", "assistant", "2026-10-15",
+                                             "x"]]))
         self.fx.build(today="2026-10-15")
         self.fx.reports()
         inv = self.fx.inventory()
@@ -530,10 +582,18 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
         self.fx = WebFixture()
         self.fx.build()
         self.ids = sorted(p["paper_id"] for p in self.fx.pubs())
-        self.header = pr.SCREENING_REQUIRED + self.COMP
+        self.header = pr.SCREENING_REQUIRED + self.COMP + self.D060_OTHER
+
+    # D-060 (6) columns other than the three method descriptors (filled with SYNTHETIC values for
+    # include/uncertain title_abstract rows). Rows that leave method descriptors blank at
+    # title_abstract are written as exclude rows, for which D-060 (6) requires no descriptors;
+    # preliminary component statuses are kept for every title_abstract row whatever the decision.
+    D060_OTHER = ["rq_tags", "record_type", "biomarker_class", "validation_design"]
 
     def row(self, pid, stage, dec, screener, date, fs="", cl="", x="", c="", u="", why="test"):
-        return [pid, stage, dec, "E3" if dec == "exclude" else "", screener, date, why, fs, cl, x, c, u]
+        r = [pid, stage, dec, "E3" if dec == "exclude" else "", screener, date, why, fs, cl, x, c, u]
+        rec = {"stage": stage, "decision": dec, "screener": screener}
+        return r + [D060_SYNTHETIC[k] if needs_d060(rec) else "" for k in self.D060_OTHER]
 
     def by_pid(self):
         return {p["paper_id"]: p for p in self.fx.pubs()}
@@ -559,7 +619,7 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
     def test_classification_statuses_accepted_and_reported(self):
         ids = self.ids[:4]
         values = ["yes", "no", "unclear", ""]
-        self.fx.write_decisions([self.row(pid, "title_abstract", "include", "assistant", "2026-10-15", cl=v)
+        self.fx.write_decisions([self.row(pid, "title_abstract", "exclude", "assistant", "2026-10-15", cl=v)
                                  for pid, v in zip(ids, values)], header=self.header)
         self.fx.build(today="2026-10-15")
         pubs = self.by_pid()
@@ -577,7 +637,7 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
         self.assertEqual(csv_cl[ids[1]], "no")
         for bad in ("maybe", "Yes", "true", "n/a"):
             with self.subTest(bad):
-                self.fx.write_decisions([self.row(ids[0], "title_abstract", "include", "assistant",
+                self.fx.write_decisions([self.row(ids[0], "title_abstract", "exclude", "assistant",
                                                   "2026-10-15", cl=bad)], header=self.header)
                 with self.assertRaises(ValueError):
                     self.fx.build(today="2026-10-16")
@@ -587,7 +647,7 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
         # rows may be partial (preliminary triage) and classification is then not assessed
         a = self.ids[0]
         old = [c for c in self.COMP if c != "dim_classification"]
-        self.fx.write_decisions([[a, "title_abstract", "include", "", "assistant", "2026-10-15", "",
+        self.fx.write_decisions([[a, "title_abstract", "exclude", "E3", "assistant", "2026-10-15", "test",
                                   "yes", "yes", "", ""]], header=pr.SCREENING_REQUIRED + old)
         self.fx.build(today="2026-10-15")
         ev = self.rq5(a)
@@ -606,7 +666,7 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
 
     def test_partial_abstract_stage_keeps_missing_as_not_assessed(self):
         a = self.ids[0]
-        self.fx.write_decisions([self.row(a, "title_abstract", "include", "assistant", "2026-10-15",
+        self.fx.write_decisions([self.row(a, "title_abstract", "exclude", "assistant", "2026-10-15",
                                           "yes", "", "yes", "", "")], header=self.header)
         self.fx.build(today="2026-10-15")
         st = self.rq5(a)["preliminary"]["statuses"]
@@ -667,17 +727,18 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
 
     def test_later_blank_row_cannot_erase(self):
         a = self.ids[0]
-        for stage in ("full_text", "title_abstract"):
+        for stage, dec in (("full_text", "include"), ("title_abstract", "exclude")):
             with self.subTest(stage):
                 self.fx.write_decisions([
-                    self.row(a, stage, "include", "assistant", "2026-10-16", "yes", "yes", "yes", "no", "unclear"),
-                    self.row(a, stage, "include", "assistant", "2026-10-17"),
+                    self.row(a, stage, dec, "assistant", "2026-10-16", "yes", "yes", "yes", "no", "unclear"),
+                    self.row(a, stage, dec, "assistant", "2026-10-17"),
                 ], header=self.header)
-                with self.assertRaises(ValueError):
+                with self.assertRaises(ValueError) as cm:
                     self.fx.build(today="2026-10-17")
+                self.assertIn("is blank but was recorded", str(cm.exception))
         # a full-text row without components does not erase title/abstract evidence (kept as preliminary)
         self.fx.write_decisions([
-            self.row(a, "title_abstract", "include", "assistant", "2026-10-15", "yes"),
+            self.row(a, "title_abstract", "exclude", "assistant", "2026-10-15", "yes"),
             self.row(a, "full_text", "include", "assistant", "2026-10-16"),
         ], header=self.header)
         self.fx.build(today="2026-10-16")
@@ -687,16 +748,16 @@ class TestRQ5ComponentEvidence(unittest.TestCase):
         a = self.ids[0]
         with self.subTest("title_abstract"):
             self.fx.write_decisions([
-                self.row(a, "title_abstract", "include", "assistant", "2026-10-15", cl="yes"),
-                self.row(a, "title_abstract", "include", "assistant", "2026-10-16", fs="yes"),
+                self.row(a, "title_abstract", "exclude", "assistant", "2026-10-15", cl="yes"),
+                self.row(a, "title_abstract", "exclude", "assistant", "2026-10-16", fs="yes"),
             ], header=self.header)
             with self.assertRaises(ValueError) as cm:
                 self.fx.build(today="2026-10-16")
             self.assertIn("dim_classification is blank", str(cm.exception))
         with self.subTest("changing a value is allowed"):
             self.fx.write_decisions([
-                self.row(a, "title_abstract", "include", "assistant", "2026-10-15", cl="yes"),
-                self.row(a, "title_abstract", "include", "assistant", "2026-10-16", cl="unclear"),
+                self.row(a, "title_abstract", "exclude", "assistant", "2026-10-15", cl="yes"),
+                self.row(a, "title_abstract", "exclude", "assistant", "2026-10-16", cl="unclear"),
             ], header=self.header)
             self.fx.build(today="2026-10-16")
             self.assertEqual(self.rq5(a)["preliminary"]["statuses"]["classification"], "unclear")

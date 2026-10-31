@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Screening decision row (screening/decisions.csv)",
-  "description": "LIT-004-WORKFLOW-FIXES (proposed, D-027). One row per decision; append-only; the latest row per paper (stage order, then date, then file order) is the current decision. All CSV values are strings; empty string = not recorded. Validated by pubrecords.load_screening_decisions; a unit test keeps this file and the code in step.",
+  "description": "LIT-004-WORKFLOW-FIXES (proposed, D-027). One row per decision; append-only; the latest row per paper (stage order, then date, then file order) is the current decision. All CSV values are strings; empty string = not recorded. Validated by pubrecords.load_screening_decisions; a unit test keeps this file and the code in step. T1-A: rq_tags, record_type, biomarker_class, dim_explainability, dim_uncertainty, dim_calibration and validation_design are required for include/uncertain rows at title_abstract unless screener=rule:stage0 (D-060 (6)); enforced in code, not expressible in this per-row schema. The column dim_independent_validation is retired and rejected.",
   "type": "object",
   "required": [
     "paper_id",
@@ -56,7 +56,9 @@
       "pattern": "^((RQ[1-6])(;RQ[1-6])*)?$"
     },
     "scope_flags": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^((scope_pending_proteomics|non_metabolic_rq5_candidate)(;(scope_pending_proteomics|non_metabolic_rq5_candidate))*)?$",
+      "description": "Semicolon-separated controlled tokens, no spaces. scope_pending_proteomics (D-057); non_metabolic_rq5_candidate (D-061, effective only when screening_criteria v1.1 is frozen). Other tokens need a separate owner decision; 'retracted' is derived by the build and is never entered here"
     },
     "criteria_version": {
       "type": "string"
@@ -77,9 +79,9 @@
         "software",
         "guideline",
         "review_lead",
-        "preprint",
-        "notice"
-      ]
+        "other"
+      ],
+      "description": "Screening classification (D-028 2d); bibliographic types such as preprint are held by the derived publication_type. Required for include/uncertain at title_abstract (D-060 (6))"
     },
     "dim_explainability": {
       "enum": [
@@ -123,14 +125,17 @@
       ],
       "description": "RQ5 classification component (D-036, answers Q-039; APPROVED - CONDITIONAL, not active for screening until its dependencies are met). Evidence definition: research/reviews/Q-041_decision_record_D035.md section 2; empty = not assessed, never no. Record: research/reviews/Q-039_decision_record_D036.md"
     },
-    "dim_independent_validation": {
+    "validation_design": {
       "enum": [
         "",
         "external",
         "temporal",
         "internal_only",
+        "none",
+        "not_applicable",
         "unclear"
-      ]
+      ],
+      "description": "Strongest stated validation design (D-029 as specified in D-060 (1)); replaces the retired column dim_independent_validation, whose values are not converted. Required for include/uncertain at title_abstract (D-060 (6))"
     },
     "needs_human": {
       "enum": [
@@ -138,6 +143,18 @@
         "yes",
         "no"
       ]
+    },
+    "biomarker_class": {
+      "enum": [
+        "",
+        "metabolomics_lipidomics",
+        "newborn_screening_msms",
+        "routine_chemistry",
+        "mixed_both",
+        "other",
+        "unclear"
+      ],
+      "description": "Biomarker strand (D-058, answers Q-035). Required for include/uncertain at title_abstract (D-060 (6))"
     }
   },
   "x-column-order": [
@@ -155,10 +172,11 @@
     "dim_explainability",
     "dim_uncertainty",
     "dim_calibration",
-    "dim_independent_validation",
+    "validation_design",
     "criteria_version",
     "needs_human",
     "dim_feature_selection",
-    "dim_classification"
+    "dim_classification",
+    "biomarker_class"
   ]
 }

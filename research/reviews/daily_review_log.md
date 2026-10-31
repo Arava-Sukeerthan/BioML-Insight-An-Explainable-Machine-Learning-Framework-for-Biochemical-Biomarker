@@ -195,3 +195,273 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** whether to commit and publish this record; the remaining activation conditions in the D-035 record §6 (Q-040; D-027 and D-024; the remaining R5/D-029 items; criteria v1.1 and protocol v0.2, frozen as the pilot's `criteria_version`; the other pilot-blocking items). Separately, open question Q-042 (not an activation condition, D-037-B1).
 - **Recommended next step:** owner review of this record; then resolve the outstanding D-035 record §6 activation conditions above before D-039 is considered. D-039 is not started.
 - **Researcher decisions:** none in this task.
+
+## Day 11 (cont.) — 2026-10-24 — PROTOCOL-DRAFT-001
+- **Work completed:** experimental protocol draft v0.1 (`research/methodology/experimental_protocol_v0.1_draft.md`); open questions Q-044–Q-058.
+- **Important findings:** `[EVIDENCE: local descriptive check]`
+  - The analytic samples are 3,088 (2017–March 2020) and 2,485 (2021–2023).
+  - The candidate outcome is 65.0% and 58.8% positive, mostly from FPG 100–125 mg/dL alone.
+  - The triglyceride equation units are supported as mg/dL (Q-044). The hs-CRP equation units are unresolved (Q-045).
+  - None of the needed references is citable yet (protocol Appendix D).
+- **Decisions requiring review:** FA-1–FA-13 in protocol §24; D-013, D-014, D-015, D-017, D-018 and D-019 (all PENDING); Q-044–Q-058.
+- **Recommended next step:** researcher review of the draft, starting with FA-2 (outcome) and Q-044/Q-045; then authorize verification of the candidate references into the inventory.
+- **Researcher decisions:** none in this task. The confirmed preferences in the prompt are recorded as CUP-1–CUP-11 inside the draft, not as approvals.
+
+## Day 11 (cont.) — 2026-10-24 — PROTOCOL-DRAFT-002
+- **Work completed:** protocol draft v0.1 rev. 1 (owner-authorized draft edits); data-protection `.gitignore` rules, `outputs/README.md` and `tests/data_protection/` (6 checks).
+- **Important findings:**
+  - `[EVIDENCE: CDC documentation]` The hs-CRP equation passage states mg/dL, while the variable and all three method manuals use mg/L, and the 2021–2023 instrument change happened "during the cycle" (Q-045, new Q-059). No conversion applied; hs-CRP removed from the primary sets.
+  - A development-period-only hs-CRP sensitivity analysis needs no conversion: both 2017–2020 method manuals name the Cobas 6000.
+- **Decisions requiring review:** FA-2 (preferred by the owner, **not approved**); the safeguards (AB-10 left open); Q-044, Q-045, Q-059.
+- **Recommended next step:** owner review of rev. 1, and authorization to commit (the work is uncommitted); NCHS enquiry on hs-CRP units and instrument timing.
+- **Researcher decisions:** the owner expressed preferences (FA-2 preferred; hs-CRP excluded) and authorized draft edits. These are recorded as preferences, not approvals.
+
+## Day 11 (cont.) — 2026-10-24 — PROTOCOL-DRAFT-003
+- **Work completed:** protocol draft rev. 2 (three wording corrections and one traceability correction); reproducible aggregate-count script; extended data-protection rules and tests; `scripts/run_checks.sh`.
+- **Important findings:**
+  - `[EVIDENCE: local descriptive check]` 84 of 85 draft values reproduce exactly. The median-FPG sentence had used the broader reference population (corrected: analytic samples 101 vs 100 mg/dL).
+  - The negative control found an allowlist-exemption flaw in the new test (fixed).
+- **Decisions requiring review:** FA-2 (preferred, **not approved**); the safeguards (AB-10 open); Q-044, Q-045, Q-059; whether to add `sh scripts/run_checks.sh` to `CLAUDE.md` §4 (owner approval needed).
+- **Recommended next step:** owner review of rev. 2 and of the pushed branch; NCHS enquiry (hs-CRP); a second bibliographic source for reference verification.
+- **Researcher decisions:** Option A authorization (corrections, scripts, safeguards, commit and push). No decision approved.
+
+## Day 11 (cont.) — 2026-10-24 — PROTOCOL-EVIDENCE-001
+- **Work completed:** primary-source review; protocol draft rev. 3; Q-060 and Q-061.
+- **Important findings:**
+  - `[EVIDENCE: CDC documentation]` The 2021–2023 instrument changes for HbA1c and the chemistry analyzer (hs-CRP, TC, HDL, TG, BIOPRO) happened **within** the cycle, with no published date or participant indicator.
+  - CDC backward equations cannot yet be shown to apply to every 2021–2023 record (Q-060).
+  - The ADA text could not be reached (Q-061), so the criteria remain unverified.
+- **Decisions requiring review:**
+  - FA-5 recommendation: unadjusted values as reference; cycle-level equations as S-09b.
+  - FA-2 (still preferred, not approved).
+  - Network access or PDF for the ADA article.
+- **Recommended next step:** allow `diabetesjournals.org` and `doi.org`, or supply the ADA PDF; send the NCHS enquiry for Q-044, Q-045, Q-059 and Q-060.
+- **Researcher decisions:** none in this task.
+
+## Day 11 (cont.) — 2026-10-24 — GOV-D040-RULE-S
+- **Work completed:** D-040 recorded (Rule S and Synthetic Verification Exemption); approved cross-references added to `CLAUDE.md` rule 13, `GOVERNANCE.md` §2 and the `logs/EXPERIMENT_LOG.md` header; `logs/SYNTHETIC_VERIFICATION_LOG.md` created (header only); Q-062 opened. Local edits only, uncommitted.
+- **Important findings:** D-040 was unused (working tree and local history); D-039 stays reserved for the screening-related proposal. The K1–K4 edits are in place but uncommitted, so activation is not recorded.
+- **Decisions requiring review:** whether K1–K4 count as satisfied and D-040 may be recorded as active (Q-062); whether to commit/push these edits (Q-005 open); D-002 environment pins; the synthetic test plan (Gate 2).
+- **Recommended next step:** owner review of the diff; decide Q-062 and the Git step; then the environment decision and the test plan. No test may run before 2026-11-03.
+- **Researcher decisions:** Rule S and exemption wording (C1 with the activation adjustment), K1–K4 mandatory, APPROVED — CONDITIONAL (inactive), D-040 and date 2026-10-24, D-039 reserved, `logs/SYNTHETIC_VERIFICATION_LOG.md`, C2–C4 wording, authorization of local documentation edits only.
+
+## Day 11 (cont.) — 2026-10-24 — GOV-D040-ACTIVATION
+- **Work completed:** owner-authorized local commit `c843230` of the 10 GOV-D040-RULE-S files; D-040 activation recorded in the decision log Status history; Q-062 closed. Not pushed; the activation edits are uncommitted.
+- **Important findings:** K1–K4 present with the approved wording in `c843230` and in the working tree. "ACTIVE" is not a decision-log status, so the owner chose the existing convention: APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230). The questions file lists "Open / Answered / Superseded"; Q-062 uses "Closed" as the owner authorized.
+- **Decisions requiring review:** whether to commit and push the activation edits (Q-005 open); whether to add "Closed" to the questions-file status list; D-002 environment pins; the synthetic test plan (Gate 2).
+- **Recommended next step:** owner review; commit/push authorization; then the environment decision and test plan. D-040 activation authorizes no synthetic verification; no run before 2026-11-03.
+- **Researcher decisions:** Q-062 Option 1; one local commit; activation label Option (a); Q-062 closure; local documentation edits only.
+- **Correction (same day, owner instruction):** Q-062's status label changed from "Closed" to "Answered", the documented status value. This settles the "Closed" question above; the questions-file header is unchanged.
+- **Correction (same day, owner-approved wording):** Q-062 now states that K1–K4 were satisfied in the documentation committed in `c843230`, and that the activation entry was recorded afterwards, outside that commit. The 6 GOV-D040-ACTIVATION files are then committed locally (owner-authorized); not pushed.
+
+## Day 15 — 2026-10-28 — LIT-005
+- **Work completed:** PubMed G-1…G-8 (435 unique PMIDs; 395 new to the inventory; all transcription checks passed), alphaXiv search (15 listings), metadata for 394 of 395 new PMIDs; 2026-10-24 review recovered as transcript-derived notes; `LIT-005_evidence_review.md` (synthesis, comparison matrix, gap matrix, contribution recommendation).
+- **Important findings:** temporal validation across national-survey cycles is established (KNHANES, NHANES), so it is not a contribution; the closest NHANES designs are A2, Casacchia 2024 and Li 2026; glucose-free laboratory classification exists outside NHANES (Guo 2026, CBC only); PubMed G-5 found no tabular metabolic study combining explanation, calibration and uncertainty, which is absence of evidence only. No reference reached `verified` (Crossref, doi.org, Europe PMC blocked; Consensus quota).
+- **Decisions requiring review:** Q-063 (restore raw exports), Q-064 (verification route), Q-065 (screening scope), Q-066 (A2 full text), D-035 §6 conditions 2–6, D-016 contribution wording.
+- **Recommended next step:** restore the LIT-003 exports and rebuild; decide the verification route; clear the screening conditions by 11-01.
+- **Researcher decisions:** authorisation of the LIT-005 searches and file updates (2026-10-28).
+- **Correction (same day, LIT-005 pre-commit review, researcher-authorised):** "395 new to the inventory" means not matched **by PMID**; inventory records without a PMID were not compared by DOI, so the rebuild's duplicate check is still needed. The screening-pilot blocker list in `LIT-005_evidence_review.md` §8 now follows `final_confirmation_sheet_LIT-004.md` ("Pilot-blocking items after confirmation") and `screening_protocol.md` B-6. Other corrections: see `logs/CHANGELOG.md`.
+
+## Day 15 (cont.) — 2026-10-28 — LIT-005-PRESERVATION
+- **Work completed:** LIT-005 commit `db84937` pushed; deterministic archive of the 39 LIT-005 raw exports created, verified (39/39 after extraction) and delivered; `preservation_status.md` LIT-005 section added.
+- **Important findings:** archive SHA-256 `7b7d4674426c7581839b970cad37e21251ade0bf22d295814ac542bd7ec96ea1`. The researcher reports that the Downloads copy matches (researcher statement; not observed by the assistant). Only one copy exists outside the container, so off-device backup is still outstanding.
+- **Decisions requiring review:** off-device storage for both archives; Q-063 (restore the LIT-003 archive and rebuild); Q-064 (verification route).
+- **Recommended next step:** store both archives on separate private media and verify them; then authorise the LIT-003 restore and rebuild.
+- **Researcher decisions:** authorisation of the push, the archive task, the documentation update and one local commit (2026-10-28).
+
+## Day 15 (cont.) — 2026-10-28 — LIT-003-RESTORE
+- **Work completed:** uploaded LIT-003 archive verified (SHA-256 exact match; 208/208 internal checksums; 205 raw files match `MANIFEST.csv` and the committed inventory); 205 raw files restored into empty destinations; `pubrecords.py verify` OK for all 244 raw exports.
+- **Important findings:** the archive's `SHA256SUMS.txt` is identical to the committed copy; its `MANIFEST.csv` is the pre-LIT-005 version and its README an earlier version, so neither was used. The rebuild precondition is now met in this workspace. Off-device backup remains outstanding, and the restored files exist only in the ephemeral container.
+- **Decisions requiring review:** authorise the inventory rebuild; Q-063 status (still Open); off-device storage for both archives; Q-064; D-035 §6 conditions.
+- **Recommended next step:** authorise the inventory rebuild while the restored files are present in this workspace.
+- **Researcher decisions:** authorisation of the verification, the restore and this documentation update (2026-10-28).
+
+## Day 16 — 2026-10-29 — LIT-005-REBUILD
+*Added 2026-10-29 in the documentation-only reconciliation; this entry was missing. Source: `logs/session_logs/2026-10-29_LIT-005-REBUILD.md`, the CHANGELOG entry and Git history.*
+- **Work completed:** literature inventory rebuilt with the LIT-005 records (2,979 → 3,386; P2989–P3395), identical to the dry run; correction C2 (`Q-CN-G5@2026-10-28` recorded as `capability_probe`, not `executed`); limitation C1 documented, not fixed. Committed as `ffee9ec`.
+- **Important findings:** `[EVIDENCE]` 0 existing paper IDs changed or merged; 406 new records `partially_verified`, 1 `unverified` (P3383, PMID 31314250, Q-067); all records `not_screened`; new records have no theme labels. Nothing became citable.
+- **Decisions requiring review:** Q-063 status; Q-021/Q-064 verification route; D-035 record §6 conditions; off-device backup of both archives.
+- **Recommended next step (as recorded then):** researcher review and commit decision; push.
+- **Researcher decisions:** authorisation of the rebuild and of corrections C2 and C1; the theme mapping kept unchanged (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — Branch recovery, post-recovery audit, documentation-only reconciliation
+- **Work completed:** the session was moved to `claude/eloquent-mccarthy-bqtxr3` at `ffee9ec` (verified against `origin`; tree clean). A read-only governance audit was carried out. Append-only log reconciliation was done (this entry, CHANGELOG, PROMPT_LOG, a session log). No commit, push or PR.
+- **Important findings:** `[EVIDENCE]` `4acfce0`, `9bbd847` and `ffee9ec` are on `origin/claude/eloquent-mccarthy-bqtxr3`; their push times are not recorded. The branch is 8 commits ahead of the default branch with no PR. D-039 is reserved (2026-10-24) and its content is not in the repository. The raw exports and `data/raw/nhanes/` are absent from this container (`verify`: 244 missing). Inventory 3,386 records; validator PASS (168); tests 69 OK.
+- **Decisions requiring review:** review of this diff and whether to commit and push it; a PR for the 8 commits; D-035 record §6 conditions 2–6 and Q-065 (due 2026-11-01); Q-021/Q-064; Q-063 status; the content of D-039.
+- **Recommended next step:** researcher review of the reconciliation diff; then a PR for the unreviewed commits (separate authorisation).
+- **Researcher decisions:** authorisation of the branch switch, the read-only audit and the documentation-only reconciliation (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — SECOND-SOURCE-ACCESS-RECHECK
+- **Work completed:** state verified at `a280e01` (clean, in sync with `origin`); second-source access re-checked for 10 hosts; read-only counts of the records each verification route could reach; `environment_assessment.md` addendum; Q-068 opened.
+- **Important findings:** `[EVIDENCE]` Crossref, doi.org, Europe PMC, E-utilities, PubMed/PMC web, OpenAlex, Semantic Scholar, the arXiv API and diabetesjournals.org are all refused by the network policy (CONNECT 403, 14:50Z). 2,282 of 3,334 `partially_verified` records have a PMCID; 964 PubMed records, including A2 (`P0303`), do not. The 14 `verified` records rest on web-search URL agreement, which `search_strategy.md` §7 does not name as a second source (Q-068). `[OPEN]` No independent bibliographic index is reachable from this environment.
+- **Decisions requiring review:** Q-021/Q-064 (verification route, including the network change); Q-068; Q-036; Q-065 (due 2026-11-01); D-035 record §6 conditions 2–6.
+- **Recommended next step:** researcher decision on Q-021/Q-064/Q-068, or allow-listing `api.crossref.org` and `www.ebi.ac.uk`; then a scoped verification task for the citation-priority records (`LIT-005_evidence_review.md` §10).
+- **Researcher decisions:** authorisation to resume Stage B with one bounded non-screening task (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — RESEARCH-AMBITION-D041
+- **Work completed:** existing governance inspected for the publication ambition; `CLAUDE.md` §1a (ambition, journal criteria, rules 14–17) and a README "Ambition" paragraph added; D-041 recorded as PROPOSED.
+- **Important findings:** `[EVIDENCE]` most of the requested standards already exist (`GOVERNANCE.md` §1–2; `research_integrity.md` §1–11; D-016, D-018, D-020), but the journal-level ambition, the journal-selection criteria and the four rules were not explicit. `[OPEN]` The 2026-11-24 manuscript target (CUP-11) may conflict with the quality bar; `GOVERNANCE.md` §2 forbids skipping stages to meet the deadline.
+- **Decisions requiring review:** D-041 (approve, amend or reject); D-011/D-022; the schedule (D-001) in view of the ambition; the six SECOND-SOURCE-ACCESS-RECHECK files and this change (commit decision).
+- **Recommended next step:** screening-activation decision brief (D-035 record §6 conditions 2–6; Q-065, due 2026-11-01).
+- **Researcher decisions:** instruction to state the ambition and record D-041 as PROPOSED (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — SCREENING-ACTIVATION-BRIEF
+- **Work completed:** decision brief for the D-035 record §6 conditions (`research/reviews/screening_activation_decision_brief_D035.md`); Q-069 opened.
+- **Important findings:** `[EVIDENCE]` conditions 2–6 unmet: Q-040; D-024/D-027 approval; R5/D-029 items; criteria v1.1 and protocol v0.2 (not written); the other pilot-blocking items of `final_confirmation_sheet_LIT-004.md`. All need researcher decisions first; none needs a network change; the rebuild and arXiv spot-check need the raw exports restored (Q-063). `[HYPOTHESIS]` A complete, gate-compliant manuscript by 2026-11-24 is unlikely. `[OPEN]` Q-069 (gate order).
+- **Decisions requiring review:** Q-065 (due 2026-11-01); D-001/Q-013/Q-058/Q-069 (schedule); R5 and D-029; Q-040; D-024, D-027, D-028, Q-035; v1 Items 6–9, 13–15; Q-036; Q-063 upload; Q-021/Q-064/Q-068 (citation route); commit decision for the three uncommitted tasks.
+- **Recommended next step:** researcher decisions in the order of the brief's §8, starting with Q-065 and the schedule.
+- **Researcher decisions:** instruction to prepare the brief, documentation only (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — Q-069-RESOLUTION
+- **Work completed:** read-only analysis of Q-069; D-042 recorded as PROPOSED; Q-069 note; protocol draft revision 4 (§23 dependency-ordered schedule and new fallback; §26 prerequisites for D-017–D-019, AB-13, AB-7 change, D-016 removed from "Not blocking training").
+- **Important findings:** `[EVIDENCE]` no repository source explicitly permits or forbids parallel stages. The evidence required for D-017 (approved D-016) and D-018 (most-used methods in included RQ1 studies) already made training depend on Stages C and D; protocol revision 3's "D-016 not blocking training" line was inconsistent with that. Two contradictions in the proposal were corrected before editing (Rule S execution timing, D-040 (7); D-014 placement).
+- **Decisions requiring review:** explicit approval, amendment or rejection of D-042 (then Q-069 can be marked Answered); protocol revision 4; D-001/CUP-11 (11-24 target); the commit decision.
+- **Recommended next step:** researcher review of D-042 and protocol revision 4.
+- **Researcher decisions:** in-principle approval of the Q-069 resolution; approval of the recording treatment and protocol edits for preparation (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — D-042-APPROVAL
+- **Work completed:** researcher approval of D-042 recorded; Q-069 marked Answered and linked to D-042; protocol draft revision 5 (references to D-042 updated from "proposed" to "approved").
+- **Important findings:** `[EVIDENCE]` D-042 is the first approved rule on stage order: the Stage C and Stage D gates must both pass before D-017, D-018 and D-019 are approved and before any real-data training. Neither gate has passed. Precedent for recording approvals is mixed (D-032: history only; D-042: row cells updated at the owner's instruction, text unchanged).
+- **Decisions requiring review:** this diff and the commit decision; D-001/CUP-11 (11-24 target); the screening-activation decisions (`screening_activation_decision_brief_D035.md` §8), starting with Q-065 (due 2026-11-01); Q-021/Q-064/Q-068.
+- **Recommended next step:** researcher decisions on Q-065 and the schedule (D-001, Q-013, Q-058).
+- **Researcher decisions:** explicit approval of D-042 as written (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — Q-065-DECISION-PACKAGE
+- **Work completed:** read-only audit; metadata-only priority-strand counts with an independent check; `research/reviews/Q-065_decision_package.md` (scope options, schedule options, recommendation); audit-trail reconciliation of the commits and pushes made on 2026-10-29.
+- **Important findings:** `[EVIDENCE]` priority strand union 1,044 records (194 / 743 / 120; overlaps 10 / 0 / 3). D-018's documented evidence ("methods most used in the included RQ1 studies") covers Q-PM-01, Q-PM-02 and Q-PM-03, but the priority strand contains only Q-PM-02; priority + remaining RQ1 strands = 1,470. No screening rate has been measured; all durations are `[HYPOTHESIS]`. `[OPEN]` Q-065 (due 2026-11-01), Q-001, Q-002.
+- **Decisions requiring review:** Q-065 scope (Options 1–3); Q-002 (biomarker scope), which decides whether Q-PM-01/Q-PM-03 are needed; schedule (D-001, Q-013, Q-058, CUP-11); the commit decision.
+- **Recommended next step:** researcher decisions on Q-002 and Q-065 by 2026-11-01; schedule S1 + S2 (interim deliverable on 11-24; D-001 revised after the pilot).
+- **Researcher decisions:** instruction to prepare the package, documentation only (2026-10-29).
+
+## Day 16 (cont.) — 2026-10-29 — SCOPE-SCHEDULE-DECISIONS
+- **Work completed:** owner decisions recorded: D-043 (Q-002: both metabolomics/lipidomics and routine clinical chemistry, as distinct categories, literature-review scope only); D-044 (Q-065: Option 3, 1,470 unique records, inactive until screening activation); D-045 (2026-11-24 kept as an interim deliverable without promised model results; schedule revised after the pilot).
+- **Important findings:** `[EVIDENCE]` 1,470 reproduced independently (`jq`; CSV five-set inclusion–exclusion): 1,044 + 399 + 44 − 17. One pending dedup pair has both members in scope (count could become 1,469). Protocol CUP-11/§23 and `screening_criteria.md` §2.2 still carry pre-decision wording.
+- **Decisions requiring review:** this diff and the commit decision (together with the Q-065 package); protocol revision for CUP-11/§23; remaining screening-activation items (D-035 record §6 conditions 2–6, including Q-001, Q-033, Q-035); Q-021/Q-064/Q-068.
+- **Recommended next step:** researcher decisions on the remaining D-035 record §6 items (`screening_activation_decision_brief_D035.md` §8, steps 2–6).
+- **Researcher decisions:** Q-002, Q-065 (Option 3) and the schedule decision (2026-10-29).
+
+## Day 17 — 2026-10-30 — D-051-GOVERNANCE-APPROVAL
+- **Work completed:** D-051 recorded: the owner's approval of the exact `GOVERNANCE.md` §2 Rule S sentence added in `c843230`; one Status-history row; task logs.
+- **Important findings:** `[EVIDENCE]` the sentence is byte-identical at `c843230` and `0c85634`; D-051 was unused on every branch and in history before recording.
+- **Decisions requiring review:** this change set and the commit decision; the push to the PR-1 branch; the PR #17 description update; the NHANES acknowledgement and D-040 comments; proposals on D-040 scope, "F-A software" and NHANES-derived values (not approved).
+- **Recommended next step:** researcher review of this change set; if authorised, commit on the PR-1 branch (Option A); PR #17 to be merged with a merge commit, not a squash.
+- **Researcher decisions:** approval of the exact `GOVERNANCE.md` §2 sentence (2026-10-30), limited to that sentence: "This approval applies only to that sentence. It does not amend D-040 or authorize test planning, test code, environment specification or creation, package installation, synthetic verification, experiments, or model training. Each such activity requires separate explicit authorization."
+
+## Day 17 (cont.) — 2026-10-30 — LIT-PRESERVATION-V1-V5
+- **Work completed:** both raw-export archives verified (archive checksums; LIT-005 listing and safety checks; per-file checks); all 244 raw files restored into `raw_exports/` with exclusive create; `pubrecords.py verify` OK; LIT-005 per-file listing and inventory created; preservation record and Q-063 status note updated.
+- **Important findings:** `[EVIDENCE]` 205/205 LIT-003 and 39/39 LIT-005 files match `MANIFEST.csv`; first restoration from the LIT-005 archive succeeded; the LIT-003 archive's README and MANIFEST equal the `b48adde` versions. `[OPEN]` no backup on a separate physical device; Google Drive not approved as project storage; restored files exist only in this workspace.
+- **Decisions requiring review:** this change set and the commit decision; Google Drive approval; a separate-device backup; Q-063 closure.
+- **Recommended next step:** researcher review of the diff; then a commit if authorised.
+- **Researcher decisions:** authorisation of phases V1, V2+V3, V4 and V5 (2026-10-30); Google Drive check reported by the researcher (not observed).
+
+## Day 17 (cont.) — 2026-10-30 — LIT-PRESERVATION-GDRIVE
+- **Work completed:** the researcher-reported Google Drive approval and the Drive folder recorded in `preservation_status.md` and the Q-063 status note.
+- **Important findings:** `[EVIDENCE]` (researcher-reported) explicit approval of the researcher's personal Google Drive for research archives; both archives in a private Drive folder. `[OPEN]` approver ("project owner or supervisor"), date, scope and conditions not recorded; no backup on a separate physical device.
+- **Decisions requiring review:** supply the missing approval details; whether a DECISION_LOG entry is wanted; whether the Drive copy meets the off-device requirement or a physical-device backup is still required; Q-063 closure.
+- **Recommended next step:** researcher review of the diff; then a commit if authorised.
+- **Researcher decisions:** Google Drive approval reported (2026-10-30); details pending.
+
+## Day 17 (cont.) — 2026-10-30 — Q-011-OPTION-B and SCREENING-READINESS-RECHECK
+- **Work completed:** Q-011 option (b) and the researcher-reported Drive-copy hashes recorded; screening readiness re-checked against D-035 §6 (brief §11).
+- **Important findings:** `[EVIDENCE]` (researcher-reported) Drive copies' SHA-256 equal the recorded values. `[EVIDENCE]` D-035 §6 conditions 2–6 unmet; screening not authorised; 3,386 records `not_screened`. `[OPEN]` approval date and wording; D-010 confirmation; a 2026-11-02 interim deliverable is not recorded (D-045 retains 2026-11-24).
+- **Decisions requiring review:** D-010 confirmation; R5/D-029 and Q-032; Q-040; D-024/D-027/D-028/Q-035; v1 Items 6–9, 13–15 and the pilot screener; Q-036; Q-021/Q-064/Q-068.
+- **Recommended next step:** one researcher decision session on brief §11.3 steps 1–4.
+- **Researcher decisions:** Q-011 option (b) selected (2026-10-30); D-010 confirmation pending.
+
+## Day 17 (cont.) — 2026-10-30 — D-010-APPROVAL
+- **Work completed:** D-010 recorded as APPROVED under Q-011 option (b); Q-011 Answered.
+- **Important findings:** `[EVIDENCE]` explicit researcher approval of D-010 (2026-10-30). `[OPEN]` date and wording of the WhatsApp approval; who "the project owner" is; PRESERVED status (researcher decision); Q-063.
+- **Decisions requiring review:** PRESERVED status; Q-063 closure; brief §11.3 steps 1–4.
+- **Recommended next step:** researcher review of the change set; then a commit if authorised.
+- **Researcher decisions:** D-010 approved (2026-10-30).
+
+## Day 17 (cont.) — 2026-10-30 — SCREENING-PREREQ-DECISIONS
+- **Work completed:** researcher selections recorded (D-055–D-057, D-027 limited, D-008; Q-036 answered); recommendations and approval request in `screening_prerequisites_decision_package.md`.
+- **Important findings:** `[EVIDENCE]` D-035 §6 conditions 1–2 met; 3–6 unmet. `[RECOMMENDATION]` the R5 "RQ5 ambiguity" line needs a MODIFY to align with D-031, D-034, D-035 G2 and D-055 (route to full text at ≥ 3 of 5 counting `unclear`), and A-2's E4 clause needs a MODIFY for D-055.
+- **Decisions requiring review:** the §5 approval request (Q-035, D-028, D-029/R5, Q-032, D-024, Q-007, D-025, A-1–A-6); commit and push.
+- **Recommended next step:** owner answers to the §5 approval request; in parallel, the authorised arXiv spot-check.
+- **Researcher decisions:** Q-040, Q-001, Q-033, D-027, Q-036 (a+b), D-008 (2026-10-30).
+
+## Day 17 (cont.) — 2026-10-30 — SCREENING-PREREQ-DECISIONS-2
+- **Work completed:** delegated decisions recorded (D-058–D-060 and status changes); arXiv spot-check run; criteria v1.1 and protocol v0.2 drafted.
+- **Important findings:** `[EVIDENCE]` arXiv spot-check 25/25 match (5 files). `[EVIDENCE]` inside the D-044 scope the D-025 pilot allocation cannot be applied (no arXiv/web records; Q 8, D 13; 173 untagged) → Q-073. `[OPEN]` OPEN-1 flag name, OPEN-2 tier; implementation and rebuild; MANIFEST recording of the spot-check.
+- **Decisions requiring review:** freeze of v1.1/v0.2 (with OPEN-1, OPEN-2, Q-073); authorisation for implementation, rebuild and `set-check`; Q-034; commit and push.
+- **Recommended next step:** researcher review of the two drafts and Q-073.
+- **Researcher decisions:** delegated selection of the recommended options (2026-10-30).
+
+## Day 17 (cont.) — 2026-10-30 — SCREENING-PREREQ-DECISIONS-3
+- **Work completed:** D-061 (flag name) and D-062 (tier rule) recorded; Q-073 recommendation; spot-check written to `MANIFEST.csv`; drafts updated and cross-checked.
+- **Important findings:** `[EVIDENCE]` `set-check` changes only the target manifest row (dry run). `[EVIDENCE]` all cited decision IDs exist. `[OPEN]` Q-073; a rebuild will change the D-044 inventory hash; P2870/P2941 may become `verified` at the next build (Q-068).
+- **Decisions requiring review:** Q-073; authorisation to commit, then to implement and rebuild; v1.1/v0.2 freeze.
+- **Recommended next step:** approve Q-073 and authorise a commit.
+- **Researcher decisions:** none new (delegated selection applied to OPEN-1/OPEN-2).
+
+## Day 17 (cont.) — 2026-10-30 — Q-073-DECISION
+- **Work completed:** D-063 recorded; 17-file preservation commit.
+- **Important findings:** `[EVIDENCE]` allocation fits every stratum (Q 7 of 8 eligible; D 7 of 13).
+- **Decisions requiring review:** implementation and rebuild authorisation; freeze of v1.1/v0.2.
+- **Recommended next step:** authorise the implementation task (scope list first).
+- **Researcher decisions:** D-063 approved (2026-10-30); commit and push authorised.
+
+## Day 17 (cont.) — 2026-10-30 — Q-068-DECISION
+- **Work completed:** D-064 recorded; Q-068 answered; `collection_workflow.md` §4.3 aligned (policy vs current build).
+- **Important findings:** `[EVIDENCE]` the 14 `verified` records rest on web rows without author, year or venue (Q-068 investigation). `[HYPOTHESIS]` at the next authorised build they become `partially_verified`, and P2870/P2941 stay `partially_verified`; to be demonstrated by that build.
+- **Decisions requiring review:** commit and push of Step A; Step B (implementation and tests), Step C (rebuild), Step D (screening activation).
+- **Recommended next step:** review the Step A diff; then authorise the commit.
+- **Researcher decisions:** D-064 approved with A5 = `needs_review` and A6 = report-level only (2026-10-30); Step A authorised.
+
+## Day 17 (cont.) — 2026-10-30 — D-064-STEP-B
+- **Work completed:** D-064 implemented in code with report-level output; tests added and the authorised test updated.
+- **Important findings:** `[EVIDENCE]` 87 literature tests pass on synthetic fixtures. `[OPEN]` effect on real records is not demonstrated until an authorised Step C build.
+- **Decisions requiring review:** the Step B diff; commit/push authorisation; Step C (rebuild).
+- **Recommended next step:** review the diff; then authorise the commit.
+- **Researcher decisions:** Step B authorised with D2, D3, D4 (2026-10-30).
+
+## Day 18 — 2026-10-31 — T0-GOVERNANCE-DECISIONS
+- **Work completed:** D-065 (Stage A, executed search), D-066 (Stage B interpretation) and D-067 (Stage B governance row) recorded; Q-022 answered; D-005, D-006, D-007 approved as executed with limitations.
+- **Important findings:** `[EVIDENCE]` search reconciliation: 56 planned (26 executed, 30 not searched) + 9 LIT-005 executions = 35 recorded executions; re-fetches (15), capability probes (32) and pilot counts (30) are not searches. `[OPEN]` D-035 §6 conditions 5–6 (freeze; screening-schema implementation, tests, rebuild).
+- **Decisions requiring review:** commit and push of this recording; T1 authorisation.
+- **Recommended next step:** review the diff; authorise commit and push separately.
+- **Researcher decisions:** final T0 wording approved and recording authorised (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — T1-A
+- **Work completed:** approved screening fields and validation (D-028 2d, D-060 (1)/(6), D-058), controlled `scope_flags` tokens (D-057, D-061) and the D-028 `publication_type` mapping implemented in code, schemas and tests; inventory field `screening_validation_design` added beside the unchanged extraction field `validation_design`.
+- **Important findings:** `[EVIDENCE]` 113 literature tests pass on synthetic fixtures; protected files unchanged; committed inventory and publication records still validate against the new schemas. `[EVIDENCE]` read-only preview of the mapping on the current records: 0 unmapped source types. `[OPEN]` Q-074 (missing-abstract enforcement), Q-075 (unresolved `scope_flags` tokens; draft v1.1 §6 lists tokens the validator now rejects), Q-076 (implementation interpretations and a pre-existing retracted-candidate check).
+- **Decisions requiring review:** the T1-A diff; commit/push authorisation; Q-075 before the v1.1 freeze; T2 authorisation.
+- **Recommended next step:** review the diff and Q-074–Q-076; then authorise commit, and T2 separately.
+- **Researcher decisions:** T1-A authorised with owner directions 1–12 (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — T1-A-FOLLOW-UP
+- **Work completed:** Q-076 owner directions implemented: retracted records excluded from the full-text candidate list by token membership; hand-edited `publication_type` values rejected (JSON and CSV) with nothing written, nulls from earlier inventories accepted; tests for all-ignored types, precedence over unrecognised types and the primary-source arXiv rule.
+- **Important findings:** `[EVIDENCE]` 122 literature tests pass; mutation checks show the new tests fail on the old code. `[EVIDENCE]` no current record is affected by (a), (b) or (d). `[OPEN]` Q-077: the edit guard will also stop a run after a legitimate extension of the mapping table.
+- **Decisions requiring review:** the combined T1-A diff; commit/push; whether to record the T1-A and Q-076 directions in DECISION_LOG; Q-074, Q-075, Q-077; T2.
+- **Recommended next step:** review the diff; authorise commit and push; then T2 separately.
+- **Researcher decisions:** Q-076(a)–(d) and mapping-precedence directions given (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — T1-A-PR-REFERENCE
+- **Work completed:** documentation-only correction: dated update notes added under the T1-A and T1-A-FOLLOW-UP entries in `logs/PROMPT_LOG.md` and `logs/CHANGELOG.md`, recording that the work was committed as `d1aaceb`, pushed, and is included in PR #17 (open, not merged). The original entries are kept unchanged.
+- **Important findings:** `[EVIDENCE]` the original "None for this task" / "uncommitted … not pushed" statements were accurate when written; PR #17 already contained `d1aaceb` when its description was updated on 2026-10-31.
+- **Decisions requiring review:** none new. Q-074, Q-075, Q-076 (owner directions implemented; no DECISION_LOG entry), Q-077 and T2 remain as before.
+- **Recommended next step:** review PR #17; decide on Q-075 before the v1.1 freeze; authorise T2 separately when ready.
+- **Researcher decisions:** documentation-only correction authorised (Option B, 2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — Q-074-DECISION
+- **Work completed:** D-068 recorded: missing-abstract rule for title/abstract triage; D-060 (2) amended (no E4 without an abstract); no RQ5-based tier without an abstract (D-062 application); Stage-0 exemption bounded to E5/E7 exclusions; *not retrieved* vs *unavailable*; human enforcement with researcher review of every such decision. Q-074 answered; v1.1/v0.2 drafts aligned (not frozen).
+- **Important findings:** `[EVIDENCE]` D-060 (2) and D-060 (4)/D-061 conflicted on E4 for records without an abstract; resolved conservatively by amendment. `[EVIDENCE]` the current code exempts any `screener=rule:stage0` row from the D-060 (6) check; it does not yet match D-068 (5). `[OPEN]` at the v1.1 freeze: verify the Stage-0 type list against its approved source (G1) and fix the E1 wording (G2).
+- **Decisions requiring review:** the documentation diff; commit/push; later, separately: Stage-0 code bounding, retrieval-status representation, pilot-report tooling; Q-075 and the v1.1 freeze.
+- **Recommended next step:** review the diff; authorise commit and push separately.
+- **Researcher decisions:** Q-074 proposal agreed (incl. G1–G3); recording of D-068 authorised (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — Q-075-DECISION
+- **Work completed:** D-069 recorded: `scope_pending_disorder` adopted for the D-056 pending conditions; `non_metabolic_method_exemplar` approved as a descriptive retention tag (D-059 A-2); `lr_only` approved as descriptive only; `prognostic` deferred. Q-075 partly addressed; criteria v1.1 draft aligned (not frozen).
+- **Important findings:** `[EVIDENCE]` D-056 had left the tag name undecided; the ballot (Item 6) gave the rename rationale. `[EVIDENCE]` the validator still accepts only `scope_pending_proteomics` and `non_metabolic_rq5_candidate`. `[OPEN]` exemplar-tag co-occurrence; `prognostic` rationale; Q-042.
+- **Decisions requiring review:** the documentation diff; commit/push; later, separately: validator/schema/test implementation of the approved vocabulary; the pre-existing D-068 omission in the criteria header.
+- **Recommended next step:** review the diff; authorise commit and push separately.
+- **Researcher decisions:** Decisions A–D approved and co-occurrence deferred; recording of D-069 authorised (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — PR17-DESCRIPTION-UPDATE
+- **Work completed:** PR #17 description updated (only the description) to cover 29 commits, including `e64ce8f` (D-068) and `81875c3` (D-069); read back from GitHub and compared with the approved text; this task recorded in the audit logs.
+- **Important findings:** `[EVIDENCE]` the repository default branch and the PR #17 base are both `claude/happy-hawking-rxptfv` (`eb79996`), so "onto the default branch" and the merge instructions were accurate. `[EVIDENCE]` the published body matches the approved text except the final trailing newline; the title is unchanged; PR open, not merged, head `81875c3`. `[OPEN]` Q-042, Q-075 remainder, Q-076 recording, Q-077; PR title still describes the original 2026-10-24 to 2026-10-30 scope.
+- **Decisions requiring review:** this documentation diff and its commit/push; PR #17 title; later, separately: D-069 validator implementation, Stage-0 exemption bounding, G1/G2 and the v1.1 freeze, T2, PR-2.
+- **Recommended next step:** review the diff; authorise commit and push separately.
+- **Researcher decisions:** PR #17 description update authorised (2026-10-31); recording of the update authorised (2026-10-31).

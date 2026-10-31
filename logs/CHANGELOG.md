@@ -832,3 +832,833 @@ No CI is configured.
 **Final correction for this sequence**: this record closes the merge-history sequence for PRs #13–#15. Its own statements that it was prepared locally with no PR are accurate when written and will not be corrected by a further record created solely for that purpose; any publication of this record is shown by the git history and GitHub. Later governance records may still be needed for other work.
 
 **Modified**: this file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_GOV-PR15-MERGE-RECORD.md`. **Not modified**: `DECISION_LOG.md`, decision records, code, tests, schemas, criteria, protocol, data.
+
+## 2026-10-24 — PROTOCOL-DRAFT-001 (experimental protocol draft v0.1; nothing approved)
+
+**Objective**: prepare a draft experimental protocol for review for the provisional NHANES laboratory-defined dysglycaemia study (owner prompt 2026-10-24). No training, evaluation, screening or pilot.
+
+**Created**: `research/methodology/experimental_protocol_v0.1_draft.md` (draft v0.1; informs D-019 and D-013–D-018; changes no decision status).
+**Modified**: `research/reviews/unresolved_questions.md` (Q-044–Q-058 appended, +15/−0); this file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`. **Created**: `logs/session_logs/2026-10-24_PROTOCOL-DRAFT-001.md`.
+**Not modified**: `logs/DECISION_LOG.md` (no entry added or changed; the protocol's proposals are listed as FA-1–FA-13 inside the draft, for the researcher to record if wanted); `GOVERNANCE.md`; `CLAUDE.md`; `.gitignore`; `research_integrity.md`; code, tests, schemas; screening files.
+
+**Evidence used** (all re-checkable):
+- Official CDC codebook pages for the 32 required files (opened 2026-10-24 in the NHANES-VERIFY task, whose report was delivered in conversation and is not committed).
+- The verified local raw files in git-ignored `data/raw/nhanes/`. All 32 were re-hashed against the local manifest in this task: 0 mismatches. No new download.
+- Aggregate descriptive checks, with no modelling:
+  - eligibility cascade: 3,088 and 2,485;
+  - outcome prevalence 65.0% / 58.8% unweighted;
+  - complete cases per predictor group;
+  - 49 and 30 stratum × PSU clusters;
+  - unit-consistency checks for the triglyceride, hs-CRP and urine-albumin equations.
+- Inventory status of the candidate references: none is `verified`; two are `partially_verified` (P0303, P0256), so none is citable.
+
+**Main findings recorded in the draft**:
+- The primary candidate outcome is the majority class and dominated by FPG 100–125 mg/dL alone.
+- The triglyceride equation is supported in mg/dL, not the "mg/L" stated in the text (Q-044).
+- The hs-CRP equation is plausible only in mg/L; CDC's mean difference is not reproduced (Q-045).
+- Insulin has no published cross-period equation (Q-047).
+- `.gitignore` has no rule for participant-level model outputs (AB-10; not changed).
+
+**Validation (actual outcomes)**:
+- `python3 -I -m unittest discover -s tests/literature`: 69 tests, OK.
+- `validate_search_queries.py`: PASS, 158 rows.
+- `DECISION_LOG.md`: no diff; 38 unique IDs, no duplicates.
+- `git ls-files`: no `.xpt` or `data/` path tracked.
+
+**Not done**: no model training, evaluation, screening or pilot. No commit, push or PR (the owner prompt forbids pushing and PR actions; the work is uncommitted on local branch `claude/eloquent-mccarthy-bqtxr3`, based on default `eb79996`). The equations were transcribed but not yet re-checked character by character (AB-9).
+
+## 2026-10-24 — PROTOCOL-DRAFT-002 (owner-authorized draft edits and data-protection safeguards; nothing approved)
+
+**Authorization** (owner prompt, 2026-10-24), limited to three actions:
+1. Retain FA-2 (HbA1c ≥ 5.7% OR FPG ≥ 100 mg/dL) as the **preferred proposed** primary outcome.
+2. Exclude hs-CRP from the primary predictor set until the cross-period conversion discrepancy is resolved; apply no unverified equation.
+3. Make draft-only protocol edits, add data-protection safeguards and tests, and update the permitted task logs.
+
+**Preferred candidate vs approved decision.** The owner's preference is recorded inside the draft (CUP-5, CUP-12). **FA-2 is not approved.** It remains pending formal approval (D-019, D-014; GOVERNANCE.md §2) and verification of the ADA primary source (PMID 41358893 found; full text not read). No DECISION_LOG entry was added or changed.
+
+**Modified**:
+- `research/methodology/experimental_protocol_v0.1_draft.md` → v0.1 rev. 1:
+  - FA-2 recorded as preferred, still pending; "either laboratory criterion, not a clinical diagnosis" made explicit;
+  - S-15a (both tests, discordant negative) and S-15b (exploratory; discordant excluded, may inflate separability) added;
+  - hs-CRP removed from groups A and B (A 21, B 27; complete-case counts recomputed: A 2,970 / 2,305, B 2,674 / 2,194);
+  - unresolved conversion documented, with conditional S-16a (development period only, no conversion) and S-16b (temporal; only if Q-045 is resolved);
+  - period prevalence differences labelled outcome-distribution findings;
+  - verbatim CDC equation strings;
+  - safeguards recorded; AB-10 left open.
+- `.gitignore`: rules appended for raw/statistical-package files (XPT, sas7bdat, dta, rds; any case), participant-level directories (`/data/derived/`, `/outputs/participant_level/`, `/outputs/models/`, `/models/`), and columnar tables, arrays and serialized objects (any case). Existing rules unchanged.
+- `research/reviews/unresolved_questions.md`: Q-059 appended (hs-CRP instrument timing within 2021–2023). No status changed.
+- This file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`.
+
+**Created**:
+- `tests/data_protection/test_data_protection.py`: 6 checks, with limitations stated in its docstring.
+- `outputs/README.md`: designates `outputs/aggregate/` as the only committed output location.
+- `logs/session_logs/2026-10-24_PROTOCOL-DRAFT-002.md`.
+
+**Evidence gathered in this task**: official CDC files fetched 2026-10-24 — `TRIGLY_L.htm`, `HSCRP_L.htm`, `HSCRP_J.htm`, and the method manuals TRIGLY-L-MET, HSCRP-J-MET, HSCRP-K-MET and HSCRP-L-MET.
+- `[EVIDENCE: CDC documentation]` The hs-CRP bridging passage says "(mg/dL)", but the variable and all three method manuals use mg/L; the 2021–2023 instrument change happened "during the cycle".
+- **Unresolved hs-CRP issue:** units (Q-045) and instrument timing (Q-059). No conversion applied.
+- **Triglycerides (Q-044):** provisional documentary evidence for mg/dL; still open.
+- **References:** none newly verified. The container could not reach any second bibliographic source.
+
+**Validation (actual outcomes)**:
+- `python3 -I -m unittest discover -s tests/literature`: 69 tests, OK.
+- `python3 -I -m unittest discover -s tests/data_protection -v`: 6 tests, OK, none skipped.
+- Negative control on a scratchpad copy of the working tree with synthetic bad files: the identifier, SAS-transport and format checks each failed as expected. The run also exposed case-sensitive extension rules, which were then made case-insensitive and retested (OK). The copy was deleted.
+- `validate_search_queries.py`: PASS, 158 rows.
+- `git ls-files -ci --exclude-standard`: 0 tracked files conflict with the new rules.
+- `DECISION_LOG.md`, `GOVERNANCE.md`, `CLAUDE.md` and `research_integrity.md` unchanged.
+
+**Not done / limitations**: no model training, evaluation, pilot, screening or protocol activation. No commit, push or PR: the work is uncommitted on local `claude/eloquent-mccarthy-bqtxr3`, together with the uncommitted PROTOCOL-DRAFT-001 files. The new test directory is not run by the `CLAUDE.md` test command (`tests/literature` only); it must be run separately until `CLAUDE.md` is updated through the proper route. The checks cannot detect participant data under unusual names or formats, renamed identifiers, or anything in Git history.
+
+## 2026-10-24 — PROTOCOL-DRAFT-003 (Option A: corrections, reproducibility, data protection; commit and push authorized)
+
+**Authorization** (owner prompt, 2026-10-24, "Option A"):
+- make the specified protocol corrections;
+- add reproducible aggregate-count scripts;
+- strengthen the data-protection rules and tests;
+- run the checks;
+- commit and push the reviewed changes to the intended project branch.
+
+No approval of FA-2, the protocol or any decision is implied.
+
+**Modified**:
+- `research/methodology/experimental_protocol_v0.1_draft.md` → v0.1 rev. 2. Scientific wording:
+  - §5.1: the ADA confirmation-rule statement is now provisional (primary text not read);
+  - §10: the CDC combining-periods wording now quotes `DEMO_L` ("urged to proceed with caution before combining"), replacing "advises against";
+  - §18: the conformal "guarantee" is removed; it is stated as an unverified hypothesis, with coverage measured.
+
+  Correction found by the reproduction check (§5.2): "median FPG 103 vs 101 mg/dL" was the median of a broader reference population (adults ≥ 18, diagnosed diabetes not excluded). The analytic-sample medians are 101 vs 100 mg/dL. The correction is recorded in the change history.
+
+  Also: revision-2 safeguards recorded in §22. FA-2 stays preferred and unapproved; hs-CRP stays out of the primary sets; S-15a/b and S-16a/b unchanged.
+- `.gitignore` (block appended; earlier rules untouched): SPSS any case; `.onnx`, `.pt`, `.pth`, `.safetensors`, `.cbm` and `.ubj` any case; archives and spreadsheets under `/data/`; archives under `/outputs/`. JSON is deliberately **not** ignored globally.
+- `tests/data_protection/test_data_protection.py` (untracked file, rewritten): 10 tests.
+  - Strict/skip Git handling; a `check-ignore` error is now a failure.
+  - Content signatures for SAS transport, Parquet, NumPy and HDF5.
+  - Validated identifier allowlist; detector self-tests on synthetic bytes.
+  - More representative paths; limitations listed in the docstring.
+- This file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`.
+
+**Created**:
+- `scripts/nhanes/descriptive_counts.py`: consolidates the scratchpad scripts; verifies the 32 input SHA-256 hashes; aggregate output only; no modelling.
+- `scripts/nhanes/README.md`.
+- `scripts/run_checks.sh`: literature tests, strict data-protection checks and the query-table check.
+- `tests/data_protection/identifier_allowlist.txt` (no entries).
+- `logs/session_logs/2026-10-24_PROTOCOL-DRAFT-003.md`.
+
+**Verification (actual)**:
+- `descriptive_counts.py` vs the draft: 85 values compared, 84 identical. The one difference is the median-FPG population labelling above, corrected rather than silently changed.
+- Negative control (synthetic files in a scratchpad copy) found one test flaw: an invalid allowlist entry still exempted its file. It was fixed and re-checked: every planted problem detected; the documented limitations (`.txt` rows, JSON-format model) not detected, as stated.
+- Missing-git simulation: default mode skipped; strict mode failed.
+- The `check-ignore` error path itself was not exercised.
+- Test results are in the session log.
+
+**References**: none newly verified; reference status unchanged.
+**Not done**: no training, evaluation, pilot, screening or activation. `CLAUDE.md`'s test command not changed (protected): the project-wide command is `sh scripts/run_checks.sh`.
+
+## 2026-10-24 — PROTOCOL-EVIDENCE-001 (primary-source review: ADA criteria, NHANES laboratory comparability)
+
+**Objective**: verify the ADA outcome criteria from the official article, and review the official CDC documentation for 2017–March 2020 and 2021–2023 hs-CRP and triglycerides (codebooks, method manuals, bridging text). No commit or push, per the prompt.
+
+**Start state**: branch `claude/eloquent-mccarthy-bqtxr3` at `a4a2955`, clean, tracking `origin/claude/eloquent-mccarthy-bqtxr3`.
+
+**ADA: blocked, not verified.**
+- The official page (`diabetesjournals.org`), `doi.org`, PubMed Central and Europe PMC all failed from the container (HTTP 000).
+- WebFetch: ENOTFOUND.
+- PubMed full text for PMC12690183: empty.
+- No ADA criterion, table or section is recorded as verified. New Q-061 asks for access.
+
+**CDC evidence** `[EVIDENCE: CDC documentation, fetched 2026-10-24]`:
+- Pages fetched: `HSCRP_L`, `P_HSCRP`, `TRIGLY_L`, `P_TRIGLY`, `BIOPRO_L`, `TCHOL_L`, `HDL_L`, `GHB_L`.
+- Method manuals: HSCRP-J/K/L-MET and TRIGLY-J/K/L-MET.
+- Cycle pages: lab methods, release notes and lab overview for 2021–2023.
+- The hs-CRP/TG pages and manuals are byte-identical to the 2026-10-24 earlier reads.
+
+**New finding.**
+- The within-cycle change is not specific to hs-CRP:
+  - HbA1c ("During the cycle … Tosoh G8 to the Bio-Rad D-100");
+  - total cholesterol and HDL ("Cobas 6000 … to the Cobas 8000 during the cycle");
+  - triglycerides and the biochemistry panel ("instrument change in the … cycle"; triglyceride method also changed).
+- No date or participant indicator is published; `RIDEXMON` gives only a six-month season with no year.
+- Applying the backward equations to every 2021–2023 record is therefore not established (Q-060).
+- Units and other points are unchanged: hs-CRP stays unresolved (Q-045); triglycerides stay provisional mg/dL (Q-044).
+
+**Modified**:
+- `research/methodology/experimental_protocol_v0.1_draft.md` → rev. 3:
+  - §5.1: laboratory category vs diagnosis; OR rule includes the diabetes range; population/outcome consistency check (no definition changed); ADA attempt recorded.
+  - New §8.2 (CDC statements, unknowns, impact, recommendation).
+  - S-09b proposed; limitation note; FA-5 note (recommendation only).
+  - Q-059–Q-061 in §25; AB-8 note; CR-08 note; change history.
+- `research/reviews/unresolved_questions.md`: Q-060 and Q-061 appended (Open).
+- This file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`.
+
+**Created**: `logs/session_logs/2026-10-24_PROTOCOL-EVIDENCE-001.md`.
+
+**Not changed**: FA-2 (preferred, not approved); the target population and outcome; hs-CRP exclusion; DECISION_LOG and every status. No training, evaluation, activation, commit, push or merge. References other than the CDC documents are not newly verified.
+
+### 2026-10-24 — PROTOCOL-COMMIT-001 (owner-authorized commit and push of PROTOCOL-EVIDENCE-001)
+- **Authorization:** keep S-09b as a proposed, conditional sensitivity analysis; commit and push to `origin/claude/eloquent-mccarthy-bqtxr3` only.
+- **Pre-commit wording clarification** in `experimental_protocol_v0.1_draft.md`, so the text states the owner's boundaries explicitly:
+  - §8.2: unadjusted 2021–2023 values are **not** established as comparable, and the transition, unit discrepancy and timing remain limitations;
+  - S-09b: "**Not executed**"; any future execution requires FA-5 approval and further documented methodological justification.
+- No definition, outcome, population or status changed. FA-2 remains preferred and unapproved; the ADA evidence (Q-061) and Q-060 remain open.
+- S-09b was not run, and no equation was applied.
+- The commit hash is recorded in Git history and the task report, not in this file.
+
+## 2026-10-24 — GOV-D040-RULE-S (record D-040: Rule S and Synthetic Verification Exemption; local edits only)
+
+**Objective**: record the owner-approved Rule S and Synthetic Verification Exemption as D-040, add the approved cross-references (activation conditions K1–K4), create the header of the separate synthetic verification log, and update the task logs. **Local working-tree edits only; no commit, push, PR or remote contact** (owner authorization, 2026-10-24).
+
+**Start state**: branch `claude/eloquent-mccarthy-bqtxr3` at `6deaac5`, clean, tracking `origin/claude/eloquent-mccarthy-bqtxr3`. Pre-edit checks: working tree clean; target sections unchanged; `D-040`, `Q-062`, `GOV-D040` and `logs/SYNTHETIC_VERIFICATION_LOG.md` absent.
+
+**Owner approvals recorded** (owner prompts 2026-10-24): the governance-review C1 wording with the approved activation adjustment; K1–K4 as mandatory activation conditions; status APPROVED — CONDITIONAL (inactive); D-040 used, D-039 kept reserved; decision date 2026-10-24; `logs/SYNTHETIC_VERIFICATION_LOG.md`; the C2–C4 wording; scope A1, Rule S A2, date A3, protocol relationship A4 option (c), location A5, T10 excluded A6.
+
+**Modified**:
+- `logs/DECISION_LOG.md`: new section "Owner decision on synthetic software verification (added GOV-D040-RULE-S, 2026-10-24)" with D-040 (K1); new Status history row. No existing row changed.
+- `CLAUDE.md` rule 13: the approved exception sentence referencing D-040 (K2).
+- `GOVERNANCE.md` §2: the approved one-sentence cross-reference after the "No predictive model training" paragraph, added after K1 (K3).
+- `logs/EXPERIMENT_LOG.md` header: the approved pointer to the synthetic verification log (K4).
+- `research/reviews/unresolved_questions.md`: Q-062 appended (Open).
+- This file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`.
+
+**Created**: `logs/SYNTHETIC_VERIFICATION_LOG.md` (header only; no entries); `logs/session_logs/2026-10-24_GOV-D040-RULE-S.md`.
+
+**Activation status**: the K1–K4 edits exist in the working tree but are **uncommitted**. D-040 stays **APPROVED — CONDITIONAL (inactive)**; no activation row was recorded. Whether the conditions count as satisfied while uncommitted is for the owner to decide (Q-062). All existing restrictions remain in force.
+
+**Context**: the preceding read-only reviews in this session (F-A literature and full-text reviews, F-A specification, synthetic-test preparation, governance and environment proposals) changed no files and were not logged separately; they are summarised in the session log.
+
+**Not changed**: the experimental protocol draft; every other decision and status (D-002 stays PROPOSED; D-017, D-019 PENDING; D-039 reserved and unused); `scripts/run_checks.sh`; tests. No test code, test plan, environment, package installation, test run, data access, model training or experiment. No commit, push, PR or remote Git operation.
+
+**Validation**: see the session log. Local, read-only checks only (`git status`, `git diff`, ID uniqueness and table-structure checks). The existing test suites (`scripts/run_checks.sh`) were **not run**, because the authorization for this task excluded executing tests.
+
+## 2026-10-24 — GOV-D040-ACTIVATION (Q-062 Option 1: commit, D-040 activation record, Q-062 closed; local edits only)
+
+**Objective**: resolve Q-062 under the owner's Option 1, and record D-040's activation. **One owner-authorized local commit; no push, PR or remote contact** (owner prompts, 2026-10-24).
+
+**Commit** (owner-authorized, local only): `c84323016c77b78b0cfb7ce6378a4adf91d515bb` on `claude/eloquent-mccarthy-bqtxr3` (parent `6deaac5`). It contains exactly the 10 GOV-D040-RULE-S files: `CLAUDE.md`, `GOVERNANCE.md`, `logs/CHANGELOG.md`, `logs/DECISION_LOG.md`, `logs/EXPERIMENT_LOG.md`, `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, `research/reviews/unresolved_questions.md`, `logs/SYNTHETIC_VERIFICATION_LOG.md` (new) and `logs/session_logs/2026-10-24_GOV-D040-RULE-S.md` (new). Pre-commit checks: nothing staged; no other change; diffs as recorded in GOV-D040-RULE-S. The GOV-D040-RULE-S entries above say "uncommitted"; that was true when written, and those changes are now in `c843230`. Not pushed: the branch is 1 commit ahead of `origin/claude/eloquent-mccarthy-bqtxr3`.
+
+**K1–K4**: each present once, with the approved wording, in the committed files (`git show c843230:<path>`) and in the working tree.
+
+**Modified (uncommitted; a further commit needs separate authorization)**:
+- `logs/DECISION_LOG.md`: new Status history row (GOV-D040-ACTIVATION): D-040 `APPROVED — CONDITIONAL (inactive)` → **`APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230)`**. Owner-approved label (Option (a)), following the existing conditional-approval and transition conventions. The D-040 decision row is unchanged (verified identical to `c843230`).
+- `research/reviews/unresolved_questions.md`: Q-062 → **Closed**, quoting the owner's decision and the commit hash. Note: the file header lists "Open / Answered / Superseded"; "Closed" was used as explicitly authorized by the owner, and the header was not changed.
+- This file; `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`.
+
+**Created**: `logs/session_logs/2026-10-24_GOV-D040-ACTIVATION.md`.
+
+**Not changed**: the D-040 decision text and its conditions; `logs/SYNTHETIC_VERIFICATION_LOG.md` (its rule is one entry per authorized run; none has occurred); every other decision and status. **D-040 activation does not authorize synthetic verification**: the test plan, test code, environment, installation and each run still need separate owner authorization, and no run is permitted before 2026-11-03. No test code, environment, package installation, test run, research-data access, model training or experiment. No push, PR, branch change or remote contact.
+
+**Validation**: local, read-only checks only (`git status`, `git diff`, `git show`, K1–K4 string checks, table-column and ID checks). The test suites were not run (excluded by the authorization).
+
+**Correction (2026-10-24, owner instruction)**: Q-062's status label changed from "Closed" to **"Answered"**, the documented status value (file header: Open / Answered / Superseded). The question, the owner's quoted decision and the commit reference are unchanged. The "Closed" statements above are kept as written. No other change.
+
+**Correction (2026-10-24, owner-approved wording)**: Q-062's answer text now reads: "K1–K4 satisfied in the documentation committed in `c84323016c77b78b0cfb7ce6378a4adf91d515bb`. The activation entry (DECISION_LOG Status history, GOV-D040-ACTIVATION: APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230)) was recorded afterwards, outside that commit." It replaces "Committed in `c84323016c77b78b0cfb7ce6378a4adf91d515bb`; activation recorded in the DECISION_LOG Status history (GOV-D040-ACTIVATION) as APPROVED — CONDITIONAL (active; K1–K4 met in commit c843230).", which could be read as saying the activation entry was committed in `c843230`. D-040's conditions and activation status are unchanged. These GOV-D040-ACTIVATION records and corrections are then committed in one owner-authorized local commit (hash in Git history and the task report); not pushed.
+
+## LIT-005 — 2026-10-28 — Focused gap searches, transcript-derived notes and evidence review (no screening)
+
+**Prompt objective**: researcher-authorised named searches (PubMed G-1…G-8, one alphaXiv search, Consensus G-5 if the quota permits); bibliographic verification where possible; document the 2026-10-24 conversation review as transcript-derived historical notes; thematic synthesis, gap matrix and contribution recommendation. No screening, no inclusion/exclusion decisions, no protocol, governance or decision changes, no participant-level data, no commit/push/PR.
+
+**Governance**: searches executed under the researcher's LIT-005 instruction; D-005/D-006/D-007 remain PROPOSED. Screening stays blocked (D-035 record §6 conditions 2–6 unmet). Q-021 unchanged; PMC not treated as a second source.
+
+**Completed**
+- 8 PubMed searches, each recorded in `search_queries.csv` before execution and re-fetched with `sort=pub_date`; `pubrecords.py check-search` passed for all 8 (44, 27, 33, 68, 1, 21, 2, 244 hits).
+- alphaXiv search: 15 ranked listings (structured transcription).
+- Consensus G-5: **not executed** — monthly quota exhausted (resets 2026-11-01).
+- PubMed metadata for the 395 PMIDs not in the inventory: 20 harness-saved responses copied unchanged; 394 returned, PMID 31314250 missing (Q-067).
+- Second-source check: Crossref, doi.org and Europe PMC refused by the network policy (403). **No reference newly verified.**
+- 24 new or re-found records read at abstract level; 2026-10-24 findings documented as transcript-derived notes with limitations.
+
+**Created**
+- `research/literature/reviews/LIT-005_evidence_review.md`
+- `logs/session_logs/2026-10-28_LIT-005.md`
+- 39 raw files in `research/literature/raw_exports/` (git-ignored, not committed): 18 PubMed search pages (9 original + 9 `CHECK-`), 20 metadata files, 1 alphaXiv file
+
+**Modified (append only)**
+- `research/literature/search_queries.csv` — 10 rows (G1–G8, AX-G9, CN-G5); existing rows unchanged
+- `research/literature/raw_exports/MANIFEST.csv` — 39 rows; existing rows unchanged. `retrieved_at` of the new rows corrected the same day to transcript tool-result times (search pages) and harness file times (metadata); the provenance blocks inside the 19 transcribed raw files keep approximate placeholder times written by the session helper, as noted in each manifest row
+- `research/reviews/unresolved_questions.md` — Q-063…Q-067
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file
+
+**Not changed**: all generated literature artifacts (`paper_inventory.*`, `records/*`, `verification_report.md`, `search_execution_register.md`, `fulltext_review_candidates.csv`). Reason: `pubrecords.py build` stops in `verify_manifest` because the 205 LIT-003 raw exports are missing in this workspace (Q-063); hand-editing generated files was not done. Inventory remains 2,979 records. Protocol, decision log, governance files and `screening/` untouched.
+
+**Validation (actually performed)**
+| Check | Outcome |
+|---|---|
+| `validate_search_queries.py` | PASS, 168 rows |
+| `pubrecords.py check-search` Q-PM-G1…G8 | passed ×8 |
+| `pubrecords.py verify` | 39 new files match their checksums; 205 LIT-003 files reported missing (pre-existing) |
+| `git diff` on CSVs | only appended lines; no historical line changed |
+| Unit tests | not run (not required for documentation and registration changes; no code changed) |
+| Rebuild | **not possible** (see above) |
+
+**Errors / warnings**: one PubMed rate-limit error (retried once, succeeded); Consensus quota; network-policy blocks; PMID 31314250 not returned.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3`, base `53e419a`; changes uncommitted; no PR (not authorised).
+
+**Correction (2026-10-28, LIT-005 pre-commit review; researcher-authorised C1–C10)**: the statements above are kept; these corrections apply.
+| ID | Correction | Where |
+|---|---|---|
+| C1 | Screening-pilot blocker list (D-035 record §6, condition 6) replaced by the documented list in `final_confirmation_sheet_LIT-004.md` ("Pilot-blocking items after confirmation") plus `screening_protocol.md` B-6. Q-024 pair decisions and D-030 are no longer listed as blockers (the sheet says they are not pilot-blocking for the current pilot); the Q-036 arXiv spot-check, implementation of D-028/D-029/`biomarker_class`/scope flags, and Q-001/Q-002 are added | evidence review §8 |
+| C2 | 2026-10-24 leads re-found: 7, not 3 (adds MacNell 2023, Kim 2026, Si 2025, Morrison 2024 from G-6) | evidence review §1.1 |
+| C3 | Q-PM-11/12: 120 unique inventory records, not 121 (one record retrieved by both) | evidence review §6, §8 |
+| C4 | Pre-task check 12:01Z; second-source check 12:13Z | session log (appended correction) |
+| C5 | arXiv listings: "not checked against the inventory" (wrong cross-reference to §6 removed) | evidence review §1.1 |
+| C6 | "New to the inventory" = not matched by PMID only; PMID-less inventory records not compared by DOI; rebuild duplicate check still needed. Applies also to "395 PMIDs not in the inventory" in this entry | evidence review §1, §1.1, §7; session log and daily review log (appended corrections) |
+| C7 | The D-012 ≥ 10 % spot-check was not performed for the hand-copied file `Q-AX-G9_2026-10-28.json` | evidence review §1, §11; session log |
+| C8 | 2026-10-24 notes "summarised from", not "quoted from", that report (the separately marked quotation is unchanged) | evidence review §3 |
+| C9 | Q-065's feasibility statement marked as an assistant estimate `[HYPOTHESIS]` | `unresolved_questions.md` (correction note in the Q-065 row) |
+| C10 | Review header: "prepared on base `53e419a`" | evidence review header |
+
+No decision, question status, raw export, manifest row or search row was changed. No test, script, rebuild, search or network call was run for these corrections.
+
+## LIT-005-PRESERVATION — 2026-10-28 — Archive of the 39 LIT-005 raw exports (no data, inventory or decision change)
+
+**Prompt objective**: create a verifiable, deterministic archive of the 39 LIT-005 raw export files so the researcher can keep a copy outside the ephemeral container; record its status after the researcher's own checksum check.
+
+**Preceding step (same day, researcher-authorised)**: the LIT-005 commit `db8493706affc5d556e284c13026190e206a1338` was pushed to `origin/claude/eloquent-mccarthy-bqtxr3` (fast-forward from `53e419a`).
+
+**Completed**
+- File list taken from the 39 `MANIFEST.csv` rows dated 2026-10-28 (all LIT-005); 39/39 present as regular files and matching their manifest SHA-256; no `data/` or NHANES path involved.
+- Archive `research/literature/preservation/archive/LIT-005_raw_exports_2026-10-28.tar.gz` (479,473 bytes, SHA-256 `7b7d4674426c7581839b970cad37e21251ade0bf22d295814ac542bd7ec96ea1`): GNU tar with sorted names, fixed mtime, owner/group 0, fixed mode, file entries only; `gzip -n -9`; built twice, byte-identical.
+- Companion files: `.tar.gz.sha256`, `LIT-005_SHA256SUMS.txt`, `LIT-005_archive_manifest.csv` (all git-ignored).
+- Delivered to the researcher as attachments (twice; the second time the original archive was re-sent, not rebuilt).
+- **Researcher-reported** (not observed by the assistant): the copy at `%USERPROFILE%\Downloads\LIT-005_raw_exports_2026-10-28.tar.gz` has the expected SHA-256.
+- `research/literature/preservation/preservation_status.md`: LIT-005 section appended (+54 lines; LIT-003 content unchanged).
+
+**Not changed**: raw exports, `MANIFEST.csv`, generated literature artifacts, inventory, protocol, screening criteria, decisions. The LIT-003 archive was not restored.
+
+**Validation (actually performed, container side)**
+| Check | Outcome |
+|---|---|
+| Archive entries vs the 39 manifest paths | identical; 39 regular files, no other entries |
+| Extraction to a fresh temporary directory + `sha256sum -c LIT-005_SHA256SUMS.txt` | 39/39 OK |
+| Two builds | byte-identical |
+| `sha256sum -c` on the archive checksum file (before the second delivery) | OK |
+| Archive git-ignored | yes (`research/literature/preservation/archive/`) |
+| Tests, rebuild, searches, network calls | none |
+
+**Status**: archive integrity verified (container and researcher-reported). **Off-device backup / disaster recovery remains outstanding**: one copy outside the container, on one laptop.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3`; documentation committed locally in one researcher-authorised commit (hash in Git history); not pushed; no PR.
+
+**Status clarification (2026-10-29, documentation-only reconciliation; appended, the line above is kept as written)**: the line above was true when it was written. The local commit is `9bbd847d7256f1932f5c30f4f285f5189950a77d` (2026-10-28 12:56:35 UTC; subject "docs: record LIT-005 archive preservation status"; the 5 files named in the LIT-005-PRESERVATION section of `logs/session_logs/2026-10-28_LIT-005.md`). It is now on `origin/claude/eloquent-mccarthy-bqtxr3` (evidence: see the reconciliation entry at the end of this file). When it was pushed, and on whose authorisation, is not recorded. No PR.
+
+## LIT-003-RESTORE — 2026-10-28 — Verification and restoration of the LIT-003 raw exports (no rebuild)
+
+**Prompt objective**: verify the researcher-uploaded LIT-003 archive, then (separately authorised) restore its 205 raw JSON files into empty destinations in `research/literature/raw_exports/` and run `pubrecords.py verify`. No inventory rebuild, no Git operation during the restore.
+
+**Completed (tool output)**
+- Uploaded archive `/root/.claude/uploads/e89f2544-52ab-549f-965c-1d5f571bc462/e9f8022d-LIT-003_raw_exports_2026-10-23.tar.gz`: 3,647,967 bytes, SHA-256 `69e690f06834758aea76bca99ec4699c2abb2dac9aa776798aecf0366bd60c0e` (exact match, checked twice). A first upload was a 0-byte unrelated CSV and was not used.
+- Listing: 211 entries (209 files + 2 directories); no unsafe paths or entry types.
+- Extraction to a fresh scratch directory: `sha256sum -c SHA256SUMS.txt` 208/208 OK; `SHA256SUMS.txt` byte-identical to the committed `archive_contents_SHA256SUMS.txt`; the 205 raw JSON files match `MANIFEST.csv` and `raw_exports_inventory.csv` (0 hash or size mismatches).
+- Restore: 205 files copied byte-for-byte with exclusive create; 0 destination conflicts; each copy re-hashed against the manifest. Archived `MANIFEST.csv`, `README.md` and inventory not used.
+- `pubrecords.py verify`: `OK: all raw exports match MANIFEST.csv` for all 244 manifest files.
+- **Researcher-reported** (not observed): the uploaded copy came from `%USERPROFILE%\Documents\BioML-Insight-Backup\`.
+
+**Modified (documentation, append only)**: `research/literature/preservation/preservation_status.md` (status-history row + restoration section), `logs/PROMPT_LOG.md`, `logs/session_logs/2026-10-28_LIT-005.md`, `research/reviews/daily_review_log.md`, this file.
+
+**Not changed**: raw exports already present, `MANIFEST.csv`, inventory, registry, generated artifacts, protocol, screening criteria, decisions, `unresolved_questions.md`. **Inventory not rebuilt.** Restored files are git-ignored and not committed.
+
+**Status**: all 244 raw exports present and verified in this (ephemeral) workspace; rebuild precondition met. Q-063 remains **Open** (restore done for this workspace; rebuild pending). Off-device backup of both archives remains **outstanding**.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `9bbd847`; documentation uncommitted; no PR.
+
+**Status clarification (2026-10-29, documentation-only reconciliation; appended, the line above is kept as written)**: the line above was true when it was written. This documentation was later committed as `4acfce00f84d225f5c3be5480e282524f153598d` (2026-10-29 04:13:08 UTC; subject "docs: record LIT-003 raw-export restoration and verification"). `logs/session_logs/2026-10-29_LIT-005-REBUILD.md` records that commit as researcher-authorised. It is now on `origin/claude/eloquent-mccarthy-bqtxr3` (evidence: see the reconciliation entry at the end of this file). When it was pushed, and on whose authorisation, is not recorded. No PR.
+
+## LIT-005-REBUILD — 2026-10-29 — Literature inventory rebuild with the LIT-005 records (no screening)
+
+**Prompt objective**: researcher-authorised real rebuild (`pubrecords.py build`, then `make_literature_reports.py`) after a copy-based dry run and a preflight; compare with the dry run; stop and roll back on any change to existing paper IDs, merges of existing records, registry-prefix failure, or unexpected metadata or verification-status change. Theme mapping unchanged (researcher choice).
+
+**Pre-checks**: clean tree at `4acfce0`; `pubrecords.py verify` OK (244 raw exports); `validate_search_queries.py` PASS (168 rows); unit tests OK (69 at the 2026-10-29 run); inventory checksum guard passed. Committed baseline exported (`git archive`) to the session scratchpad for comparison.
+
+**Run**: 2026-10-29T05:44:51Z – 05:47:30Z; both scripts exit 0; nothing on stderr.
+
+**Results (tool output)**
+| Item | Result |
+|---|---|
+| Publications / inventory | 2,979 → 3,386; new paper IDs P2989–P3395 (407: 395 PubMed, 12 arXiv) |
+| Registry | 10,785 → 12,268 rows; old rows an unchanged prefix (0 lines removed); 0 old keys re-mapped; new rows dated 2026-10-29 |
+| Existing records | 0 IDs missing or re-mapped; 0 identifier, substantive-field or verification-status changes; no merge of existing records; registry conflicts unchanged (3 known pairs); duplicate-review pairs 15 → 15 |
+| Expected changes to existing records | 43 gained query IDs (40 PMIDs re-found by G1/G2/G4/G8; 3 arXiv records by Q-AX-G9), none removed; 29 of them `unique` → `merged_duplicates` (their own new LIT-005 hit for the same identifier) |
+| New records | 406 `partially_verified`, 1 `unverified` (P3383 = PMID 31314250, no metadata; Q-067); all `not_screened`; `retrieval_themes` empty (G queries not in `THEMES`; mapping unchanged by choice) |
+| Search completeness | G1–G8 complete; no incomplete query |
+| Comparison with the dry run | identical on every compared item |
+| Validation | inventory valid against `paper_inventory.schema.json` (`collection_stats.json`: `valid`); CSV columns identical to the baseline; 0 duplicate PMID/DOI/PMCID/arXiv ID; no abstract column; `verify` OK after the run |
+
+**Modified (generated, uncommitted)**: `paper_inventory.csv`, `paper_inventory.json`, `records/build_report.json`, `records/collection_stats.json`, `records/paper_id_registry.csv` (append only), `records/publications_index.csv`, `search_execution_register.md`, `verification_report.md`. `records/dedup_review.csv` and `fulltext_review_candidates.csv` were rewritten with identical content (no Git change). Created (git-ignored, contain abstracts): `records/source_records.jsonl`, `records/publications.jsonl`.
+
+**Not changed**: raw exports, `MANIFEST.csv`, `search_queries.csv`, code, tests, theme mapping, protocol, screening criteria, decisions, question statuses. No screening; nothing becomes citable (Q-021, Q-064, D-035 §6 still open).
+
+**Logging note**: `research/literature/collection_workflow.md` §5 says to log each build in `logs/EXPERIMENT_LOG.md`; that log's header limits it to experiments, and earlier builds were logged here and in session logs. This build is logged in this file and `logs/session_logs/2026-10-29_LIT-005-REBUILD.md`, as the researcher chose; the discrepancy is unresolved.
+
+**Correction to the preflight report**: it first named 9 generated files; `records/dedup_review.csv` is also written by the build (10 tracked files in total).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `4acfce0`; rebuild and log changes uncommitted for researcher review; not pushed; no PR.
+
+**Correction (2026-10-29, LIT-005-REBUILD; researcher-authorised C2 and C1)**: the statements above are kept; these corrections and notes apply.
+- **C2 — blocked Consensus search recorded as executed.** `research/literature/search_queries.csv` row `Q-CN-G5@2026-10-28` (added in LIT-005, commit `db84937`) had `row_type = executed`, although the search never ran: the Consensus connector refused it for quota at 2026-10-28T12:09:07Z (status `blocked_quota`, no result, no export, no manifest row; LIT-005 evidence review §1 and session log). The generated `search_execution_register.md` therefore listed it under "Exact query strings as executed". Corrected: only that row's `row_type` changed to `capability_probe`, matching the 2026-10-23 precedent `LIT003-PROBE-17` (Consensus, `blocked_quota`); query text, date, status, identifiers and all other fields unchanged. `make_literature_reports.py` re-run (no rebuild; `row_type` is read only by the register section): `search_execution_register.md` no longer lists `Q-CN-G5`; the other 12 generated files (inventory CSV/JSON, index, registry, build report, collection stats, dedup review, full-text candidates, verification report, both `.jsonl` files) are byte-identical to before the correction. `validate_search_queries.py`: PASS, 168 rows.
+- **C1 — known display limitation (not fixed).** The dated PubMed rows `Q-PM-G1…G8@2026-10-28` contain the date restriction in their stored query strings (`AND 2015/01/01:2026/10/28[edat]`; `date_limit` = "2015-01-01 to run date (entry date)"). The generated register shows an empty "Date restriction" column and "Filters: none" for these searches because `make_literature_reports.py` looks rows up by the base ID (`Q-PM-G1`), and only the dated `@2026-10-28` rows exist for LIT-005 (the LIT-003 queries also have base-ID planned rows). The report code and query schema were not changed; the register still displays the gap.
+
+**Status clarification (2026-10-29, documentation-only reconciliation; appended, the "Branch / commit / PR" line above is kept as written)**: that line was true when it was written. The rebuild, the C1/C2 corrections and their log entries were later committed as `ffee9ec55ff346b55136a3d3c532b8dbae70b209` (2026-10-29 06:31:01 UTC; subject "data: rebuild literature inventory with LIT-005 records; correct Q-CN-G5 row type"; 11 files: the 8 generated files, `search_queries.csv`, this file and the session log). The repository does not record who authorised this commit. It is the head of `origin/claude/eloquent-mccarthy-bqtxr3` (evidence: see the next entry). When it was pushed, and on whose authorisation, is not recorded. No PR. `logs/PROMPT_LOG.md` and `research/reviews/daily_review_log.md` had no LIT-005-REBUILD entry; both were added in the next entry's task.
+
+## Documentation-only reconciliation — 2026-10-29 — Record the commit and push state of LIT-003-RESTORE, LIT-005-PRESERVATION and LIT-005-REBUILD; record the branch recovery and post-recovery audit (log-only)
+
+**Prompt objective** (researcher, 2026-10-29, "Task: Documentation-Only Reconciliation"; no task ID was assigned, and the label above is taken from the prompt title): carry out the documentation-only reconciliation that the post-recovery governance audit recommended. Documentation edits and non-destructive validation only: no commit, push, branch change, merge, PR, rebuild, restore, screening, experiment, decision change or question-status change.
+
+**Preceding prompts in the same session (2026-10-29), recorded here because each needs a log entry**
+- *Branch recovery*: the researcher authorised switching the session from `claude/gracious-hopper-rx64za` (`eb79996`, the default-branch head) to the existing `claude/eloquent-mccarthy-bqtxr3` if the remote branch pointed to `ffee9ec55ff346b55136a3d3c532b8dbae70b209` and the tree was clean. Both held. The single branch was fetched and a local tracking branch created; no reset, merge, commit or push. Checks: query table PASS (168 rows); unit tests 69, OK; `pubrecords.py verify` exit 1, all 244 raw exports missing and nothing else reported. No files changed.
+- *Post-recovery governance audit* (read-only): it found the D-039 gap intentional (reserved by the researcher on 2026-10-24 for a screening-related proposal whose text is not in the repository). It also found the logging gaps corrected here, that `claude/eloquent-mccarthy-bqtxr3` is 8 commits ahead of the default branch `claude/happy-hawking-rxptfv` with no PR for them, and that D-035 record §6 conditions 2–6 are unmet. Inventory: 3,386 records, CSV SHA-256 matching `collection_stats.json`. No files changed; the only side effect was a `git fetch` of the default branch, which updated a remote-tracking ref inside `.git`.
+
+**Evidence for the commit and push state (observed in this session)**
+- `git log`: `9bbd847` (2026-10-28 12:56:35 UTC), `4acfce0` (2026-10-29 04:13:08 UTC) and `ffee9ec` (2026-10-29 06:31:01 UTC) are consecutive commits on `claude/eloquent-mccarthy-bqtxr3`.
+- `git ls-remote origin refs/heads/claude/eloquent-mccarthy-bqtxr3`: `ffee9ec55ff346b55136a3d3c532b8dbae70b209`. This was observed at the start of the branch recovery and again in this task's preflight. `git merge-base --is-ancestor`: `9bbd847`, `4acfce0` and `db84937` are ancestors of the remote head.
+- The repository does not record when these commits were pushed, by whom, or under which authorisation. The local reflog starts with this session's checkout. The push time is therefore not stated anywhere.
+- GitHub PR listing (read-only, during the audit): the most recent PR is #16 (2026-10-24); no PR has `claude/eloquent-mccarthy-bqtxr3` at these commits as its head.
+
+**Modified (append-only; no existing line changed or removed)**
+- `logs/CHANGELOG.md`: status clarifications after the LIT-005-PRESERVATION, LIT-003-RESTORE and LIT-005-REBUILD entries; this entry.
+- `logs/PROMPT_LOG.md`: detailed entries for LIT-005-REBUILD, the branch recovery, the post-recovery audit and this task. Each includes a note on the earlier entries whose Git status changed.
+- `research/reviews/daily_review_log.md`: Day 16 entries for LIT-005-REBUILD and for the recovery, audit and reconciliation.
+
+**Created**: `logs/session_logs/2026-10-29_DOCUMENTATION-ONLY-RECONCILIATION.md`.
+
+**Not changed**: `logs/DECISION_LOG.md`, `research/reviews/unresolved_questions.md`, `research/literature/preservation/preservation_status.md`, `CLAUDE.md`, `GOVERNANCE.md`, generated inventory files, git-ignored files, code, tests, protocol, criteria. No D-039 entry. No question closed (Q-063 and Q-067 remain Open).
+
+**Validation**: see the session log; the results are recorded there.
+
+**Unresolved**: (1) who authorised the `ffee9ec` commit and the pushes of `9bbd847`, `4acfce0` and `ffee9ec`, and when the pushes happened; (2) `collection_workflow.md` §5 versus the `logs/EXPERIMENT_LOG.md` header on where builds are logged (unchanged); (3) Q-063's question text predates the restore and rebuild, and the raw exports are absent from the current container; its status is the researcher's decision; (4) the content of reserved D-039.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `ffee9ec` (unchanged); changes uncommitted, awaiting the researcher's diff review; not pushed; no PR.
+
+## SECOND-SOURCE-ACCESS-RECHECK — 2026-10-29 — Stage B: re-check of second-source verification access (Q-021, Q-064); no search, no verification change
+
+**Prompt objective** (researcher, 2026-10-29: resume Stage B literature research and source verification; perform one bounded, non-screening task under existing approvals). No task ID was assigned; the label is the assistant's. The selected task was a dated re-check of access to independent bibliographic sources, plus a read-only count of which records each route could reach. Its purpose is to give the researcher current evidence for Q-021 and Q-064.
+
+**Why this task was permitted**: it is non-screening, needs no raw exports and no participant-level data, executes no literature search, and changes no decision, question status or inventory. Not chosen: Q-036 spot-check (needs the absent raw exports and the researcher's answer), Q-067 re-request (an open question awaiting the researcher), any verification lookup (depends on Q-021/Q-064), screening (D-035 record §6 conditions 2–6 unmet).
+
+**Completed (tool output)**
+- Proxy status read (`$HTTPS_PROXY/__agentproxy/status`): enabled, not selective.
+- One `curl` request each to 10 hosts (Crossref, doi.org, Europe PMC REST, E-utilities, PubMed web, PMC web, OpenAlex, Semantic Scholar, arXiv API, diabetesjournals.org), 14:50:09–14:50:11Z. All returned `CONNECT tunnel failed, response 403` (network policy). No response body was saved.
+- Read-only counts from `paper_inventory.json`: 3,334 `partially_verified`; of these, 2,282 PubMed records with a PMCID, 964 PubMed records without one (including A2, `P0303`), 88 arXiv records awaiting the transcription spot-check.
+- Found an inconsistency between the verification rule in `search_strategy.md` §7 / `research_plan.md` §6 and the second-source basis of the 14 `verified` records (web-search URL agreement on title and identifier only; `verification_report.md`). Recorded as Q-068; not resolved.
+
+**Modified (append-only)**: `research/setup/environment_assessment.md` (2026-10-29 addendum); `research/reviews/unresolved_questions.md` (new row Q-068, Open); `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`; this file.
+**Created**: `logs/session_logs/2026-10-29_SECOND-SOURCE-ACCESS-RECHECK.md`.
+
+**Not changed**: decisions; existing question statuses (Q-021, Q-036, Q-063–Q-067 Open); `search_queries.csv` (no search executed, so no row); inventory and generated files; raw exports and manifest; code; tests; protocol; criteria; `CLAUDE.md` (its network note "re-checked 2026-10-23" is left as written; the 2026-10-29 result is in `environment_assessment.md`).
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; changes uncommitted, awaiting researcher review; not pushed; no PR.
+
+## RESEARCH-AMBITION-D041 — 2026-10-29 — Research ambition and quality standard in `CLAUDE.md` and `README.md`; D-041 PROPOSED (documentation only)
+
+**Prompt objective** (researcher, 2026-10-29): reflect the ambition of an original, rigorous, reproducible contribution suitable for a reputable journal of an established publisher. Add the proposed wording to `CLAUDE.md` and `README.md`, record D-041 as PROPOSED, and log the change. No task ID was assigned; the label is the assistant's. No staging, commit, push, branch change or PR.
+
+**Conflicts reported before editing (none blocking)**: (1) the proposed rule 15 cited "(D-018)", which would imply D-018 already requires strong, recent baselines; it does not (D-018, PENDING: most-used RQ1 methods, a simple reference model, equal tuning budgets). It was reworded to "input to D-018, which is PENDING". (2) D-011 and D-022 (both PROPOSED) concern rules in `CLAUDE.md`; D-041 is recorded alongside them without changing their status (`CLAUDE.md` rule 10). (3) As with D-022, rules 14–17 are followed as researcher instructions while D-041 is PROPOSED. (4) Rules 14–17 sit in §1a, before §2 (rules 8–13); numbers are kept so existing references stay valid. (5) The tension between the 2026-11-24 manuscript target (protocol CUP-11, D-001 PROPOSED) and the ambition is unresolved and not decided here.
+
+**Modified**
+- `CLAUDE.md`: new section §1a (ambition statement, journal-selection criteria for D-020, rules 14–17), inserted before §2; no existing line changed.
+- `README.md`: "Ambition" paragraph appended to "Research objective"; no existing line changed. The README status block (dated 2026-10-23) was left as it is.
+- `logs/DECISION_LOG.md`: Status-history row for D-041; new section with the D-041 row (PROPOSED, "Not approved").
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-29_RESEARCH-AMBITION-D041.md`.
+
+**Not changed**: `GOVERNANCE.md`; D-001–D-040 (including D-011, D-013–D-020, D-022); question statuses; research question; dataset; protocol; method; baseline set; screening status; inventory; code; tests. The six uncommitted SECOND-SOURCE-ACCESS-RECHECK files are preserved (their existing content is unchanged; three logs were appended to).
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted together with the SECOND-SOURCE-ACCESS-RECHECK changes; not staged, not pushed; no PR.
+
+## SCREENING-ACTIVATION-BRIEF — 2026-10-29 — Decision brief for the unmet D-035 record §6 conditions (documentation only; screening stays inactive)
+
+**Prompt objective** (researcher, 2026-10-29): verify that both uncommitted tasks are intact, then prepare a documentation-only screening-activation decision brief: the five unmet D-035 §6 conditions, the evidence each needs, blockers by kind, Q-065 (due 2026-11-01), the Q-068 verification conflict, the 2026-11-24 target, and next actions in dependency order. No task ID was assigned; the label is the assistant's. No search, screening, verification, training, decision change, staging, commit or push.
+
+**Preflight**: branch `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; nothing staged; no stashes. Both uncommitted tasks (SECOND-SOURCE-ACCESS-RECHECK, RESEARCH-AMBITION-D041) present; checksums and sizes recorded before editing.
+
+**Created**: `research/reviews/screening_activation_decision_brief_D035.md`. No existing brief covered D-035 §6; the file sits with the other decision records in `research/reviews/`.
+**Modified (append-only)**: `research/reviews/unresolved_questions.md` (Q-069, Open: gate order of protocol §23 vs `GOVERNANCE.md` §2); `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`; this file.
+**Created (log)**: `logs/session_logs/2026-10-29_SCREENING-ACTIVATION-BRIEF.md`.
+
+**Findings** (from the records): condition 1 met (D-036); conditions 2–6 unmet. D-031 C1 (R5/D-029) is the only open D-031 condition. No condition needs a network change. The rebuild in pilot-blocking item 8 and the arXiv spot-check in item 6 need the raw exports restored (Q-063). Criteria v1.1 and protocol v0.2 do not exist. Correction to the post-recovery audit report (conversation only, not in the repository): it listed D-032 among PROPOSED decisions. The Status history records D-032 as APPROVED — CONDITIONAL (inactive); its row keeps the original text by convention.
+
+**Not changed**: decision statuses (including D-011, D-013–D-020, D-022, D-041); existing question statuses; `GOVERNANCE.md`; criteria; screening and experimental protocols; schemas; code; tests; inventory; raw exports. **Screening remains inactive.**
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `a280e01`; uncommitted together with the two earlier tasks; not staged, not pushed; no PR.
+
+## Q-069-RESOLUTION — 2026-10-29 — D-042 PROPOSED (stage order before D-017–D-019 and training); protocol draft revision 4 (documentation only)
+
+**Prompt objective** (researcher, 2026-10-29): after a read-only analysis of Q-069 and a reviewed proposal, record the researcher's in-principle resolution as D-042 (PROPOSED — awaiting explicit approval), keep Q-069 Open with a linking note, and revise the experimental protocol draft (§23, §26) to match. No task ID was assigned; the label is the assistant's. No screening, training, experiment, protocol freeze, decision approval, staging, commit or push.
+
+**Contradictions found in the reviewed proposal and corrected before editing** (reported to the researcher):
+1. §23 row P listed Rule S synthetic verification as "Ongoing". D-040 (7) says "No execution before 2026-11-03" and requires an approved test plan. Row P now covers Rule S test **planning** only and refers to D-040 (7).
+2. §23 step 5 placed D-014 and the outcome definition (Stage F gate) after the Stage D gate. D-042 orders only D-017, D-018 and D-019. D-014/outcome now has its own row ("F"), with timing not fixed by D-042, but needed before D-017 (its evidence requirement) and before training (AB-3).
+
+**Modified**
+- `research/methodology/experimental_protocol_v0.1_draft.md`: header "Version" → draft revision 4; §23 replaced (dependency-ordered table; dates are targets, not gates; new risk line; new fallback that does not assume a frozen protocol); §26: new block "Before D-017, D-018 or D-019 is approved", AB-13, sentence "A blocker is not met because its date has arrived", AB-7 last sentence replaced (old sentence quoted in place), "Not blocking training" line replaced (old line quoted in place); change-history row "0.1 rev. 4" (Approved: **No**).
+- `logs/DECISION_LOG.md`: Status-history row for D-042; new section with the D-042 row (PROPOSED — awaiting explicit approval; "Not approved").
+- `research/reviews/unresolved_questions.md`: Q-069 status cell "Open" → "Open — researcher's in-principle answer (2026-10-29) prepared as D-042 (PROPOSED); awaiting explicit approval." (precedent: Q-032 and D-029). Status value unchanged.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-29_Q-069-RESOLUTION.md`.
+
+**Not changed**: `GOVERNANCE.md`; `CLAUDE.md`; decision statuses other than the new D-042 (D-001, D-016–D-019 and all others unchanged); every other question; screening files; inventory; code; tests; data. Protocol not frozen or activated. **Screening remains inactive.**
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `eca5116`; uncommitted; not staged, not pushed; no PR.
+
+## D-042-APPROVAL — 2026-10-29 — Researcher approval of D-042 recorded; Q-069 Answered; protocol references synchronised (documentation only)
+
+**Prompt objective** (researcher, 2026-10-29): "I explicitly approve D-042 exactly as currently written in `logs/DECISION_LOG.md`." Record the approval following the governance and audit-log conventions; mark Q-069 Answered and link it to D-042; update only references made factually stale by the approval. No task ID was assigned; the label is the assistant's. No staging, commit or push.
+
+**Convention note**: precedent for approving a PROPOSED entry is mixed. D-032's approval (2026-10-24) is recorded only in the Status history, with "Original D-032 row kept unchanged"; other PROPOSED rows had their status cell changed in place (e.g., D-003). As instructed, D-042's row had only its status cell (→ **APPROVED**) and "Approved by" cell (→ "Researcher (owner), 2026-10-29 — explicit approval of the text as written") updated; the decision text and rationale are byte-identical; the earlier status stays in the Status history.
+
+**Modified**
+- `logs/DECISION_LOG.md`: D-042 status and "Approved by" cells; Status-history row (PROPOSED — awaiting explicit approval → **APPROVED**); note under the D-042 table.
+- `research/reviews/unresolved_questions.md`: Q-069 status → "**Answered 2026-10-29 by the owner** → D-042 (APPROVED): …", with the earlier status quoted (convention of Q-037, Q-039, Q-041). Question text and other columns unchanged.
+- `research/methodology/experimental_protocol_v0.1_draft.md`: header → draft revision 5; five references "D-042, proposed" → "D-042, approved 2026-10-29" (§23 intro; §26 block heading, AB-7, AB-13, submission line); change-history row "0.1 rev. 5" (Approved: **No**). The revision 4 row keeps its wording.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-29_D-042-APPROVAL.md`.
+
+**Not changed (historical, accurate when written)**: earlier CHANGELOG, PROMPT_LOG, daily-review and session-log entries that describe D-042 as PROPOSED; `research/reviews/screening_activation_decision_brief_D035.md` (it records Q-069 as opened). **Not changed (protected or out of scope)**: `GOVERNANCE.md`; `CLAUDE.md`; D-001, D-016–D-019 and every other decision status; every other question status.
+
+**What the approval does not do**: it passes no gate (the Stage C and Stage D gates are not passed); it does not activate screening, authorise real-data training or experiments, approve D-016–D-019, freeze the protocol, or relax the Stage B verification requirement. **Screening remains inactive.**
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `9aefe42`; uncommitted; not staged, not pushed; no PR.
+
+## Q-065-DECISION-PACKAGE — 2026-10-29 — Q-065 scope and schedule decision package; audit-trail reconciliation of commits and pushes (documentation only)
+
+**Prompt objective** (researcher, 2026-10-29): prepare a researcher-reviewable decision package for Q-065 with the schedule analysis (D-001, Q-013, Q-058, CUP-11 under D-042); compute the priority-strand counts from committed metadata only, with an independent check; reconcile the audit trail for commits `24f5dfd`, `27c86c0`, `eca5116`, `9aefe42`, `5d92d94`. No task ID was assigned; the label is the assistant's. No screening, labelling, searches, downloads, training, decision change, staging, commit or push.
+
+**Preceding request (same session, not executed)**: a request to commit the 11 LIT-005-REBUILD files was interrupted by the researcher. That commit already exists as `ffee9ec` and is on `origin`; nothing was staged or committed.
+
+**Created**: `research/reviews/Q-065_decision_package.md`; `logs/session_logs/2026-10-29_Q-065-DECISION-PACKAGE.md`.
+**Modified (append-only)**: `logs/PROMPT_LOG.md`; `research/reviews/daily_review_log.md`; this file.
+
+**Results (computed from `paper_inventory.json`, SHA-256 `a509538d…f4a3`, metadata fields only)**: G-1…G-7 194; Q-PM-02 743; Q-PM-11/12 120; overlaps 10 (G ∩ Q-PM-02), 0 (G ∩ Q-PM-11/12), 3 (Q-PM-02 ∩ Q-PM-11/12), 0 (all three); union **1,044**. Confirmed independently on `paper_inventory.csv` (membership-pattern counting) and with `jq`. Alternative scope sizes: priority + remaining RQ1 strands (Q-PM-01, Q-PM-03) 1,470; entire inventory 3,386. No title or abstract was read; no record was sampled or labelled.
+
+**Audit-trail reconciliation (verified from Git; earlier entries kept as written)**
+The CHANGELOG and PROMPT_LOG entries for SECOND-SOURCE-ACCESS-RECHECK, RESEARCH-AMBITION-D041, SCREENING-ACTIVATION-BRIEF, Q-069-RESOLUTION and D-042-APPROVAL say "uncommitted" and "not pushed". That was true when each was written. Their later state:
+
+| Commit | Commit time (UTC) | Subject | Pushed (remote-tracking reflog, "update by push") |
+|---|---|---|---|
+| `24f5dfd6ef1c526acc67fc585864f22faa7d8766` | 2026-10-29 15:12:36 | docs: record literature access re-check | with `eca5116`, 2026-10-29 15:13:15 (`a280e01..eca5116`) |
+| `27c86c0469c5d615c038d0e10b1283b27a5c44f5` | 2026-10-29 15:12:50 | docs: document research ambition and D-041 proposal | with `eca5116`, 2026-10-29 15:13:15 |
+| `eca5116319dc5af3f0968c1195a7c3e99469f704` | 2026-10-29 15:13:07 | docs: add screening activation decision brief | 2026-10-29 15:13:15 |
+| `9aefe42aca800769d2c089ad5de60aa82be00991` | 2026-10-29 15:28:07 | docs: record Q-069 resolution proposal | 2026-10-29 15:29:25 (`eca5116..9aefe42`) |
+| `5d92d94286a0a8257222a662241b016c545618d5` | 2026-10-29 15:36:38 | docs: record D-042 approval | 2026-10-29 15:40:56 (`9aefe42..5d92d94`) |
+
+Additional, same pattern: `a280e01` (DOCUMENTATION-ONLY-RECONCILIATION; its entry says "not pushed") was pushed at 2026-10-29 14:47:14 (`ffee9ec..a280e01`). Evidence: `git log`; `git reflog show --date=iso origin/claude/eloquent-mccarthy-bqtxr3`; `git merge-base --is-ancestor` (all six on `origin/claude/eloquent-mccarthy-bqtxr3`); `git ls-remote` → `5d92d94`. Commits and pushes were made in this session on the researcher's explicit authorisation (three commits + push; then commit, push; then commit, push). No PR exists for these commits.
+
+**Not changed**: Q-065 (Open); every decision status; every question status; `GOVERNANCE.md`; `CLAUDE.md`; the protocol (draft revision 5, not approved); inventory and generated files; code; tests. **Screening remains inactive.**
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted; not staged, not pushed; no PR.
+
+## SCOPE-SCHEDULE-DECISIONS — 2026-10-29 — Owner decisions on Q-002 (D-043), Q-065 (D-044) and the schedule (D-045) recorded (documentation only)
+
+**Prompt objective** (researcher, 2026-10-29): record the researcher's explicit decisions on Q-002 (biomarker scope), Q-065 (screening scope, Option 3) and the project schedule, after verifying the Q-065 count; no screening activation, no experiment authorisation, no change to unrelated decisions. No task ID was assigned; the label is the assistant's. No staging, commit or push.
+
+**Pre-checks**: branch `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`, in sync with `origin`; uncommitted Q-065-DECISION-PACKAGE work (5 files) present and snapshotted (checksums and sizes) before editing. D-043–D-045 unused (D-039 reserved).
+
+**Count verification (before recording)** — `paper_inventory.json` SHA-256 `a509538d…f4a3` and `paper_inventory.csv` `8fc5bea9…6846`, both equal to HEAD. RQ1 = Q-PM-01, Q-PM-02, Q-PM-03 (`search_queries.csv`, column `rq`). Method 1: `jq` set union on the JSON → G 194, Q-PM-02 743, Q-PM-11/12 120, Q-PM-01 434, Q-PM-03 52; priority 1,044; Option 3 **1,470**. Method 2: Python `csv` on the CSV, five-set membership patterns and inclusion–exclusion → **1,470**. Decomposition: 1,044 + 399 (Q-PM-01 outside the priority strand) + 44 (Q-PM-03 outside) − 17 (in both) = 1,470. The package states 399 and 44 but not the 17 overlap; no discrepancy in the total. Metadata of the 1,470: all `not_screened`; 1,460 `partially_verified`, 10 `verified`; 6 `abstract_available = False`; 2 retraction publication types; 0 duplicate PMID/DOI/PMCID; 4 pending dedup pairs touch the set, 1 with both members inside (caveat recorded in D-044). Metadata only; no title or abstract read.
+
+**Modified**
+- `logs/DECISION_LOG.md`: three Status-history rows; new section with D-043 (APPROVED), D-044 (APPROVED — CONDITIONAL, inactive for screening until D-035 record §6 is met), D-045 (APPROVED); attribution "Researcher (owner), 2026-10-29".
+- `research/reviews/unresolved_questions.md`: Q-002 → Answered → D-043; Q-065 → Answered → D-044; Q-013 and Q-058 stay **Open** with notes referring to D-045 (D-001 revision pending pilot evidence).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-29_SCOPE-SCHEDULE-DECISIONS.md`.
+
+**Not changed**: D-001 (PROPOSED), D-005, D-009, D-013–D-020, D-025, D-035, D-042 and every other decision; Q-001, Q-007, Q-033, Q-035 and every other question; `GOVERNANCE.md`; `CLAUDE.md`; `screening_criteria.md` (v1.0 draft; D-043 enters only via v1.1); the experimental protocol (draft revision 5; CUP-11 and §23 wording not updated, see open items); the Q-065 decision package; the inventory and all record fields. **Screening remains inactive**; no training, experiment or dataset work authorised.
+
+**Open items**: protocol CUP-11 ("Target: a defensible manuscript by 2026-11-24") and §23 ("The 2026-11-24 target is under review") predate D-045 and need an owner-authorised protocol revision; `screening_criteria.md` §2.2 still reads "[PROVISIONAL — Q-002]" until v1.1; D-001 revision after the pilot.
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3` at `5d92d94`; uncommitted together with the Q-065-DECISION-PACKAGE work; not staged, not pushed; no PR.
+
+## D-051-GOVERNANCE-APPROVAL — 2026-10-30 — Owner approval of the `GOVERNANCE.md` §2 Rule S sentence recorded as D-051 (documentation only)
+
+**Context**: the PR #17 merge-readiness review (2026-10-30) found that the D-040 records do not settle whether the conditional approval of D-040 satisfies the `GOVERNANCE.md` rule "It must not be changed without a DECISION_LOG entry approved by the researcher". The researcher asked for a separate entry on the PR-1 branch before PR #17 is merged (Option A of the review) and approved the exact sentence on 2026-10-30.
+
+**Modified**
+- `logs/DECISION_LOG.md`: one Status-history row; new section with D-051 (APPROVED; Researcher (owner), 2026-10-30), quoting the approved sentence and the researcher's scope statement verbatim. D-040 and every other entry unchanged.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Created**: `logs/session_logs/2026-10-30_D-051-GOVERNANCE-APPROVAL.md`.
+
+**Not changed**: `GOVERNANCE.md` (the approved sentence is unchanged); `CLAUDE.md`; D-040 and all other decisions; all questions; the protocol (draft revision 5, not approved, not frozen, not active); schemas; inventory; scripts; tests. **Screening remains inactive.** No test planning, test code, environment specification or creation, package installation, synthetic verification, experiment or model training; NHANES data not accessed.
+
+**Not recorded (proposals only, not approved)**: D-040 scope after the merge; a definition of "F-A software" before any Rule S test plan; the restriction on NHANES-derived values in synthetic work.
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: prepared for `claude/eloquent-mccarthy-bqtxr3-part1` on top of `0c85634` (PR #17); uncommitted when written; not pushed.
+
+## LIT-PRESERVATION-V1-V5 — 2026-10-30 — LIT-003 and LIT-005 archives verified and restored; LIT-005 per-file evidence prepared in this change set (documentation and evidence only)
+
+**Context**: the preservation audits of 2026-10-30 concluded "Preservation evidence partially established; closure pending". The researcher uploaded both archives and authorised V1 (archive checksums), V2 (LIT-005 listing and safety checks), V3 (LIT-005 temporary extraction and per-file check), V4 (restoration of both and full `verify`) and V5 (this documentation and the LIT-005 listing), each separately.
+
+**Created**
+- `research/literature/preservation/LIT-005_archive_contents_SHA256SUMS.txt`: 39 per-file SHA-256 lines (archive entry paths), sorted.
+- `research/literature/preservation/LIT-005_raw_exports_inventory.csv`: 39 rows, same columns as the LIT-003 `raw_exports_inventory.csv`.
+- `logs/session_logs/2026-10-30_LIT-PRESERVATION-V1-V5.md`.
+
+**Modified**
+- `research/literature/preservation/preservation_status.md`: one status-history row each for LIT-003 and LIT-005; new final section with the V1–V4 results, the new evidence files, and the researcher-reported Google Drive check (not observed).
+- `research/reviews/unresolved_questions.md`: Q-063 status cell only ("Open — partly addressed", with what remains); question text and status unchanged in substance (still Open).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Results (tool output)**: LIT-003 3,647,967 bytes, SHA-256 `69e690f0…0c0e`, 205/205 raw files match `MANIFEST.csv`, 4 companion files match committed records (not restored); LIT-005 479,473 bytes, SHA-256 `7b7d4674…6ea1`, safety checks passed, 39/39 match; 244/244 restored with exclusive create; `pubrecords.py verify` exit 0, `OK: all raw exports match MANIFEST.csv`; `MANIFEST.csv` and `README.md` unchanged; archives unchanged.
+
+**Not changed**: `MANIFEST.csv`, `README.md`, `archive_contents_SHA256SUMS.txt`, `raw_exports_inventory.csv`, the inventory and all generated records (no build), decisions, protocol, screening status (inactive). The 244 restored raw files are git-ignored and exist only in this workspace.
+
+**Open**: backup on a separate physical device; Google Drive approval as project storage; Q-063 closure (researcher).
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `ec52627`; uncommitted when written; not pushed.
+
+## LIT-PRESERVATION-GDRIVE — 2026-10-30 — Google Drive approval recorded as researcher-reported (documentation only)
+
+**Context**: the researcher reported on 2026-10-30 that explicit approval has been obtained from "the project owner or supervisor" to use their personal Google Drive for research archives, and that both archives are in a private folder in the researcher's personal Google Drive. Neither the approval details nor the Drive copies were verified by the assistant.
+
+**Modified**
+- `research/literature/preservation/preservation_status.md`: one status-history row each for LIT-003 and LIT-005; new final section "Google Drive copies: approval reported (2026-10-30)" with four parts: researcher-reported approval; approval details not yet recorded or verified; archive integrity verification (assistant-observed vs researcher-reported); the unresolved backup-requirement decision.
+- `research/reviews/unresolved_questions.md`: Q-063 status cell only (Google Drive clause); status still Open.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries. `logs/session_logs/2026-10-30_LIT-PRESERVATION-GDRIVE.md`: new.
+
+**Not changed**: earlier preservation entries; `MANIFEST.csv`, `README.md`, the restored raw files and the archives; decisions (no DECISION_LOG entry: approver, date, scope and conditions not recorded); protocol; screening status (inactive). Google Drive not accessed. Preservation not marked complete; backup on a separate physical device outstanding.
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `78e4269`; uncommitted when written; not pushed.
+
+## Q-011-OPTION-B and SCREENING-READINESS-RECHECK — 2026-10-30 — off-device backup designated; screening readiness re-checked (documentation only)
+
+**Context**: the researcher selected Q-011 option (b) (private Google Drive folder as the off-device backup), reported the project owner's approval via WhatsApp (date and wording not provided) and supplied the SHA-256 values of the Drive copies; and asked whether screening can start before a 2026-11-02 interim deliverable.
+
+**Modified**
+- `research/literature/preservation/preservation_status.md`: one status-history row each for LIT-003 and LIT-005; new final section "Off-device backup designated (Q-011 option (b), 2026-10-30)". Status not changed to PRESERVED.
+- `research/reviews/unresolved_questions.md`: Q-011 and Q-063 status cells (update notes); both still Open.
+- `research/reviews/screening_activation_decision_brief_D035.md`: new §11 (dated status update; §1–§10 unchanged).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries. `logs/session_logs/2026-10-30_Q-011-OPTION-B_SCREENING-READINESS.md`: new.
+
+**Not changed**: `DECISION_LOG.md` (D-010 stays PROPOSED pending a one-line confirmation that option (b) approves it as written); screening status (INACTIVE; D-035 §6 conditions 2–6 unmet); protocol, criteria, scope, inventory, raw exports. No screening, sampling, labelling, experiment or training. Google Drive and the approval message not accessed.
+
+**Validation**: see the session log.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed.
+
+## D-010-APPROVAL — 2026-10-30 — D-010 approved under Q-011 option (b) (decision record)
+
+**Context**: explicit researcher approval (2026-10-30): "I explicitly approve D-010 under Q-011 Option B, designating my private personal Google Drive folder as the off-device backup location for the literature exports, subject to the applicable governance requirements and outstanding preservation checks."
+
+**Modified**
+- `logs/DECISION_LOG.md`: D-010 row Status and "Approved by" cells (PROPOSED → **APPROVED**, as for D-042); one Status history row (D-010-APPROVAL); one note line after the first table. Decision text and rationale unchanged.
+- `research/reviews/unresolved_questions.md`: Q-011 → **Answered** (D-010); Q-011 and Q-063 update notes adjusted; Q-063 still Open.
+- `research/literature/preservation/preservation_status.md`: Q-011-OPTION-B rows annotated; part 5 added to the final section. Not PRESERVED.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; session log `2026-10-30_Q-011-OPTION-B_SCREENING-READINESS.md` (addendum).
+
+**Not changed**: other decisions; screening (INACTIVE); protocol; inventory; raw exports.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed.
+
+## SCREENING-PREREQ-DECISIONS — 2026-10-30 — researcher selections recorded; recommendations and approval request for the remaining screening prerequisites
+
+**Context**: the researcher's prompt of 2026-10-30 stated selections on Q-040, Q-001, Q-033, D-027, Q-036 and D-008 (Q-011/D-010 were recorded earlier the same day) and asked for evidence-based recommendations on the remaining choices.
+
+**Created**
+- `research/reviews/screening_prerequisites_decision_package.md`: recorded selections; recommendations on Q-035, D-028, D-029/R5/Q-032, D-024, Q-007, D-025, A-1–A-6; D-035 §6 activation table; critical path; approval request.
+- `logs/session_logs/2026-10-30_SCREENING-PREREQ-DECISIONS.md`.
+
+**Modified**
+- `logs/DECISION_LOG.md`: new section with D-055 (Q-040), D-056 (Q-001), D-057 (Q-033), all APPROVED — CONDITIONAL (inactive for screening); D-027 → APPROVED (limited) and D-008 → APPROVED — CONDITIONAL, Status and "Approved by" cells updated in place; Status history rows, including D-012/D-023 unchanged (PROPOSED until the arXiv spot-check passes).
+- `research/reviews/unresolved_questions.md`: Q-001, Q-008, Q-033, Q-036, Q-040 → Answered.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Not changed**: screening (INACTIVE; D-035 §6 conditions 3–6 unmet); protocol, criteria, scope (D-044), inventory; D-013–D-020; Q-063. No spot-check, screening, experiment or training.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed.
+
+## SCREENING-PREREQ-DECISIONS-2 — 2026-10-30 — remaining screening decisions recorded; arXiv spot-check passed; criteria v1.1 and protocol v0.2 drafted
+
+**Context**: the researcher delegated the selection of the recommended options (`screening_prerequisites_decision_package.md` §2), authorised their recording, and asked for the Q-036 arXiv spot-check and drafts of criteria v1.1 and protocol v0.2.
+
+**Created**
+- `research/literature/reviews/arxiv_transcription_spot_check_2026-10-30.md` and `.csv`: 25/25 sampled records match in 5/5 files (seeded sample, ≥ 10 %, min 5 per file).
+- `research/literature/screening_criteria_v1.1_draft.md`, `research/literature/screening_protocol_v0.2_draft.md`: drafts, not frozen; v1.0 and v0.1 unchanged.
+- `logs/session_logs/2026-10-30_SCREENING-PREREQ-DECISIONS-2.md`.
+
+**Modified**
+- `logs/DECISION_LOG.md`: new D-058 (Q-035), D-059 (A-1–A-6), D-060 (R5, Q-032); D-009, D-024, D-025, D-028, D-029 approved (conditional/not implemented as stated); D-012, D-023 approved (spot-check passed); D-026 revised by D-029; Status history rows; D-030 unchanged.
+- `research/reviews/unresolved_questions.md`: Q-007, Q-026, Q-032, Q-035 answered; Q-034 proposed resolution noted (Open); new Q-073 (pilot strata in the D-044 scope).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries.
+
+**Not changed**: `MANIFEST.csv` (spot-check outcome not yet recorded there), raw exports, inventory, schemas, code, `screening_criteria.md` v1.0, `screening_protocol.md` v0.1, scope (D-044), protocol, D-013–D-020. Screening INACTIVE; no sample.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed.
+
+## SCREENING-PREREQ-DECISIONS-3 — 2026-10-30 — OPEN-1/OPEN-2 settled; Q-073 recommendation; arXiv spot-check recorded in MANIFEST.csv
+
+**Modified**
+- `logs/DECISION_LOG.md`: new D-061 (flag `non_metabolic_rq5_candidate`) and D-062 (RQ5 tier rule), both APPROVED — CONDITIONAL (effective at the v1.1 freeze); Status history rows (D-025 unchanged pending Q-073; D-012 spot-check recorded).
+- `research/literature/raw_exports/MANIFEST.csv`: `transcription_check=passed` and a note for Q-AX-01…05 only (`pubrecords.py set-check`; dry run on a copy first; `verify` OK).
+- `research/reviews/unresolved_questions.md`: Q-073 recommendation (near-equal allocation), still Open.
+- `research/literature/screening_criteria_v1.1_draft.md`, `screening_protocol_v0.2_draft.md`: OPEN-1/OPEN-2 resolved, Q-073 recommendation, spot-check status; still DRAFT.
+- `research/literature/reviews/arxiv_transcription_spot_check_2026-10-30.md`: recording status.
+- `research/reviews/screening_prerequisites_decision_package.md`: §6 review summary and implementation readiness.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; session log `2026-10-30_SCREENING-PREREQ-DECISIONS-3.md` (new).
+
+**Not done**: implementation and rebuild (reasons in the package §6.3); no build run; no freeze; screening INACTIVE.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `f60a23b`; uncommitted when written; not pushed.
+
+## Q-073-DECISION — 2026-10-30 — D-063 pilot allocation approved (conditional, inactive)
+
+Explicit researcher approval of the near-equal allocation (B 8, A 8, untagged 8, F 8, C 7, E 7, D 7, Q 7; seed 4004; fixed stratum order; deterministic draw; inventory hash). Recorded as D-063 (APPROVED — CONDITIONAL, inactive) revising D-025's allocation; Q-073 Answered; protocol v0.2 §7, §10, §11 and criteria v1.1 §9, §10 updated (still DRAFT). No sample generated; screening INACTIVE. Committed in the preservation commit of the same day (17 files).
+
+## Q-068-DECISION — 2026-10-30 — D-064 recorded (Step A: decision and documentation only)
+
+**Context**: explicit researcher approval: "Approve D-064 with A5 = needs_review and A6 = report-level only. Authorize Step A only."
+
+**Modified**
+- `logs/DECISION_LOG.md`: new section with D-064 (APPROVED; takes effect at the next authorised build) and one Status history row.
+- `research/reviews/unresolved_questions.md`: Q-068 → Answered (D-064); question text unchanged.
+- `research/literature/collection_workflow.md` §4.3: new §4.3.1 (approved D-064 policy, implementation pending); existing table kept as §4.3.2 (rules of the current build).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file: task entries; `logs/session_logs/2026-10-30_Q-068-DECISION.md` (new).
+
+**Not changed**: code (`pubrecords.py`, `make_literature_reports.py`), tests, schemas, inventory and generated reports (incl. `verification_report.md`), verification statuses, D-044 scope and snapshot, criteria and protocol drafts, screening status (INACTIVE). Steps B, C, D not authorised.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `ee0d7de`; uncommitted when written; not pushed.
+
+## D-064-STEP-B — 2026-10-30 — D-064 implemented in code and tests (no build)
+
+**Context**: researcher authorisation of Step B with decisions D2 (first-author rules), D3 (modify `test_spot_check_upgrades_verification`; add a negative Consensus test) and D4 (no "arXiv" venue).
+
+**Modified**
+- `scripts/literature/pubrecords.py`: new `normalize_venue`, `compare_first_author`, `compare_identifiers`, `compare_required_fields`, `source_provider`, `source_independence`, `evaluate_second_sources`; `auto_verification` applies D-064 after the unchanged existing checks; `build()` writes report-level `verification_second_sources` and `verification_status_changes` into `build_report.json`. `merge_cluster`, `deduplicate`, `normalize_journal` and the schemas are unchanged; publication records gain no field.
+- `scripts/literature/make_literature_reports.py`: D-064 rule text replaces the old web-second-source sentence; new sections "Second-source evaluation (D-064; report-level only)" and "Verification status changes since the previous build".
+- `tests/literature/test_pubrecords.py`: `test_spot_check_upgrades_verification` now uses a synthetic, checked Crossref source; new `test_consensus_without_underlying_source_does_not_verify`; new classes `TestD064Helpers` (6 tests) and `TestD064Build` (11 tests). All fixtures synthetic.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; session log `2026-10-30_D-064-STEP-B.md` (new).
+
+**Not changed**: inventory, generated reports, `records/`, verification statuses, raw exports and manifest, schemas, D-044 snapshot, criteria/protocol drafts, screening (INACTIVE). No build run.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `5cd9fc3`; uncommitted when written; not pushed.
+
+## T0-GOVERNANCE-DECISIONS — 2026-10-31 — D-065, D-066, D-067 recorded; Q-022 answered; GOVERNANCE.md Stage B row amended
+
+**Context**: researcher approval (2026-10-31) of the final T0 wording and authorisation to record it. Commit and push are not authorised by this task.
+
+**Modified**
+- `logs/DECISION_LOG.md`: new section with D-065 (Q-022: 35 recorded search executions approved as executed with limitations; 30 planned searches not searched), D-066 (Stage B interpretation) and D-067 (Stage B governance amendment), all APPROVED; D-005, D-006, D-007 status and "Approved by" cells → APPROVED as executed with documented limitations (texts unchanged); four Status history rows.
+- `GOVERNANCE.md` §2: Stage B row only (D-067).
+- `research/reviews/unresolved_questions.md`: Q-022 → Answered (D-065).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; new `logs/session_logs/2026-10-31_T0-GOVERNANCE-DECISIONS.md`.
+
+**Not changed**: Q-020, Q-021, Q-063, Q-064; other decisions; search inventory and register; code, tests, schemas, inventory and generated outputs; criteria and protocol drafts; screening (INACTIVE).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `b81c4e7`; uncommitted when written; not pushed.
+
+## T1-A — 2026-10-31 — Approved screening-schema and validation changes implemented in code, schemas and tests (no build)
+
+**Context**: researcher task T1-A (2026-10-31) with owner directions 1–12: inventory field `screening_validation_design` for the screening descriptor; extraction field `validation_design` unchanged; `dim_independent_validation` retired from screening input without value mapping (removal from generated outputs and their schemas deferred to T2); manual `scope_flags` tokens limited to `scope_pending_proteomics` and `non_metabolic_rq5_candidate`; `retracted` stays build-derived; no software enforcement of the D-060 (2) missing-abstract rule; descriptor requirement only for title/abstract `include`/`uncertain` rows, Stage-0 rows exempt. Governing decisions: D-028 (2a–2d), D-029 as specified in D-060, D-057, D-058, D-061.
+
+**Modified**
+- `scripts/literature/pubrecords.py`: screening columns and enums (`record_type` per D-028 2d; `validation_design` per D-060 (1); `biomarker_class` per D-058); `RETIRED_SCREENING_COLUMNS` (clear error, no conversion); D-060 (6) required-descriptor check for title/abstract `include`/`uncertain` rows with the `rule:stage0` exemption; controlled `scope_flags` validator (`scope_flag_errors`, checked on the value as written); D-028 mapping (`PUBLICATION_TYPE_MAP`, `PUBLICATION_TYPES_IGNORED`, `derive_publication_type`, `unmapped_publication_types`); `publication_type` written to publication records and `unmapped_publication_types` to the build report.
+- `scripts/literature/make_literature_reports.py`: inventory columns `biomarker_class` and `screening_validation_design`; `publication_type` taken from the build and removed from the manual fields; `dim_independent_validation` written as null until T2.
+- `research/literature/schemas/screening_decision.schema.json`, `paper_inventory.schema.json`, `publication_record.schema.json`: aligned with the code (enums, column order, controlled `scope_flags` pattern, 13-value `publication_type`, `screening_details` keys); `scope_flags` description no longer lists `abstract_only` or `expression_of_concern`; extraction field `validation_design` unchanged.
+- `tests/literature/test_screening_and_ids.py`: fixtures completed with SYNTHETIC D-060 (6) descriptors where the test subject is not the descriptors; RQ5 tests that leave method descriptors blank at title/abstract now use `exclude` rows (their assertions are unchanged); `test_optional_descriptor_columns` uses `validation_design`/`screening_validation_design`; manual-value tests use extraction fields instead of `publication_type`; new `test_publication_type_is_derived_not_manual`; publication-schema test allows the retired key until T2.
+- `tests/literature/test_t1a_schema_validation.py` (new, 22 tests, synthetic fixtures only).
+- `research/reviews/unresolved_questions.md`: Q-074, Q-075, Q-076 added (Open).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; new `logs/session_logs/2026-10-31_T1-A.md`.
+
+**Validation**: `python3 -I -m unittest discover -s tests/literature` (run with `-B`, `PYTHONDONTWRITEBYTECODE=1`): 113 tests, OK (baseline before T1-A: 90, OK). Protected files (306: all of `research/` except `schemas/`, incl. ignored raw exports, plus `DECISION_LOG.md`, `GOVERNANCE.md`, `CLAUDE.md`) hashed before and after the code/test work: identical. Committed inventory (3,386 rows) and `publications.jsonl` (3,386) validate against the new schemas (read-only check). `git -c core.whitespace=cr-at-eol diff --check`: exit 0.
+
+**Not changed**: inventory, `records/`, `build_report.json`, generated reports, raw exports and `MANIFEST.csv`, registry, D-044 snapshot, criteria/protocol drafts, decision statuses. No build, screening, pilot, freeze or experiment.
+
+**T2 (requires separate authorisation)**: rebuild under the Step C safeguards; then remove `dim_independent_validation` from `INV_COLS`, the inventory schema and the publication schema `screening_details` (with `RETIRED_SCREENING_COLUMNS` kept for input rejection) and list `publication_type` as required in the publication schema.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted when written; not pushed.
+
+> **Update (2026-10-31, T1-A-PR-REFERENCE).** The line above was accurate when written. This work, together with T1-A-FOLLOW-UP, was committed as `d1aaceb` ("Implement literature T1-A validation safeguards"), pushed to `claude/eloquent-mccarthy-bqtxr3-part1`, and is included in **PR #17** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17 — open, not merged. This note records the PR reference only; it does not indicate approval.
+
+## T1-A-FOLLOW-UP — 2026-10-31 — Q-076(a)–(d) owner directions implemented (no build)
+
+**Context**: researcher prompt 2026-10-31 with owner directions on Q-076: (a) all-ignored source types → `unknown`; (b) arXiv rule on the primary source database; (c) reject non-null hand-edited `publication_type` values that differ from the derived value, include the field in the CSV-versus-JSON check, allow nulls from earlier inventories; (d) exclude retracted records from the full-text candidate list by token membership; recognised types take precedence over unrecognised ones. Q-074 and Q-075 stay open. No DECISION_LOG entry or status change.
+
+**Modified**
+- `scripts/literature/make_literature_reports.py`: `DERIVED_GUARDED` (`publication_type`) added to the CSV-versus-JSON comparison in `manual_values`; new check in `manual_values` (runs before any output is written) that stops with nothing written when a non-null `publication_type` differs from `pr.derive_publication_type` on the same row's `source_publication_types`/`source_db`; candidate filter uses `"retracted" in (scope_flags or "").split(";")`.
+- `tests/literature/test_screening_and_ids.py`: `test_publication_type_is_derived_not_manual` now expects rejection with outputs unchanged (it previously expected the edit to be overwritten).
+- `tests/literature/test_t1a_schema_validation.py`: new classes `TestFollowUpQ076` (3), `TestFollowUpPublicationTypeEdits` (4), `TestFollowUpRetractedCandidates` (2); synthetic fixtures only.
+- `research/reviews/unresolved_questions.md`: Q-076 status cell (owner directions; implemented; no decision entry); new Q-077 (guard versus a future mapping-table extension).
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; `logs/session_logs/2026-10-31_T1-A.md` (follow-up section).
+
+**Validation**: `PYTHONDONTWRITEBYTECODE=1 python3 -I -B -m unittest discover -s tests/literature`: 122 tests, OK (113 before the follow-up). Mutation checks on a scratchpad copy: restoring the old exact-equality filter fails `test_retracted_with_other_flag_excluded_and_theme_record_kept`; disabling the guard fails 3 tests. Protected files unchanged (see session log). `git -c core.whitespace=cr-at-eol diff --check`: exit 0.
+
+**Not changed**: inventory, `records/`, generated reports, raw exports, MANIFEST, registry, D-044 snapshot, criteria/protocol drafts, decision statuses, the 13-value mapping. No build, screening, pilot, freeze or experiment.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `1478089`; uncommitted (together with T1-A); not pushed.
+
+> **Update (2026-10-31, T1-A-PR-REFERENCE).** The line above was accurate when written. This work, together with T1-A, was committed as `d1aaceb` ("Implement literature T1-A validation safeguards"), pushed to `claude/eloquent-mccarthy-bqtxr3-part1`, and is included in **PR #17** — https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17 — open, not merged. This note records the PR reference only; it does not indicate approval.
+
+## Q-074-DECISION — 2026-10-31 — D-068 recorded (missing-abstract rule); Q-074 answered (documentation only)
+
+**Context**: researcher agreement to the Q-074 decision brief and consolidated proposal (incl. G1–G3) and explicit authorisation, 2026-10-31, to record D-068 and apply the agreed documentation-only changes. Commit and push are not authorised by this task.
+
+**Modified**
+- `logs/DECISION_LOG.md`: new section with D-068 (APPROVED — CONDITIONAL, inactive for screening; amends D-060 (2) "Stage-0/E1/E4" → "Stage-0/E1" and the application of D-062; clarifies D-059 A-6, D-060 (4) and the D-060 (6) Stage-0 exemption); four Status history rows. The D-059, D-060 and D-062 rows are unchanged.
+- `research/reviews/unresolved_questions.md`: Q-074 status cell → Answered (D-068); question text unchanged.
+- `research/literature/screening_criteria_v1.1_draft.md` (still DRAFT, not frozen): §4 missing-abstract bullet, §5 tier note, §6 Stage-0 exception, §9 traceability rows (§4, §5), §10 Q-074 row.
+- `research/literature/screening_protocol_v0.2_draft.md` (still DRAFT, not frozen): governing-decision list, §1 "Without abstract" row, §3 missing-abstract row and Stage-0 paragraph, §7 missing-abstract review row, §8 expansion review.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; new `logs/session_logs/2026-10-31_Q-074-DECISION.md`.
+
+**Not changed**: code, scripts, tests, schemas, configuration, inventory, registry, manifest, generated reports; D-008, D-025, D-029, D-035, D-058, D-059, D-060, D-061, D-062 statuses; Q-075, Q-076, Q-077. No screening activation, freeze, T2, retrieval or data acquisition. The current code does **not** enforce the D-068 (5) Stage-0 restriction (see session log).
+
+**Validation**: diff inspected; `git -c core.whitespace=cr-at-eol diff --check`; no tests run (no executable change).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `753a1bc`; uncommitted when written; not pushed. The branch is the head of PR #17.
+
+**Follow-up correction (2026-10-31, Option (i), researcher-selected after the independent review)**: D-068 (6), the missing-abstract bullet of `screening_criteria_v1.1_draft.md` and the missing-abstract row of `screening_protocol_v0.2_draft.md` were aligned so that, for records without an abstract: method descriptors and `validation_design` remain `unclear`; `biomarker_class` may take a value only when explicitly supported by the title; all five preliminary component statuses remain `unclear`, justified by "no abstract"; no RQ5-based tier applies; `rq_tags` and `record_type` remain provisional until full-text assessment. This resolves the inconsistency between D-068 (6), which had allowed title-supported values for the method descriptors, and D-068 (7), which sets all five component statuses (three of which are those descriptors) to `unclear`. No other policy changed; both drafts stay unfrozen and screening stays inactive. Checks performed: diff of the three files inspected; text search confirming the title exception now appears only for `biomarker_class`; D-025, D-029, D-035, D-058, D-059, D-060, D-061 and D-062 rows compared with HEAD (unchanged); `git diff --check` exit 0. Uncommitted; not pushed.
+
+## Q-075-DECISION — 2026-10-31 — D-069 recorded (`scope_flags` vocabulary); Q-075 partly addressed (documentation only)
+
+**Context**: researcher approval of Decisions A–D (researcher prompt 2026-10-31); exemplar-tag co-occurrence deferred by the researcher; recording authorised in the researcher prompt of 2026-10-31 using the corrected wording of the final audit. Commit and push are not authorised by this task.
+
+**Modified**
+- `logs/DECISION_LOG.md`: new section with D-069 (APPROVED — CONDITIONAL, inactive for screening): `scope_pending_disorder` for the D-056 pending conditions; `non_metabolic_method_exemplar` as a descriptive retention tag (D-059 A-2); `lr_only` descriptive only (Q-042 open); `prognostic` deferred; co-occurrence of `non_metabolic_method_exemplar` and `non_metabolic_rq5_candidate` not decided. Three Status history rows (D-069; D-056 and D-059 A-2 with no status change). The D-056, D-059 and D-061 rows are unchanged.
+- `research/reviews/unresolved_questions.md`: Q-075 status cell → "Open — partly addressed" (D-069); question text unchanged.
+- `research/literature/screening_criteria_v1.1_draft.md` (still DRAFT, not frozen): header governing-decision list (+D-069); §2.1 tag name; §2.3 heading and `lr_only` note; §3 RQ1 row (`prognostic` deferred, **[OPEN]**); §6 `scope_flags` row (vocabulary, **[OPEN]** markers, governing decisions); §9 rows (§2.1, §6, new §2.3/§3 RQ1 row, "Unchanged" row narrowed to RQ2–RQ4); §10 Q-075 row.
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; new `logs/session_logs/2026-10-31_Q-075-DECISION.md`.
+
+**Not changed**: screening protocol v0.2, validator, schemas, tests, data and generated outputs; Q-042, Q-076, Q-077. The validator still rejects `scope_pending_disorder`, `non_metabolic_method_exemplar` and `lr_only` until a separately authorised implementation. The pre-existing omission of D-068 from the criteria header is not addressed here.
+
+**Validation**: see the session log (during editing: exact-match edit assertions, per-file line counts, historical decision rows and other questions compared with HEAD, SHA-256 baseline of `research/`, `scripts/` and `tests/`, whitespace checks; full diff reviewed afterwards in the independent audit). No tests run (no executable change).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `e64ce8f` (1 commit ahead of `origin`, unpushed); uncommitted when written; not pushed. The branch is the head of PR #17; the PR is not changed by this task.
+
+## PR17-DESCRIPTION-UPDATE — 2026-10-31 — PR #17 description updated for commits 28–29 (D-068, D-069); task recorded (documentation only)
+
+**Context**: researcher authorisation, 2026-10-31, to update the description of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) with the reviewed proposal (default and base branch verified as `claude/happy-hawking-rxptfv`; the only change to the earlier proposal was naming that branch in the first summary sentence); then a separate authorisation, 2026-10-31, to record that completed update in the audit logs. Commit and push of this record are not authorised by this task.
+
+**Done on GitHub (PR description only)**
+- PR #17 description replaced with the approved text. It now covers 29 commits (head `81875c3`), adds commit rows 28 (`e64ce8f`, D-068) and 29 (`81875c3`, D-069), the updated size (82 files, +38,364/−3,958), D-068 and D-069 sections, and the updated governance status, checks and reviewer items (Q-042, Q-075 remainder, Q-076, Q-077 and the unfixed discrepancies kept open; screening INACTIVE; criteria v1.1 not frozen; T2 and the D-069 validator change not authorised).
+- Read-back: the published body was fetched from the GitHub API and compared programmatically with the approved text: identical except for the final trailing newline, which GitHub does not store (24,302 vs 24,303 characters). GitHub `updated_at` after the update: 2026-10-31T08:55:37Z.
+- State after the update: title unchanged; open; not draft; not merged; mergeable state `clean`; head `81875c301fcddd0afc36959b45eb65c4a2af8aed`; base `claude/happy-hawking-rxptfv` at `eb79996`; 29 commits.
+
+**Modified (this record)**
+- `logs/PROMPT_LOG.md`, `research/reviews/daily_review_log.md`, this file; new `logs/session_logs/2026-10-31_PR17-DESCRIPTION-UPDATE.md`.
+
+**Not changed**: PR title, state, base, reviewers, labels, assignees, milestone, comments and reviews; no approval or merge; no branch, commit or push during the description update; `DECISION_LOG.md`, `unresolved_questions.md`, criteria and protocol drafts, code, schemas, tests, data, inventory and generated reports. No PR-2, T2, screening, retrieval, build, experiment or test run. This entry records only the description update of 2026-10-31 (08:55 UTC); it does not reconstruct earlier description updates.
+
+**Validation**: see the session log, sections "Preflight" and "Verification (read-back)" (approved-text diff against the previously published body; programmatic read-back comparison; `git status` clean at `81875c3` after the update). No tests run (no executable change).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `81875c3` (= `origin`); this record uncommitted when written; not pushed. The branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged.
