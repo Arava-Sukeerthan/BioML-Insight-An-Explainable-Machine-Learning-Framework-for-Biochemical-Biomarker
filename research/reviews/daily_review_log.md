@@ -451,3 +451,10 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** the documentation diff; commit/push; later, separately: Stage-0 code bounding, retrieval-status representation, pilot-report tooling; Q-075 and the v1.1 freeze.
 - **Recommended next step:** review the diff; authorise commit and push separately.
 - **Researcher decisions:** Q-074 proposal agreed (incl. G1–G3); recording of D-068 authorised (2026-10-31).
+
+## Day 18 (cont.) — 2026-10-31 — Q-075-DECISION
+- **Work completed:** D-069 recorded: `scope_pending_disorder` adopted for the D-056 pending conditions; `non_metabolic_method_exemplar` approved as a descriptive retention tag (D-059 A-2); `lr_only` approved as descriptive only; `prognostic` deferred. Q-075 partly addressed; criteria v1.1 draft aligned (not frozen).
+- **Important findings:** `[EVIDENCE]` D-056 had left the tag name undecided; the ballot (Item 6) gave the rename rationale. `[EVIDENCE]` the validator still accepts only `scope_pending_proteomics` and `non_metabolic_rq5_candidate`. `[OPEN]` exemplar-tag co-occurrence; `prognostic` rationale; Q-042.
+- **Decisions requiring review:** the documentation diff; commit/push; later, separately: validator/schema/test implementation of the approved vocabulary; the pre-existing D-068 omission in the criteria header.
+- **Recommended next step:** review the diff; authorise commit and push separately.
+- **Researcher decisions:** Decisions A–D approved and co-occurrence deferred; recording of D-069 authorised (2026-10-31).

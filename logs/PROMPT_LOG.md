@@ -708,3 +708,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | D-068 recorded (APPROVED — CONDITIONAL, inactive); Q-074 Answered; drafts updated (still drafts); task logs updated; uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `753a1bc`; uncommitted when written; not pushed |
 | Pull request | Branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged; PR not changed by this task |
+
+### Q-075-DECISION (2026-10-31)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | Q-075-DECISION (researcher prompts 2026-10-31: Q-075 review and decision proposal; approval of Decisions A–D with co-occurrence deferred; final audit; "I authorize Claude to record the audited Q-075 decision as D-069 using the corrected wording in the final audit report.") |
+| Prompt date | 2026-10-31 (Day 18) |
+| Objective | Record D-069, update Q-075 (partly addressed), align criteria v1.1 draft; documentation only; no protocol, code, schema, test, data, freeze, screening, commit or push |
+| Actual completion status | D-069 recorded (APPROVED — CONDITIONAL, inactive); Q-075 "Open — partly addressed"; criteria v1.1 draft aligned (still a draft); task logs updated; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `e64ce8f` (1 commit ahead of `origin`); uncommitted when written; not pushed |
+| Pull request | Branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged; PR not changed by this task |

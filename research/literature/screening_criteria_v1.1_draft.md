@@ -7,7 +7,7 @@
 | Replaces | `screening_criteria.md` v1.0 (2026-10-14, draft) **only when** the researcher approves and freezes this text as the pilot's `criteria_version` (D-035 record §6, condition 5). v1.0 is kept unchanged for traceability |
 | Companion | `screening_protocol_v0.2_draft.md` (operational rules, pilot, audit trail) |
 | Screening status | **INACTIVE.** No record has been screened, labelled or sampled |
-| Governing decisions | D-008, D-009, D-012/D-023, D-024, D-025, D-027 (limited), D-028, D-029, D-031–D-038, D-043, D-044, D-055–D-062. Every change from v1.0 is traced in §9 |
+| Governing decisions | D-008, D-009, D-012/D-023, D-024, D-025, D-027 (limited), D-028, D-029, D-031–D-038, D-043, D-044, D-055–D-062, D-069. Every change from v1.0 is traced in §9 |
 | Wording rule | Only approved decisions are written as rules. Items still open are marked **[OPEN]** and listed in §10 |
 
 Records are screened against the criteria of **the RQ strand(s) they could inform**. A record is included if it satisfies the criteria of at least one RQ. Its RQ tags are recorded.
@@ -54,7 +54,7 @@ Sample size, journal, country and model type are **not** exclusion criteria.
 ### 2.1 Metabolic-disorder scope (D-056; Q-001 answered)
 **In scope:** type 1, type 2 and gestational diabetes; prediabetes / impaired glucose regulation; insulin resistance; metabolic syndrome; NAFLD/MASLD/NASH/MASH; dyslipidaemias; hyperuricaemia and gout; inborn errors of metabolism (incl. newborn-screening targets).
 
-**Pending (included at screening, flagged `scope_pending`):** obesity (as a classification target), thyroid dysfunction, polycystic ovary syndrome. Decided later without re-screening. (The ballot's proposed rename to `scope_pending_disorder` is not decided; v1.0's flag name is kept.)
+**Pending (included at screening, flagged `scope_pending_disorder`, D-069):** obesity (as a classification target), thyroid dysfunction, polycystic ovary syndrome. Decided later without re-screening.
 
 **Out of scope (E4), subject to the §1 E4 clarification:** complications of metabolic disease when the classification target is the complication itself (e.g., diabetic retinopathy, nephropathy, foot ulcer); cardiovascular events, cancer and infectious disease.
 
@@ -72,8 +72,8 @@ This defines the literature-screening scope only. It does not decide the primary
 
 **Content field (D-058):** every `include`/`uncertain` record gets `biomarker_class` = `metabolomics_lipidomics` / `newborn_screening_msms` / `routine_chemistry` / `mixed_both` / `other` / `unclear`, from what the study used, never from the retrieving query. Reporting: `mixed_both` appears in both strand tables and as its own row; overall totals count each record once.
 
-### 2.3 Machine-learning scope — unchanged from v1.0
-Supervised classification or risk-probability models: regularised regression; PLS-DA/OPLS-DA used as classifiers; tree ensembles, SVM, k-NN, naive Bayes, neural networks, AutoML, tabular foundation models. Classical logistic-regression-only studies are included only for RQ3/RQ4 methodological relevance or as comparators (`lr_only`).
+### 2.3 Machine-learning scope — unchanged from v1.0 except the `lr_only` tag note (D-069)
+Supervised classification or risk-probability models: regularised regression; PLS-DA/OPLS-DA used as classifiers; tree ensembles, SVM, k-NN, naive Bayes, neural networks, AutoML, tabular foundation models. Classical logistic-regression-only studies are included only for RQ3/RQ4 methodological relevance or as comparators. They may be tagged `lr_only`, a descriptive tag only (D-069): it does not determine `dim_classification` or RQ5 counting; Q-042 remains open.
 
 ---
 
@@ -81,7 +81,7 @@ Supervised classification or risk-probability models: regularised regression; PL
 
 | RQ | Include when | Specific exclusions |
 |---|---|---|
-| RQ1 | Meets §2.1 + §2.2 + §2.3; diagnosis/screening/classification/subtyping or risk prediction of a metabolic disorder (prognostic models flagged `prognostic`) | E1–E4, E11 |
+| RQ1 | Meets §2.1 + §2.2 + §2.3; diagnosis/screening/classification/subtyping or risk prediction of a metabolic disorder (`prognostic` tag deferred, **[OPEN]**, D-069; eligibility unchanged) | E1–E4, E11 |
 | RQ2 | (a) Methodological work on explanation methods for tabular or omics classifiers (any biomedical domain), incl. stability, faithfulness or agreement of attributions; **or** (b) RQ1-eligible study that reports and interprets an explanation method | "Feature importance" without stating how it was computed → E12 unless otherwise RQ1-eligible |
 | RQ3 | (a) Methodological work on calibration, recalibration, conformal prediction or other uncertainty quantification for classification/risk models, preferably tabular biomedical data; **or** (b) RQ1-eligible study reporting calibration or uncertainty | Image-only or NLP-only UQ papers excluded unless directly applicable to tabular classifiers (judgement recorded) |
 | RQ4 | (a) RQ1-eligible study with external, temporal or cross-cohort validation; **or** (b) methodological work on external validation, transportability, dataset shift, batch/site effects | Internal validation only → not RQ4 (may remain RQ1) |
@@ -131,7 +131,7 @@ One file, `research/literature/screening/decisions.csv`, with `stage` = `title_a
 | `dim_explainability`, `dim_uncertainty`, `dim_calibration` | `include`, `uncertain` | `yes / no / unclear` (triage meaning at title/abstract) | D-029; D-060 (5), (6) |
 | `validation_design` | `include`, `uncertain` | `external / temporal / internal_only / none / not_applicable / unclear`; strongest stated | D-029; D-060 (1) |
 | `dim_feature_selection`, `dim_classification` | Full-text RQ5 assessment: all five component columns; at title/abstract whenever the RQ5 routing rule is applied (preliminary, triage only) | D-032, D-035 §2, D-036 | D-035 G5; D-062 |
-| `scope_flags` | When applicable | `scope_pending`, `scope_pending_proteomics`, `lr_only`, `prognostic`, `non_metabolic_method_exemplar`, `non_metabolic_rq5_candidate` | D-055, D-056, D-057, D-061 |
+| `scope_flags` | When applicable | `scope_pending_disorder` (D-056 conditions), `scope_pending_proteomics`, `non_metabolic_method_exemplar` (descriptive retention tag; co-occurrence with `non_metabolic_rq5_candidate` **[OPEN]**), `non_metabolic_rq5_candidate`, `lr_only` (descriptive; Q-042 open). `prognostic`: deferred, not accepted **[OPEN]** | D-056; D-057; D-059 (A-2); D-061; D-069 |
 | `tier`, `needs_human`, `criteria_version` | `tier` for `include`; `needs_human` per §4 triggers; `criteria_version` always once frozen | — | D-060 (3) |
 
 Exceptions: Stage-0 rule rows (`screener=rule:stage0`; only `exclude` rows with E5 or E7, D-068 (5)) need only the always-required columns. `exclude` rows may leave descriptors empty. `publication_type` is derived by the build from source metadata via the D-028 mapping table (never hand-edited; arXiv → `preprint`; no URL/DOI-prefix rules). The schema currently names `dim_independent_validation`; it is replaced by `validation_design` when D-029 is implemented (implementation pending).
@@ -150,14 +150,15 @@ Primary disorder (D-013), primary dataset, outcome definition (D-014), evaluatio
 | §1 E3, E5, E6, E8, E12 | Clarifications | D-059 (A-2) | APPROVED (as modified), inactive |
 | §1 E4 | Exemplar and D-055 exceptions; flag name | D-059 (A-2 modified); D-055; D-061 | APPROVED, inactive; D-061 effective at freeze |
 | §1 E8 | Version handling deferred | D-059 (A-4 deferred); D-030 | DEFERRED / PROPOSED |
-| §2.1 | Main list approved; pending conditions kept | D-056 | APPROVED — CONDITIONAL (inactive) |
+| §2.1 | Main list approved; pending conditions kept; tag renamed `scope_pending_disorder` | D-056; D-069 | APPROVED — CONDITIONAL (inactive) |
 | §2.2 | Two strands; NBS MS/MS with metabolomics; proteomics pending; `biomarker_class` | D-043; D-057; D-058 | APPROVED; APPROVED — CONDITIONAL (inactive) |
 | §3 RQ5 | ≥ 4 of 5 components; evidence standard; coverage groups; researcher verification; D-055 retention | D-031–D-038; D-055 | APPROVED — CONDITIONAL (inactive) |
 | §4 | Silence ≠ `no`; missing abstracts; RQ5 routing; triggers | D-060 (2) as amended by D-068, (3), (4); D-059 (A-6); D-068; D-035 G2, G3 | APPROVED — CONDITIONAL (inactive) |
 | §5 | RQ5 tier rule | D-031; D-060; D-062 (not applied without an abstract, D-068 (7)) | APPROVED — CONDITIONAL; D-062 and D-068 (7) effective at freeze |
-| §6 | One file, required/optional columns, new fields, exemptions | D-027 (limited); D-059 (A-5); D-028; D-029; D-058; D-060 (6) | APPROVED / APPROVED — CONDITIONAL; implementation pending |
+| §6 | One file, required/optional columns, new fields, exemptions | D-027 (limited); D-059 (A-5); D-028; D-029; D-058; D-060 (6); D-069 (`scope_flags` vocabulary) | APPROVED / APPROVED — CONDITIONAL; implementation pending |
 | §7 | Pilot replaced; audit; allocation | D-025; D-059 (A-1); D-063; D-008 | APPROVED — CONDITIONAL (inactive) |
-| §1 I-C1–I-C4, E1, E2, E7, E9–E11, §2.3, RQ1–RQ4, RQ6 | Unchanged | — | — |
+| §2.3; §3 RQ1 | `lr_only` descriptive-tag note (§2.3); `prognostic` tag deferred, eligibility unchanged (§3 RQ1) | D-069 | APPROVED — CONDITIONAL (inactive) |
+| §1 I-C1–I-C4, E1, E2, E7, E9–E11, RQ2–RQ4, RQ6 | Unchanged | — | — |
 
 ## 10. Open items to settle before the freeze
 | ID | Item | Proposed resolution (not approved) |
@@ -166,3 +167,4 @@ Primary disorder (D-013), primary dataset, outcome definition (D-014), evaluatio
 | OPEN-2 | Tier for records routed only as possible `near_rq5` | Settled: D-062 (Tier 2 rule), effective at freeze |
 | Q-073 | Pilot stratification inside the D-044 scope | Settled: D-063 (near-equal allocation), conditional and inactive |
 | Q-074 | Missing-abstract rule and its enforcement | Settled: D-068 (amends D-060 (2) and the application of D-062), conditional and inactive. At the freeze: verify the Stage-0 type list against its approved source (G1) and fix the E1 wording (G2) |
+| Q-075 | `scope_flags` vocabulary | Partly settled: D-069 (`scope_pending_disorder`, `non_metabolic_method_exemplar`, `lr_only`), conditional and inactive. Open: co-occurrence of `non_metabolic_method_exemplar` and `non_metabolic_rq5_candidate`; `prognostic` (deferred) |
