@@ -848,3 +848,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Completed: four corrections applied and verified against pre-edit copies; no unrelated, whitespace or generated-output change; no tests or scripts run. Uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `bf0c579`; uncommitted; not pushed |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### PRE-FREEZE-CORRECTIONS (2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PRE-FREEZE-CORRECTIONS (researcher prompts 2026-11-01: read-only pre-freeze review; documentation-only draft corrections; read-only decision and evidence audit; recording and one local commit) |
+| Prompt date | 2026-11-01 (Day 19) |
+| Objective | Correct the drafts for the inventory-hash basis, the freeze procedure (proposed, not executed), the D-077 (6) draw authorisation, the D-035 §6 status wording and the Stage-0 timing. Record the three-inventory consistency check. No freeze, content approval, D-035 §6 record, implementation, pilot draw, screening, network access or push |
+| Actual completion status | Completed: draft corrections; inventory check reproduced (3 commits; 3,386 / 1,470 / 194; identical IDs and order; JSON = CSV); log entries; one local commit. Open: content approval, Stage-0 confirmation, names and status wording, D-035 §6 recording, Stage-0 timing and tools, draw authorisation |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1`, parent `9308a6a`; local commit; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |

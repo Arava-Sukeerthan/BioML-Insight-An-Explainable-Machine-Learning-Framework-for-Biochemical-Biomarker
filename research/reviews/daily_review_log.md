@@ -626,3 +626,24 @@ One entry per researcher review session (~1 h/day).
 - **Important findings:** `[EVIDENCE]` no unrelated, whitespace or generated-output change; no tests or scripts run.
 - **Decisions requiring review:** commit and push of the uncommitted change set; then the freeze decision (Stage-0 list confirmation, `criteria_version` binding), the D-035 §6 record and pilot authorisation.
 - **Recommended next step:** authorise the commit of the change set.
+
+## Day 19 (cont.) — 2026-11-01 — PRE-FREEZE-CORRECTIONS
+- **Work completed:**
+  - pre-freeze review and audit (read-only);
+  - documentation corrections to both drafts (inventory basis; proposed freeze procedure, not executed; D-077 (6) draw authorisation; D-035 §6 assessment wording; Stage-0 timing);
+  - three-inventory consistency check recorded in CHANGELOG.
+- **Important findings:**
+  - `[EVIDENCE]` same 1,470 in-scope IDs and order in the inventories at `ffee9ec`, `b81c4e7` and `bf0c579`; the hashes differ and are not interchangeable;
+  - `[EVIDENCE]` no Stage-0 generator, no sampling tool, and no `criteria_version` check exist;
+  - `[EVIDENCE]` the D-035 record §6 condition 5 names "`screening_criteria.md` v1.1", which bears on the file-name decision;
+  - no D-035 §6 condition is formally recorded as met; 5 and 6 are unmet.
+- **Decisions requiring review:**
+  - content approval;
+  - Stage-0 list confirmation;
+  - final names and status wording;
+  - D-035 §6 recording approach;
+  - Stage-0 timing;
+  - software authorisation;
+  - draw authorisation.
+- **Researcher preferences (not decisions):** keep v1.0 unchanged; consider version-specific names; record conditions 1–4 separately from 5–6; software only after the freeze.
+- **Recommended next step:** content review of the committed drafts; then a freeze task.

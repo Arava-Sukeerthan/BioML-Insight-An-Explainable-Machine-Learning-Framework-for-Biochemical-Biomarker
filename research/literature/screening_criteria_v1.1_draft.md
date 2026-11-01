@@ -4,7 +4,7 @@
 |---|---|
 | Task | SCREENING-PREREQ-DECISIONS-2 (2026-10-30; assistant draft) |
 | Version | **1.1 — DRAFT for researcher review. NOT frozen. Not in force.** |
-| Proposed `criteria_version` | `criteria_v1.1+protocol_v0.2` — **proposed identifier only, not a frozen or effective version** (proposed by the assistant at the researcher's request, 2026-11-01). It takes effect only when the researcher freezes this text together with protocol v0.2; the freeze record should bind it to the commit and the SHA-256 of both files |
+| Proposed `criteria_version` | `criteria_v1.1+protocol_v0.2` — **proposed identifier only, not a frozen or effective version** (proposed by the assistant at the researcher's request, 2026-11-01). It takes effect only through an explicit, approved freeze decision covering this text and protocol v0.2; the proposed procedure, which has not been executed, is in §11 |
 | Replaces | `screening_criteria.md` v1.0 (2026-10-14, draft) **only when** the researcher approves and freezes this text as the pilot's `criteria_version` (D-035 record §6, condition 5). v1.0 is kept unchanged for traceability |
 | Companion | `screening_protocol_v0.2_draft.md` (operational rules, pilot, audit trail) |
 | Screening status | **INACTIVE.** No record has been screened, labelled or sampled |
@@ -16,7 +16,7 @@ Records are screened against the criteria of **the RQ strand(s) they could infor
 ---
 
 ## 0. Records to which these criteria apply
-The **1,470** publication records defined by D-044 (records retrieved by G-1…G-7, Q-PM-01, Q-PM-02, Q-PM-03, Q-PM-11, Q-PM-12; `paper_inventory.json` SHA-256 `a509538d…f4a3`). All 743 Q-PM-02 records are screened (D-009). The remaining inventory records are outside the approved screening scope; they are neither screened nor excluded, and the review reports the reduced scope (D-044).
+The **1,470** publication records defined by D-044 (records retrieved by G-1…G-7, Q-PM-01, Q-PM-02, Q-PM-03, Q-PM-11, Q-PM-12). **Inventory basis:** D-044 defined and counted this scope on `paper_inventory.json` SHA-256 `a509538d…f4a3` (commit `ffee9ec`, 2026-10-29); that historical basis is unchanged. The inventory was rebuilt later (commit `b81c4e7`, SHA-256 `e20ce77e…341f`; T2 rebuild, commit `bf0c579`, SHA-256 `b668dbde…d054`). The T2 log records identical `paper_id`s and order between `e20ce77e…` and `b668dbde…`; a read-only comparison of the committed inventories at `ffee9ec`, `b81c4e7` and `bf0c579` (2026-11-01, pre-freeze documentation correction; not yet recorded in the logs) found the same 1,470 in-scope `paper_id`s in the same order in all three. The three hashes differ because other fields changed, so they are **not interchangeable**: a hash identifies one file version only. The pilot records the SHA-256 of the inventory actually used at the draw (D-077 (5); protocol v0.2 §7). All 743 Q-PM-02 records are screened (D-009). The remaining inventory records are outside the approved screening scope; they are neither screened nor excluded, and the review reports the reduced scope (D-044).
 
 ## 1. Common criteria (all RQs)
 
@@ -181,3 +181,13 @@ Primary disorder (D-013), primary dataset, outcome definition (D-014), evaluatio
 | Q-078 | Full-text handling of `non_metabolic_rq5_candidate` when fewer than three possible components remain | Settled: D-075, conditional and inactive; rule in §1 E4, §3 RQ5 and §6 |
 | Q-079 | Code for retraction notices at manual screening (not Stage 0, D-072) | Settled: D-076, conditional and inactive; rule in §1 E5/E7 and §4. Notice-to-article linking stays with D-030 (PROPOSED) |
 | Q-080 | Stage-0 handling of records with several source publication types (H4; recording stopped because of a conflict with D-028 2a) | Settled: D-074 (approved with the E7-precedence clarification), conditional and inactive; rule in §4 |
+
+## 11. Proposed freeze procedure (not executed; nothing here is approved)
+The identifier `criteria_v1.1+protocol_v0.2` is proposed only. It becomes effective only through step 6; until then this text and protocol v0.2 are drafts and not in force.
+1. The researcher reviews the final content of this text and of protocol v0.2 and explicitly approves it.
+2. The researcher explicitly confirms the Stage-0 type list and its E5/E7 codes against protocol v0.1 §3 (D-068 (5); §10 Q-074).
+3. The final file names and status wording are settled **before** the freeze commit. **[OPEN — researcher decision]:** whether the files keep their `_draft` names or are renamed, the exact final status wording, and whether `screening_criteria.md` v1.0 and `screening_protocol.md` v0.1 receive a superseded note.
+4. The final contents of both files are committed.
+5. The SHA-256 of each file is computed from the exact contents at that commit.
+6. A separate `logs/DECISION_LOG.md` entry records the identifier, both final paths, the commit, both SHA-256 values, the researcher's explicit approval and the effective date. Neither file contains its own final hash or commit; the decision-log entry holds them, which avoids a self-referential hash.
+7. Only that approved entry makes the identifier effective. Recording D-035 record §6 conditions as met, authorising the pilot draw (D-077 (6)) and authorising screening remain separate later decisions.

@@ -2087,3 +2087,72 @@ Not a freeze. No D-035 §6 record, pilot, screening, training, network, commit o
 **Validation**: edits compared with pre-edit copies; no unrelated file changed; no whitespace issue (`git diff --check` and the CRLF-aware check exit 0); no generated output, code, test, schema or inventory change. No tests or scripts run (wording-only change).
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `bf0c579`; uncommitted, together with the FREEZE-READINESS-REVIEW and FREEZE-DRAFT-CORRECTIONS changes; not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## PRE-FREEZE-CORRECTIONS — 2026-11-01 — pre-freeze documentation corrections to the drafts; three-inventory consistency check recorded (not a freeze)
+
+**Context**: researcher prompts 2026-11-01:
+- a read-only pre-freeze review of criteria v1.1 and protocol v0.2;
+- documentation-only corrections to the two drafts;
+- a read-only decision and evidence audit;
+- authorisation to record the corrections and the inventory check and to make one local commit.
+
+Not a content approval or a freeze. No D-035 §6 record, pilot draw, implementation, screening, network access or push.
+
+**Modified (drafts; wording only, no E-code, inclusion rule, Stage-0 list, Option A wording or D-079 text changed)**:
+- `research/literature/screening_criteria_v1.1_draft.md`:
+  - header: the identifier takes effect only through an explicit, approved freeze decision;
+  - §0: inventory basis distinguished (D-044 historical inventory, later inventories, inventory hashed at the draw);
+  - new §11: proposed freeze procedure, **not executed**, with file names and status wording marked [OPEN].
+- `research/literature/screening_protocol_v0.2_draft.md`:
+  - header pointer to criteria §11;
+  - §1: all three inventory hashes and commits;
+  - §3: Stage-0 timing from approved decisions, with the timing and the generating tool marked [OPEN];
+  - §7 "When": the separate draw authorisation of D-077 (6) added, no existing prerequisite removed;
+  - §10: rows 1–4 reworded to "Assessed as met at decision level; not formally recorded", plus a status-terms note. **No condition 1–6 is formally recorded as met; conditions 5 and 6 remain Unmet.** How conditions 1–4 are recorded is [OPEN].
+
+**Inventory consistency check `[EVIDENCE]`** (read-only, 2026-11-01; reproduced again at 14:11 UTC before this entry):
+- **Method:** each inventory was read from Git objects (`git show <commit>:<path>`), never from the working tree. Two independent parsers: Python `json` on `paper_inventory.json` and Python `csv` on `paper_inventory.csv`.
+- **Filter (D-044):** a record is in scope if any `;`-separated token of `query_ids` (whitespace-stripped, exact match) is one of `Q-PM-G1` … `Q-PM-G7`, `Q-PM-01`, `Q-PM-02`, `Q-PM-03`, `Q-PM-11`, `Q-PM-12`. The G-strand is `Q-PM-G1` … `Q-PM-G7`.
+
+| Commit | Date | `paper_inventory.json` SHA-256 | `paper_inventory.csv` SHA-256 |
+|---|---|---|---|
+| `ffee9ec55ff346b55136a3d3c532b8dbae70b209` | 2026-10-29 | `a509538dc5e1cf41cd7a4e180ed17df86f6d4cd83a7d227abea073f1689af4a3` | `8fc5bea9c57f486ea1099f4f9f3902f2537144c0f22af36f1b556a44d4891846` |
+| `b81c4e700e3c35c3a57c0c868a387e009d39d321` | 2026-10-30 | `e20ce77e9e3af3bafdd4d6ae38a36213df2d98eb2dc89b2ecfebb4178a84341f` | `a63e08ce35ec81911399a06427924f2e430e5b1ccf11dc01a234462f09b11699` |
+| `bf0c579d7d2b6099232774e9d6388b19159b983d` | 2026-11-01 | `b668dbde42473baa49ac1f02f89f900e94e39159c82efb8175ba125fef06d054` | `00062fed6d7aad189af86e4e489488db45d347f5426acf0f393695f406a194ef` |
+
+- **Results**, identical for all three commits:
+  - 3,386 records, 3,386 unique `paper_id`s;
+  - 1,470 in the D-044 scope (first P0001, last P3161);
+  - 194 G-strand records;
+  - JSON and CSV agree on all IDs, their order, the scope list and the G count.
+- **Across commits:** the 1,470 in-scope IDs are identical and in identical order; all 3,386 IDs are identical and in identical order. The 1,470 and the 194 agree with the 2026-10-29 count (`logs/session_logs/2026-10-29_SCOPE-SCHEDULE-DECISIONS.md`, count verification).
+- **Distinction kept:**
+  - (1) D-044's historical basis remains `a509538d…`;
+  - (2) `e20ce77e…` and `b668dbde…` are later versions of the same record set, but their hashes differ because other fields changed, so they are **not interchangeable**;
+  - (3) the inventory actually used at a future pilot draw is hashed and recorded at that time (D-077 (5)).
+- **Limitations:**
+  - the mapping of D-044's "G-1…G-7" to the tokens `Q-PM-G1` … `Q-PM-G7` is an inference, supported by the matching G-strand count of 194;
+  - the check compares IDs and order only, not other fields;
+  - it authorises no pilot draw and makes no record eligible or ineligible.
+
+**Not changed**: `logs/DECISION_LOG.md` (no decision made); inventories; records; schemas; code; tests; generated outputs.
+
+**Open, pending your content approval and a later authorised freeze**:
+- Stage-0 list confirmation;
+- final file names and status wording;
+- the formal D-035 §6 recording approach;
+- Stage-0 row timing;
+- authorisation and implementation of the Stage-0 generator, the frozen `criteria_version` check and the pilot-sampling tool;
+- the pilot-draw authorisation.
+
+**Researcher planning preferences (2026-11-01; preferences, not decisions)**:
+- keep v1.0 (`screening_criteria.md`) unchanged;
+- consider version-specific file names for the new versions;
+- record conditions 1–4 separately from conditions 5–6;
+- implement software only after content approval and the freeze.
+
+**Validation**: `git diff --check` and the CRLF-aware check before commit; both drafts still read "DRAFT … NOT frozen. Not in force"; inventory check reproduced as above. No test suite run (documentation only).
+
+**Note**: both drafts describe the inventory comparison as "not yet recorded in the logs". This entry now records it; that draft wording is left unchanged in this task (no further draft edits authorised) and can be updated in a later documentation correction.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1`, parent `9308a6a`. This entry is part of one local commit whose hash it cannot contain; the hash is reported to the researcher and can be recorded in a later entry. Not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
