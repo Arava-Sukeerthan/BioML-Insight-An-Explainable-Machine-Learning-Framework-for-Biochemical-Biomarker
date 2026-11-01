@@ -2022,3 +2022,68 @@ Not authorised: push of the T2 commit, PR #17 changes, decision changes, six-rec
 **Not done**: six records without an abstract not classified; D-035 §6 conditions 5 and 6 not recorded as met; criteria v1.1 and protocol v0.2 still drafts; no pilot, screening, extraction or training.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1`; remote at `2fcc7b9` after the authorised push. This entry is part of one local T2 commit (parent `2fcc7b9`; hash reported to the researcher); not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## FREEZE-READINESS-REVIEW — 2026-11-01 — freeze-readiness review package for criteria v1.1 and protocol v0.2 (proposals only)
+
+**Context**: researcher prompt 2026-11-01. Decision support only. No draft edits, freeze, classification, Option A/B choice, D-035 §6 record, pilot, screening, training, network access, commit or push.
+
+**Created**:
+- `research/reviews/freeze_readiness_review_v1.1_v0.2.md` (sections A–I: summary; outdated passages with proposed replacements; Stage-0 Option A vs B; Stage-0 type list; six records without an abstract; D-035 §6 evidence table; freeze checklist; downstream prerequisites; decision register);
+- `logs/session_logs/2026-11-01_FREEZE-READINESS-REVIEW.md`.
+
+**Key findings**:
+- `[EVIDENCE]` protocol v0.2 §10 line 102 still lists the validator work and T2 as pending ("T2, not authorised"), and criteria v1.1 line 138 describes the column removal as future work. Both are done (`2fcc7b9`, `bf0c579`).
+- `[EVIDENCE]` criteria v1.1 lists neither D-077 nor D-078 among its governing decisions (line 10) and does not state the D-078 repeat rule (line 135).
+- `[OPEN]` protocol v0.2 line 55 states a usage restriction (Option B) while the validator implements Option A.
+- `[EVIDENCE]` the Stage-0 type list is identical in all sources (no discrepancy); its explicit confirmation at the freeze is still required (D-068 (5)).
+- The six records remain unclassified (R1/R2 open).
+- No `criteria_version` identifier is defined yet.
+
+**Validation**: all references checked against the repository; new files without trailing whitespace; the drafts, DECISION_LOG, unresolved questions and inventory are byte-identical before and after. Tests: the strict data-protection suite was run at the end of the task and reported OK (10-test suite); the literature and NHANES suites and the query-table check were not run (no code change). *(Corrected before commit on 2026-11-01: previously "No tests run".)*
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `bf0c579` (= `origin`); uncommitted; not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## FREEZE-DRAFT-CORRECTIONS — 2026-11-01 — draft corrections from the freeze-readiness review; D-079 (R1, six records); Option A retained; Stage-0 list re-verified (not a freeze)
+
+**Context**: researcher prompt 2026-11-01:
+- retain Option A;
+- adopt R1 for all six records if compatible with D-068 (8);
+- confirm the Stage-0 list only after comparison, documenting unresolved approval evidence;
+- correct outdated passages; propose a `criteria_version`.
+
+Not a freeze. No D-035 §6 record, pilot, screening, training, network, commit or push.
+
+**Modified**:
+- `research/literature/screening_criteria_v1.1_draft.md` and `research/literature/screening_protocol_v0.2_draft.md`: Option A exemption-scope wording; completed T2 and validator work no longer described as pending; D-077, D-078 and D-079 references; D-078 repeat rule; six records classified *unavailable — PubMed* (D-079); proposed `criteria_version` `criteria_v1.1+protocol_v0.2` (not in force); §10 refreshed without recording any condition as met; traceability rows.
+- `logs/DECISION_LOG.md` (insertions only): D-079 and status-history rows for D-079 and D-068.
+
+**Created**: `logs/session_logs/2026-11-01_FREEZE-DRAFT-CORRECTIONS.md`.
+
+**Key points**:
+- `[EVIDENCE]` R1 is compatible with D-068 (8) when limited to PubMed. It is not a finding that no abstract exists in any source.
+- `[EVIDENCE]` the Stage-0 list is identical in protocol v0.1 §3, D-068 (5) and the drafts. D-025 approved v0.1's "Stage-0 handling" but does not enumerate the list. `[OPEN]` the explicit confirmation "at the v1.1 freeze" remains for the freeze record.
+- No validator code changed: Option A matches D-068 (5).
+
+**Validation** (10:26–10:27 UTC; all exit 0):
+- literature 217, data protection (strict) 10, NHANES 29, all OK;
+- query table PASS (168 rows); `sh -n` OK;
+- `git diff --check` and the CRLF-aware check OK;
+- every cited D-number exists; inventory and `unresolved_questions.md` unchanged; 484 pre-existing warning lines (TD-1).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `bf0c579` (= remote-tracking ref); uncommitted, together with the FREEZE-READINESS-REVIEW changes; not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## FREEZE-DOCUMENTATION-CORRECTIONS — 2026-11-01 — four wording corrections from the final read-only review of the uncommitted freeze change set
+
+**Context**: researcher prompts 2026-11-01 after the read-only final review (no critical or major issues; minor documentation corrections recommended). Wording only; no scientific decision, rule, status or classification changed. Not a freeze.
+
+**Modified**:
+- `logs/session_logs/2026-11-01_FREEZE-READINESS-REVIEW.md` and the FREEZE-READINESS-REVIEW entry above: test-run record corrected. The strict data-protection suite was run at the end of that review and reported OK (10-test suite); the literature and NHANES suites and the query-table check were not run. Both lines carry a dated "corrected before commit" note.
+- `research/literature/screening_criteria_v1.1_draft.md` (header; §9 header row) and `research/literature/screening_protocol_v0.2_draft.md` (header): `criteria_v1.1+protocol_v0.2` now attributed as "proposed by the assistant at the researcher's request (2026-11-01)"; it remains a proposed identifier only, not frozen or effective.
+- `logs/DECISION_LOG.md`: D-079 (4) "is listed" → "will be listed in the pilot report" (no pilot report exists). Status unchanged: APPROVED — CONDITIONAL (inactive for screening).
+- `research/reviews/freeze_readiness_review_v1.1_v0.2.md`: one dated "Later note" header row; the original point-in-time analysis is unchanged.
+
+**Created**: `logs/session_logs/2026-11-01_FREEZE-DOCUMENTATION-CORRECTIONS.md`.
+
+**Validation**: edits compared with pre-edit copies; no unrelated file changed; no whitespace issue (`git diff --check` and the CRLF-aware check exit 0); no generated output, code, test, schema or inventory change. No tests or scripts run (wording-only change).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `bf0c579`; uncommitted, together with the FREEZE-READINESS-REVIEW and FREEZE-DRAFT-CORRECTIONS changes; not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.

@@ -584,3 +584,45 @@ One entry per researcher review session (~1 h/day).
   - then the D-035 §6 record and the pilot authorisation.
 - **Recommended next step:** decide R1 or R2 for the six records; then the freeze review.
 - **Researcher decisions:** fetch and fast-forward push, T2 execution, acceptance of the CRLF convention, T2 logs and one local commit authorised (2026-11-01); push of the T2 commit not authorised.
+
+## Day 19 (cont.) — 2026-11-01 — FREEZE-READINESS-REVIEW
+- **Work completed:** freeze-readiness review package (`research/reviews/freeze_readiness_review_v1.1_v0.2.md`): outdated draft passages with proposed replacements; Stage-0 Option A vs B; Stage-0 type list; six records; D-035 §6 evidence; freeze checklist; decision register.
+- **Important findings:**
+  - `[EVIDENCE]` two draft passages describe completed work as pending (protocol v0.2 line 102; criteria v1.1 line 138); criteria v1.1 omits D-077 and D-078;
+  - `[EVIDENCE]` the Stage-0 type list is identical across all sources;
+  - `[OPEN]` protocol v0.2 line 55 wording vs the Option A implementation; R1/R2; `criteria_version` identifier.
+- **Decisions requiring review:**
+  - Stage-0 rule (A, B or A with a procedural rule);
+  - Stage-0 list confirmation;
+  - R1 or R2;
+  - corrections B1–B6;
+  - `criteria_version` form;
+  - then the freeze, the D-035 §6 record and the pilot authorisation.
+- **Recommended next step:** take decisions 1–5 of the review's decision register; then authorise the draft edits.
+- **Researcher decisions:** review package authorised (2026-11-01); none of its proposals is approved yet.
+
+## Day 19 (cont.) — 2026-11-01 — FREEZE-DRAFT-CORRECTIONS
+- **Work completed:**
+  - drafts corrected per the researcher's directions (Option A wording; T2 and validator no longer described as pending; D-077/D-078/D-079 references; D-078 repeat rule; proposed `criteria_version` `criteria_v1.1+protocol_v0.2`);
+  - D-079 recorded (R1; six records *unavailable — PubMed*).
+- **Important findings:**
+  - `[EVIDENCE]` R1 compatible with D-068 (8) when limited to PubMed;
+  - `[EVIDENCE]` Stage-0 list identical across sources;
+  - `[OPEN]` explicit confirmation of the list at the freeze, because D-025 does not enumerate it.
+- **Decisions requiring review:**
+  - review of the corrected drafts;
+  - the freeze (with the list confirmation and the `criteria_version` binding);
+  - then the D-035 §6 record and the pilot authorisation;
+  - commit and push of the uncommitted work.
+- **Recommended next step:** review the corrected drafts and authorise the commit; then the freeze decision.
+- **Researcher decisions:** Option A retained; R1 adopted for the six records; Stage-0 list confirmation directed after comparison (2026-11-01). No freeze.
+
+## Day 19 (cont.) — 2026-11-01 — FREEZE-DOCUMENTATION-CORRECTIONS
+- **Work completed:** four wording corrections from the final read-only review:
+  - FREEZE-READINESS-REVIEW test-run record corrected (strict data-protection suite ran and reported OK; other suites and the query-table check not run);
+  - proposed `criteria_version` `criteria_v1.1+protocol_v0.2` attributed to the assistant at the researcher's request; still proposed, not frozen or effective;
+  - D-079 (4): "will be listed in the pilot report";
+  - dated later note added to the freeze-readiness review; original analysis preserved.
+- **Important findings:** `[EVIDENCE]` no unrelated, whitespace or generated-output change; no tests or scripts run.
+- **Decisions requiring review:** commit and push of the uncommitted change set; then the freeze decision (Stage-0 list confirmation, `criteria_version` binding), the D-035 §6 record and pilot authorisation.
+- **Recommended next step:** authorise the commit of the change set.

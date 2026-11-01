@@ -818,3 +818,33 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Push `e0dd690..2fcc7b9` done. T2 executed: `publication_type` populated (counts in CHANGELOG), two columns added, `dim_independent_validation` removed, `publication_type` required; same 3,386 IDs, registry and provenance identical, statuses unchanged, unmapped types empty, pilot frame 1,463. Ordinary `git diff --check` exits 2 (CRLF only); the accepted CRLF-aware check exits 0. Tests in `logs/session_logs/2026-11-01_T2-REBUILD.md`. Committed locally in the commit containing this entry; not pushed |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1`; remote `2fcc7b9`; T2 commit local only |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### FREEZE-READINESS-REVIEW (2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | FREEZE-READINESS-REVIEW (researcher prompt 2026-11-01: freeze-readiness review package for criteria v1.1, protocol v0.2, D-035 §6, six records without an abstract, Stage-0 rule) |
+| Prompt date | 2026-11-01 (Day 19) |
+| Objective | One review document with proposals and a decision register; no draft edits, freeze, classification, Option choice, D-035 §6 record, pilot, screening, training, network, commit or push |
+| Actual completion status | Completed: `research/reviews/freeze_readiness_review_v1.1_v0.2.md` (proposals only) and session log; references validated; protected files byte-identical. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `bf0c579` (= `origin`); uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### FREEZE-DRAFT-CORRECTIONS (2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | FREEZE-DRAFT-CORRECTIONS (researcher prompt 2026-11-01: retain Option A; adopt R1 for the six records if compatible with D-068 (8); confirm the Stage-0 list only after comparison; correct the drafts; propose a `criteria_version`) |
+| Prompt date | 2026-11-01 (Day 19) |
+| Objective | Prepare corrected draft criteria and protocol and the associated decision and audit records; not a freeze; no D-035 §6 record, pilot, screening, training, network, commit or push |
+| Actual completion status | Completed: drafts corrected; D-079 recorded; D-068 status-history row; proposed `criteria_version` `criteria_v1.1+protocol_v0.2`; tests and checks pass (217 / 10 / 29; query table PASS; both whitespace checks OK). Freeze-time list confirmation left [OPEN]. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `bf0c579`; uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### FREEZE-DOCUMENTATION-CORRECTIONS (2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | FREEZE-DOCUMENTATION-CORRECTIONS (researcher prompts 2026-11-01: four minor documentation corrections from the final read-only review; then audit-log entries) |
+| Prompt date | 2026-11-01 (Day 19) |
+| Objective | Correct the test-run record of FREEZE-READINESS-REVIEW; attribute the proposed `criteria_version` to the assistant at the researcher's request; D-079 (4) future tense; add a dated later note to the freeze-readiness review. Wording only; no freeze, classification, status change, pilot, screening, training, network, commit or push |
+| Actual completion status | Completed: four corrections applied and verified against pre-edit copies; no unrelated, whitespace or generated-output change; no tests or scripts run. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `bf0c579`; uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
