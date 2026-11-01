@@ -78,7 +78,10 @@ Classifications and eligibility reasons are reported here only; they are not sto
 
 ## Verification status changes since the previous build
 
-No previous build output was available for comparison.
+- Changed: 0; new publications: 0; removed: 0
+
+| Paper ID | Previous | Current | Note |
+|---|---|---|---|
 
 ## Retracted publications (PubMed publication type)
 

@@ -44,7 +44,7 @@ INV_COLS = ["paper_id", "title", "authors", "year", "venue", "doi", "pmid", "arx
             "source_db", "query_ids", "retrieved_on", "verification_status", "verification_note",
             "screening_status", "screening_stage", "exclusion_reason", "publication_type", "rq_tags", "tier",
             "scope_flags", "record_type", "biomarker_class", "dim_explainability", "dim_uncertainty",
-            "dim_calibration", "dim_independent_validation", "screening_validation_design",
+            "dim_calibration", "screening_validation_design",
             "dim_feature_selection", "dim_classification", "screener",
             "screening_date", "screening_justification",
             "source_publication_types", "abstract_available", "full_text_availability", "retrieval_themes",
@@ -209,8 +209,6 @@ def main(argv=None):
             "record_type": sd.get("record_type"), "biomarker_class": sd.get("biomarker_class"),
             "dim_explainability": sd.get("dim_explainability"),
             "dim_uncertainty": sd.get("dim_uncertainty"), "dim_calibration": sd.get("dim_calibration"),
-            # retired screening column (D-029/D-060): always empty; the column is removed at T2
-            "dim_independent_validation": None,
             # screening descriptor validation_design (D-060); kept apart from the extraction field
             # validation_design (D-024), which stays in EXTRACTION_FIELDS
             "screening_validation_design": sd.get("validation_design"),

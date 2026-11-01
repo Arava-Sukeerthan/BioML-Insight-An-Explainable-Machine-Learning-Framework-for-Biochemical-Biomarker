@@ -808,3 +808,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Commit `ad02333` created (17 files; not pushed). Validator, schemas and tests updated; literature 217, data protection 10, NHANES 29 tests OK; query table PASS; mutation check 10/10; scratch regression 284/284 identical. D-078 recorded. Protocol v0.2 corrected and still a draft. Six-record evidence and T2 checklist in `logs/session_logs/2026-11-01_WORKSTREAM-C.md`. Remaining changes uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `ad02333` (local commit); not pushed; not fetched |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### T2-REBUILD (2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | T2-REBUILD (researcher prompts 2026-11-01: fetch and fast-forward push of three commits, then T2 under stop conditions; after review of the whitespace finding, acceptance of the CRLF convention, T2 logs and one local commit) |
+| Prompt date | 2026-11-01 (Day 19) |
+| Objective | Push the verified commits (fast-forward only); rebuild the inventory (T2) with backups and integrity checks; document; commit locally. No push of the T2 commit, PR change, classification, freeze, pilot, screening or training |
+| Actual completion status | Push `e0dd690..2fcc7b9` done. T2 executed: `publication_type` populated (counts in CHANGELOG), two columns added, `dim_independent_validation` removed, `publication_type` required; same 3,386 IDs, registry and provenance identical, statuses unchanged, unmapped types empty, pilot frame 1,463. Ordinary `git diff --check` exits 2 (CRLF only); the accepted CRLF-aware check exits 0. Tests in `logs/session_logs/2026-11-01_T2-REBUILD.md`. Committed locally in the commit containing this entry; not pushed |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1`; remote `2fcc7b9`; T2 commit local only |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |

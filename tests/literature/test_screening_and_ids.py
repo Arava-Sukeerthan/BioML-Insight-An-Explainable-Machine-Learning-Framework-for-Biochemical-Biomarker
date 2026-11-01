@@ -257,7 +257,7 @@ class TestScreeningRecords(unittest.TestCase):
                          ("RQ1;RQ3", 2, "original", "external", "routine_chemistry", "scope_pending_proteomics"))
         # the extraction field of the same name is separate and keeps its sentinel (D-024)
         self.assertEqual(row["validation_design"], mlr.SENTINEL)
-        self.assertIsNone(row["dim_independent_validation"])         # retired; column removed at T2
+        self.assertNotIn("dim_independent_validation", row)           # retired; removed at T2
 
     def test_feature_selection_descriptor(self):
         # D-032: optional dim_feature_selection column (yes/no/unclear); files without it stay valid.
@@ -376,10 +376,10 @@ class TestSchemaConsistency(unittest.TestCase):
     def test_publication_schema_matches_code(self):
         pub = json.load(open(REPO / "research" / "literature" / "schemas" / "publication_record.schema.json"))
         props = pub["properties"]
-        # retired screening columns stay listed (always null) until the T2 rebuild removes them
+        # retired screening columns were removed from the publication schema at T2
         self.assertEqual(set(props["screening_details"]["properties"]),
-                         set(["screener", "date", "justification"] + pr.SCREENING_OPTIONAL
-                             + list(pr.RETIRED_SCREENING_COLUMNS)))
+                         set(["screener", "date", "justification"] + pr.SCREENING_OPTIONAL))
+        self.assertIn("publication_type", pub["required"])
         for stage in ("preliminary", "confirmed"):
             with self.subTest(stage):
                 statuses = props["rq5_components"]["properties"][stage]["properties"]["statuses"]["properties"]

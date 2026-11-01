@@ -1978,3 +1978,47 @@ No session logs exist for them either. This entry records that the work exists a
 **Not done**: T2 not executed. D-035 §6 conditions 5 and 6 not recorded as met. Six records not classified (evidence in the session log). No push, fetch or PR change.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1`, HEAD `ad02333` (local, 1 ahead of `93dd16d`, 2 ahead of the last known remote `e0dd690`); this task's other changes are uncommitted. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## T2-REBUILD — 2026-11-01 — inventory rebuild: `publication_type` populated, two new columns, `dim_independent_validation` removed; integrity verified; CRLF convention accepted
+
+**Context**: researcher prompts 2026-11-01:
+- fetch and fast-forward push of `93dd16d`, `ad02333`, `2fcc7b9` (`e0dd690..2fcc7b9`, no force);
+- T2 execution under stop conditions;
+- acceptance of the CRLF line endings of `paper_inventory.csv`, T2 logs and one local commit.
+
+Not authorised: push of the T2 commit, PR #17 changes, decision changes, six-record classification, freeze, D-035 §6 record, pilot, screening, training.
+
+**Modified**:
+- code and tests: `scripts/literature/make_literature_reports.py`; `research/literature/schemas/paper_inventory.schema.json`; `research/literature/schemas/publication_record.schema.json` (also `publication_type` required); `tests/literature/test_t1a_schema_validation.py`; `tests/literature/test_screening_and_ids.py`;
+- regenerated: `research/literature/paper_inventory.json`, `paper_inventory.csv`, `records/build_report.json`, `records/collection_stats.json`, `verification_report.md` (and the git-ignored `records/publications.jsonl`).
+
+**Created**: `logs/session_logs/2026-11-01_T2-REBUILD.md`.
+
+**Preflight**: manifest verified (244 rows, 0 problems); 14 outputs hashed and backed up to the scratchpad, including the two git-ignored `.jsonl` files; backups verified.
+
+**Result (actual)**:
+- `publication_type` for 3,386 records: journal_article 2,698; review 483; preprint 135; unknown 38; editorial_comment_letter 22; study_protocol 3; erratum_or_correction 2; dataset 2; conference_paper 2; guideline_or_consensus 1.
+- `unmapped_publication_types` `{}`; `biomarker_class` and `screening_validation_design` null for all.
+
+**Integrity**:
+- same 3,386 paper IDs in the same order;
+- registry byte-identical, no new row;
+- provenance and metadata identical;
+- verification statuses unchanged (3,348 / 37 / 1 / 0; 0 changes);
+- the 3 registry conflicts are pre-existing;
+- pilot frame 1,463 with identical membership;
+- dedup review, publications index, search register, full-text candidate list, `source_records.jsonl` and manifest byte-identical.
+
+**Inventory SHA-256**: JSON `b668dbde42473baa49ac1f02f89f900e94e39159c82efb8175ba125fef06d054`; CSV `00062fed6d7aad189af86e4e489488db45d347f5426acf0f393695f406a194ef`.
+
+**Whitespace**:
+- ordinary `git diff --check` exits 2: 3,387 findings, all CRLF carriage returns in `paper_inventory.csv`;
+- no genuine trailing spaces or tabs; uniform CRLF in the working and committed CSV;
+- `git -c core.whitespace=cr-at-eol diff --check` exits 0, the accepted repository-specific check for this generated CSV (researcher, 2026-11-01);
+- no git configuration changed; line endings not converted.
+
+**Validation**: test and check results before commit are in the session log (§6).
+
+**Not done**: six records without an abstract not classified; D-035 §6 conditions 5 and 6 not recorded as met; criteria v1.1 and protocol v0.2 still drafts; no pilot, screening, extraction or training.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1`; remote at `2fcc7b9` after the authorised push. This entry is part of one local T2 commit (parent `2fcc7b9`; hash reported to the researcher); not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.

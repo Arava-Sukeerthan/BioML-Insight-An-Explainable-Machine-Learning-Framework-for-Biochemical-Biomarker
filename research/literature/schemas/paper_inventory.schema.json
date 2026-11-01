@@ -385,13 +385,6 @@
         ],
         "description": "From the latest screening decision (screening/decisions.csv). RQ5 classification component (D-036, answers Q-039; APPROVED - CONDITIONAL; inactive for screening)"
       },
-      "dim_independent_validation": {
-        "type": [
-          "string",
-          "null"
-        ],
-        "description": "Retired screening column (replaced by validation_design, D-029/D-060); always null. Removed from the inventory at T2"
-      },
       "screening_validation_design": {
         "type": [
           "string",

@@ -79,9 +79,12 @@ class TestSchemaCorrectness(unittest.TestCase):
         self.assertNotIn("dim_independent_validation", self.sd["x-column-order"])
         self.assertNotIn("dim_independent_validation", pr.SCREENING_OPTIONAL)
         self.assertNotIn("dim_independent_validation", pr.SCREENING_ENUMS)
-        # inventory and publication schemas keep it (always null) until T2
-        self.assertIn("dim_independent_validation", mlr.INV_COLS)
-        self.assertIn("dim_independent_validation", self.inv)
+        # removed from the inventory and publication outputs and schemas at T2
+        self.assertNotIn("dim_independent_validation", mlr.INV_COLS)
+        self.assertNotIn("dim_independent_validation", self.inv)
+        self.assertNotIn("dim_independent_validation", self.pub["screening_details"]["properties"])
+        with open(SCHEMAS / "publication_record.schema.json") as f:
+            self.assertIn("publication_type", json.load(f)["required"])
 
     def test_extraction_validation_design_unchanged(self):
         self.assertIn("validation_design", mlr.EXTRACTION_FIELDS)

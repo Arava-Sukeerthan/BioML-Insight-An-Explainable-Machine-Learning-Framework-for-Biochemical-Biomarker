@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-10-30T18:21:54+00:00",
+  "built_at": "2026-11-01T09:50:15+00:00",
   "dedup_review_pairs": 15,
   "duplicate_status": {
     "merged_duplicates": 471,
@@ -158,6 +158,7 @@
   },
   "source_records": 3998,
   "source_records_missing_metadata": 1,
+  "unmapped_publication_types": {},
   "verification_second_sources": {
     "eligibility": {
       "independence not_independent": 22
@@ -527,8 +528,8 @@
   },
   "verification_status_changes": {
     "changed": [],
-    "new_publications": 3386,
-    "previous_build_available": false,
+    "new_publications": 0,
+    "previous_build_available": true,
     "removed_publications": []
   }
 }

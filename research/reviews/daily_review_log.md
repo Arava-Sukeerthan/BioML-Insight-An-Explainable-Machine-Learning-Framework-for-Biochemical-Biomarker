@@ -565,3 +565,22 @@ One entry per researcher review session (~1 h/day).
   - the freeze review.
 - **Recommended next step:** review and authorise the commit of this task; decide the six-record classification; authorise T2.
 - **Researcher decisions:** commit, Workstream C (Option A), repeated-token rejection (D-078), D-077 wording, six-record evidence and T2 review report authorised (2026-11-01); push, T2 execution, pilot, freeze and screening not authorised.
+
+## Day 19 (cont.) — 2026-11-01 — T2-REBUILD
+- **Work completed:**
+  - three commits pushed (fast-forward `e0dd690..2fcc7b9`);
+  - T2 executed with verified backups and manifest;
+  - inventory and publication schemas completed;
+  - T2 committed locally (not pushed).
+- **Important findings:**
+  - `[EVIDENCE]` `publication_type` populated for all 3,386 records (2,698 journal articles, 483 reviews, 135 preprints, 38 unknown, 32 in six other types); unmapped types none;
+  - `[EVIDENCE]` same IDs, registry and provenance; statuses unchanged; pilot frame 1,463;
+  - `[EVIDENCE]` the ordinary `git diff --check` flags only the CRLF line endings of the CSV; the CRLF-aware check passes (convention accepted).
+  - `[OPEN]` six records without an abstract (R1/R2); freeze; D-035 §6.
+- **Decisions requiring review:**
+  - push of the T2 commit;
+  - the six-record rule;
+  - the freeze review of criteria v1.1 and protocol v0.2 (including the Stage-0 type list);
+  - then the D-035 §6 record and the pilot authorisation.
+- **Recommended next step:** decide R1 or R2 for the six records; then the freeze review.
+- **Researcher decisions:** fetch and fast-forward push, T2 execution, acceptance of the CRLF convention, T2 logs and one local commit authorised (2026-11-01); push of the T2 commit not authorised.

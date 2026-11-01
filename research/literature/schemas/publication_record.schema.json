@@ -33,7 +33,8 @@
     "source_url",
     "abstract",
     "publication_types",
-    "language"
+    "language",
+    "publication_type"
   ],
   "properties": {
     "paper_id": {
@@ -508,13 +509,6 @@
             "string",
             "null"
           ]
-        },
-        "dim_independent_validation": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Retired screening column (replaced by validation_design, D-029/D-060); no longer written. Removed from this schema at T2"
         },
         "validation_design": {
           "type": [
