@@ -28,7 +28,7 @@ The **1,470** publication records defined by D-044 (records retrieved by G-1…G
 | I-C3 | English language |
 | I-C4 | Original research, methodological/statistical paper, software/framework paper, reporting guideline or consensus statement. **Reviews** are included only as *lead sources* (`record_type=review_lead`) |
 
-### Exclusion (first applicable code in numerical order is the primary reason; Stage-0 rows with both E7 and E5 take E7, §4 and D-074)
+### Exclusion (primary code when several codes apply: see the note below this table [OPEN]; Stage-0 rows with both E7 and E5 take E7, §4 and D-074)
 Codes E1–E12 are unchanged in number and meaning; the clarifications approved in D-059 (A-2, as modified) are added, and E1 is clarified by D-073 (its reason is unchanged).
 
 | Code | Reason | Clarification (D-059, A-2; E1: D-073; E4 at full text: D-075; E5 and E7 for retraction notices: D-076) |
@@ -47,6 +47,8 @@ Codes E1–E12 are unchanged in number and meaning; the clarifications approved 
 | E12 | Not relevant to any RQ (catch-all) | Justification mandatory; audited at 100 % in the pilot |
 
 Sample size, journal, country and model type are **not** exclusion criteria.
+
+**Primary code when several codes apply [OPEN — researcher decision; Q-081].** v1.0 §1 ("first applicable code is recorded as the primary reason") and protocol v0.1 §5 ("The first applicable code in numerical order is the primary reason") state a general rule, but no approved decision adopts it: D-074's status records that this rule "is not part of an approved decision". It is carried here only as the proposed convention, to be approved or replaced when the content is approved. The only approved precedence is D-074 (d): a Stage-0 row that qualifies for both E7 and E5 takes E7.
 
 ---
 
@@ -99,11 +101,11 @@ Record (within the D-044 scope)
  │     PubMed type Editorial, Comment, News, Published Erratum → E5; Retracted Publication → E7
  ├─ Stage 1 (title/abstract):
  │    ├─ clearly meets ≥ 1 RQ → INCLUDE (RQ tags, tier, required descriptors §6)
- │    ├─ clearly fails all RQs → EXCLUDE (first applicable code + one-line justification)
+ │    ├─ clearly fails all RQs → EXCLUDE (primary code per the §1 note [OPEN] + one-line justification)
  │    └─ insufficient information → UNCERTAIN → full text (required descriptors §6)
  └─ Stage 2 (full text): INCLUDE / EXCLUDE (code) / ABSTRACT_ONLY (full text unavailable but abstract supports extraction)
 ```
-* **Stage 0 scope** (protocol v0.1 §3 through D-025; D-068 (5)): letters are not auto-excluded; a letter is excluded only at manual screening, as E5 when it has no original data (§1). *Retraction of Publication* notices are not Stage-0 types (D-072): they are screened manually and, if excluded, coded E5 (§1; D-076); a record that also carries *Retracted Publication* is a Stage-0 E7 exclusion under D-074 (a). **Records with several source publication types** (D-074): (1) if the types include *Retracted Publication*, the record is a Stage-0 E7 exclusion whatever its other types, and E7 is its primary code even when an E5 type is also present (for Stage-0 rows only, an exception to the §1 numerical-order rule); (2) otherwise it is a Stage-0 E5 exclusion only if every type is a Stage-0 E5 type or a type the D-028 2a mapping keeps but does not use for the class (*Research Support…*, *Validation Study*, *Multicenter Study*, *Comparative Study*, *Observational Study*, *Randomized Controlled Trial*, *Clinical Trial* and its phases, *Evaluation Study*, *English Abstract*, *Historical Article*, *Video-Audio Media*); (3) any other combination (for example with *Journal Article*, *Letter* or an unrecognised type) is not excluded at Stage 0 and is screened normally.
+* **Stage 0 scope** (protocol v0.1 §3 through D-025; D-068 (5)). **List status:** approved conditionally through protocol v0.1 §3 (D-025, whose approval cell does not enumerate the types) and accepted provisionally by D-068 (5); it is not confirmed for the freeze until the researcher confirms it explicitly (§10 Q-074; §11 step 2). Letters are not auto-excluded; a letter is excluded only at manual screening, as E5 when it has no original data (§1). *Retraction of Publication* notices are not Stage-0 types (D-072): they are screened manually and, if excluded, coded E5 (§1; D-076); a record that also carries *Retracted Publication* is a Stage-0 E7 exclusion under D-074 (a). **Records with several source publication types** (D-074): (1) if the types include *Retracted Publication*, the record is a Stage-0 E7 exclusion whatever its other types, and E7 is its primary code even when an E5 type is also present (for Stage-0 rows only; D-074 (d), approved as an exception to the proposed §1 numerical-order convention); (2) otherwise it is a Stage-0 E5 exclusion only if every type is a Stage-0 E5 type or a type the D-028 2a mapping keeps but does not use for the class (*Research Support…*, *Validation Study*, *Multicenter Study*, *Comparative Study*, *Observational Study*, *Randomized Controlled Trial*, *Clinical Trial* and its phases, *Evaluation Study*, *English Abstract*, *Historical Article*, *Video-Audio Media*); (3) any other combination (for example with *Journal Article*, *Letter* or an unrecognised type) is not excluded at Stage 0 and is screened normally.
 * **When in doubt, include at Stage 1.** Exclusion requires a positive reason stated in the title/abstract.
 * **Silence is never `no`** (D-060 (2)): absence of mention is not evidence that a method is absent.
 * **Missing abstract** (title/abstract stage only; 6 records in the D-044 scope, classified as *unavailable — PubMed* under D-079 (R1: PubMed's "[Abstract not available]" placeholder; this does not establish that no abstract exists in any other source); D-060 (2) as amended by D-068; D-059 A-6): `uncertain` → full text, unless a Stage-0 rule exclusion (E5/E7, from source publication types) applies or the title alone clearly meets E1 as worded in the frozen §1, including its RQ limitations. **E4 is not applied because an abstract is missing.** Method descriptors and `validation_design` = `unclear`; `biomarker_class` = `unclear` unless explicitly supported by the title. All five preliminary component statuses are `unclear` with justification "no abstract". `rq_tags` (RQs the record could inform) and `record_type` are provisional and are confirmed or corrected at full text. No RQ5-based tier (§5; D-068 (7)). Missing information never gives `yes`, `include` or a confirmed classification. A record whose abstract was *not retrieved* is not treated as having an *unavailable* abstract; retrieval comes first where feasible (D-068 (8), (9)). Enforced by the screener with researcher review of every such decision (D-068 (10)).
@@ -134,13 +136,13 @@ One file, `research/literature/screening/decisions.csv`, with `stage` = `title_a
 | `validation_design` | `include`, `uncertain` | `external / temporal / internal_only / none / not_applicable / unclear`; strongest stated | D-029; D-060 (1) |
 | `dim_feature_selection`, `dim_classification` | Full-text RQ5 assessment: all five component columns; at title/abstract whenever the RQ5 routing rule is applied (preliminary, triage only) | D-032, D-035 §2, D-036 | D-035 G5; D-062 |
 | `scope_flags` | When applicable | `scope_pending_disorder` (D-056 conditions), `scope_pending_proteomics`, `non_metabolic_method_exemplar` (descriptive retention tag; may co-occur with `non_metabolic_rq5_candidate`, D-070; a record with both tags is counted once per count), `non_metabolic_rq5_candidate` (set at title/abstract, D-061; reassessed at full text: recorded on a `full_text` row, including verification and adjudication rows, only when `yes` + `unclear` ≥ 3, otherwise omitted with a justification; the title/abstract row is unchanged, D-075), `lr_only` (descriptive; Q-042 open). Each token at most once per value (D-078). `prognostic`: deferred, not accepted; does not block the freeze (D-071) | D-056; D-057; D-059 (A-2); D-061; D-069; D-070; D-071; D-075; D-078 |
-| `tier`, `needs_human`, `criteria_version` | `tier` for `include`; `needs_human` per §4 triggers; `criteria_version` always once frozen | — | D-060 (3) |
+| `tier`, `needs_human`, `criteria_version` | `tier` for `include`; `needs_human` per §4 triggers; `criteria_version` always once frozen (not yet enforced: the screening schema types it as an optional string and no validator checks it against a frozen identifier; implementation gap, protocol v0.2 §5 item 2) | — | D-060 (3) |
 
 Exemption (D-060 (6) as clarified by D-068 (5)): the descriptor requirement does not apply to Stage-0 rule rows, which are `exclude` rows with reason code E5 or E7 and `screener=rule:stage0`; these need only the always-required columns. The exemption covers only such rows: an `include` or `uncertain` row at title/abstract always needs the descriptors, whatever its screener. This rule sets the exemption's scope only; it does not restrict which rows may carry `screener=rule:stage0` (Option A, as implemented by the validator; researcher direction 2026-11-01). `exclude` rows may leave descriptors empty. `publication_type` is derived by the build from source metadata via the D-028 mapping table (never hand-edited; arXiv → `preprint`; no URL/DOI-prefix rules). Screening rows use `validation_design` (D-029 as specified in D-060 (1)); `dim_independent_validation` is a retired screening column that is rejected and never converted. In the generated inventory the screening value appears as `screening_validation_design`; the former inventory column `dim_independent_validation` was removed from generated outputs and schemas in the T2 rebuild (2026-11-01, commit `bf0c579`).
 
 ## 7. Pilot and audit
 * **Pilot:** `screening_protocol_v0.2_draft.md` §7 (D-025, A-1). The v1.0 §7 pilot (first 30 PMIDs of Q-PM-01 and Q-PM-09) is **replaced** once this version is frozen and A-1's conditions are met.
-* **Audit (D-008):** after the first expansion batches, the researcher blind-audits 25 `include` + 25 `exclude` decisions; κ < 0.60 or a wrongful exclusion triggers clarification and re-screening of affected records.
+* **Audit (D-008):** after the first expansion batches (exact timing [OPEN; Q-084]: D-008 sets none; protocol v0.1 §7 "Expansion" row says after the first two batches; see protocol v0.2 §8), the researcher blind-audits 25 `include` + 25 `exclude` decisions; κ < 0.60 or a wrongful exclusion triggers clarification and re-screening of affected records.
 
 ## 8. Not decided by these criteria
 Primary disorder (D-013), primary dataset, outcome definition (D-014), evaluation protocol (D-019), research contribution (D-016), novelty: none is implied by any rule here. Inclusion in screening says nothing about study quality or novelty.
@@ -168,10 +170,13 @@ Primary disorder (D-013), primary dataset, outcome definition (D-014), evaluatio
 | §6 | Stage-0 exemption worded as its scope (Option A, matching the validator); T2 sentence updated; `scope_flags` tokens at most once per value | D-060 (6); D-068 (5); D-078 | APPROVED — CONDITIONAL (inactive); D-078 APPROVED (implementation decision) |
 | §4 | Six records without an abstract classified *unavailable — PubMed* (R1) | D-079 | APPROVED — CONDITIONAL (inactive) |
 | Header | Proposed `criteria_version` identifier (not in force) | Proposed by the assistant at the researcher's request (2026-11-01) | Proposed |
+| §1 note and heading; §4; §6; §7; §10; §11 | Pre-freeze reconciliation (2026-11-01): rules without an approved decision marked [OPEN] (general code precedence; audit timing); D-076 (8), Stage-0 timing and D-030 listed as open; Stage-0 list status stated; `criteria_version` enforcement gap stated; §10 heading corrected; file-name reference to D-035 §6 condition 5 explained. No approved rule changed; the general code-precedence rule, which no approved decision adopts, is now presented as a proposed convention | D-008; D-030; D-035 record §6; D-059; D-068 (5); D-074; D-076 | As stated per row |
 | §1 I-C1–I-C4, E2, E7, E9–E11, RQ2–RQ4, RQ6 | Unchanged | — | — |
 
-## 10. Open items to settle before the freeze
-| ID | Item | Proposed resolution (not approved) |
+## 10. Pre-freeze items: settled by decisions, and still open
+A row marked *Settled* cites the approved decision that settles it (all are conditional and inactive for screening, as stated). A row marked **[OPEN]** is unresolved. Neither kind approves or freezes this draft.
+
+| ID | Item | Resolution and status |
 |---|---|---|
 | OPEN-1 | Name of the D-055 flag | Settled: D-061 (`non_metabolic_rq5_candidate`), effective at freeze |
 | OPEN-2 | Tier for records routed only as possible `near_rq5` | Settled: D-062 (Tier 2 rule), effective at freeze |
@@ -181,12 +186,17 @@ Primary disorder (D-013), primary dataset, outcome definition (D-014), evaluatio
 | Q-078 | Full-text handling of `non_metabolic_rq5_candidate` when fewer than three possible components remain | Settled: D-075, conditional and inactive; rule in §1 E4, §3 RQ5 and §6 |
 | Q-079 | Code for retraction notices at manual screening (not Stage 0, D-072) | Settled: D-076, conditional and inactive; rule in §1 E5/E7 and §4. Notice-to-article linking stays with D-030 (PROPOSED) |
 | Q-080 | Stage-0 handling of records with several source publication types (H4; recording stopped because of a conflict with D-028 2a) | Settled: D-074 (approved with the E7-precedence clarification), conditional and inactive; rule in §4 |
+| PREC | Primary code when several codes apply (outside the D-074 Stage-0 case) | **[OPEN — researcher decision; Q-081]**: no approved decision (D-074 status); proposed convention in the §1 note |
+| D-076 (8) | Manual coding of retracted **articles** that lack the PubMed *Retracted Publication* type | **[OPEN — researcher decision; Q-082]** (D-076 (8): "Not resolved"). Stage-0 E7 is triggered only by the source type *Retracted Publication* (D-074 (a)); a retraction **notice** (`retraction_notice`) is a different record, screened manually and coded E5 if excluded (D-076 (1)–(2)). Whether and how E7 is applied at manual screening to a retracted article without that source type is not decided; no automatic rule exists |
+| STAGE0-T | When Stage-0 rows are written after activation, and the tool that writes them | **[OPEN — researcher decision and implementation; Q-089]**: protocol v0.2 §3; D-074 (f) requires separate authorisation |
+| AUDIT-T | Timing of the D-008 audit | **[OPEN — researcher confirmation; Q-084]**: §7; protocol v0.2 §8 |
+| D-030 | Duplicates and versions (E8; A-4; notice-to-article linking) | **[OPEN]**: D-030 PROPOSED; A-4 DEFERRED (D-059); until decided, both records of a pair are screened (§1 E8) |
 
 ## 11. Proposed freeze procedure (not executed; nothing here is approved)
 The identifier `criteria_v1.1+protocol_v0.2` is proposed only. It becomes effective only through step 6; until then this text and protocol v0.2 are drafts and not in force.
 1. The researcher reviews the final content of this text and of protocol v0.2 and explicitly approves it.
 2. The researcher explicitly confirms the Stage-0 type list and its E5/E7 codes against protocol v0.1 §3 (D-068 (5); §10 Q-074).
-3. The final file names and status wording are settled **before** the freeze commit. **[OPEN — researcher decision]:** whether the files keep their `_draft` names or are renamed, the exact final status wording, and whether `screening_criteria.md` v1.0 and `screening_protocol.md` v0.1 receive a superseded note.
+3. The final file names and status wording are settled **before** the freeze commit. **[OPEN — researcher decision; Q-088]:** whether the files keep their `_draft` names or are renamed, the exact final status wording, and whether `screening_criteria.md` v1.0 and `screening_protocol.md` v0.1 receive a superseded note. D-035 record §6 condition 5 names "`screening_criteria.md` v1.1"; this v1.1 text is held at `screening_criteria_v1.1_draft.md` while `screening_criteria.md` keeps v1.0 for traceability (line 8). The final path, and how the freeze record ties it to condition 5, is part of this decision.
 4. The final contents of both files are committed.
 5. The SHA-256 of each file is computed from the exact contents at that commit.
 6. A separate `logs/DECISION_LOG.md` entry records the identifier, both final paths, the commit, both SHA-256 values, the researcher's explicit approval and the effective date. Neither file contains its own final hash or commit; the decision-log entry holds them, which avoids a self-referential hash.

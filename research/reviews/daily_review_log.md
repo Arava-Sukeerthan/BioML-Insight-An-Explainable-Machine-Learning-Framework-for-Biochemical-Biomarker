@@ -647,3 +647,28 @@ One entry per researcher review session (~1 h/day).
   - draw authorisation.
 - **Researcher preferences (not decisions):** keep v1.0 unchanged; consider version-specific names; record conditions 1–4 separately from 5–6; software only after the freeze.
 - **Recommended next step:** content review of the committed drafts; then a freeze task.
+
+## Day 19 (cont.) — 2026-11-01 — PRE-FREEZE-RECONCILIATION
+- **Work completed:**
+  - documentation reconciliation of review issues I-1 to I-12 in both screening drafts;
+  - read-only audit of the diff, then two wording issues, corrected in three locations;
+  - later: Q-088 split (new Q-089) and Q-081 to Q-089 cross-referenced in both drafts;
+  - open questions Q-081 to Q-089 registered (Q-089 split from Q-088 before commit).
+- **Important findings:**
+  - `[EVIDENCE]` the general "first applicable code in numerical order" rule has no approved decision (D-074 status); only D-074 (d) is approved;
+  - `[EVIDENCE]` D-008 sets no audit timing;
+  - `[EVIDENCE]` D-025 does not name the pilot retry, and D-063/D-077 cover the first 60 only;
+  - `[EVIDENCE]` D-076 (8) is unresolved;
+  - `[EVIDENCE]` no Stage-0 generator, no pilot-sampling tool, and no `criteria_version` check exist.
+- **Decisions requiring review:**
+  - Q-081 (code precedence);
+  - Q-082 (D-076 (8));
+  - Q-083 (pilot retry);
+  - Q-084 (audit timing);
+  - Q-085 and Q-086 (D-035 §6 conditions 3 and 6);
+  - Q-087 (how D-035 §6 is recorded);
+  - Q-088 (file names, status wording, superseded notes);
+  - Q-089 (Stage-0 row timing);
+  - content approval and Stage-0 list confirmation.
+- **Status:** both drafts remain DRAFT, not frozen, not in force; no D-035 §6 condition recorded as met.
+- **Recommended next step:** authorise a local commit of the reconciliation and logs; then decide Q-081 and Q-088 and confirm the Stage-0 list, which block the freeze.

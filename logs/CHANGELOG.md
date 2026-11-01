@@ -2156,3 +2156,55 @@ Not a content approval or a freeze. No D-035 §6 record, pilot draw, implementat
 **Note**: both drafts describe the inventory comparison as "not yet recorded in the logs". This entry now records it; that draft wording is left unchanged in this task (no further draft edits authorised) and can be updated in a later documentation correction.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1`, parent `9308a6a`. This entry is part of one local commit whose hash it cannot contain; the hash is reported to the researcher and can be recorded in a later entry. Not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## PRE-FREEZE-RECONCILIATION — 2026-11-01 — documentation reconciliation of review issues I-1 to I-12 in the two screening drafts; open questions Q-081 to Q-089 (documentation only; not a freeze)
+
+**Context**: researcher prompts 2026-11-01:
+- evidence-driven resolution pass for the 12 issues of the pre-freeze review packet;
+- read-only audit of the resulting diff ("return for correction": two wording issues, corrected in three locations);
+- the three wording corrections;
+- authorisation to write the governance logs;
+- later the same day, after a further read-only audit: the Q-088/Q-089 split, question-ID cross-references in both drafts, and log clarifications.
+
+**Documentation only.** No rule, E-code, decision, status or identifier changed. No screening rule was approved or frozen.
+
+**Modified (drafts)**:
+- `research/literature/screening_criteria_v1.1_draft.md`:
+  - §1 heading and a new §1 note: the general "first applicable code in numerical order" rule is presented as a proposed convention [OPEN], because no approved decision adopts it (D-074 status); D-074 (d), Stage-0 E7 over E5, is kept as the only approved precedence;
+  - §4: the diagram and Stage-0 bullet are qualified accordingly, and the Stage-0 list status is stated (conditional through D-025, provisional under D-068 (5), not confirmed for the freeze);
+  - §6: the `criteria_version` enforcement gap is stated;
+  - §7: audit timing marked [OPEN] (D-008 sets none; protocol v0.1 §7 "Expansion" row says first two batches);
+  - §10: heading and column corrected so that settled rows and [OPEN] rows are distinguished, and rows added: PREC, D-076 (8), STAGE0-T, AUDIT-T, D-030;
+  - §11 step 3: the D-035 §6 condition 5 file-name reference is explained;
+  - §9: one traceability row.
+- `research/literature/screening_protocol_v0.2_draft.md`:
+  - §5 item 2: `criteria_version` enforcement gap;
+  - §6: precedence presented as in the criteria;
+  - §7 "If not passed": the undefined retry details marked [OPEN];
+  - §7 missing-abstract row: statuses aligned with D-068 (8) and D-079;
+  - §8: audit timing [OPEN];
+  - §10 rows 3 and 6: condition 3 sufficiency and condition 6 scope marked [OPEN];
+  - §11: one traceability row.
+- **Wording corrections after the audit:**
+  - "No rule changed" (criteria §9, protocol §11) → "No approved rule changed; the general code-precedence rule, which no approved decision adopts, is now presented as a proposed convention";
+  - protocol §7 "(protocol v0.1 §7, under D-025)" → "(protocol v0.1 §7; D-025 approved its "pass criteria and adjudication as written" but does not name the retry)".
+- `research/reviews/unresolved_questions.md`: Q-081 to Q-089 added (Q-080 was the last ID; no Q-081 or higher existed). Q-089 (Stage-0 row timing) was split from an initial combined Q-088 before commit; Q-088 keeps file names, status wording and superseded notes. Duplicate handling is already open as Q-024 and Q-029, so no new entry.
+- **Question-ID cross-references (added after the first logging pass):** Q-081 to Q-089 were added to the matching [OPEN] items in both drafts:
+  - `research/literature/screening_criteria_v1.1_draft.md`: §1 note and §10 PREC (Q-081); §10 D-076 (8) (Q-082); §7 audit and §10 AUDIT-T (Q-084); §11 step 3 (Q-088); §10 STAGE0-T (Q-089);
+  - `research/literature/screening_protocol_v0.2_draft.md`: §6 (Q-081); §7 "If not passed" (Q-083); §8 (Q-084); §10 row 3 (Q-085), row 6 (Q-086) and status terms (Q-087); §3 (Q-089).
+
+  Only the IDs were added; no wording, rule or status changed.
+
+**Created**: `logs/session_logs/2026-11-01_PRE-FREEZE-RECONCILIATION.md`.
+
+**Issue status**:
+- settled from approved evidence: I-4 (wording), I-9, I-10, I-11 (drafts already consistent);
+- partly settled: I-3;
+- your decision needed: I-1, I-2, I-5, I-6, I-7, I-8;
+- missing software: I-6, I-12 (no Stage-0 generator, no pilot-sampling tool, no `criteria_version` check).
+
+**Validation**: `git diff --check` and the CRLF-aware check exit 0; consistent table column counts; quotations checked against `screening_criteria.md` line 26, `screening_protocol.md` lines 116, 145 and 146, and the D-008, D-024, D-025, D-027, D-030, D-059, D-068 (8), D-074, D-076 and D-079 entries. **Not performed:** scientific validation of any screening rule; no test suite run (no code changed).
+
+**Unchanged**: `logs/DECISION_LOG.md`; decision statuses; D-035 §6 conditions (none formally recorded as met; 5 and 6 unmet); both drafts "DRAFT … NOT frozen. Not in force"; code, schemas, tests, inventories, records.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `e70a038` (2 earlier commits not pushed); these changes uncommitted; not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
