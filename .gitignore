@@ -26,3 +26,66 @@ research/literature/records/publications.jsonl
 
 # LIT-003-HOTFIX: preservation archive of raw exports (contains abstracts; never commit)
 research/literature/preservation/archive/
+
+# PROTOCOL-DRAFT-002 (2026-10-24): participant-level data, outputs and model artifacts.
+# The repository is PUBLIC. Raw survey files, participant-level derived data, per-participant
+# predictions / explanations (e.g. SHAP values) / conformal sets, and fitted models (which can
+# embed training rows, e.g. k-NN or SVM support vectors) are never committed.
+# Aggregate tables intended for publication go in outputs/aggregate/ (NOT ignored; see
+# outputs/README.md). Checked by tests/data_protection/test_data_protection.py.
+# Raw transport and statistical-package files, any letter case:
+*.[xX][pP][tT]
+*.[sS][aA][sS]7[bB][dD][aA][tT]
+*.[dD][tT][aA]
+*.[rR][dD][sS]
+# Participant-level derived data and outputs (anchored to the repository root):
+/data/derived/
+/outputs/participant_level/
+/outputs/models/
+/models/
+# Columnar tables, arrays and serialized objects that typically hold participant-level records:
+# (any letter case)
+*.[pP][aA][rR][qQ][uU][eE][tT]
+*.[fF][eE][aA][tT][hH][eE][rR]
+*.[nN][pP][yY]
+*.[nN][pP][zZ]
+*.[hH]5
+*.[hH][dD][fF]5
+*.[pP][kK][lL]
+*.[pP][iI][cC][kK][lL][eE]
+*.[jJ][oO][bB][lL][iI][bB]
+
+# PROTOCOL-DRAFT-003 (2026-10-24): further model-artifact formats and data-location rules.
+# Any letter case. SPSS (the older *.sav rule above is lower-case only):
+*.[sS][aA][vV]
+# Serialized model formats (rarely legitimate source files in this project):
+*.[oO][nN][nN][xX]
+*.[pP][tT]
+*.[pP][tT][hH]
+*.[sS][aA][fF][eE][tT][eE][nN][sS][oO][rR][sS]
+*.[cC][bB][mM]
+*.[uU][bB][jJ]
+# JSON is NOT ignored globally (schemas, build reports and configs are legitimate JSON).
+# JSON models/exports are protected by the directory rules (/models/, /outputs/models/,
+# /outputs/participant_level/, /data/derived/ ...). A model saved as .json elsewhere is NOT
+# ignored; save fitted models under /outputs/models/.
+# Archives and spreadsheets anywhere under /data/ (raw, derived or exported data):
+/data/**/*.[zZ][iI][pP]
+/data/**/*.[gG][zZ]
+/data/**/*.[tT][gG][zZ]
+/data/**/*.[tT][aA][rR]
+/data/**/*.7[zZ]
+/data/**/*.[bB][zZ]2
+/data/**/*.[xX][zZ]
+/data/**/*.[xX][lL][sS][xX]
+/data/**/*.[xX][lL][sS]
+/data/**/*.[xX][lL][sS][mM]
+/data/**/*.[oO][dD][sS]
+# Archives anywhere under /outputs/ (aggregate spreadsheets in /outputs/aggregate/ stay allowed):
+/outputs/**/*.[zZ][iI][pP]
+/outputs/**/*.[gG][zZ]
+/outputs/**/*.[tT][gG][zZ]
+/outputs/**/*.[tT][aA][rR]
+/outputs/**/*.7[zZ]
+/outputs/**/*.[bB][zZ]2
+/outputs/**/*.[xX][zZ]

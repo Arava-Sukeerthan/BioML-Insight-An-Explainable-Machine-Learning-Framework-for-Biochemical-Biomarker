@@ -1,0 +1,14 @@
+# Identifier allowlist for tests/data_protection/test_data_protection.py (PROTOCOL-DRAFT-003).
+#
+# Purpose: some legitimate files may name the participant identifier without containing any
+# participant data, e.g. a variable dictionary or an analysis configuration whose keys or header
+# include "SEQN". List such a file here (one repository-relative path per line, then " # reason").
+#
+# Rules enforced by the tests:
+# - only files that actually exist may be listed;
+# - files under data/ or outputs/ may never be listed (those locations hold data, not dictionaries);
+# - listing a file exempts it ONLY from the identifier-name check, not from the format,
+#   location or content-signature checks.
+# Review every entry: an allowlisted file is no longer checked for the identifier.
+#
+# (no entries)

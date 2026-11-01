@@ -55,7 +55,8 @@
       "enum": [
         "eutils_api",
         "pubmed_connector",
-        "structured_transcription"
+        "structured_transcription",
+        "crossref_api"
       ]
     },
     "query_id": {

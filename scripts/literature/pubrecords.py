@@ -27,8 +27,10 @@ import datetime as dt
 import difflib
 import hashlib
 import html
+import io
 import itertools
 import json
+import os
 import re
 import sys
 import unicodedata
@@ -43,7 +45,20 @@ SOURCE_PRIORITY = ["pubmed", "europepmc", "crossref", "arxiv", "semantic_scholar
 AUTHORITATIVE_SOURCES = {"pubmed", "europepmc", "crossref", "arxiv"}
 ROUTE_PRIORITY = ["eutils_api", "pubmed_connector", "structured_transcription"]
 ROUTES = {"eutils_esearch", "eutils_efetch", "pubmed_connector_search",
-          "pubmed_connector_metadata", "structured_transcription"}
+          "pubmed_connector_metadata", "structured_transcription", "crossref_works"}
+# Crossref verification lookups (WP2): one raw /works/{DOI} response per authorised pilot paper,
+# registered under query ID "VERIFY-CR-<paper_id>" with manifest route "crossref_works". They are
+# second-source evidence for D-064 only: they never become search provenance, never fill or override
+# publication metadata, never create a paper ID and attach only to the one existing publication that
+# carries the same normalised DOI and is listed in records/verification_pilot.csv.
+VERIFY_PREFIX = "VERIFY-CR-"
+CROSSREF_ROUTE = "crossref_works"          # manifest route
+CROSSREF_SOURCE_ROUTE = "crossref_api"     # source-record route
+# Which Crossref date field supplies the publication year is a PENDING researcher decision (options:
+# "published-print"; "issued"; "published-print" then "published-online"). Until it is decided the
+# Crossref year stays empty, so a Crossref record is "insufficient" on the year and cannot by itself
+# make a publication `verified` (D-064 (5), (7)). Set only by a recorded decision.
+CROSSREF_YEAR_FIELDS = None
 MANIFEST_COLS = ["raw_file", "sha256", "query_id", "source", "route", "endpoint_or_tool",
                  "request_json", "retrieved_at", "n_items", "transcribed", "transcription_check",
                  "notes"]
@@ -57,18 +72,27 @@ SCREENING_STAGE_ORDER = {"title_abstract": 1, "full_text": 2}
 # research/literature/schemas/screening_decision.schema.json (checked by a unit test).
 SCREENING_REQUIRED = ["paper_id", "stage", "decision", "reason_code", "screener", "date", "justification"]
 SCREENING_OPTIONAL = ["rq_tags", "tier", "scope_flags", "record_type", "dim_explainability",
-                      "dim_uncertainty", "dim_calibration", "dim_independent_validation",
-                      "criteria_version", "needs_human", "dim_feature_selection", "dim_classification"]
+                      "dim_uncertainty", "dim_calibration", "validation_design",
+                      "criteria_version", "needs_human", "dim_feature_selection", "dim_classification",
+                      "biomarker_class"]
+# Screening columns that are no longer accepted (T1-A). dim_independent_validation is replaced by
+# validation_design (D-029 as specified in D-060); its values are never converted automatically.
+RETIRED_SCREENING_COLUMNS = ("dim_independent_validation",)
 SCREENING_DECISIONS = ("include", "exclude", "uncertain", "abstract_only")   # "not_screened" = no row
 SCREENING_ENUMS = {
     "stage": ("title_abstract", "full_text"),
     "decision": SCREENING_DECISIONS,
     "tier": ("", "1", "2", "3"),
-    "record_type": ("", "original", "methodological", "software", "guideline", "review_lead", "preprint", "notice"),
+    # D-028 2d: preprint/notice removed (bibliographic facts now held by publication_type)
+    "record_type": ("", "original", "methodological", "software", "guideline", "review_lead", "other"),
     "dim_explainability": ("", "yes", "no", "unclear"),
     "dim_uncertainty": ("", "yes", "no", "unclear"),
     "dim_calibration": ("", "yes", "no", "unclear"),
-    "dim_independent_validation": ("", "external", "temporal", "internal_only", "unclear"),
+    # D-060 (1): strongest stated validation design
+    "validation_design": ("", "external", "temporal", "internal_only", "none", "not_applicable", "unclear"),
+    # D-058 (Q-035)
+    "biomarker_class": ("", "metabolomics_lipidomics", "newborn_screening_msms", "routine_chemistry",
+                        "mixed_both", "other", "unclear"),
     "needs_human": ("", "yes", "no"),
     # D-032 (APPROVED - CONDITIONAL, inactive for screening until its dependencies are met):
     # RQ5 feature/biomarker-selection component
@@ -83,6 +107,54 @@ RQ5_COMPONENT_FIELDS = {"feature_selection": "dim_feature_selection", "classific
                         "explainability": "dim_explainability", "calibration": "dim_calibration",
                         "uncertainty": "dim_uncertainty"}
 RQ5_RECORDED_FIELDS = list(RQ5_COMPONENT_FIELDS.values())
+# D-060 (6): required for include/uncertain at title/abstract; optional for exclude. Not applied to
+# full-text rows. The D-060 (6) Stage-0 exemption covers only Stage-0 rule rows as defined by D-068 (5):
+# `exclude` rows with reason code E5 or E7 and screener=rule:stage0 (is_stage0_rule_row). Such rows
+# never needed the descriptors anyway, so an include/uncertain row is never exempt, whatever its
+# screener (Option A, researcher authorisation 2026-11-01). Other rows carrying screener=rule:stage0
+# are not rejected for that reason (Option B was not adopted).
+TITLE_ABSTRACT_REQUIRED = ("rq_tags", "record_type", "biomarker_class", "dim_explainability",
+                           "dim_uncertainty", "dim_calibration", "validation_design")
+STAGE0_SCREENER = "rule:stage0"
+STAGE0_RULE_REASON_CODES = ("E5", "E7")
+# scope_flags tokens a screener may enter (semicolon-separated): the approved vocabulary of D-069 (E)
+# -- scope_pending_disorder (D-056, D-069 (A)), scope_pending_proteomics (D-057),
+# non_metabolic_method_exemplar (D-069 (B)), non_metabolic_rq5_candidate (D-061), lr_only (D-069 (C)).
+# Any combination is allowed; the two non-metabolic retention tags may co-occur (D-070 (1)). All are
+# descriptive and inactive for screening until D-035 record §6 is met; accepting a token activates
+# nothing. "prognostic" is deferred and not accepted (D-069 (D), D-071). "retracted" is derived by the
+# build, never entered by hand. A token may not be repeated within one value (researcher
+# authorisation 2026-11-01, recorded in DECISION_LOG as D-078).
+SCOPE_FLAG_TOKENS = ("scope_pending_disorder", "scope_pending_proteomics", "non_metabolic_method_exemplar",
+                     "non_metabolic_rq5_candidate", "lr_only")
+BUILD_DERIVED_SCOPE_FLAGS = ("retracted",)
+# D-028 2a: publication_type is derived only from source metadata, first match wins. Table: ballot
+# Item 2 (research/reviews/owner_review_ballot_LIT-004.md), same as decision_reconciliation_LIT-004.md
+# section 2.2. Row "preprint" also matches when the publication's source database is arXiv (D-028 2b).
+# No URL or DOI-prefix rules (D-028 2c). Extensions only by a logged change.
+PUBLICATION_TYPE_MAP = (
+    ("retraction_notice", ("Retraction of Publication",)),
+    ("expression_of_concern", ("Expression of Concern",)),
+    ("erratum_or_correction", ("Published Erratum", "Correction")),
+    ("study_protocol", ("Clinical Trial Protocol",)),
+    ("dataset", ("Dataset",)),
+    ("preprint", ("Preprint",)),
+    ("review", ("Review", "Systematic Review", "Scoping Review", "Meta-Analysis", "Evidence Synthesis")),
+    ("guideline_or_consensus", ("Guideline", "Practice Guideline", "Consensus Statement")),
+    ("editorial_comment_letter", ("Editorial", "Comment", "Letter", "News")),
+    ("conference_paper", ("Conference Proceedings", "Congress")),
+    ("journal_article", ("Journal Article",)),
+)
+# Kept verbatim in source_publication_types but not used for the class. "Retracted Publication" only
+# sets the retracted flag: a retracted article is not a retraction notice.
+PUBLICATION_TYPES_IGNORED = frozenset({
+    "Research Support, N.I.H., Extramural", "Research Support, N.I.H., Intramural",
+    "Research Support, Non-U.S. Gov't", "Research Support, U.S. Gov't, Non-P.H.S.",
+    "Research Support, U.S. Gov't, P.H.S.", "Validation Study", "Multicenter Study", "Comparative Study",
+    "Observational Study", "Randomized Controlled Trial", "Clinical Trial", "Clinical Trial, Phase I",
+    "Clinical Trial, Phase II", "Clinical Trial, Phase III", "Evaluation Study", "English Abstract",
+    "Historical Article", "Video-Audio Media", "Retracted Publication"})
+PUBLICATION_TYPES = tuple(v for v, _ in PUBLICATION_TYPE_MAP) + ("unknown", "other")
 RESEARCHER = "researcher"   # screener value for the researcher (screening_protocol.md section 6)
 REASON_CODE = re.compile(r"E(1[0-2]|[1-9])")
 RQ_TAGS = re.compile(r"(RQ[1-6])(;RQ[1-6])*")
@@ -132,6 +204,36 @@ def strip_markup(text):
     if text is None:
         return None
     t = re.sub(r"<[^>]+>", " ", html.unescape(str(text)))
+    return re.sub(r"\s+", " ", t).strip()
+
+
+# Inline (character-level) JATS/HTML/MathML tags that Crossref titles may carry, e.g. HbA<sub>1c</sub>.
+# They are removed WITHOUT inserting a space, so the text reads as in the plain-text PubMed record
+# ("HbA1c"); every other tag is replaced by a space, as in strip_markup. Used for Crossref fields only:
+# ordinary-build parsing keeps strip_markup unchanged.
+# Evidence status: the tag names below are an implementation assumption (common JATS/HTML inline
+# formatting and MathML presentation elements). No project document describes Crossref title markup,
+# and no real Crossref response has been inspected. The only project evidence is on the PubMed side:
+# the PubMed connector titles in raw_exports carried no markup (0 tags in 3,273 articles, checked
+# 2026-10-31). Unknown tags are replaced by a space, the conservative choice: a missed inline tag is
+# expected to produce a spurious title conflict (needs_review) rather than a spurious agreement.
+INLINE_MARKUP_TAGS = frozenset({"sub", "sup", "i", "b", "u", "em", "strong", "italic", "bold", "underline",
+                                "sc", "scp", "small", "tt", "monospace", "span", "font", "inline-formula",
+                                "math", "mi", "mn", "mo", "ms", "mtext", "msub", "msup", "msubsup", "mrow",
+                                "mfrac", "msqrt", "mstyle", "mspace", "semantics", "annotation"})
+
+
+def strip_inline_markup(text):
+    """Markup removal for Crossref text fields: inline tags (INLINE_MARKUP_TAGS, any namespace prefix
+    such as jats: or mml:) are dropped without a space; other tags become a space."""
+    if text is None:
+        return None
+
+    def repl(m):
+        local = m.group(1).split(":")[-1].lower()
+        return "" if local in INLINE_MARKUP_TAGS else " "
+    t = re.sub(r"<\s*/?\s*([A-Za-z][\w.:-]*)[^>]*>", repl, html.unescape(str(text)))
+    t = re.sub(r"<[^>]+>", " ", t)          # anything left that is not a well-formed tag name
     return re.sub(r"\s+", " ", t).strip()
 
 
@@ -272,6 +374,79 @@ def parse_efetch_xml(xml_bytes):
     return out
 
 
+def crossref_year(message, fields=None):
+    """Year from a Crossref message using the date fields in `fields` (first present wins).
+    Returns None while the field choice is undecided (CROSSREF_YEAR_FIELDS is None)."""
+    fields = CROSSREF_YEAR_FIELDS if fields is None else fields
+    for field in fields or ():
+        value = message.get(field)
+        if value is None:
+            continue
+        parts = value.get("date-parts") if isinstance(value, dict) else None
+        if (not isinstance(parts, list) or not parts or not isinstance(parts[0], list) or not parts[0]
+                or not isinstance(parts[0][0], (int, str)) or isinstance(parts[0][0], bool)):
+            raise ValueError(f"Crossref field {field!r} has no well-formed 'date-parts'")
+        year = parse_year(parts[0][0])
+        if year is not None:
+            return year
+    return None
+
+
+def _crossref_string_list(message, key):
+    """A Crossref list-of-strings field (e.g. title, container-title). Absent or null -> [].
+    Any other shape (a bare string, number, object, or a list holding non-strings) is malformed."""
+    value = message.get(key)
+    if value is None:
+        return []
+    if not isinstance(value, list) or not all(isinstance(v, str) for v in value):
+        raise ValueError(f"Crossref field {key!r} must be a list of strings, got {type(value).__name__}")
+    return [v for v in value if v.strip()]
+
+
+def _crossref_authors(message):
+    value = message.get("author")
+    if value is None:
+        return []
+    if not isinstance(value, list) or not all(isinstance(a, dict) for a in value):
+        raise ValueError("Crossref field 'author' must be a list of objects")
+    for a in value:
+        for k in ("family", "given", "name", "sequence"):
+            if a.get(k) is not None and not isinstance(a[k], str):
+                raise ValueError(f"Crossref author field {k!r} must be a string")
+    return value
+
+
+def parse_crossref_work(message):
+    """The `message` object of one Crossref /works/{DOI} response (verification lookups only).
+    Raises ValueError when the message is malformed, including wrongly shaped fields: `title` and
+    `container-title` must be lists of strings, `author` a list of objects with string name parts,
+    `DOI` a string. Inline markup in titles and venues is removed without a space
+    (strip_inline_markup). Abstract, publication types and language are not taken; the whole message
+    is kept verbatim in `original`."""
+    if not isinstance(message, dict):
+        raise ValueError("Crossref response has no 'message' object")
+    if not isinstance(message.get("DOI"), str):
+        raise ValueError("Crossref message has no DOI string")
+    doi = normalize_doi(message["DOI"])
+    if not doi:
+        raise ValueError("Crossref message has no valid DOI")
+    m = _empty_meta()
+    titles = _crossref_string_list(message, "title")
+    m["title"] = strip_inline_markup(titles[0]) or None if titles else None
+    authors = _crossref_authors(message)
+    firsts = [a for a in authors if a.get("sequence") == "first"]
+    if firsts and authors[0] is not firsts[0]:
+        authors = [firsts[0]] + [a for a in authors if a is not firsts[0]]
+    m["authors"] = [({"last_name": a.get("family"), "fore_name": a.get("given")} if a.get("family")
+                     else {"collective_name": a.get("name")}) for a in authors if a.get("family") or a.get("name")]
+    m["year"] = crossref_year(message)
+    venues = _crossref_string_list(message, "container-title")
+    m["journal"] = strip_inline_markup(venues[0]) or None if venues else None
+    m["doi"] = doi
+    m["original"] = message
+    return m
+
+
 def parse_transcribed_record(rec):
     """Records typed into a structured JSON file from a non-JSON tool (Consensus, alphaXiv, web).
     Expected keys: title, authors (list of 'Last, First' strings or dicts), year, journal, doi,
@@ -318,6 +493,9 @@ def register_raw(lit_dir, raw_file, query_id, source, route, endpoint_or_tool, r
                  retrieved_at, n_items, transcribed, notes=""):
     if route not in ROUTES:
         raise ValueError(f"unknown route {route!r}")
+    if str(query_id).startswith(VERIFY_PREFIX) != (route == CROSSREF_ROUTE):
+        raise ValueError(f"query ID {query_id!r} and route {route!r}: {VERIFY_PREFIX}* query IDs are "
+                         f"reserved for route {CROSSREF_ROUTE}, and that route for those IDs only")
     lit_dir = Path(lit_dir)
     raw_path = lit_dir / "raw_exports" / raw_file
     if not raw_path.exists():
@@ -333,12 +511,27 @@ def register_raw(lit_dir, raw_file, query_id, source, route, endpoint_or_tool, r
            "notes": notes}
     mp = lit_dir / "raw_exports" / "MANIFEST.csv"
     new = not mp.exists()
-    with open(mp, "a", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=MANIFEST_COLS)
-        if new:
-            w.writeheader()
-        w.writerow(row)
+    if not new and mp.stat().st_size and not _ends_with_newline(mp):
+        raise ValueError(f"{mp}: last line is incomplete (interrupted write?); nothing appended. "
+                         "Inspect and repair the manifest by hand before registering more files")
+    buf = io.StringIO()
+    w = csv.DictWriter(buf, fieldnames=MANIFEST_COLS)
+    if new:
+        w.writeheader()
+    w.writerow(row)
+    # one write call, then flush and fsync, so an interruption leaves at most one incomplete last
+    # line, which the check above detects (not a guarantee of atomicity on every filesystem)
+    with open(mp, "ab") as f:
+        f.write(buf.getvalue().encode("utf-8"))
+        f.flush()
+        os.fsync(f.fileno())
     return row
+
+
+def _ends_with_newline(path):
+    with open(path, "rb") as f:
+        f.seek(-1, os.SEEK_END)
+        return f.read(1) == b"\n"
 
 
 def set_transcription_check(lit_dir, raw_file, status, note=""):
@@ -479,6 +672,12 @@ def build_source_records(lit_dir, rows):
     for row in rows:
         route = row["route"]
         path = Path(lit_dir) / "raw_exports" / row["raw_file"]
+        if row["query_id"].startswith(VERIFY_PREFIX) and route != CROSSREF_ROUTE:
+            # a verification lookup registered under any other route would otherwise be processed as
+            # an ordinary search hit (deduplication, paper IDs, metadata, provenance): stop instead
+            raise RuntimeError(f"{row['raw_file']}: query ID {row['query_id']} is a Crossref verification "
+                               f"lookup but is registered with route {route!r}; only {CROSSREF_ROUTE} is "
+                               "allowed (nothing written)")
         if row["query_id"].startswith(CHECK_PREFIX):
             continue
         if route == "pubmed_connector_metadata":
@@ -510,6 +709,18 @@ def build_source_records(lit_dir, rows):
         elif route == "structured_transcription":
             for i, rec in enumerate(_load_raw_json(lit_dir, row).get("records", [])):
                 direct.append((row, i + 1, parse_transcribed_record(rec)))
+        elif route == CROSSREF_ROUTE:
+            if not row["query_id"].startswith(VERIFY_PREFIX) or row["source"] != "crossref":
+                raise RuntimeError(f"{row['raw_file']}: route {CROSSREF_ROUTE} is for Crossref verification "
+                                   f"lookups registered as {VERIFY_PREFIX}<paper_id> only")
+            try:
+                with open(path, encoding="utf-8") as f:
+                    doc = json.load(f)
+                meta = parse_crossref_work(doc.get("message") if isinstance(doc, dict) else None)
+            except ValueError as e:   # includes json.JSONDecodeError, UnicodeDecodeError, shape errors
+                raise RuntimeError(f"{row['raw_file']}: malformed Crossref response ({e}); malformed "
+                                   "responses must never be registered") from None
+            direct.append((row, 1, meta))
 
     records = []
 
@@ -524,7 +735,8 @@ def build_source_records(lit_dir, rows):
         r.update({
             "source_record_id": rid,
             "source": row["source"],
-            "route": ("eutils_api" if row["route"].startswith("eutils") else
+            "route": (CROSSREF_SOURCE_ROUTE if row["route"] == CROSSREF_ROUTE else
+                      "eutils_api" if row["route"].startswith("eutils") else
                       "pubmed_connector" if row["route"].startswith("pubmed_connector") else
                       "structured_transcription"),
             "query_id": row["query_id"],
@@ -716,7 +928,12 @@ def load_registry(path):
     return reg
 
 
-def assign_ids(clusters, records, registry_path, today):
+def _preview_ids(clusters, records, registry_path):
+    """The paper IDs assign_ids would give, without writing the registry."""
+    return assign_ids(clusters, records, registry_path, "preview", write=False)
+
+
+def assign_ids(clusters, records, registry_path, today, write=True):
     reg = load_registry(registry_path)
     used = [int(v[1:]) for v in reg.values() if re.fullmatch(r"P\d+", v)]
     nxt = max(used, default=0) + 1
@@ -743,7 +960,7 @@ def assign_ids(clusters, records, registry_path, today):
                 reg[k] = pid
                 new_rows.append({"key": k, "paper_id": pid, "first_seen": today})
         out[c] = pid
-    if new_rows:
+    if new_rows and write:
         new = not Path(registry_path).exists()
         with open(registry_path, "a", newline="") as f:
             w = csv.DictWriter(f, fieldnames=["key", "paper_id", "first_seen"])
@@ -789,7 +1006,198 @@ def merge_cluster(members):
     return primary, pub, provenance, conflicts
 
 
-def auto_verification(members, conflicts):
+# --------------------------------------------------------------------------------------------
+# Second-source verification (D-064, answers Q-068)
+# --------------------------------------------------------------------------------------------
+# A publication is `verified` only when an eligible second source -- independent of the
+# authoritative record by recorded provenance, and spot-checked if transcribed -- agrees with it
+# on title, first author, year, venue and a shared persistent identifier. Missing fields are
+# insufficient evidence, never conflicts; a conflict with any eligible source gives needs_review.
+# Independence classifications and eligibility reasons are reported at report level only (A6).
+ARXIV_HOSTS = {"arxiv.org", "www.arxiv.org", "export.arxiv.org", "alphaxiv.org", "www.alphaxiv.org"}
+ID_TYPES = ("pmid", "doi", "pmcid", "arxiv_id")
+REQUIRED_FIELDS = ("title", "first_author", "year", "venue", "identifier")
+FIRST_AUTHOR_UNRELIABLE = "first-author comparison not reliable"
+
+
+def normalize_venue(venue):
+    """Unicode, case, punctuation, ampersand and whitespace normalisation only. Abbreviations are
+    never expanded: an abbreviated and a full journal title stay different."""
+    if not venue:
+        return ""
+    t = unicodedata.normalize("NFKD", strip_markup(venue))
+    t = "".join(ch for ch in t if not unicodedata.combining(ch)).casefold()
+    t = t.replace("&", " and ")
+    t = re.sub(r"[^\w\s]|_", " ", t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def _first_author(authors):
+    for a in authors or []:
+        if a.get("last_name") or a.get("collective_name") or a.get("name"):
+            return a
+    return None
+
+
+def compare_first_author(a_authors, b_authors):
+    """Returns (outcome, reason); outcome is agree / conflict / review / missing (D-064, D2)."""
+    ka, kb = first_author_key(a_authors), first_author_key(b_authors)
+    if not ka or not kb:
+        return "missing", "first author absent"
+    fa, fb = _first_author(a_authors), _first_author(b_authors)
+    coll_a = bool(fa.get("collective_name")) and not fa.get("last_name")
+    coll_b = bool(fb.get("collective_name")) and not fb.get("last_name")
+    if coll_a != coll_b:
+        return "review", FIRST_AUTHOR_UNRELIABLE + " (collective vs personal author)"
+    if ka == kb:
+        return "agree", None
+    if ka.endswith(kb) or kb.endswith(ka) or ka.startswith(kb) or kb.startswith(ka):
+        return "review", FIRST_AUTHOR_UNRELIABLE + " (compound or particle surname)"
+    return "conflict", "first author differs"
+
+
+def compare_identifiers(a, b):
+    """By type: every shared type must match; at least one shared type is required."""
+    shared = [t for t in ID_TYPES if a.get(t) and b.get(t)]
+    mismatched = [t for t in shared if a[t] != b[t]]
+    if mismatched:
+        return "conflict", "identifier differs: " + ", ".join(mismatched)
+    if not shared:
+        return "missing", "no shared identifier type"
+    return "agree", None
+
+
+def compare_required_fields(a, b, venue_map=None):
+    """Field-by-field outcome between the authoritative record a and a second source b.
+    venue_map: frozenset of (authoritative venue, second-source venue) pairs, both already
+    normalised with normalize_venue, from records/venue_mappings.csv (explicit reviewed mapping,
+    D-064 (3)); exact pairs only, never fuzzy."""
+    out = {}
+    ta, tb = normalize_title(a.get("title")), normalize_title(b.get("title"))
+    out["title"] = (("missing", "title absent") if not ta or not tb else
+                    ("agree", None) if ta == tb else ("conflict", "title differs"))
+    out["first_author"] = compare_first_author(a.get("authors"), b.get("authors"))
+    ya, yb = a.get("year"), b.get("year")
+    out["year"] = (("missing", "year absent") if ya is None or yb is None else
+                   ("agree", None) if ya == yb else ("conflict", "year differs"))
+    va, vb = normalize_venue(a.get("journal")), normalize_venue(b.get("journal"))
+    out["venue"] = (("missing", "venue absent") if not va or not vb else
+                    ("agree", None) if va == vb else
+                    ("agree", "explicit reviewed venue mapping") if venue_map and (va, vb) in venue_map else
+                    ("conflict", "venue differs"))
+    out["identifier"] = compare_identifiers(a, b)
+    return out
+
+
+def _url_parts(url):
+    if not url:
+        return "", ""
+    m = re.match(r"(?i)^[a-z][a-z0-9+.-]*://([^/?#:]+)(?::\d+)?([^?#]*)", str(url).strip())
+    return (m.group(1).lower(), m.group(2)) if m else ("", "")
+
+
+def source_provider(m):
+    """The repository that holds the underlying record, from recorded source and URL only."""
+    s = m["source"]
+    if s in ("pubmed", "arxiv", "europepmc", "crossref", "consensus", "semantic_scholar"):
+        return s
+    host, path = _url_parts(m.get("source_url"))
+    if host in ARXIV_HOSTS:
+        return "arxiv"
+    if host == "pubmed.ncbi.nlm.nih.gov":
+        return "pubmed"
+    if host == "pmc.ncbi.nlm.nih.gov" or (host == "www.ncbi.nlm.nih.gov" and path.lower().startswith("/pmc")):
+        return "pmc"
+    if host == "europepmc.org" or host.endswith(".europepmc.org"):
+        return "europepmc"
+    if s == "publisher_site":
+        return "publisher:" + (host or "unknown")
+    return f"{s}:{host}" if host else s
+
+
+# retrieval routes whose output is saved without transcription (collection_workflow.md §2,
+# routes A and B; D-023): script retrieval via E-utilities and verbatim PubMed-connector output.
+# crossref_api: script retrieval of Crossref /works/{DOI}, raw response saved byte for byte with its
+# SHA-256 in the manifest (recorded retrieval, D-064 (1), (10)); used as second-source evidence only.
+RETRIEVAL_ROUTES = {"eutils_api", "pubmed_connector", CROSSREF_SOURCE_ROUTE}
+
+
+def _recorded_provenance(m):
+    """Retrieved through a recorded non-transcription route, or transcribed with a passed
+    spot-check. A non-transcribed record from any other or a missing route does not qualify."""
+    if m["transcribed"]:
+        return m["transcription_check"] == "passed"
+    return m.get("route") in RETRIEVAL_ROUTES
+
+
+def _url_only(m):
+    orig = m.get("original") or {}
+    return (isinstance(orig, dict) and orig.get("identifiers_parsed_from_url") is True
+            and not (m.get("authors") and m.get("year") is not None and m.get("journal")))
+
+
+def source_independence(a, c):
+    """(value, basis) with value independent / not_independent / undetermined (D-064 table)."""
+    pa, pc = source_provider(a), source_provider(c)
+    if _url_only(c):
+        return "not_independent", "URL-only corroboration (identifier parsed from URL, no bibliographic metadata)"
+    if pa == pc:
+        return "not_independent", f"same underlying repository ({pa})"
+    pair = {pa, pc}
+    if pair == {"pubmed", "europepmc"}:
+        epmc = a if pa == "europepmc" else c
+        if str((epmc.get("original") or {}).get("source", "")).upper() == "MED":
+            return "not_independent", "Europe PMC MED record copies PubMed"
+        return "undetermined", "Europe PMC record without a recorded independent origin"
+    if pair == {"pubmed", "pmc"}:
+        return "undetermined", "PubMed vs PMC is undetermined by default (D-064)"
+    other = pc if pa == "pubmed" else pa if pc == "pubmed" else None
+    if other is not None and (other == "crossref" or other.startswith("publisher:")):
+        if _recorded_provenance(a) and _recorded_provenance(c):
+            return "independent", f"PubMed vs {other} with recorded retrieval or checked transcription"
+        return "undetermined", f"PubMed vs {other} without recorded retrieval or checked transcription"
+    if "consensus" in pair:
+        return "undetermined", "Consensus record without a recorded underlying source"
+    return "undetermined", f"unclassified source relationship ({pa} vs {pc})"
+
+
+def evaluate_second_sources(auth, candidates, venue_map=None):
+    """Classify, check eligibility and compare every candidate against the authoritative record."""
+    rows = []
+    for c in sorted(candidates, key=lambda m: m["source_record_id"]):
+        value, basis = source_independence(auth, c)
+        row = {"source_record_id": c["source_record_id"], "source": c["source"],
+               "provider": source_provider(c), "independence": value, "independence_basis": basis}
+        if value != "independent":
+            row.update(eligible=False, eligibility_reason=f"independence {value}", result="ineligible")
+        elif c["transcribed"] and c["transcription_check"] != "passed":
+            row.update(eligible=False, eligibility_reason="transcribed, spot-check not passed",
+                       result="ineligible")
+        else:
+            fields = compare_required_fields(auth, c, venue_map)
+            outcomes = {f: o for f, (o, _) in fields.items()}
+            row.update(eligible=True, eligibility_reason="eligible",
+                       fields={f: {"outcome": o, "reason": r} for f, (o, r) in fields.items()})
+            if "conflict" in outcomes.values():
+                row["result"] = "conflict"
+            elif "review" in outcomes.values():
+                row["result"] = "review"
+            elif "missing" in outcomes.values():
+                row["result"] = "insufficient"
+            else:
+                row["result"] = "agrees"
+        rows.append(row)
+    return {"authoritative_source_record_id": auth["source_record_id"], "candidates": rows}
+
+
+def auto_verification(members, conflicts, details=None, venue_map=None):
+    """Bibliographic verification status (collection_workflow.md §4.3; D-064). When `details` is a
+    dict, the second-source evaluation is written into it for report-level output only.
+    Crossref verification records (route crossref_api) are second-source candidates only: they are
+    never the authoritative record. While CROSSREF_YEAR_FIELDS is None a Crossref year is always
+    missing, so a Crossref record can never make a publication `verified`; a conflict it shows on
+    title, first author, venue or identifier still gives `needs_review` (D-064 A4: conflicts are not
+    outvoted and do not depend on the year rule)."""
     hard = {c["field"] for c in conflicts} & {"title", "year", "doi", "pmid"}
     if hard:
         return "needs_review", "conflicting " + ", ".join(sorted(hard))
@@ -797,6 +1205,7 @@ def auto_verification(members, conflicts):
         return "unverified", "no metadata retrieved"
     sources = {m["source"] for m in members if not m["metadata_missing"]}
     auth = [m for m in members if m["source"] in AUTHORITATIVE_SOURCES and not m["metadata_missing"]
+            and m.get("route") != CROSSREF_SOURCE_ROUTE
             and (m.get("pmid") or m.get("doi") or m.get("arxiv_id"))]
     if not auth:
         return "unverified", "no authoritative index record with a persistent identifier"
@@ -804,9 +1213,35 @@ def auto_verification(members, conflicts):
     trusted_auth = [m for m in auth if not m["transcribed"] or m["transcription_check"] == "passed"]
     if not trusted_auth:
         return "partially_verified", "authoritative record is transcribed and not yet spot-checked"
-    if len(sources) >= 2:
-        return "verified", "consistent in sources: " + ", ".join(sorted(sources))
-    return "partially_verified", "single source: " + ", ".join(sorted(sources))
+    if len(sources) < 2:
+        return "partially_verified", "single source: " + ", ".join(sorted(sources))
+    primary = sorted(trusted_auth, key=_source_rank)[0]
+    evaluation = evaluate_second_sources(
+        primary, [m for m in members if m is not primary and not m["metadata_missing"]], venue_map)
+    if details is not None:
+        details.update(evaluation)
+    cands = evaluation["candidates"]
+    conflicted = [r for r in cands if r["result"] == "conflict"]
+    review = [r for r in cands if r["result"] == "review"]
+    if conflicted:
+        fields = sorted({f for r in conflicted for f, v in r["fields"].items() if v["outcome"] == "conflict"})
+        return "needs_review", ("conflict with independent second source: " + ", ".join(fields)
+                                + " (" + ", ".join(r["source_record_id"] for r in conflicted) + ")")
+    if review:
+        reasons = sorted({v["reason"] for r in review for v in r["fields"].values() if v["outcome"] == "review"})
+        return "needs_review", "; ".join(reasons) + " (" + ", ".join(r["source_record_id"] for r in review) + ")"
+    agree = [r for r in cands if r["result"] == "agrees"]
+    if agree:
+        return "verified", ("independent second source agrees on all required fields: "
+                            + ", ".join(sorted({r["provider"] for r in agree})))
+    why = []
+    for r in cands:
+        if r["result"] == "insufficient":
+            missing = [f for f, v in r["fields"].items() if v["outcome"] == "missing"]
+            why.append(f"{r['provider']} lacks {', '.join(missing)}")
+        else:
+            why.append(f"{r['provider']} {r['eligibility_reason']}")
+    return "partially_verified", "no qualifying independent second source: " + "; ".join(sorted(set(why)))
 
 
 def full_text_hint(pub):
@@ -824,6 +1259,77 @@ def _read_csv(path):
         return list(csv.DictReader(f))
 
 
+VENUE_MAPPING_COLS = ("authoritative_venue", "second_source_venue", "basis", "reviewer", "date")
+
+
+def load_venue_mappings(rec_dir):
+    """records/venue_mappings.csv: explicit, reviewed venue pairs (D-064 (3)). Every row needs all
+    columns; pairs are compared after normalize_venue only (no fuzzy matching). Returns a frozenset of
+    normalised (authoritative, second-source) pairs. Raises ValueError (nothing is written) on an
+    incomplete, duplicated or pointless row."""
+    rows = _read_csv(Path(rec_dir) / "venue_mappings.csv")
+    pairs, errors = set(), []
+    for n, r in enumerate(rows, start=2):
+        if any(not (r.get(c) or "").strip() for c in VENUE_MAPPING_COLS):
+            errors.append(f"line {n}: every column of {', '.join(VENUE_MAPPING_COLS)} is required")
+            continue
+        pair = (normalize_venue(r["authoritative_venue"]), normalize_venue(r["second_source_venue"]))
+        if pair[0] == pair[1]:
+            errors.append(f"line {n}: the two venues are already equal after normalisation")
+        elif pair in pairs:
+            errors.append(f"line {n}: duplicate mapping")
+        pairs.add(pair)
+    if errors:
+        raise ValueError("records/venue_mappings.csv: " + "; ".join(errors))
+    return frozenset(pairs)
+
+
+def attach_verification_records(ver, records, clusters, ids, rows, rec_dir):
+    """Attach Crossref verification records to existing publications. Each record must carry the
+    DOI it was requested for, that DOI must belong to exactly one existing publication, that
+    publication must be the paper ID named in the request, and the paper ID must be listed in
+    records/verification_pilot.csv. Anything else stops the build (nothing written).
+    Returns {cluster index: [verification records]}."""
+    if not ver:
+        return {}
+    pilot = {r["paper_id"].strip() for r in _read_csv(Path(rec_dir) / "verification_pilot.csv")
+             if (r.get("paper_id") or "").strip()}
+    requests = {r["raw_file"]: json.loads(r["request_json"] or "{}") for r in rows if r["route"] == CROSSREF_ROUTE}
+    query_ids = {r["raw_file"]: r["query_id"] for r in rows if r["route"] == CROSSREF_ROUTE}
+    by_doi = {}
+    for c, idx in enumerate(clusters):
+        for i in idx:
+            if records[i].get("doi"):
+                by_doi.setdefault(records[i]["doi"], set()).add(c)
+    out, errors = {}, []
+    for v in sorted(ver, key=lambda r: r["source_record_id"]):
+        req = requests.get(v["raw_file"], {})
+        want_pid = req.get("paper_id")
+        want_doi = normalize_doi(req.get("doi"))
+        where = f"{v['raw_file']} ({want_pid})"
+        if query_ids.get(v["raw_file"]) != VERIFY_PREFIX + str(want_pid):
+            errors.append(f"{where}: query ID does not name the requested paper ID")
+            continue
+        if not want_doi or want_doi != v["doi"]:
+            errors.append(f"{where}: returned DOI {v['doi']} differs from requested DOI {want_doi}")
+            continue
+        cs = by_doi.get(v["doi"], set())
+        if len(cs) != 1:
+            errors.append(f"{where}: DOI {v['doi']} matches {len(cs)} existing publications (exactly one required)")
+            continue
+        (c,) = cs
+        if ids[c] != want_pid:
+            errors.append(f"{where}: DOI {v['doi']} belongs to {ids[c]}, not to the requested paper ID")
+            continue
+        if want_pid not in pilot:
+            errors.append(f"{where}: paper ID not listed in records/verification_pilot.csv")
+            continue
+        out.setdefault(c, []).append(v)
+    if errors:
+        raise RuntimeError("Crossref verification records cannot be attached (nothing written): " + "; ".join(errors))
+    return out
+
+
 def build(lit_dir, today=None, check_schema=True):
     lit_dir = Path(lit_dir)
     today = today or dt.date.today().isoformat()
@@ -834,6 +1340,11 @@ def build(lit_dir, today=None, check_schema=True):
     if problems:
         raise RuntimeError("; ".join(problems))
     records, completeness = build_source_records(lit_dir, rows)
+    # Crossref verification records take no part in deduplication, paper-ID assignment, metadata
+    # merging or search provenance; they are attached afterwards as second-source evidence only.
+    verification_records = [r for r in records if r["route"] == CROSSREF_SOURCE_ROUTE]
+    records = [r for r in records if r["route"] != CROSSREF_SOURCE_ROUTE]
+    venue_map = load_venue_mappings(rec_dir)
 
     # manual dedup decisions are keyed by paper_id -> map back through the registry
     registry = load_registry(rec_dir / "paper_id_registry.csv")
@@ -855,7 +1366,14 @@ def build(lit_dir, today=None, check_schema=True):
             different.add(frozenset((a, b)))
 
     clusters, review = deduplicate(records, same)
+    # checked before the registry is touched: an unattachable verification record stops the build
+    # with nothing written (assign_ids only appends registry rows for new keys of base records)
+    ids_preview = {}
+    if verification_records:
+        ids_preview, _ = _preview_ids(clusters, records, rec_dir / "paper_id_registry.csv")
+        attach_verification_records(verification_records, records, clusters, ids_preview, rows, rec_dir)
     ids, reg_conflicts = assign_ids(clusters, records, rec_dir / "paper_id_registry.csv", today)
+    attached = attach_verification_records(verification_records, records, clusters, ids, rows, rec_dir)
     cluster_of = {i: c for c, idx in enumerate(clusters) for i in idx}
 
     screening_rows = load_screening_decisions(lit_dir)
@@ -903,14 +1421,22 @@ def build(lit_dir, today=None, check_schema=True):
             uniq_review.append(r)
 
     pubs = []
+    second_source_rows = []      # D-064 report-level evaluation (A6: not stored in publication records)
     for c, idx in enumerate(clusters):
         members = [records[i] for i in idx]
         primary, pub, prov, conflicts = merge_cluster(members)
         pid = ids[c]
-        status, note = auto_verification(members, conflicts)
+        vdetails = {}
+        # attached Crossref records are second-source candidates only; everything else in this
+        # publication record (fields, provenance, sources, query IDs, timestamps) comes from `members`
+        status, note = auto_verification(members + attached.get(c, []), conflicts, vdetails, venue_map)
+        auto_status = status
         if pid in overrides:
             status = overrides[pid]["verification_status"]
             note = f"manual override by {overrides[pid].get('reviewer','?')} on {overrides[pid].get('date','?')}: {overrides[pid].get('note','')}"
+        if vdetails.get("candidates"):
+            second_source_rows.append({"paper_id": pid, "verification_status": status,
+                                       "automatic_status": auto_status, **vdetails})
         sc = screening.get(pid)
         ft = fulltext.get(pid)
         if pid in review_by_pid:
@@ -919,11 +1445,12 @@ def build(lit_dir, today=None, check_schema=True):
             dup = "merged_duplicates"
         else:
             dup = "unique"
+        source_dbs = sorted({m["source"] for m in members},
+                            key=lambda s: SOURCE_PRIORITY.index(s) if s in SOURCE_PRIORITY else 99)
         pubs.append({
             "paper_id": pid,
             **pub,
-            "source_databases": sorted({m["source"] for m in members},
-                                       key=lambda s: SOURCE_PRIORITY.index(s) if s in SOURCE_PRIORITY else 99),
+            "source_databases": source_dbs,
             "source_urls": sorted({m["source_url"] for m in members if m.get("source_url")}),
             "primary_source_record_id": primary["source_record_id"],
             "field_provenance": prov,
@@ -948,14 +1475,34 @@ def build(lit_dir, today=None, check_schema=True):
             "rq5_coverage_group": rq5_groups.get(pid, (None, None))[0],
             "rq5_coverage_provisional": rq5_groups.get(pid, (None, None))[1],
             "retracted": any("Retracted Publication" in (m.get("publication_types") or []) for m in members),
+            "publication_type": derive_publication_type(pub.get("publication_types"), source_dbs),
         })
     pubs.sort(key=lambda p: int(p["paper_id"][1:]))
 
     if check_schema:
-        validate_outputs(records, pubs)
+        validate_outputs(records + verification_records, pubs)
+
+    # status changes against the previous build output, read before it is overwritten
+    prev_path = rec_dir / "publications.jsonl"
+    prev_status = {}
+    if prev_path.exists():
+        with open(prev_path) as f:
+            for line in f:
+                if line.strip():
+                    q = json.loads(line)
+                    prev_status[q["paper_id"]] = q.get("verification_status")
+    status_changes = {
+        "previous_build_available": prev_path.exists(),
+        "changed": [{"paper_id": p["paper_id"], "previous": prev_status[p["paper_id"]],
+                     "current": p["verification_status"], "note": p["verification_note"]}
+                    for p in pubs if p["paper_id"] in prev_status
+                    and prev_status[p["paper_id"]] != p["verification_status"]],
+        "new_publications": sum(1 for p in pubs if p["paper_id"] not in prev_status),
+        "removed_publications": sorted(set(prev_status) - {p["paper_id"] for p in pubs}),
+    }
 
     with open(rec_dir / "source_records.jsonl", "w") as f:
-        for r in sorted(records, key=lambda r: r["source_record_id"]):
+        for r in sorted(records + verification_records, key=lambda r: r["source_record_id"]):
             f.write(json.dumps(r, ensure_ascii=False, sort_keys=True) + "\n")
     with open(rec_dir / "publications.jsonl", "w") as f:
         for p in pubs:
@@ -999,13 +1546,55 @@ def build(lit_dir, today=None, check_schema=True):
         "registry_conflicts": [{"kept": k, "also": v} for k, v in reg_conflicts],
         "search_completeness": completeness,
         "retracted": [p["paper_id"] for p in pubs if p["retracted"]],
+        # D-028: unrecognised source types (publication_type "other" when nothing else matched);
+        # the build does not fail; the mapping table is extended only by a logged change
+        "unmapped_publication_types": _count(t for p in pubs
+                                             for t in unmapped_publication_types(p["publication_types"])),
         "screening_decision": _count(p["screening_decision"] for p in pubs),
         "publications_without_stable_registry_key": sum(
             1 for c in clusters if not any(record_keys(records[i]) for i in c)),
+        "verification_second_sources": {
+            "rule": "D-064",
+            "independence": _count(r["independence"] for p in second_source_rows for r in p["candidates"]),
+            "eligibility": _count(r["eligibility_reason"] for p in second_source_rows for r in p["candidates"]),
+            "results": _count(r["result"] for p in second_source_rows for r in p["candidates"]),
+            "publications": second_source_rows,
+        },
+        "verification_status_changes": status_changes,
     }
+    if verification_records or venue_map:
+        report["crossref_verification"] = {
+            "year_fields": list(CROSSREF_YEAR_FIELDS) if CROSSREF_YEAR_FIELDS else None,
+            "verification_records": len(verification_records),
+            "attached": [{"paper_id": ids[c], "source_record_id": v["source_record_id"], "doi": v["doi"],
+                          "raw_file": v["raw_file"], "raw_sha256": v["raw_sha256"]}
+                         for c in sorted(attached, key=lambda c: ids[c]) for v in attached[c]],
+            "venue_mappings": len(venue_map),
+        }
     with open(rec_dir / "build_report.json", "w") as f:
         json.dump(report, f, indent=2, sort_keys=True)
     return report
+
+
+def unmapped_publication_types(source_types):
+    """Source types that are neither in PUBLICATION_TYPE_MAP nor in PUBLICATION_TYPES_IGNORED."""
+    known = {t for _, names in PUBLICATION_TYPE_MAP for t in names} | PUBLICATION_TYPES_IGNORED
+    return sorted({t for t in (source_types or []) if t and t not in known})
+
+
+def derive_publication_type(source_types, source_databases):
+    """D-028 publication_type from source metadata only (first match wins).
+    source_types: the publication-level source types (as kept in source_publication_types);
+    source_databases: the publication's source databases, field-priority source first.
+    No class-bearing type: "other" if an unrecognised type is present (it is also reported as
+    unmapped), otherwise "unknown" (no type at all, or only types not used for the class).
+    Never looks at URLs, DOIs or titles."""
+    types = list(source_types or [])
+    arxiv = bool(source_databases) and source_databases[0] == "arxiv"
+    for value, names in PUBLICATION_TYPE_MAP:
+        if any(t in names for t in types) or (value == "preprint" and arxiv):
+            return value
+    return "other" if unmapped_publication_types(types) else "unknown"
 
 
 def _component_statuses(row):
@@ -1102,6 +1691,35 @@ def derive_rq5_coverage_group(statuses):
     return group, provisional
 
 
+def is_stage0_rule_row(r):
+    """D-068 (5): a Stage-0 rule row is an `exclude` row with reason code E5 or E7 and
+    screener=rule:stage0; the D-060 (6) exemption covers only such rows."""
+    return (r.get("screener") == STAGE0_SCREENER and r.get("decision") == "exclude"
+            and r.get("reason_code") in STAGE0_RULE_REASON_CODES)
+
+
+def scope_flag_errors(value):
+    """Problems in a manually entered scope_flags value (semicolon-separated tokens; empty = none).
+    Values are reported, never corrected."""
+    if value == "":
+        return []
+    errors, seen = [], set()
+    for tok in value.split(";"):
+        if tok in seen and tok != "":
+            errors.append(f"scope_flags={value!r}: token {tok!r} is repeated (D-078)")
+            continue
+        seen.add(tok)
+        if tok == "":
+            errors.append(f"scope_flags={value!r}: empty token")
+        elif tok != tok.strip():
+            errors.append(f"scope_flags={value!r}: token {tok!r} has leading or trailing whitespace")
+        elif tok in BUILD_DERIVED_SCOPE_FLAGS:
+            errors.append(f"scope_flags={value!r}: {tok!r} is derived by the build and cannot be entered")
+        elif tok not in SCOPE_FLAG_TOKENS:
+            errors.append(f"scope_flags={value!r}: token {tok!r} not in {SCOPE_FLAG_TOKENS}")
+    return errors
+
+
 def load_screening_decisions(lit_dir):
     """Read and validate screening/decisions.csv. Any invalid row stops the build (no row is
     silently dropped). Returns the rows as dicts (all columns as strings)."""
@@ -1112,12 +1730,17 @@ def load_screening_decisions(lit_dir):
         reader = csv.DictReader(f)
         cols = reader.fieldnames or []
         missing = [c for c in SCREENING_REQUIRED if c not in cols]
-        unknown = [c for c in cols if c not in SCREENING_REQUIRED + SCREENING_OPTIONAL]
-        if missing or unknown:
-            raise ValueError(f"{path}: missing columns {missing}, unknown columns {unknown}")
-        rows = [{k: (v or "").strip() for k, v in r.items()} for r in reader]
+        retired = [c for c in cols if c in RETIRED_SCREENING_COLUMNS]
+        unknown = [c for c in cols if c not in SCREENING_REQUIRED + SCREENING_OPTIONAL + retired]
+        if missing or unknown or retired:
+            raise ValueError(f"{path}: missing columns {missing}, unknown columns {unknown}"
+                             + (f", retired columns {retired} (dim_independent_validation is replaced by "
+                                "validation_design, D-029/D-060; values are not converted: record "
+                                "validation_design instead)" if retired else ""))
+        raw = list(reader)
+        rows = [{k: (v or "").strip() for k, v in r.items()} for r in raw]
     errors = []
-    for n, r in enumerate(rows, start=2):
+    for n, (r, r_raw) in enumerate(zip(rows, raw), start=2):
         for k in SCREENING_OPTIONAL:
             r.setdefault(k, "")
         where = f"line {n} ({r['paper_id'] or '?'})"
@@ -1140,6 +1763,13 @@ def load_screening_decisions(lit_dir):
             errors.append(f"{where}: date must be YYYY-MM-DD")
         if r["rq_tags"] and not RQ_TAGS.fullmatch(r["rq_tags"]):
             errors.append(f"{where}: rq_tags must be like RQ1;RQ3")
+        # checked on the value as written (before stripping), so padded tokens are reported, not fixed
+        errors += [f"{where}: {e}" for e in scope_flag_errors(r_raw.get("scope_flags") or "")]
+        if (r["stage"] == "title_abstract" and r["decision"] in ("include", "uncertain")
+                and not is_stage0_rule_row(r)):
+            absent = [k for k in TITLE_ABSTRACT_REQUIRED if not r[k]]
+            if absent:
+                errors.append(f"{where}: {r['decision']} at title_abstract requires {absent} (D-060 (6))")
     if errors:
         raise ValueError(f"{path}: invalid screening decisions:\n  " + "\n  ".join(errors))
     return rows
