@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Screening decision row (screening/decisions.csv)",
-  "description": "LIT-004-WORKFLOW-FIXES (proposed, D-027). One row per decision; append-only; the latest row per paper (stage order, then date, then file order) is the current decision. All CSV values are strings; empty string = not recorded. Validated by pubrecords.load_screening_decisions; a unit test keeps this file and the code in step. T1-A: rq_tags, record_type, biomarker_class, dim_explainability, dim_uncertainty, dim_calibration and validation_design are required for include/uncertain rows at title_abstract unless screener=rule:stage0 (D-060 (6)); enforced in code, not expressible in this per-row schema. The column dim_independent_validation is retired and rejected.",
+  "description": "LIT-004-WORKFLOW-FIXES (proposed, D-027). One row per decision; append-only; the latest row per paper (stage order, then date, then file order) is the current decision. All CSV values are strings; empty string = not recorded. Validated by pubrecords.load_screening_decisions; a unit test keeps this file and the code in step. T1-A: rq_tags, record_type, biomarker_class, dim_explainability, dim_uncertainty, dim_calibration and validation_design are required for include/uncertain rows at title_abstract (D-060 (6)); the Stage-0 exemption covers only exclude rows with reason code E5 or E7 and screener=rule:stage0 (D-068 (5)), which never need them, so no include/uncertain row is exempt; enforced in code, not expressible in this per-row schema. The column dim_independent_validation is retired and rejected.",
   "type": "object",
   "required": [
     "paper_id",
@@ -57,8 +57,8 @@
     },
     "scope_flags": {
       "type": "string",
-      "pattern": "^((scope_pending_proteomics|non_metabolic_rq5_candidate)(;(scope_pending_proteomics|non_metabolic_rq5_candidate))*)?$",
-      "description": "Semicolon-separated controlled tokens, no spaces. scope_pending_proteomics (D-057); non_metabolic_rq5_candidate (D-061, effective only when screening_criteria v1.1 is frozen). Other tokens need a separate owner decision; 'retracted' is derived by the build and is never entered here"
+      "pattern": "^(?!(?:[^;]*;)*([^;]+);(?:[^;]*;)*\\1(?:;|$))((scope_pending_disorder|scope_pending_proteomics|non_metabolic_method_exemplar|non_metabolic_rq5_candidate|lr_only)(;(scope_pending_disorder|scope_pending_proteomics|non_metabolic_method_exemplar|non_metabolic_rq5_candidate|lr_only))*)?$",
+      "description": "Semicolon-separated controlled tokens, no spaces, each at most once (D-078). Approved vocabulary (D-069 (E)): scope_pending_disorder (D-056, D-069 (A)); scope_pending_proteomics (D-057); non_metabolic_method_exemplar (D-069 (B)); non_metabolic_rq5_candidate (D-061, effective only when screening_criteria v1.1 is frozen; reassessed at full text, D-075); lr_only (D-069 (C)). Any combination is allowed; the two non-metabolic retention tags may co-occur (D-070). All are descriptive and inactive for screening until D-035 record \u00a76 is met. 'prognostic' is deferred and not accepted (D-069 (D), D-071). Other tokens need a separate owner decision; 'retracted' is derived by the build and is never entered here"
     },
     "criteria_version": {
       "type": "string"

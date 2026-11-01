@@ -1945,3 +1945,36 @@ No session logs exist for them either. This entry records that the work exists a
 **Validation**: `git diff --check` exit 0. Test suites not re-run (no code or test changed since 07:58–08:00 UTC: 212/10/29 OK; query table PASS).
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (unchanged); uncommitted; not pushed; not fetched. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## WORKSTREAM-C — 2026-11-01 — preservation commit `ad02333`; validator update (D-068 (5) Option A; D-069/D-070 vocabulary; repeated tokens rejected, D-078); D-077 wording in protocol v0.2; six-record evidence; T2 checklist
+
+**Context**: researcher prompt 2026-11-01 approving the items below. Not approved: fetch, push, branch or PR changes, executing T2, pilot draw, freeze, screening, training, unrelated decisions.
+
+**Commit**:
+- `ad02333b1ae8df8e58f4f11588d20960ef8fc2ba` (parent `93dd16d`): the 17-file set verified in DECISION-PREPARATION, staged by explicit path.
+- Pre-commit checks: literature 212, data protection 10, NHANES 29, all OK; query table PASS (168 rows); `sh -n` OK; `git diff --check` OK.
+- Not pushed.
+
+**Modified (uncommitted)**:
+- `scripts/literature/pubrecords.py`:
+  - D-069 (E) vocabulary;
+  - repeated tokens rejected (D-078);
+  - `is_stage0_rule_row()`: the D-060 (6) exemption is limited to `exclude` E5/E7 `rule:stage0` rows (D-068 (5), Option A; Option B not adopted).
+- `research/literature/schemas/screening_decision.schema.json` and `paper_inventory.schema.json`: `scope_flags` patterns and descriptions.
+- `tests/literature/test_t1a_schema_validation.py`: token, pattern, Stage-0, co-occurrence and inventory tests.
+- `tests/literature/test_screening_and_ids.py`: `needs_d060` helper.
+- `research/literature/screening_protocol_v0.2_draft.md`: two D-077 wording fixes only; still DRAFT, not frozen.
+- `logs/DECISION_LOG.md`: D-078 (new) and three status-history rows; insertions only.
+
+**Created**: `logs/session_logs/2026-11-01_WORKSTREAM-C.md`.
+
+**Validation** (`python3 -I -B`, 09:00:58–09:02:32 UTC; all exit 0):
+- **Tests:** literature 217, OK; data protection (strict) 10, OK; NHANES 29, OK.
+- **Other checks:** query table PASS (168 rows); `sh -n scripts/run_checks.sh` OK; `git diff --check` OK.
+- **Warnings:** 484 lines (470 before). The 14 extra lines come from existing code run by the new tests (`make_literature_reports.py` unclosed files and fixture temporary directories, TD-1); two unclosed files in the new test code were fixed.
+- **Mutation check (scratch copies):** 10/10 caught.
+- **Regression (scratch copies of `research/literature` outside the repository; not T2):** HEAD vs new code, 284/284 files identical (`build_report.json` differs only in `built_at`).
+
+**Not done**: T2 not executed. D-035 §6 conditions 5 and 6 not recorded as met. Six records not classified (evidence in the session log). No push, fetch or PR change.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1`, HEAD `ad02333` (local, 1 ahead of `93dd16d`, 2 ahead of the last known remote `e0dd690`); this task's other changes are uncommitted. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.

@@ -1,5 +1,6 @@
 """T1-A tests: screening fields and descriptors (D-028 2d, D-029/D-060, D-058), controlled
-scope_flags tokens (D-057, D-061), the D-028 publication_type mapping, and compatibility.
+scope_flags tokens (D-057, D-061, D-069, D-070; repeated tokens rejected, D-078), the D-068 (5) Stage-0
+exemption limit (Option A), the D-028 publication_type mapping, and compatibility.
 
 ALL FIXTURE RECORDS IN THIS FILE ARE SYNTHETIC SOFTWARE-TEST DATA (titles start with
 "SYNTHETIC", URLs use example.org or arxiv.org with non-existent IDs, PMIDs 9000000xx, DOI
@@ -91,27 +92,48 @@ class TestSchemaCorrectness(unittest.TestCase):
         self.assertIn("screening_validation_design", mlr.INV_COLS)
         self.assertNotIn("screening_validation_design", mlr.MANUAL_FIELDS)
 
+    APPROVED = ("scope_pending_disorder", "scope_pending_proteomics", "non_metabolic_method_exemplar",
+                "non_metabolic_rq5_candidate", "lr_only")                                  # D-069 (E)
+    PAIR = ("non_metabolic_method_exemplar", "non_metabolic_rq5_candidate")                 # D-070 (1)
+
     def test_scope_flag_patterns_match_code(self):
-        self.assertEqual(pr.SCOPE_FLAG_TOKENS, ("scope_pending_proteomics", "non_metabolic_rq5_candidate"))
+        self.assertEqual(pr.SCOPE_FLAG_TOKENS, self.APPROVED)
         manual = re.compile(self.sd["properties"]["scope_flags"]["pattern"])
         built = re.compile(self.inv["scope_flags"]["pattern"])
-        good = ["", "scope_pending_proteomics", "non_metabolic_rq5_candidate",
-                "scope_pending_proteomics;non_metabolic_rq5_candidate"]
-        bad = ["retracted", "scope_pending", "lr_only", "prognostic", "non_metabolic_method_exemplar",
-               "abstract_only", "expression_of_concern", "scope_pending_proteomics;;non_metabolic_rq5_candidate",
-               " scope_pending_proteomics", "scope_pending_proteomics; non_metabolic_rq5_candidate"]
+        good = ["", *self.APPROVED, ";".join(self.PAIR), ";".join(reversed(self.PAIR)), ";".join(self.APPROVED),
+                ";".join(reversed(self.APPROVED)), "lr_only;scope_pending_disorder", "scope_pending_proteomics;lr_only"]
+        bad = ["retracted", "prognostic", "lr_only;prognostic", "scope_pending", "scope_pending_disorders",
+               "LR_ONLY", "lr-only", "non_metabolic_exemplar", "abstract_only", "expression_of_concern",
+               "lr_only;;scope_pending_disorder", ";lr_only", "lr_only;", " lr_only", "lr_only ",
+               "lr_only; scope_pending_disorder", "lr_only,scope_pending_disorder",
+               "lr_only;lr_only", "scope_pending_disorder;lr_only;scope_pending_disorder",
+               ";".join(self.APPROVED) + ";non_metabolic_method_exemplar"]
         for v in good:
             with self.subTest(good=v):
                 self.assertTrue(manual.fullmatch(v))
+                self.assertTrue(built.fullmatch(v))
                 self.assertEqual(pr.scope_flag_errors(v), [])
         for v in bad:
             with self.subTest(bad=v):
                 self.assertFalse(manual.fullmatch(v))
                 self.assertTrue(pr.scope_flag_errors(v))
-        self.assertTrue(built.fullmatch("retracted;scope_pending_proteomics"))
-        for word in ("abstract_only", "expression_of_concern", "lr_only", "prognostic"):
+        for v in ("retracted;scope_pending_proteomics", "retracted;" + ";".join(self.PAIR),
+                  "retracted;" + ";".join(self.APPROVED)):
+            with self.subTest(built=v):
+                self.assertTrue(built.fullmatch(v))
+        for v in ("retracted;retracted", "retracted;lr_only;lr_only", "prognostic", "abstract_only"):
+            with self.subTest(built_bad=v):
+                self.assertFalse(built.fullmatch(v))
+        for word in ("abstract_only", "expression_of_concern", "prognostic"):
             self.assertNotIn(word, self.inv["scope_flags"]["description"])
-            self.assertFalse(built.fullmatch(word))
+        for token in self.APPROVED:
+            self.assertIn(token, self.sd["properties"]["scope_flags"]["description"])
+            self.assertIn(token, self.inv["scope_flags"]["description"])
+
+    def test_repeated_token_message(self):
+        (err,) = pr.scope_flag_errors("lr_only;scope_pending_disorder;lr_only")
+        self.assertIn("'lr_only' is repeated", err)
+        self.assertIn("D-078", err)
 
 
 class TestScreeningValidation(unittest.TestCase):
@@ -147,17 +169,56 @@ class TestScreeningValidation(unittest.TestCase):
                                   "SYNTHETIC no model"]])
         self.fx.build(today="2026-10-16")
 
-    def test_stage0_rule_rows_exempt(self):
-        a, b, c = self.ids[:3]
+    def test_stage0_rule_rows_e5_e7_accepted(self):
+        a, b = self.ids[:2]
         self.fx.write_decisions([
             [a, "title_abstract", "exclude", "E5", pr.STAGE0_SCREENER, "2026-10-15", "SYNTHETIC Stage 0"],
-            [b, "title_abstract", "include", "", pr.STAGE0_SCREENER, "2026-10-15", ""],
-            [c, "title_abstract", "uncertain", "", pr.STAGE0_SCREENER, "2026-10-15", "SYNTHETIC Stage 0"],
+            [b, "title_abstract", "exclude", "E7", pr.STAGE0_SCREENER, "2026-10-15", "SYNTHETIC Stage 0"],
         ])
         self.fx.build(today="2026-10-16")
-        # the exemption is for that exact screener value only
-        self.assert_rejected([[b, "title_abstract", "include", "", "rule:stage0x", "2026-10-15", ""]],
-                             "D-060 (6)", header=pr.SCREENING_REQUIRED)
+        got = {p["paper_id"]: p for p in self.fx.pubs()}
+        self.assertEqual((got[a]["exclusion_reason"], got[b]["exclusion_reason"]), ("E5", "E7"))
+
+    def test_stage0_screener_no_longer_exempts_include_or_uncertain(self):
+        # D-068 (5), Option A: the D-060 (6) exemption covers only exclude E5/E7 Stage-0 rule rows
+        a = self.ids[0]
+        for decision in ("include", "uncertain"):
+            with self.subTest(decision=decision, descriptors="missing"):
+                row = [a, "title_abstract", decision, "", pr.STAGE0_SCREENER, "2026-10-15",
+                       "" if decision == "include" else "SYNTHETIC Stage 0"]
+                self.assert_rejected([row], "line 2", a, "D-060 (6)", header=pr.SCREENING_REQUIRED)
+            with self.subTest(decision=decision, descriptors="missing one"):
+                self.assert_rejected([ta_row(a, decision, screener=pr.STAGE0_SCREENER, biomarker_class="")],
+                                     "line 2", a, "biomarker_class", "D-060 (6)")
+            with self.subTest(decision=decision, descriptors="complete"):
+                self.fx.write_decisions([ta_row(a, decision, screener=pr.STAGE0_SCREENER)], header=HEADER)
+                self.fx.build(today="2026-10-16")
+                (p,) = [p for p in self.fx.pubs() if p["paper_id"] == a]
+                self.assertEqual(p["screening_decision"], decision)
+
+    def test_option_b_not_adopted(self):
+        # Option A only: other rows carrying screener=rule:stage0 are not rejected for that reason
+        a, b = self.ids[:2]
+        self.fx.write_decisions([
+            [a, "title_abstract", "exclude", "E1", pr.STAGE0_SCREENER, "2026-10-15", "SYNTHETIC not Stage 0 code"],
+            [b, "full_text", "uncertain", "", pr.STAGE0_SCREENER, "2026-10-16", "SYNTHETIC full text"],
+        ])
+        self.fx.build(today="2026-10-16")
+        self.assertTrue(pr.is_stage0_rule_row({"screener": pr.STAGE0_SCREENER, "decision": "exclude", "reason_code": "E5"}))
+        for row in ({"screener": pr.STAGE0_SCREENER, "decision": "exclude", "reason_code": "E1"},
+                    {"screener": pr.STAGE0_SCREENER, "decision": "include", "reason_code": ""},
+                    {"screener": "rule:stage0x", "decision": "exclude", "reason_code": "E5"},
+                    {"screener": "assistant", "decision": "exclude", "reason_code": "E7"}):
+            with self.subTest(row=row):
+                self.assertFalse(pr.is_stage0_rule_row(row))
+
+    def test_unrelated_exclusions_unaffected(self):
+        a, b = self.ids[:2]
+        self.fx.write_decisions([
+            [a, "title_abstract", "exclude", "E3", "assistant", "2026-10-15", "SYNTHETIC no model"],
+            [b, "title_abstract", "exclude", "E5", "assistant", "2026-10-15", "SYNTHETIC editorial by hand"],
+        ])
+        self.fx.build(today="2026-10-16")
 
     def test_full_text_rows_not_subject_to_title_abstract_rule(self):
         a, b = self.ids[:2]
@@ -190,16 +251,26 @@ class TestScreeningValidation(unittest.TestCase):
 
     def test_scope_flags(self):
         a = self.ids[0]
-        for value in ("scope_pending_proteomics", "non_metabolic_rq5_candidate",
-                      "scope_pending_proteomics;non_metabolic_rq5_candidate"):
+        for value in ("scope_pending_disorder", "scope_pending_proteomics", "non_metabolic_method_exemplar",
+                      "non_metabolic_rq5_candidate", "lr_only", "scope_pending_proteomics;non_metabolic_rq5_candidate",
+                      "non_metabolic_method_exemplar;non_metabolic_rq5_candidate",
+                      "non_metabolic_rq5_candidate;non_metabolic_method_exemplar",
+                      "scope_pending_disorder;scope_pending_proteomics;non_metabolic_method_exemplar;"
+                      "non_metabolic_rq5_candidate;lr_only"):
             with self.subTest(accepted=value):
                 self.fx.write_decisions([ta_row(a, scope_flags=value)], header=HEADER)
                 self.fx.build(today="2026-10-16")
                 (p,) = [p for p in self.fx.pubs() if p["paper_id"] == a]
                 self.assertEqual(p["screening_details"]["scope_flags"], value)        # stored as written
+        with self.subTest(accepted="empty"):
+            self.fx.write_decisions([ta_row(a, scope_flags="")], header=HEADER)
+            self.fx.build(today="2026-10-16")
+            (p,) = [p for p in self.fx.pubs() if p["paper_id"] == a]
+            self.assertIsNone(p["screening_details"]["scope_flags"])                # no flags
         rejected = {
-            "lr_only": "not in", "scope_pending": "not in", "prognostic": "not in",
-            "non_metabolic_method_exemplar": "not in", "abstract_only": "not in",
+            "scope_pending": "not in", "prognostic": "not in", "lr_only;prognostic": "not in",
+            "LR_ONLY": "not in", "lr-only": "not in", "abstract_only": "not in",
+            "lr_only;lr_only": "repeated", "non_metabolic_method_exemplar;lr_only;non_metabolic_method_exemplar": "repeated",
             "expression_of_concern": "not in", "retracted": "derived by the build",
             "scope_pending_proteomics;retracted": "derived by the build",
             "scope_pending_proteomics;;non_metabolic_rq5_candidate": "empty token",
@@ -363,6 +434,23 @@ class TestPublicationTypeMapping(unittest.TestCase):
             fx.build(today="2026-10-17")
         fx.reports()                                   # previous valid build: flag kept
         self.assertEqual(fx.inventory()[pid]["scope_flags"], "retracted;scope_pending_proteomics")
+
+    def test_co_occurring_tags_reach_the_inventory_and_pass_its_schema(self):
+        # D-070: both non-metabolic retention tags on one record, next to the build-derived flag
+        fx = PubTypeFixture()
+        fx.build()
+        pid = [p["paper_id"] for p in fx.pubs() if p["pmid"] == "900000022"][0]
+        value = "non_metabolic_rq5_candidate;non_metabolic_method_exemplar;lr_only"
+        fx.write_decisions([ta_row(pid, scope_flags=value)], header=HEADER)
+        fx.build(today="2026-10-16")
+        fx.reports()
+        self.assertEqual(fx.inventory()[pid]["scope_flags"], "retracted;" + value)
+        with open(fx.lit / "records" / "collection_stats.json") as f:
+            stats = json.load(f)
+        self.assertEqual(stats["paper_inventory_schema"], "valid")         # full jsonschema validation ran
+        with open(SCHEMAS / "paper_inventory.schema.json") as f:
+            built = re.compile(json.load(f)["items"]["properties"]["scope_flags"]["pattern"])
+        self.assertTrue(built.fullmatch("retracted;" + value))
 
 
 class TestFollowUpQ076(unittest.TestCase):

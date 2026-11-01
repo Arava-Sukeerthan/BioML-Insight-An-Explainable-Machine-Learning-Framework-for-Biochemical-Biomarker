@@ -107,15 +107,26 @@ RQ5_COMPONENT_FIELDS = {"feature_selection": "dim_feature_selection", "classific
                         "explainability": "dim_explainability", "calibration": "dim_calibration",
                         "uncertainty": "dim_uncertainty"}
 RQ5_RECORDED_FIELDS = list(RQ5_COMPONENT_FIELDS.values())
-# D-060 (6): required for include/uncertain at title/abstract; optional for exclude; rows written by
-# the Stage-0 rule (screener=rule:stage0) are exempt. Not applied to full-text rows.
+# D-060 (6): required for include/uncertain at title/abstract; optional for exclude. Not applied to
+# full-text rows. The D-060 (6) Stage-0 exemption covers only Stage-0 rule rows as defined by D-068 (5):
+# `exclude` rows with reason code E5 or E7 and screener=rule:stage0 (is_stage0_rule_row). Such rows
+# never needed the descriptors anyway, so an include/uncertain row is never exempt, whatever its
+# screener (Option A, researcher authorisation 2026-11-01). Other rows carrying screener=rule:stage0
+# are not rejected for that reason (Option B was not adopted).
 TITLE_ABSTRACT_REQUIRED = ("rq_tags", "record_type", "biomarker_class", "dim_explainability",
                            "dim_uncertainty", "dim_calibration", "validation_design")
 STAGE0_SCREENER = "rule:stage0"
-# scope_flags tokens a screener may enter (semicolon-separated): D-057 and D-061 (D-061 takes effect
-# only when screening_criteria v1.1 is frozen; accepting the token activates nothing). Other tokens
-# need a separate owner decision. "retracted" is derived by the build, never entered by hand.
-SCOPE_FLAG_TOKENS = ("scope_pending_proteomics", "non_metabolic_rq5_candidate")
+STAGE0_RULE_REASON_CODES = ("E5", "E7")
+# scope_flags tokens a screener may enter (semicolon-separated): the approved vocabulary of D-069 (E)
+# -- scope_pending_disorder (D-056, D-069 (A)), scope_pending_proteomics (D-057),
+# non_metabolic_method_exemplar (D-069 (B)), non_metabolic_rq5_candidate (D-061), lr_only (D-069 (C)).
+# Any combination is allowed; the two non-metabolic retention tags may co-occur (D-070 (1)). All are
+# descriptive and inactive for screening until D-035 record §6 is met; accepting a token activates
+# nothing. "prognostic" is deferred and not accepted (D-069 (D), D-071). "retracted" is derived by the
+# build, never entered by hand. A token may not be repeated within one value (researcher
+# authorisation 2026-11-01, recorded in DECISION_LOG as D-078).
+SCOPE_FLAG_TOKENS = ("scope_pending_disorder", "scope_pending_proteomics", "non_metabolic_method_exemplar",
+                     "non_metabolic_rq5_candidate", "lr_only")
 BUILD_DERIVED_SCOPE_FLAGS = ("retracted",)
 # D-028 2a: publication_type is derived only from source metadata, first match wins. Table: ballot
 # Item 2 (research/reviews/owner_review_ballot_LIT-004.md), same as decision_reconciliation_LIT-004.md
@@ -1680,13 +1691,24 @@ def derive_rq5_coverage_group(statuses):
     return group, provisional
 
 
+def is_stage0_rule_row(r):
+    """D-068 (5): a Stage-0 rule row is an `exclude` row with reason code E5 or E7 and
+    screener=rule:stage0; the D-060 (6) exemption covers only such rows."""
+    return (r.get("screener") == STAGE0_SCREENER and r.get("decision") == "exclude"
+            and r.get("reason_code") in STAGE0_RULE_REASON_CODES)
+
+
 def scope_flag_errors(value):
     """Problems in a manually entered scope_flags value (semicolon-separated tokens; empty = none).
     Values are reported, never corrected."""
     if value == "":
         return []
-    errors = []
+    errors, seen = [], set()
     for tok in value.split(";"):
+        if tok in seen and tok != "":
+            errors.append(f"scope_flags={value!r}: token {tok!r} is repeated (D-078)")
+            continue
+        seen.add(tok)
         if tok == "":
             errors.append(f"scope_flags={value!r}: empty token")
         elif tok != tok.strip():
@@ -1744,7 +1766,7 @@ def load_screening_decisions(lit_dir):
         # checked on the value as written (before stripping), so padded tokens are reported, not fixed
         errors += [f"{where}: {e}" for e in scope_flag_errors(r_raw.get("scope_flags") or "")]
         if (r["stage"] == "title_abstract" and r["decision"] in ("include", "uncertain")
-                and r["screener"] != STAGE0_SCREENER):
+                and not is_stage0_rule_row(r)):
             absent = [k for k in TITLE_ABSTRACT_REQUIRED if not r[k]]
             if absent:
                 errors.append(f"{where}: {r['decision']} at title_abstract requires {absent} (D-060 (6))")

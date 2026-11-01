@@ -798,3 +798,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Completed: proposed commit scope (one commit, 17 files) and a separate push plan; decision table for 26 items; activation order; schedule conditional on activation. No code, decision or protocol change |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (unchanged); uncommitted; not pushed; not fetched |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### WORKSTREAM-C (2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | WORKSTREAM-C (researcher prompt 2026-11-01: approved commit of the 17-file set; Workstream C with D-068 (5) Option A; repeated-token rejection; D-077 wording; six-record evidence; T2 review report) |
+| Prompt date | 2026-11-01 (Day 19) |
+| Objective | Preserve the verified work in one local commit; implement and test the validator update; record D-078; correct protocol v0.2 wording; prepare evidence and checklists. No push, fetch, T2, pilot, freeze, screening or training |
+| Actual completion status | Commit `ad02333` created (17 files; not pushed). Validator, schemas and tests updated; literature 217, data protection 10, NHANES 29 tests OK; query table PASS; mutation check 10/10; scratch regression 284/284 identical. D-078 recorded. Protocol v0.2 corrected and still a draft. Six-record evidence and T2 checklist in `logs/session_logs/2026-11-01_WORKSTREAM-C.md`. Remaining changes uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `ad02333` (local commit); not pushed; not fetched |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |

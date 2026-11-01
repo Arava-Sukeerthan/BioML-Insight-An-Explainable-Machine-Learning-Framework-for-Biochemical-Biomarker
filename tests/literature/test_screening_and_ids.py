@@ -36,8 +36,8 @@ D060_SYNTHETIC = {"rq_tags": "RQ1", "record_type": "original", "biomarker_class"
 
 
 def needs_d060(rec):
-    return (rec.get("stage") == "title_abstract" and rec.get("decision") in ("include", "uncertain")
-            and rec.get("screener") != pr.STAGE0_SCREENER)
+    # D-068 (5), Option A: no include/uncertain title_abstract row is exempt, whatever its screener
+    return rec.get("stage") == "title_abstract" and rec.get("decision") in ("include", "uncertain")
 
 
 def with_d060(rows, header=None):

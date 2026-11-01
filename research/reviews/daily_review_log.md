@@ -546,3 +546,22 @@ One entry per researcher review session (~1 h/day).
   - Q-016, Q-018, D-002; the Crossref year field and allow-list.
 - **Recommended next step:** take the S1 decisions in the session log (about 2 h).
 - **Researcher decisions:** none taken in this session.
+
+## Day 19 (cont.) — 2026-11-01 — WORKSTREAM-C
+- **Work completed:**
+  - the 17-file set committed locally (`ad02333`, not pushed);
+  - Workstream C implemented and tested (D-068 (5) Option A; D-069 (E) vocabulary; D-070 co-occurrence; repeated tokens rejected, recorded as D-078);
+  - D-077 wording fixed in protocol v0.2 (still a draft);
+  - six-record evidence prepared; T2 checklist written.
+- **Important findings:**
+  - `[EVIDENCE]` all checks pass (217 + 10 + 29 tests; query table PASS); mutation check 10/10; outputs unchanged on scratch copies (284/284); the 1,463 pilot frame recomputed from the committed inventory;
+  - `[EVIDENCE]` all six records without an abstract carry PubMed's "[Abstract not available]"; P0624 is a Stage-0 E5 record;
+  - `[OPEN]` whether the PubMed placeholder counts as "unavailable" (D-068 (8)), especially for P0559 and P1154.
+- **Decisions requiring review:**
+  - the Workstream C diff and its commit;
+  - push (separately);
+  - the six-record classification;
+  - T2 authorisation;
+  - the freeze review.
+- **Recommended next step:** review and authorise the commit of this task; decide the six-record classification; authorise T2.
+- **Researcher decisions:** commit, Workstream C (Option A), repeated-token rejection (D-078), D-077 wording, six-record evidence and T2 review report authorised (2026-11-01); push, T2 execution, pilot, freeze and screening not authorised.

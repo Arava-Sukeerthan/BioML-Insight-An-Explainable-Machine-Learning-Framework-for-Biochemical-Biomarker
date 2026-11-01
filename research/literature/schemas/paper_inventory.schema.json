@@ -170,8 +170,8 @@
           "string",
           "null"
         ],
-        "pattern": "^((retracted|scope_pending_proteomics|non_metabolic_rq5_candidate)(;(retracted|scope_pending_proteomics|non_metabolic_rq5_candidate))*)?$",
-        "description": "Semicolon-separated. 'retracted' is derived by the build (PubMed Retracted Publication); the other tokens come from the latest screening decision (scope_pending_proteomics D-057; non_metabolic_rq5_candidate D-061)"
+        "pattern": "^(?!(?:[^;]*;)*([^;]+);(?:[^;]*;)*\\1(?:;|$))((retracted|scope_pending_disorder|scope_pending_proteomics|non_metabolic_method_exemplar|non_metabolic_rq5_candidate|lr_only)(;(retracted|scope_pending_disorder|scope_pending_proteomics|non_metabolic_method_exemplar|non_metabolic_rq5_candidate|lr_only))*)?$",
+        "description": "Semicolon-separated, each token at most once (D-078). 'retracted' is derived by the build (PubMed Retracted Publication); the other tokens come from the latest screening decision (approved vocabulary, D-069 (E): scope_pending_disorder, scope_pending_proteomics D-057, non_metabolic_method_exemplar, non_metabolic_rq5_candidate D-061, lr_only; the two non-metabolic retention tags may co-occur, D-070)"
       },
       "disorder": {
         "type": [

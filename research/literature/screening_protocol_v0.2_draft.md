@@ -7,7 +7,7 @@
 | Replaces | `screening_protocol.md` v0.1 only when the researcher approves and freezes this text together with `screening_criteria_v1.1_draft.md` as the pilot's `criteria_version` (D-035 record §6, condition 5). v0.1 is kept unchanged |
 | Screening status | **INACTIVE.** No record has been screened, labelled or sampled. No pilot sample exists |
 | Scope of claims | The protocol does not assume that the BioML-Insight framework is new or better. Screening describes the existing evidence; any research gap is decided later (Stage D, D-016) from verified, screened evidence |
-| Governing decisions | As in criteria v1.1 §9, plus D-008, D-010, D-012/D-023, D-025, D-042, D-044, D-045, D-061, D-062, D-063, D-068. Traced in §11 |
+| Governing decisions | As in criteria v1.1 §9, plus D-008, D-010, D-012/D-023, D-025, D-042, D-044, D-045, D-061, D-062, D-063, D-068, D-077. Traced in §11 |
 
 ---
 
@@ -80,7 +80,7 @@ E1–E12 as in criteria v1.1 §1 (numbering unchanged; schema pattern `^E(1[0-2]
 | Agreement | Percentage agreement; Cohen's κ on 3-level decision and on include vs not; primary-code agreement; per-descriptor agreement (incl. `biomarker_class`, `validation_design`) |
 | Pass | κ (3-level) ≥ 0.60 **and** no record excluded by one screener and included by the other without adjudicated agreement **and** fewer than 3 disagreements on any single code |
 | If not passed | Disagreements reviewed together; criteria clarified (new version); second pilot of 40 new records, same strata rule, next seed |
-| Outputs | `screening/pilot_sample.csv` (IDs, stratum, seed), `pilot_decisions_assistant.csv`, `pilot_decisions_researcher.csv`, `pilot_report.md` (metrics computed by script) |
+| Outputs | `screening/pilot_sample.csv` (IDs, stratum, seed, inventory SHA-256 and the sampling script; D-063, D-077), `pilot_decisions_assistant.csv`, `pilot_decisions_researcher.csv`, `pilot_report.md` (metrics computed by script) |
 | Missing-abstract review | The researcher reviews every title/abstract decision on a record without an abstract; such records are listed separately in `pilot_report.md` with *not retrieved* / *unavailable* status (D-068 (10)) |
 
 ## 8. Expansion and audit
