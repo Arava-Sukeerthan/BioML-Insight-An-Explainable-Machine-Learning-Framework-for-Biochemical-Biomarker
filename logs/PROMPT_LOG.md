@@ -748,3 +748,53 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Inspection completed; existing work unchanged and matching the reviewed state; append-only log entries and the session log added; 17 files committed in one local preservation commit (hash reported to the researcher); not pushed; not fetched. Checks: see `logs/session_logs/2026-10-31_PRESERVATION-FIRST.md` |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1`; parent `e0dd690` (= local tracking ref, not fetched); not pushed |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged. Its description (31 commits, HEAD `e0dd690`) will be stale if this commit is pushed |
+
+### DEFECT-CORRECTION-AB (2026-10-31 / 2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | DEFECT-CORRECTION-AB (label chosen by the assistant). Researcher prompts: 2026-10-31 "a new, separately scoped defect-correction phase" (Workstreams A and B audit defects); 2026-11-01 review of the corrections, rerun of the checks and append-only logging authorised for this task |
+| Prompt date | 2026-10-31 (Day 18) and 2026-11-01 (Day 19) |
+| Objective | Correct the audited Crossref and NHANES safeguard defects with synthetic regression and failure-injection tests; review them; record the task. No commit, push, fetch, merge, branch change, scientific decision, freeze, external API call or real-data experiment |
+| Actual completion status | Corrections and tests implemented (2026-10-31); review and rerun completed (2026-11-01): literature 177, data protection 10, NHANES 27 tests OK, query table PASS (168 rows); mutation check 26/26 caught after tightening two tests; regression on scratch copies 284/284 files identical. Synthetic tests only; not validated on real Crossref or NHANES data. Known limitations listed in the CHANGELOG entry and `logs/session_logs/2026-11-01_DEFECT-CORRECTION-AB.md`. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (preservation commit, unchanged); task changes uncommitted and unstaged; not pushed; not fetched |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### SOFTWARE-GAP-CLOSURE (2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | SOFTWARE-GAP-CLOSURE (researcher prompt 2026-11-01: "BioML-Insight — November 1 Software Gap Closure") |
+| Prompt date | 2026-11-01 (Day 19) |
+| Objective | Close, where safe, the remaining software-testing gaps from the DEFECT-CORRECTION-AB review with offline synthetic tests; document untestable paths; no staging, commit, push, fetch, network, real data, decision or protocol change |
+| Actual completion status | 20 Crossref failure-path tests and 2 synthetic cascade-equivalence tests added; two report-transparency changes in `fetch_crossref.py` and a comment in `pubrecords.py`; literature 197, data protection 10, NHANES 29 tests OK; query table PASS (168 rows); mutation check 10/11 (survivor equivalent). Real-data validation outstanding. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (unchanged); uncommitted and unstaged; not pushed; not fetched |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### FAILURE-REPORT-RELIABILITY (2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | FAILURE-REPORT-RELIABILITY (researcher prompt 2026-11-01: "BioML-Insight — Failure Report Reliability Review") |
+| Prompt date | 2026-11-01 (Day 19) |
+| Objective | Investigate why a planning failure and a KeyboardInterrupt produced no run report; implement the smallest safe fix if possible; no staging, commit, push, fetch, network, real data, decision or protocol change |
+| Actual completion status | Root causes identified; a clearly marked incomplete-run report is printed and the original exception re-raised unchanged; lock and `finally` hardening; 15 new tests; literature 212, data protection 10, NHANES 29 tests OK; query table PASS (168 rows); mutation check 9/9. Limitations recorded. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (unchanged); uncommitted and unstaged; not pushed; not fetched |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### READINESS-STABILIZATION (2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | READINESS-STABILIZATION (researcher prompt "BioML-Insight — November 2 Consolidated Research Readiness and Stabilization"; container clock 2026-11-01) |
+| Prompt date | 2026-11-01 (Day 19) |
+| Objective | Verify repository and software state; review the accumulated diff; assess research readiness against recorded decisions and gates; plan to 2026-11-24 for about 2 h/day; audit and planning only |
+| Actual completion status | Completed: state verified (15 uncommitted changes preserved); checks pass (212/10/29; query table PASS); readiness assessment and 22-task plan in `logs/session_logs/2026-11-01_READINESS-STABILIZATION.md`. No code, decision or protocol change |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (unchanged); uncommitted; not pushed; not fetched |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### DECISION-PREPARATION (2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | DECISION-PREPARATION (researcher prompt "BioML-Insight — November 2 Execution and Decision Preparation"; container clock 2026-11-01) |
+| Prompt date | 2026-11-01 (Day 19) |
+| Objective | Verify state; assess commit safety; prepare the decision package, screening and Crossref readiness and a conditional schedule to 2026-11-24; planning only |
+| Actual completion status | Completed: proposed commit scope (one commit, 17 files) and a separate push plan; decision table for 26 items; activation order; schedule conditional on activation. No code, decision or protocol change |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (unchanged); uncommitted; not pushed; not fetched |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |

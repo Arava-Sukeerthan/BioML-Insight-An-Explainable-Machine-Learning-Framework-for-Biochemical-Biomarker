@@ -27,8 +27,10 @@ import datetime as dt
 import difflib
 import hashlib
 import html
+import io
 import itertools
 import json
+import os
 import re
 import sys
 import unicodedata
@@ -194,6 +196,36 @@ def strip_markup(text):
     return re.sub(r"\s+", " ", t).strip()
 
 
+# Inline (character-level) JATS/HTML/MathML tags that Crossref titles may carry, e.g. HbA<sub>1c</sub>.
+# They are removed WITHOUT inserting a space, so the text reads as in the plain-text PubMed record
+# ("HbA1c"); every other tag is replaced by a space, as in strip_markup. Used for Crossref fields only:
+# ordinary-build parsing keeps strip_markup unchanged.
+# Evidence status: the tag names below are an implementation assumption (common JATS/HTML inline
+# formatting and MathML presentation elements). No project document describes Crossref title markup,
+# and no real Crossref response has been inspected. The only project evidence is on the PubMed side:
+# the PubMed connector titles in raw_exports carried no markup (0 tags in 3,273 articles, checked
+# 2026-10-31). Unknown tags are replaced by a space, the conservative choice: a missed inline tag is
+# expected to produce a spurious title conflict (needs_review) rather than a spurious agreement.
+INLINE_MARKUP_TAGS = frozenset({"sub", "sup", "i", "b", "u", "em", "strong", "italic", "bold", "underline",
+                                "sc", "scp", "small", "tt", "monospace", "span", "font", "inline-formula",
+                                "math", "mi", "mn", "mo", "ms", "mtext", "msub", "msup", "msubsup", "mrow",
+                                "mfrac", "msqrt", "mstyle", "mspace", "semantics", "annotation"})
+
+
+def strip_inline_markup(text):
+    """Markup removal for Crossref text fields: inline tags (INLINE_MARKUP_TAGS, any namespace prefix
+    such as jats: or mml:) are dropped without a space; other tags become a space."""
+    if text is None:
+        return None
+
+    def repl(m):
+        local = m.group(1).split(":")[-1].lower()
+        return "" if local in INLINE_MARKUP_TAGS else " "
+    t = re.sub(r"<\s*/?\s*([A-Za-z][\w.:-]*)[^>]*>", repl, html.unescape(str(text)))
+    t = re.sub(r"<[^>]+>", " ", t)          # anything left that is not a well-formed tag name
+    return re.sub(r"\s+", " ", t).strip()
+
+
 def normalize_title(title):
     """Matching key only; the original title is always kept separately."""
     if not title:
@@ -336,34 +368,69 @@ def crossref_year(message, fields=None):
     Returns None while the field choice is undecided (CROSSREF_YEAR_FIELDS is None)."""
     fields = CROSSREF_YEAR_FIELDS if fields is None else fields
     for field in fields or ():
-        parts = ((message.get(field) or {}).get("date-parts") or [[None]])[0] or [None]
-        year = parse_year(parts[0])
+        value = message.get(field)
+        if value is None:
+            continue
+        parts = value.get("date-parts") if isinstance(value, dict) else None
+        if (not isinstance(parts, list) or not parts or not isinstance(parts[0], list) or not parts[0]
+                or not isinstance(parts[0][0], (int, str)) or isinstance(parts[0][0], bool)):
+            raise ValueError(f"Crossref field {field!r} has no well-formed 'date-parts'")
+        year = parse_year(parts[0][0])
         if year is not None:
             return year
     return None
 
 
+def _crossref_string_list(message, key):
+    """A Crossref list-of-strings field (e.g. title, container-title). Absent or null -> [].
+    Any other shape (a bare string, number, object, or a list holding non-strings) is malformed."""
+    value = message.get(key)
+    if value is None:
+        return []
+    if not isinstance(value, list) or not all(isinstance(v, str) for v in value):
+        raise ValueError(f"Crossref field {key!r} must be a list of strings, got {type(value).__name__}")
+    return [v for v in value if v.strip()]
+
+
+def _crossref_authors(message):
+    value = message.get("author")
+    if value is None:
+        return []
+    if not isinstance(value, list) or not all(isinstance(a, dict) for a in value):
+        raise ValueError("Crossref field 'author' must be a list of objects")
+    for a in value:
+        for k in ("family", "given", "name", "sequence"):
+            if a.get(k) is not None and not isinstance(a[k], str):
+                raise ValueError(f"Crossref author field {k!r} must be a string")
+    return value
+
+
 def parse_crossref_work(message):
     """The `message` object of one Crossref /works/{DOI} response (verification lookups only).
-    Raises ValueError when the message is malformed. Abstract, publication types and language are
-    not taken; the whole message is kept verbatim in `original`."""
+    Raises ValueError when the message is malformed, including wrongly shaped fields: `title` and
+    `container-title` must be lists of strings, `author` a list of objects with string name parts,
+    `DOI` a string. Inline markup in titles and venues is removed without a space
+    (strip_inline_markup). Abstract, publication types and language are not taken; the whole message
+    is kept verbatim in `original`."""
     if not isinstance(message, dict):
         raise ValueError("Crossref response has no 'message' object")
-    doi = normalize_doi(message.get("DOI"))
+    if not isinstance(message.get("DOI"), str):
+        raise ValueError("Crossref message has no DOI string")
+    doi = normalize_doi(message["DOI"])
     if not doi:
         raise ValueError("Crossref message has no valid DOI")
     m = _empty_meta()
-    titles = [t for t in message.get("title") or [] if isinstance(t, str) and t.strip()]
-    m["title"] = strip_markup(titles[0]) if titles else None
-    authors = [a for a in message.get("author") or [] if isinstance(a, dict)]
+    titles = _crossref_string_list(message, "title")
+    m["title"] = strip_inline_markup(titles[0]) or None if titles else None
+    authors = _crossref_authors(message)
     firsts = [a for a in authors if a.get("sequence") == "first"]
     if firsts and authors[0] is not firsts[0]:
         authors = [firsts[0]] + [a for a in authors if a is not firsts[0]]
     m["authors"] = [({"last_name": a.get("family"), "fore_name": a.get("given")} if a.get("family")
                      else {"collective_name": a.get("name")}) for a in authors if a.get("family") or a.get("name")]
     m["year"] = crossref_year(message)
-    venues = [v for v in message.get("container-title") or [] if isinstance(v, str) and v.strip()]
-    m["journal"] = strip_markup(venues[0]) if venues else None
+    venues = _crossref_string_list(message, "container-title")
+    m["journal"] = strip_inline_markup(venues[0]) or None if venues else None
     m["doi"] = doi
     m["original"] = message
     return m
@@ -415,6 +482,9 @@ def register_raw(lit_dir, raw_file, query_id, source, route, endpoint_or_tool, r
                  retrieved_at, n_items, transcribed, notes=""):
     if route not in ROUTES:
         raise ValueError(f"unknown route {route!r}")
+    if str(query_id).startswith(VERIFY_PREFIX) != (route == CROSSREF_ROUTE):
+        raise ValueError(f"query ID {query_id!r} and route {route!r}: {VERIFY_PREFIX}* query IDs are "
+                         f"reserved for route {CROSSREF_ROUTE}, and that route for those IDs only")
     lit_dir = Path(lit_dir)
     raw_path = lit_dir / "raw_exports" / raw_file
     if not raw_path.exists():
@@ -430,12 +500,27 @@ def register_raw(lit_dir, raw_file, query_id, source, route, endpoint_or_tool, r
            "notes": notes}
     mp = lit_dir / "raw_exports" / "MANIFEST.csv"
     new = not mp.exists()
-    with open(mp, "a", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=MANIFEST_COLS)
-        if new:
-            w.writeheader()
-        w.writerow(row)
+    if not new and mp.stat().st_size and not _ends_with_newline(mp):
+        raise ValueError(f"{mp}: last line is incomplete (interrupted write?); nothing appended. "
+                         "Inspect and repair the manifest by hand before registering more files")
+    buf = io.StringIO()
+    w = csv.DictWriter(buf, fieldnames=MANIFEST_COLS)
+    if new:
+        w.writeheader()
+    w.writerow(row)
+    # one write call, then flush and fsync, so an interruption leaves at most one incomplete last
+    # line, which the check above detects (not a guarantee of atomicity on every filesystem)
+    with open(mp, "ab") as f:
+        f.write(buf.getvalue().encode("utf-8"))
+        f.flush()
+        os.fsync(f.fileno())
     return row
+
+
+def _ends_with_newline(path):
+    with open(path, "rb") as f:
+        f.seek(-1, os.SEEK_END)
+        return f.read(1) == b"\n"
 
 
 def set_transcription_check(lit_dir, raw_file, status, note=""):
@@ -576,6 +661,12 @@ def build_source_records(lit_dir, rows):
     for row in rows:
         route = row["route"]
         path = Path(lit_dir) / "raw_exports" / row["raw_file"]
+        if row["query_id"].startswith(VERIFY_PREFIX) and route != CROSSREF_ROUTE:
+            # a verification lookup registered under any other route would otherwise be processed as
+            # an ordinary search hit (deduplication, paper IDs, metadata, provenance): stop instead
+            raise RuntimeError(f"{row['raw_file']}: query ID {row['query_id']} is a Crossref verification "
+                               f"lookup but is registered with route {route!r}; only {CROSSREF_ROUTE} is "
+                               "allowed (nothing written)")
         if row["query_id"].startswith(CHECK_PREFIX):
             continue
         if route == "pubmed_connector_metadata":
@@ -612,9 +703,10 @@ def build_source_records(lit_dir, rows):
                 raise RuntimeError(f"{row['raw_file']}: route {CROSSREF_ROUTE} is for Crossref verification "
                                    f"lookups registered as {VERIFY_PREFIX}<paper_id> only")
             try:
-                doc = _load_raw_json(lit_dir, row)
+                with open(path, encoding="utf-8") as f:
+                    doc = json.load(f)
                 meta = parse_crossref_work(doc.get("message") if isinstance(doc, dict) else None)
-            except ValueError as e:   # includes json.JSONDecodeError
+            except ValueError as e:   # includes json.JSONDecodeError, UnicodeDecodeError, shape errors
                 raise RuntimeError(f"{row['raw_file']}: malformed Crossref response ({e}); malformed "
                                    "responses must never be registered") from None
             direct.append((row, 1, meta))
@@ -1091,7 +1183,10 @@ def auto_verification(members, conflicts, details=None, venue_map=None):
     """Bibliographic verification status (collection_workflow.md §4.3; D-064). When `details` is a
     dict, the second-source evaluation is written into it for report-level output only.
     Crossref verification records (route crossref_api) are second-source candidates only: they are
-    never the authoritative record."""
+    never the authoritative record. While CROSSREF_YEAR_FIELDS is None a Crossref year is always
+    missing, so a Crossref record can never make a publication `verified`; a conflict it shows on
+    title, first author, venue or identifier still gives `needs_review` (D-064 A4: conflicts are not
+    outvoted and do not depend on the year rule)."""
     hard = {c["field"] for c in conflicts} & {"title", "year", "doi", "pmid"}
     if hard:
         return "needs_review", "conflicting " + ", ".join(sorted(hard))

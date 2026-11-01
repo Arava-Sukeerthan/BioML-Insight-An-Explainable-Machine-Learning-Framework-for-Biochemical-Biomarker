@@ -67,6 +67,19 @@ def no_network(*a, **k):
     raise AssertionError("network access attempted in a test")
 
 
+def append_manifest_row(lit, name, query_id, route, pid, source="crossref"):
+    """Simulates a hand-edited manifest row (bypasses register_raw and its checks)."""
+    path = lit / "raw_exports" / name
+    row = {c: "" for c in pr.MANIFEST_COLS}
+    row.update(raw_file=name, sha256=hashlib.sha256(path.read_bytes()).hexdigest(), query_id=query_id,
+               source=source, route=route, endpoint_or_tool="synthetic",
+               request_json=json.dumps({"doi": "10.0000/cr.1", "paper_id": pid}),
+               retrieved_at="2026-10-31T10:00:00+00:00", n_items="1", transcribed="no",
+               transcription_check="not_applicable")
+    with open(lit / "raw_exports" / "MANIFEST.csv", "a", newline="") as f:
+        csv.DictWriter(f, fieldnames=pr.MANIFEST_COLS).writerow(row)
+
+
 class CrossrefFixture:
     def __init__(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -222,9 +235,17 @@ class TestPlanAndFetch(unittest.TestCase):
         self.assertRegex(row["retrieved_at"], r"^\d{4}-\d\d-\d\dT")
 
     def test_existing_run_files_are_never_overwritten(self):
-        (self.lit / "raw_exports" / "CR_2026-10-31_000.json").write_bytes(b"{}")
-        with self.assertRaises(FileExistsError):
-            fc.run(["P0001"], "2026-10-31", self.lit, self.inv, FakeTransport({}), sleep=lambda s: None, execute=True)
+        # an unregistered file left by an earlier run keeps its bytes; the new file takes the next number
+        old = self.lit / "raw_exports" / "CR_2026-10-31_000.json"
+        old.write_bytes(b"{}")
+        u1 = fc.API + "10.0000/x.1"
+        body = crossref_body("10.0000/x.1", "SYNTHETIC one", "Alpha", "Synthetic Journal A")
+        report = fc.run(["P0001"], "2026-10-31", self.lit, self.inv, FakeTransport({u1: [(200, body)]}),
+                        sleep=lambda s: None, execute=True)
+        self.assertEqual(old.read_bytes(), b"{}")
+        self.assertEqual(report["results"][0]["raw_file"], "CR_2026-10-31_001.json")
+        self.assertEqual(report["orphans_before"], ["CR_2026-10-31_000.json"])
+        self.assertEqual(report["orphans"], ["CR_2026-10-31_000.json"])     # reported, never deleted
 
 
 class TestParser(unittest.TestCase):
@@ -391,9 +412,12 @@ class TestBuildSafeguards(unittest.TestCase):
     def test_route_is_reserved_for_verify_query_ids(self):
         name = "CR_2026-10-31_900.json"
         (self.fx.lit / "raw_exports" / name).write_bytes(self.agreeing())
-        pr.register_raw(self.fx.lit, name, "Q-TEST-CR", "crossref", pr.CROSSREF_ROUTE, fc.API,
-                        {"doi": "10.0000/cr.1", "paper_id": self.p1}, "2026-10-31T10:00:00+00:00", 1, False)
-        self.assert_build_refused()
+        args = (self.fx.lit, name, "Q-TEST-CR", "crossref", pr.CROSSREF_ROUTE, fc.API,
+                {"doi": "10.0000/cr.1", "paper_id": self.p1}, "2026-10-31T10:00:00+00:00", 1, False)
+        with self.assertRaises(ValueError):                      # refused at registration
+            pr.register_raw(*args)
+        append_manifest_row(self.fx.lit, name, "Q-TEST-CR", pr.CROSSREF_ROUTE, self.p1)   # hand-edited manifest
+        self.assert_build_refused()                               # and refused again by the build
 
     def test_publication_metadata_provenance_and_other_statuses_unchanged(self):
         self.fx.pilot([self.p1])

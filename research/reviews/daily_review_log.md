@@ -482,3 +482,67 @@ One entry per researcher review session (~1 h/day).
 - **Decisions requiring review:** fetch and push; the branch discrepancy; the PR #17 description; authorisation of defect fixes, Workstream C and the D-068 (5) reading; the freeze.
 - **Recommended next step:** review the local commit; decide fetch/push separately; then a defect-correction package.
 - **Researcher decisions:** Option A, preservation first; governance-log entries, inclusion of the four previously protected files and a local commit authorised; push not authorised (all 2026-10-31).
+
+## Day 19 — 2026-11-01 — DEFECT-CORRECTION-AB (corrections of 2026-10-31, reviewed and logged today)
+- **Work completed:**
+  - The audit defects in the Crossref fetcher and parser (persistence and recovery, malformed shapes, `VERIFY-CR-` route, per-record errors, inline markup) and in the NHANES safeguards (E3 values, IDs, aliases and whole-word matching, folds and partitions, cascade subcategories) were corrected on 2026-10-31 with 42 new synthetic tests.
+  - Reviewed and rechecked on 2026-11-01.
+- **Important findings:**
+  - `[EVIDENCE]` all checks pass (177 + 10 + 27 tests; query table PASS); mutation check 26/26; ordinary literature build outputs unchanged on scratch copies (284/284 files).
+  - `[OPEN]` atomicity not guaranteed (crash recovery only); the NHANES alias list and the OGTT variable names are not approved or codebook-checked; Q-050 allow-list; S-06 insulin; safeguards not integrated; no real-data validation.
+  - `[OPEN]` possible protocol §7 wording issue (SPISE), unverified.
+- **Decisions requiring review:**
+  - commit and push of this task (separately);
+  - the NHANES alias list;
+  - Q-050; S-06; the Crossref year field; the D-068 (5) reading; Workstream C; T2; the freeze.
+- **Recommended next step:** review the diff and the session log; then authorise a commit separately.
+- **Researcher decisions:** defect-correction phase authorised (2026-10-31); append-only logging for this task authorised (2026-11-01); no commit, push or fetch authorised.
+
+## Day 19 (cont.) — 2026-11-01 — SOFTWARE-GAP-CLOSURE
+- **Work completed:** offline tests for the remaining Crossref failure paths (manifest and directory `fsync`, command-line exit status, mixed-outcome reports, planning failures and interrupts, recovery) and a synthetic equivalence test between the NHANES cascade and `descriptive_counts.period_counts`; two report-transparency changes in the fetcher; a comment marking the markup tag list as an assumption.
+- **Important findings:**
+  - `[EVIDENCE]` all checks pass (197 + 10 + 29 tests; query table PASS). The ResourceWarnings come from existing code and older tests, none from the new tests.
+  - `[OPEN]` planning failures and keyboard interrupts produce no run report; crash safety is not guaranteed; the markup tag list and `LBXGLT`/`LBDGLTSI` are unverified; cascade equivalence is shown on synthetic data only.
+- **Decisions requiring review:**
+  - commit and push of the uncommitted work (separately);
+  - a later fix for the unclosed files in `make_literature_reports.py`;
+  - the NHANES alias list, Q-050 and S-06.
+- **Recommended next step:** review the diff and the session log; authorise a commit separately.
+- **Researcher decisions:** gap-closure phase authorised (2026-11-01); no staging, commit, push or fetch authorised.
+
+## Day 19 (cont.) — 2026-11-01 — FAILURE-REPORT-RELIABILITY
+- **Work completed:** the two missing-report paths in the Crossref fetcher were traced and fixed with the smallest change: `main()` prints a marked `incomplete` report and re-raises the original exception. Lock creation and the `finally` block were hardened. 15 synthetic tests added.
+- **Important findings:**
+  - `[EVIDENCE]` all checks pass (212 + 10 + 29 tests; query table PASS); mutation check 9/9; no new warnings.
+  - `[OPEN]` no report on SIGTERM, SIGKILL or power loss, or on a second Ctrl-C; a one-instruction stale-lock window remains; the report is printed only, not saved; atomicity is not guaranteed.
+- **Decisions requiring review:** commit and push of the uncommitted work (separately).
+- **Recommended next step:** review the diff and the session log; authorise a commit separately.
+- **Researcher decisions:** failure-report reliability review authorised (2026-11-01); no staging, commit, push or fetch authorised.
+
+## Day 19 (cont.) — 2026-11-01 — READINESS-STABILIZATION (prompt titled November 2)
+- **Work completed:** repository state and all checks verified; accumulated software diff reviewed; research-readiness assessment and plan to 2026-11-24 written to the session log.
+- **Important findings:**
+  - `[EVIDENCE]` 0 of 3,386 records verified; none screened or extracted; D-035 §6 conditions 5 and 6 unmet; Stage C and D gates not passed; D-013–D-020 pending; no NHANES files in the container.
+  - `[INFERENCE]` real-data training before 11-24 is unlikely.
+- **Decisions requiring review:**
+  - commit and push of the 15 changes, the branch discrepancy and the PR #17 description;
+  - the D-068 (5) reading, and authorisation of Workstream C and T2;
+  - the v0.2 D-077 fixes; the freeze;
+  - Crossref network access and year field;
+  - Stage F decisions; Q-018; D-002; whether D-064 needs a status-history row.
+- **Recommended next step:** on 11-02, take decisions 1–3 and 12 of the plan (about 1.5 h).
+- **Researcher decisions:** none taken in this session.
+
+## Day 19 (cont.) — 2026-11-01 — DECISION-PREPARATION (prompt titled November 2)
+- **Work completed:** commit-safety assessment, decision package, screening and Crossref readiness assessment and conditional schedule (session log).
+- **Important findings:**
+  - `[EVIDENCE]` no material defect in the 16 changes, which must be committed together;
+  - `[EVIDENCE]` the six in-scope records without an abstract all carry PubMed's "[Abstract not available]" placeholder;
+  - `[OPEN]` D-035 §6 conditions 5 and 6; Crossref access and year field; Stage C and D gates.
+- **Decisions requiring review:**
+  - the commit, then separately fetch, push, branch and the PR #17 description;
+  - the D-068 (5) reading; authorisation of Workstream C and T2;
+  - the D-077 wording; the six-record classification;
+  - Q-016, Q-018, D-002; the Crossref year field and allow-list.
+- **Recommended next step:** take the S1 decisions in the session log (about 2 h).
+- **Researcher decisions:** none taken in this session.

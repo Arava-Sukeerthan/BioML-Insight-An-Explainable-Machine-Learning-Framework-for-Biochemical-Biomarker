@@ -1727,3 +1727,221 @@ No session logs exist for them either. This entry records that the work exists a
 - Not pushed: no push authorisation. Not fetched: the local tracking ref (`e0dd690`) may not reflect the remote.
 - This session's standing instructions name a different development branch (`claude/gracious-hopper-rx64za`). The researcher directed that the current branch be used; the discrepancy is left for a separate decision.
 - The branch is the head of PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17), open, not merged, not changed by this task.
+
+## DEFECT-CORRECTION-AB — 2026-10-31 / 2026-11-01 — corrections to the Crossref and NHANES safeguards (Workstreams A and B); synthetic tests only; uncommitted
+
+**Context**:
+- Researcher prompt 2026-10-31: correct the confirmed implementation defects found by the independent read-only audit of Workstreams A and B (2026-10-31), with targeted regression tests and documented limitations.
+- Researcher prompt 2026-11-01: review the corrections, rerun the checks, and record this task with append-only logging (authorised for this task only).
+- Not authorised: commit, push, fetch, merge, branch change, scientific decisions, screening freeze, external API calls and real-data experiments.
+- The task label `DEFECT-CORRECTION-AB` was chosen by the assistant; no label was given in the prompts.
+
+**Modified**:
+- `scripts/literature/pubrecords.py`:
+  - Crossref-only inline-markup removal (`strip_inline_markup`; e.g. `HbA<sub>1c</sub>` → `HbA1c`); ordinary parsing (`strip_markup`) unchanged;
+  - shape validation of Crossref `title`, `container-title`, `author` and `DOI`, plus the (inactive) year fields;
+  - `VERIFY-CR-` query IDs restricted to route `crossref_works`, in `register_raw` and again in `build_source_records`;
+  - `register_raw` refuses a manifest whose last line is incomplete and appends each row in one write followed by `fsync`;
+  - a non-object Crossref file stops the build instead of crashing;
+  - the no-year behaviour is documented in `auto_verification` (unchanged).
+- `scripts/literature/fetch_crossref.py`:
+  - `.partial` write with `fsync` and SHA-256 read-back, then a hard link to the final name (never overwriting);
+  - run refused before any request on a damaged manifest, a malformed run date or an existing lock file;
+  - already-registered papers skipped, so a run can be resumed with the same date; new files take the next free number;
+  - `http.client.HTTPException` retried as a transport error;
+  - per-record handling of unexpected exceptions; a persistence failure stops the run with the report still returned;
+  - unregistered `CR_*` files reported as orphans and never deleted;
+  - exit status 1 for any outcome other than saved, already registered or dry run.
+- `scripts/nhanes/safeguards.py`:
+  - E3 flags must be real booleans (missing, text, numeric and NA values raise instead of being coerced to True);
+  - `SEQN` must be unique and non-missing when present;
+  - name aliases for the section 7 categories, matched as whole tokens; OGTT names `LBXGLT`/`LBDGLTSI` added;
+  - derived-index names matched as whole tokens; the comment-code rule limited to NHANES-style names;
+  - optional allow-list in `check_predictors`;
+  - participant-aware fold checks with optional full coverage;
+  - `check_partitions` (train/calibration/validation separation and coverage) and `check_unique_participants`; missing IDs rejected in `check_disjoint_participants`;
+  - optional subcategory and per-step exclusion counts in `eligibility_cascade`.
+- `tests/literature/test_crossref_verification.py`: two tests updated for intended behaviour changes (route refused at registration; existing files are never overwritten and the next number is used); helper `append_manifest_row`.
+
+**Created**:
+- `tests/literature/test_crossref_robustness.py` (25 tests, including failure injection on the save-and-register path);
+- `tests/nhanes/test_safeguards_corrections.py` (17 tests);
+- `logs/session_logs/2026-11-01_DEFECT-CORRECTION-AB.md`.
+
+**Validation (actual outcomes)**:
+- **2026-11-01 07:26:02–07:27:10 UTC** (`python3 -I -B`; all exit 0):
+  - `tests/literature`: 177 tests, OK;
+  - `DATA_PROTECTION_STRICT=1 … tests/data_protection -v`: 10, OK;
+  - `tests/nhanes -v`: 27, OK;
+  - `validate_search_queries.py`: PASS, 168 rows;
+  - `sh -n scripts/run_checks.sh`: OK;
+  - `git diff --check`: OK.
+  - Literature tests emitted 470 warning lines (unclosed files and implicitly cleaned temporary directories, all in pre-existing code and tests; none from the new test files). The same counts were seen on 2026-10-31 at 18:01–18:02 UTC.
+- **Mutation check (2026-10-31; scratch copies, then deleted):**
+  - 26 deliberately reintroduced defects; 24 caught in the first run;
+  - two tests were then tightened; 26 of 26 caught in the second run.
+  - Only the second run's results are kept in the session scratchpad.
+- **Regression (2026-10-31; scratch copies of `research/literature` outside the repository):**
+  - build and reports with the code at `93dd16d` and with the corrected code;
+  - 284 of 284 files identical, `build_report.json` differing only in `built_at`.
+  - Separately, the generated files committed to the repository differ from both runs: `publication_type` in all 3,386 inventory records, `collection_stats`, `verification_report`. This is because they predate the T2 rebuild, which is not authorised; it is not caused by this task.
+- `fetch_crossref.manifest_problems` and `orphans`, run read-only on the real `research/literature`, returned no problems; the `MANIFEST.csv` hash was unchanged.
+
+**Scope of the evidence**:
+- All new tests use synthetic fixtures and a fake transport, with `urlopen` patched to fail.
+- No Crossref request was made and no NHANES file was read.
+- The corrections are **not** validated against real Crossref responses or real NHANES data.
+- Crash recovery is tested by injected failures. Atomicity is **not** guaranteed: it depends on POSIX hard links and `fsync`; a crash can leave an orphan file, a stale lock or an incomplete manifest line, all detected and repaired by hand.
+
+**Known limitations and open items (review of 2026-11-01)**:
+- **Crossref:**
+  - `main()` exit status 1 for failed or malformed outcomes is not tested through `main()`;
+  - no run report is produced if planning itself raises (for example an unreadable inventory) or on a keyboard interrupt;
+  - the report goes to standard output only;
+  - malformed response bodies are reported but not retained;
+  - the manifest and directory `fsync` calls are not directly tested;
+  - the tag list and the real Crossref response layout are unverified.
+- **NHANES:**
+  - the alias list is an assistant proposal, not approved and not complete by nature;
+  - `LBXGLT`/`LBDGLTSI` were named from memory and not checked against a codebook;
+  - the allow-list depends on Q-050;
+  - a declared feature derived only from `LBXIN` is still flagged (S-06 undecided);
+  - fold coverage checking is opt-in and stratification is not checked;
+  - the `SEQN` check runs only when the column is present;
+  - equivalence with `descriptive_counts.py` on the real files is unverified;
+  - the safeguards are not integrated into any pipeline.
+- **Observation for the researcher (not changed):** protocol draft §7 states that every listed derived index contains glucose, HbA1c or insulin; as recalled, SPISE uses HDL, triglycerides and BMI only. This is unverified.
+
+**Not changed**: research decisions and their statuses; `DECISION_LOG.md`; `unresolved_questions.md`; screening drafts; the inventory and generated outputs in the repository; the preservation commit; the PRESERVATION-FIRST and PR17-DESCRIPTION-UPDATE-2 session logs.
+
+**Branch / commit / PR**:
+- `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (preservation commit, unchanged). All changes of this task are uncommitted and unstaged; not pushed; not fetched.
+- The local tracking ref (`e0dd690`) may not reflect the remote.
+- PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed; open, not merged.
+
+## SOFTWARE-GAP-CLOSURE — 2026-11-01 — failure-path tests and two report fixes for the Crossref fetcher; synthetic cascade-equivalence test; uncommitted
+
+**Context**:
+- Researcher prompt 2026-11-01 ("November 1 Software Gap Closure"): close, where safe, the software-testing gaps listed in the DEFECT-CORRECTION-AB review, using offline synthetic tests only.
+- Not authorised: staging, commit, push, fetch, branch or PR changes, network, real NHANES records, screening sample or freeze, model training, and decision or question-status changes.
+- The task label is taken from the prompt title.
+
+**Modified**:
+- `scripts/literature/fetch_crossref.py`:
+  - a failed directory `fsync` (best effort) is now reported in `report["warnings"]` instead of being ignored silently; the key is omitted when empty, so ordinary reports are unchanged;
+  - a `persistence_error` entry now records the state on disk (`file_saved`, `manifest_row_present`). A manifest `fsync` failure after the row is written leaves the row in place, and the report now says so.
+- `scripts/literature/pubrecords.py`: comment only. It records that the inline-markup tag list is an implementation assumption: no project document describes Crossref markup, no real Crossref response has been inspected, and the only project evidence is that PubMed connector titles carried no markup. Tag list and behaviour unchanged.
+
+**Created**:
+- `tests/literature/test_crossref_failure_paths.py` (20 tests): manifest and directory `fsync` failures; command-line exit status for failed, exhausted-retry and malformed responses and for refused, saved and dry runs; one report for mixed per-record outcomes; planning failures and keyboard interrupts (actual behaviour: they raise and no report is produced; lock released; state resumable); recovery from a truncated `.partial`, an orphan file, an incomplete manifest line and a stale lock.
+- `tests/nhanes/test_cascade_equivalence.py` (2 tests): `descriptive_counts.period_counts` (with `read` replaced by synthetic tables and `pandas.read_sas` patched to fail) and `safeguards.eligibility_cascade` give identical cascade counts on a synthetic fixture covering every E0–E8 rule and subcategory.
+- `logs/session_logs/2026-11-01_SOFTWARE-GAP-CLOSURE.md`.
+
+**Validation (2026-11-01, 07:35:52–07:37:07 UTC; `python3 -I -B`; all exit 0)**:
+- `tests/literature`: 197 tests, OK;
+- `DATA_PROTECTION_STRICT=1 … tests/data_protection -v`: 10, OK;
+- `tests/nhanes -v`: 27 + 2 = 29, OK;
+- `validate_search_queries.py`: PASS, 168 rows;
+- `sh -n scripts/run_checks.sh`: OK;
+- `git diff --check`: OK.
+- **Warnings:** 470 warning lines in the literature run, the same count as before. They come from 5 `open()` calls without a context manager in `make_literature_reports.py` (lines 76, 78, 167, 239, 291, present since `eb79996`) and from temporary directories in `test_screening_and_ids.py`, `test_t1a_schema_validation.py` and `test_pubrecords.py`. Per module: 264, 138, 58 and 10 (the last via the existing report test in `test_crossref_verification.py`); 0 from `test_crossref_robustness.py` and `test_crossref_failure_paths.py`. Not suppressed and not fixed (out of scope).
+- **Mutation check (scratch copies):** 10 of 11 reintroduced defects caught. The survivor (E6 written as `!= 1` instead of `~(== 1)`) is equivalent in pandas for missing values, so it is not a test gap.
+
+**Evidence status**:
+- Tested on synthetic data: every behaviour listed under Created.
+- Inferred from code inspection only: behaviour after a real power loss or kernel crash; POSIX hard-link and `fsync` semantics on the target filesystem.
+- Untested: a failure inside the orphan or report bookkeeping in `finally`; concurrent runs beyond the lock check.
+- Outstanding: real Crossref response validation; real NHANES equivalence of the cascade (no local data or codebook in the repository).
+- `LBXGLT`/`LBDGLTSI` remain unverified: the project contains no codebook or other authoritative evidence for these names.
+
+**Not changed**: decisions, decision statuses and questions (`DECISION_LOG.md`, `unresolved_questions.md`); protocol draft and screening drafts; the NHANES alias list, Q-050, S-06 and insulin handling; `safeguards.py`; PubMed parsing; earlier log entries and session logs.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (preservation commit, unchanged); all changes uncommitted and unstaged; not pushed; not fetched. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## FAILURE-REPORT-RELIABILITY — 2026-11-01 — incomplete-run reports for planning failures and KeyboardInterrupt in the Crossref fetcher; uncommitted
+
+**Context**:
+- Researcher prompt 2026-11-01 ("Failure Report Reliability Review"): investigate the two missing-report paths (planning failure; KeyboardInterrupt) and, if safe, implement the smallest fix.
+- Not authorised: staging, commit, push, fetch, branch or PR changes; network; real data; screening; training; decision or protocol changes.
+- The task label is taken from the prompt title.
+
+**Root causes**:
+1. **Planning failure:** `run()` reads the inventory and the manifest and plans before its `report` dict exists, and `main()` printed only a returned report, so an exception there left nothing to print.
+2. **KeyboardInterrupt:** it is not an `Exception`, so it bypassed every per-record handler. `finally` released the lock and listed orphans in the local `report`, but the dict was lost when the exception left `run()`.
+
+**Related weaknesses found**:
+- An exception inside `finally` (orphan listing) could replace the propagating exception.
+- A failure between creating the lock file and entering `try` (lock write, transport construction) left a stale lock.
+
+**Modified** `scripts/literature/fetch_crossref.py`:
+- `run(..., progress=None)` records the stage reached and the partial report.
+- Every returned report has `status` set to `refused`, `aborted` or `finished` ("finished" means every planned paper was processed, not that every lookup succeeded).
+- Lock creation moved inside `try`, with a `locked` flag, so `finally` removes only a lock this run created; a lock that appears from another run is never removed.
+- The orphan listing in `finally` is guarded and reported as a warning.
+- `main()` catches `BaseException`, prints a failure report (`status: incomplete`, `completed: false`, `failure_stage`, exception name and message, partial report) and re-raises the original exception unchanged.
+- `emit_failure_report()` contains any error raised while writing the report (one line on standard error if possible), so it can never replace the original exception.
+- Module docstring updated.
+- No file is written for the failure report (standard output only). Persistence, manifest and resume behaviour are unchanged.
+
+**Created**:
+- `tests/literature/test_crossref_failure_report.py` (15 tests): missing pilot file, missing inventory and unreadable manifest; KeyboardInterrupt between papers and during a save (partial results, orphans, released lock, resume); a failure report that never claims completion; failure-report construction errors and broken standard output and error; identity and traceback of the re-raised exception; an orphan-listing failure in `finally`; lock write failure; another run's lock never removed; status of completed, refused and aborted runs; two child-process tests (report on standard output, original traceback on standard error, non-zero exit status).
+- `logs/session_logs/2026-11-01_FAILURE-REPORT-RELIABILITY.md`.
+
+**Validation (2026-11-01, 07:52:16–07:53:34 UTC; `python3 -I -B`; all exit 0)**:
+- `tests/literature`: 212 tests, OK;
+- `DATA_PROTECTION_STRICT=1 … tests/data_protection -v`: 10, OK;
+- `tests/nhanes -v`: 29, OK;
+- `validate_search_queries.py`: PASS, 168 rows;
+- `sh -n scripts/run_checks.sh`: OK;
+- `git diff --check`: OK.
+- **Warnings:** 470 warning lines in the literature run, the same count and sources as before (`make_literature_reports.py` unclosed files and temporary directories in older tests); 0 from the new test file.
+- **Mutation check (scratch copies):** 9 of 9 reintroduced defects caught.
+
+**Remaining limitations**:
+- No report on SIGTERM, SIGKILL or power loss.
+- A second Ctrl-C while the first is being handled can stop the report or the lock release.
+- A KeyboardInterrupt in the instant between the exclusive lock creation and setting `locked` can leave a stale lock (manual removal).
+- An interrupt while the normal report is printing is not handled.
+- The failure report goes to standard output only and is not saved.
+- Crash recovery is tested by injected failures only; atomicity is not guaranteed.
+
+**Not changed**: `DECISION_LOG.md`, `unresolved_questions.md`, protocol and screening drafts, publication metadata or provenance logic, earlier log entries and session logs.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (unchanged); uncommitted and unstaged; not pushed; not fetched. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## READINESS-STABILIZATION — 2026-11-01 — verified state, software review, research-readiness assessment and plan to 2026-11-24 (audit and planning only)
+
+**Context**: researcher prompt titled "BioML-Insight — November 2 Consolidated Research Readiness and Stabilization"; the container clock read 2026-11-01. Audit and planning only; no staging, commit, push, fetch, network, real data, screening, freeze, training or decision change.
+
+**Created**: `logs/session_logs/2026-11-01_READINESS-STABILIZATION.md`, which holds the full assessment and the task plan. **Modified**: this file, `logs/PROMPT_LOG.md` and `research/reviews/daily_review_log.md` (append-only). No source code, test, decision, question status, protocol or screening file was changed.
+
+**Validation (07:58:49–08:00:08 UTC; `python3 -I -B`; all exit 0)**:
+- literature 212 tests, OK; data protection (strict) 10, OK; NHANES 29, OK;
+- query table PASS (168 rows); `sh -n scripts/run_checks.sh` OK; `git diff --check` OK;
+- 470 warning lines from existing code and tests, recorded as technical debt TD-1;
+- the 15 uncommitted changes were unchanged (SHA-256 checked at start and end).
+
+**Key findings**:
+- **Inventory** [EVIDENCE]: 3,386 records (3,348 partially verified, 37 unverified, 1 needs review, 0 verified); all not screened and not extracted.
+- **Gates:** D-035 §6 conditions 5 and 6 unmet; Stage C and Stage D gates not passed; D-013–D-020 pending; AB-2 to AB-13 unmet.
+- **Data:** no NHANES files in the container.
+- **Schedule:** [INFERENCE] real-data training before 2026-11-24 is unlikely. [RECOMMENDATION] use the D-045 fallback deliverable.
+- **Governance:** D-064's status cell does not record the later implementation authorisations (question for the researcher).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (unchanged); uncommitted; not pushed; not fetched. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## DECISION-PREPARATION — 2026-11-01 — change-safety assessment, decision package, screening and Crossref readiness, conditional schedule (planning only)
+
+**Context**: researcher prompt titled "BioML-Insight — November 2 Execution and Decision Preparation"; container clock 2026-11-01. No staging, commit, push, fetch, network, real data, screening, freeze, training or decision change.
+
+**Created**: `logs/session_logs/2026-11-01_DECISION-PREPARATION.md`. **Modified**: this file, `logs/PROMPT_LOG.md` and `research/reviews/daily_review_log.md` (append-only). No code, test, decision, question status, protocol or screening file was changed.
+
+**Findings**:
+- State verified: 7 modified and 9 untracked files; the 12 non-log files unchanged since READINESS-STABILIZATION. No material defect found.
+- The changes must be committed together (test imports; logs refer to the untracked session logs).
+- The six in-scope records without an abstract (P0522, P0559, P0624, P0938, P1154, P3061) all carry PubMed's "[Abstract not available]" placeholder in the local raw metadata; their classification under D-068 (8) is left to the researcher.
+- D-035 §6 conditions 5 and 6 remain unmet.
+
+**Validation**: `git diff --check` exit 0. Test suites not re-run (no code or test changed since 07:58–08:00 UTC: 212/10/29 OK; query table PASS).
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `93dd16d` (unchanged); uncommitted; not pushed; not fetched. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
