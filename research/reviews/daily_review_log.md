@@ -672,3 +672,21 @@ One entry per researcher review session (~1 h/day).
   - content approval and Stage-0 list confirmation.
 - **Status:** both drafts remain DRAFT, not frozen, not in force; no D-035 §6 condition recorded as met.
 - **Recommended next step:** authorise a local commit of the reconciliation and logs; then decide Q-081 and Q-088 and confirm the Stage-0 list, which block the freeze.
+
+## Day 19 (cont.) — 2026-11-01 — PRE-FREEZE-DECISIONS
+- **Work completed:**
+  - recorded the researcher's pre-freeze decisions: D-080 (primary-code rule with the D-074 (d) exception), D-081 (file names), D-082 (Stage-0 list confirmed), D-083 (Q-082 to Q-084 kept open), D-084 (freeze procedure approved in principle);
+  - updated the register;
+  - wrote the decisions into both drafts;
+  - renamed the drafts to `screening_criteria_v1.1.md` and `screening_protocol_v0.2.md` (still DRAFT).
+- **Important findings:**
+  - `[EVIDENCE]` the confirmed Stage-0 list is identical to protocol v0.1 §3 and D-072 (1);
+  - `[EVIDENCE]` the Q-083 restriction in the plan was stronger than the register's "Needed by"; the register wording was kept.
+- **Decisions requiring review:**
+  - your review of the amended §11 procedure;
+  - final status wording and superseded notes (Q-088);
+  - content approval of the final texts;
+  - the effective date;
+  - authorisation of the rename commit and the decision-record commit.
+- **Status:** both texts DRAFT, not frozen, not in force; no D-035 §6 condition recorded as met.
+- **Recommended next step:** review the diff, then authorise the separate rename commit and the documentation commit.

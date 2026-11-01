@@ -2208,3 +2208,48 @@ Not a content approval or a freeze. No D-035 §6 record, pilot draw, implementat
 **Unchanged**: `logs/DECISION_LOG.md`; decision statuses; D-035 §6 conditions (none formally recorded as met; 5 and 6 unmet); both drafts "DRAFT … NOT frozen. Not in force"; code, schemas, tests, inventories, records.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `e70a038` (2 earlier commits not pushed); these changes uncommitted; not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## PRE-FREEZE-DECISIONS — 2026-11-01 — five researcher-approved pre-freeze decisions recorded (D-080 to D-084); drafts renamed; not a freeze
+
+**Context**: the researcher approved five recommendations of the read-only pre-freeze decision sheet (2026-11-01) and four procedural choices (2026-11-01), and authorised their documentation-only implementation. Not a freeze; no content approval; no screening, sampling, extraction, pilot work or training; no commit or push in this task.
+
+**Decision records**:
+- `logs/DECISION_LOG.md`, new section:
+  - D-080: primary exclusion code = first applicable code in numerical order, with the D-074 (d) E7-over-E5 Stage-0 exception; APPROVED — CONDITIONAL, inactive; effective at the freeze;
+  - D-081: final file names; APPROVED;
+  - D-082: Stage-0 list confirmed against protocol v0.1 §3; APPROVED — CONDITIONAL, inactive; to be restated in the freeze entry;
+  - D-083: Q-082 to Q-084 kept open at the freeze, with their "Needed by" restrictions unchanged; APPROVED;
+  - D-084: freeze procedure approved in principle, with the amended text to be reviewed before execution.
+- Status-history rows: D-080 to D-084 new; D-074 (its "not part of an approved decision" note superseded by D-080; row text kept); D-068 ((5) confirmation given).
+- `research/reviews/unresolved_questions.md`: Q-081 answered (D-080); Q-088 partly answered (D-081; status wording and superseded notes still open; step reference updated to §11 step 2); Q-082 to Q-084 annotated "kept open at the v1.1 freeze (D-083)", still Open.
+
+**Drafts**:
+- **Renamed** (plain move; not staged): `research/literature/screening_criteria_v1.1_draft.md` → `screening_criteria_v1.1.md`; `screening_protocol_v0.2_draft.md` → `screening_protocol_v0.2.md`. Both still read "DRAFT … NOT frozen. Not in force".
+- **Criteria v1.1**:
+  - §1 heading and note: D-080;
+  - §4 diagram and Stage-0 bullet: D-080; list status confirmed (D-082);
+  - §7 pilot reference and header Companion: new protocol name;
+  - §10 rows PREC (settled, D-080), Q-074 (D-082), D-076 (8) and AUDIT-T (kept open, D-083);
+  - §11 rewritten as the amended freeze procedure (D-084; not executed);
+  - §9 traceability row; governing decisions list.
+- **Protocol v0.2**:
+  - header Replaces (new criteria name) and governing decisions;
+  - §3 Stage-0 confirmation (D-082);
+  - §6 rule (D-080);
+  - §7 retry and §8 audit kept open (D-083);
+  - §11 traceability row.
+- **Unchanged:** `screening_criteria.md` (v1.0), `screening_protocol.md` (v0.1), historical logs and reviews (old names kept), code, schemas, tests, inventories.
+
+**Deviation from the plan**: the plan's Q-083 restriction ("no second pilot until … recorded as a new criteria/protocol version") would have strengthened the register's "Needed by" ("Before a second pilot, if the first fails"); the register wording was used unchanged, as instructed.
+
+**Validation**: see the session log (`git diff --check`, CRLF-aware check, register column and ID checks, reference checks, v1.0/v0.1 hashes). No tests run (no code change). Not performed: scientific validation.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `c036f47`; uncommitted; not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed. The researcher's choice of a separate rename commit applies when committing.
+
+**Corrections after the read-only review (researcher-approved, 2026-11-01)**:
+- (A) The header of both active documents now describes §11 as approved in principle only under D-084, requiring researcher review and approval before execution.
+- (B) Criteria §9 now distinguishes the statuses of D-080 through D-084 and identifies D-084 as approved in principle.
+- (C) The session log records the validation commands and their observed outcomes.
+- (D) Q-082's full "Needed by" wording is preserved in D-083, criteria §10 row D-076 (8), and the session log.
+
+These are documentation corrections only. No research decision, approval status, restriction, or research-execution authorization has changed. Q-082 remains open.

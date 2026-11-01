@@ -868,3 +868,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Completed: draft reconciliation (I-1 to I-12) and three wording corrections; diff checks pass; Q-081 to Q-089 registered; logs written. Not performed: scientific validation, tests (no code change). Open: your decisions on Q-081 to Q-089, Stage-0 confirmation, content approval. Uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `e70a038`; uncommitted; not pushed (2 earlier local commits also unpushed) |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### PRE-FREEZE-DECISIONS (2026-11-01)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PRE-FREEZE-DECISIONS (researcher prompts 2026-11-01: approval of five pre-freeze recommendations; four procedural choices; documentation-only implementation) |
+| Prompt date | 2026-11-01 (Day 19) |
+| Objective | Record D-080 to D-084; update the register; write the decisions into both drafts; rename the drafts to their final names while still drafts; no freeze, content approval, screening, sampling, extraction, pilot work, training, commit or push |
+| Actual completion status | Completed in the working tree: D-080 to D-084 and status-history rows; register updates (Q-081 answered; Q-088 partly answered; Q-082 to Q-084 kept open); draft edits; renames (unstaged); logs. Open: final status wording and superseded notes (Q-088), your review of the amended procedure, content approval, effective date. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c036f47`; uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
