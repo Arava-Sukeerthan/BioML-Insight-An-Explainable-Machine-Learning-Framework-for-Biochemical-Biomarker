@@ -690,3 +690,18 @@ One entry per researcher review session (~1 h/day).
   - authorisation of the rename commit and the decision-record commit.
 - **Status:** both texts DRAFT, not frozen, not in force; no D-035 §6 condition recorded as met.
 - **Recommended next step:** review the diff, then authorise the separate rename commit and the documentation commit.
+
+## Day 29 — 2026-11-11 — PHASE1-SCREENING-TOOLS
+- **Work completed:**
+  - Phase 1 screening tools (Stage-0 generator, criteria-version check, pilot sampler, blinded pilot sheet), implemented on 2026-11-01 under D-086;
+  - five corrections from the independent review (verified run authorisation; atomic Stage-0 writes; shared Stage-0 guards in the sampler; input-file SHA-256s; input validation);
+  - D-085 to D-087 recorded; Q-090 added.
+- **Important findings:**
+  - `[EVIDENCE]` all suites pass (literature 281, data protection 10, NHANES 29; query table PASS);
+  - `[EVIDENCE]` the real decision log contains no run authorisation (regression test);
+  - `[EVIDENCE]` no tool was run on real data.
+- **Decisions requiring review:**
+  - Q-090 (run-authorisation marker);
+  - commit and push of the Phase 1 work;
+  - then the freeze path (D-084, content approval, Q-088) and the run gates (Q-085 to Q-089, D-074 (f), D-077 (6), the `.gitignore` rule).
+- **Recommended next step:** review the Phase 1 diff and authorise a local commit.

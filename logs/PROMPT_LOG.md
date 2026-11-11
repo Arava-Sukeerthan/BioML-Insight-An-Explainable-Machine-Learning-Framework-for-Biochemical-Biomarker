@@ -878,3 +878,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Completed in the working tree: D-080 to D-084 and status-history rows; register updates (Q-081 answered; Q-088 partly answered; Q-082 to Q-084 kept open); draft edits; renames (unstaged); logs. Open: final status wording and superseded notes (Q-088), your review of the amended procedure, content approval, effective date. Uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c036f47`; uncommitted; not pushed |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### PHASE1-SCREENING-TOOLS (2026-11-01 to 2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PHASE1-SCREENING-TOOLS (researcher prompts: approval of the Phase 1 defaults and Phase 1 authorisation, 2026-11-01; independent read-only review; authorisation of the five corrections, regression tests, logs and decision records, 2026-11-11) |
+| Prompt date | 2026-11-01 (Day 19) and 2026-11-11 (Day 29) |
+| Objective | Implement and test the Stage-0 generator, the frozen criteria-version check, the pilot sampler and the blinded pilot sheet on synthetic fixtures; correct the five reviewed weaknesses; record D-085 to D-087. No real-data run, freeze, `.gitignore` change, commit or push |
+| Actual completion status | Completed in the working tree: four tools, the validator and schema change, 64 tests; five corrections; D-085, D-086, D-087; Q-090. Tests: literature 281 OK, data protection 10 OK, NHANES 29 OK, query table PASS (2026-11-11). Open: Q-090, and everything before a real run (freeze, Q-085 to Q-089, D-074 (f), D-077 (6), `.gitignore` rule). Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `4b56345`; uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |

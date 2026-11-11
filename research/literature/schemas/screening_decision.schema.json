@@ -61,7 +61,8 @@
       "description": "Semicolon-separated controlled tokens, no spaces, each at most once (D-078). Approved vocabulary (D-069 (E)): scope_pending_disorder (D-056, D-069 (A)); scope_pending_proteomics (D-057); non_metabolic_method_exemplar (D-069 (B)); non_metabolic_rq5_candidate (D-061, effective only when screening_criteria v1.1 is frozen; reassessed at full text, D-075); lr_only (D-069 (C)). Any combination is allowed; the two non-metabolic retention tags may co-occur (D-070). All are descriptive and inactive for screening until D-035 record \u00a76 is met. 'prognostic' is deferred and not accepted (D-069 (D), D-071). Other tokens need a separate owner decision; 'retracted' is derived by the build and is never entered here"
     },
     "criteria_version": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^([A-Za-z0-9][A-Za-z0-9._+-]*)?$"
     },
     "tier": {
       "enum": [

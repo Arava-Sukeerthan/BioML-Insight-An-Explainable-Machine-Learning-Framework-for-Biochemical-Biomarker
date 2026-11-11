@@ -2253,3 +2253,51 @@ Not a content approval or a freeze. No D-035 §6 record, pilot draw, implementat
 - (D) Q-082's full "Needed by" wording is preserved in D-083, criteria §10 row D-076 (8), and the session log.
 
 These are documentation corrections only. No research decision, approval status, restriction, or research-execution authorization has changed. Q-082 remains open.
+
+## PHASE1-SCREENING-TOOLS — 2026-11-01 and 2026-11-11 — Phase 1 screening tools, independent review and five corrections (synthetic fixtures only; not a freeze)
+
+**Context**:
+- 2026-11-01: the researcher approved the Phase 1 design defaults (D-085) and authorised Phase 1 implementation and testing with 12 restrictions (D-086);
+- an independent read-only review then found five implementation weaknesses;
+- 2026-11-11: the researcher authorised their correction, regression tests, the logs, and recording D-085 to D-087.
+
+No real-data operation, freeze, commit or push.
+
+**Created**:
+- `scripts/literature/stage0.py`: Stage-0 generator (D-082, D-074, D-080; D-085 A1–A5);
+- `scripts/literature/pilot_sample.py`: pilot sampler (C1 parameters of D-025, D-063 and D-077 unchanged; D-085 C2–C4);
+- `scripts/literature/pilot_sheet.py`: blinded pilot sheet (D-085 D1–D3, D5; D-087);
+- `tests/literature/test_phase1_screening_tools.py`: 64 tests;
+- `logs/session_logs/2026-11-11_PHASE1-SCREENING-TOOLS.md`.
+
+**Modified**:
+- `scripts/literature/pubrecords.py`: frozen criteria-version registry (`load_criteria_registry`, cross-checked against `DECISION_LOG.md`); validator checks for `criteria_version` (format; registered frozen value once a registry exists; fail closed, B2–B4); run-authorisation check (`verify_run_authorisation`); `load_screening_decisions(lit_dir, path=None)` so a candidate file can be validated before it replaces the real one;
+- `research/literature/schemas/screening_decision.schema.json`: `criteria_version` `pattern` only (a format guard; B1, the identifier, stays open).
+
+**Corrections (2026-11-11)**:
+1. Run authorisation verified against `DECISION_LOG.md`: a decision row with status starting "**APPROVED**" and the exact marker "Run authorisation under D-074 (f)" or "Run authorisation under D-077 (6)". Invented, malformed, conditional, in-principle, duplicated or wrong-clause references are refused. No current decision carries either marker, and the marker wording is open (Q-090).
+2. Stage-0 writes are atomic: the original file plus the new rows are written to a temporary file, validated, then moved into place. A validation failure leaves the original unchanged.
+3. The sampler builds its frame through the shared checked guards (`stage0.check_types`: A1 union guard, A2 variant stop).
+4. The Stage-0 run report records the SHA-256 of `publications.jsonl` and `source_records.jsonl`; the sampler sidecar records them too.
+5. Input validation:
+   - `run_date` must be a real calendar date;
+   - the type guards apply to D-044 in-scope records;
+   - the pilot-sheet command line refuses unless the sample, its provenance sidecar, the current inventory and the authorisation agree.
+
+**Decision records**: `logs/DECISION_LOG.md` D-085, D-086, D-087, with status-history rows; `research/reviews/unresolved_questions.md` Q-090 (run-authorisation marker convention).
+
+**Validation (actual runs)**:
+- 2026-11-01 17:48:22 UTC, initial implementation: literature 259 OK (42 new), data protection (strict) 10 OK, NHANES 29 OK, query table PASS (168 rows), whitespace checks OK.
+- 2026-11-11 02:41:02–02:42:38 UTC, after the corrections: Phase 1 module 64 OK; literature 281 OK; data protection (strict) 10 OK; NHANES 29 OK; query table PASS (168 rows).
+- Not performed: any run on the real inventory, including the check that the real frame equals 1,463 and the F1 stratum sizes; scientific validation.
+
+**Unchanged**:
+- approved decisions and statuses;
+- criteria v1.1, protocol v0.2, v1.0 and v0.1;
+- the inventory and records;
+- `.gitignore`;
+- PR #17.
+
+No `screening/decisions.csv`, Stage-0 row, pilot sample, pilot sheet or criteria registry exists.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `4b56345`; uncommitted; not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.

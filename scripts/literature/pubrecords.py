@@ -1720,12 +1720,135 @@ def scope_flag_errors(value):
     return errors
 
 
-def load_screening_decisions(lit_dir):
-    """Read and validate screening/decisions.csv. Any invalid row stops the build (no row is
-    silently dropped). Returns the rows as dicts (all columns as strings)."""
-    path = Path(lit_dir) / "screening" / "decisions.csv"
+# Frozen criteria versions (Phase 1, decisions B2-B4, researcher approval 2026-11-01). The registry
+# is a machine-readable copy of the approved freeze entry (criteria v1.1 §11 step 9); it does not
+# exist until a freeze is recorded, and until then screening rows are validated as before. Once it
+# exists, every screening row must carry a registered frozen criteria_version (criteria v1.1 §6;
+# protocol v0.2 §5 item 2). Any missing, malformed or contradictory freeze information stops
+# validation (fail closed); a value is never filled in or corrected.
+CRITERIA_REGISTRY_FILE = "criteria_registry.json"
+CRITERIA_VERSION_FORMAT = re.compile(r"[A-Za-z0-9][A-Za-z0-9._+-]*")   # format guard only (B1 open)
+_REGISTRY_FIELDS = {
+    "criteria_version": CRITERIA_VERSION_FORMAT,
+    "decision_id": re.compile(r"D-\d{3}"),
+    "criteria_path": re.compile(r"\S+"),
+    "protocol_path": re.compile(r"\S+"),
+    "freeze_commit": re.compile(r"[0-9a-f]{40}"),
+    "criteria_sha256": re.compile(r"[0-9a-f]{64}"),
+    "protocol_sha256": re.compile(r"[0-9a-f]{64}"),
+    "effective_date": re.compile(r"\d{4}-\d{2}-\d{2}"),
+}
+
+
+class CriteriaRegistryError(ValueError):
+    """Freeze information is missing, malformed or contradictory (fail closed)."""
+
+
+def decision_log_path(lit_dir):
+    """`logs/DECISION_LOG.md` of the repository that holds `<repo>/research/literature`."""
+    return Path(lit_dir).resolve().parents[1] / "logs" / "DECISION_LOG.md"
+
+
+# Run authorisations (Phase 1 correction 1). A run of the Stage-0 generator or the pilot sampler and
+# sheet needs a separate, explicit researcher authorisation (D-074 (f); D-077 (6)). A reference is
+# accepted only if it names a decision row of DECISION_LOG.md whose status cell starts with
+# "**APPROVED**" (not conditional, in principle or proposed) and whose decision text contains the
+# exact marker below. The marker is a technical convention proposed in Phase 1 for the researcher to
+# confirm (Q-090); no current decision carries it, so no run is authorised by this code.
+RUN_AUTHORISATION_MARKERS = {
+    "D-074 (f)": "Run authorisation under D-074 (f)",
+    "D-077 (6)": "Run authorisation under D-077 (6)",
+}
+
+
+class RunAuthorisationError(ValueError):
+    """A run-authorisation reference is missing, invented or does not authorise this run."""
+
+
+def verify_run_authorisation(lit_dir, reference, clause, decision_log=None):
+    """Return the reference if DECISION_LOG.md records it as an approved run authorisation for
+    `clause` (a key of RUN_AUTHORISATION_MARKERS); raise RunAuthorisationError otherwise."""
+    marker = RUN_AUTHORISATION_MARKERS.get(clause)
+    if marker is None:
+        raise RunAuthorisationError(f"unknown authorisation clause {clause!r}")
+    ref = (reference or "").strip()
+    if not re.fullmatch(r"D-\d{3}", ref):
+        raise RunAuthorisationError(f"refused: {reference!r} is not a decision ID (D-nnn)")
+    log_path = Path(decision_log) if decision_log else decision_log_path(lit_dir)
+    if not log_path.exists():
+        raise RunAuthorisationError(f"refused: decision log {log_path} not found")
+    rows = [line for line in log_path.read_text(encoding="utf-8").splitlines()
+            if re.match(rf"\| {re.escape(ref)} \| 20\d\d-", line)]
+    if not rows:
+        raise RunAuthorisationError(f"refused: {ref} is not a decision in {log_path.name}")
+    if len(rows) > 1:
+        raise RunAuthorisationError(f"refused: {ref} has more than one decision row in {log_path.name}")
+    cells = rows[0].split("|")
+    if len(cells) < 5:
+        raise RunAuthorisationError(f"refused: {ref} decision row is malformed")
+    decision, status = cells[3], cells[4].strip()
+    if not status.startswith("**APPROVED**"):
+        raise RunAuthorisationError(f"refused: {ref} is not an unconditional approval ({status[:60]!r})")
+    if marker not in decision:
+        raise RunAuthorisationError(f"refused: {ref} does not state {marker!r}")
+    return ref
+
+
+def load_criteria_registry(lit_dir, decision_log=None):
+    """Return the frozenset of registered frozen criteria versions, or None when no registry exists.
+
+    The registry is cross-checked against the decision log: each entry's decision ID must have a
+    row in DECISION_LOG.md that states the identifier, the freeze commit and both SHA-256 values.
+    Raises CriteriaRegistryError on any malformed or contradictory content."""
+    path = Path(lit_dir) / CRITERIA_REGISTRY_FILE
+    if not path.exists():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        raise CriteriaRegistryError(f"{path}: unreadable criteria registry ({e})") from None
+    entries = data.get("frozen_versions") if isinstance(data, dict) else None
+    if not isinstance(entries, list) or not entries:
+        raise CriteriaRegistryError(f"{path}: 'frozen_versions' must be a non-empty list")
+    log_path = Path(decision_log) if decision_log else decision_log_path(lit_dir)
+    if not log_path.exists():
+        raise CriteriaRegistryError(f"{path}: decision log {log_path} not found for the cross-check")
+    log_rows = {}
+    for line in log_path.read_text(encoding="utf-8").splitlines():
+        m = re.match(r"\| (D-\d{3}) \|", line)
+        if m:
+            log_rows.setdefault(m.group(1), line)
+    versions = {}
+    for i, e in enumerate(entries):
+        where = f"{path}: frozen_versions[{i}]"
+        if not isinstance(e, dict):
+            raise CriteriaRegistryError(f"{where}: entry must be an object")
+        for k, pat in _REGISTRY_FIELDS.items():
+            v = e.get(k)
+            if not isinstance(v, str) or not pat.fullmatch(v):
+                raise CriteriaRegistryError(f"{where}: missing or malformed {k!r}")
+        cv = e["criteria_version"]
+        if cv in versions and versions[cv] != e:
+            raise CriteriaRegistryError(f"{where}: contradictory entries for criteria_version {cv!r}")
+        row = log_rows.get(e["decision_id"])
+        if row is None:
+            raise CriteriaRegistryError(f"{where}: {e['decision_id']} not found in {log_path.name}")
+        absent = [k for k in ("criteria_version", "freeze_commit", "criteria_sha256", "protocol_sha256")
+                  if e[k] not in row]
+        if absent:
+            raise CriteriaRegistryError(f"{where}: {e['decision_id']} in {log_path.name} does not state {absent}")
+        versions[cv] = e
+    return frozenset(versions)
+
+
+def load_screening_decisions(lit_dir, path=None):
+    """Read and validate screening/decisions.csv (or `path`, a candidate file validated before it
+    replaces the real one). Any invalid row stops the build (no row is silently dropped). Returns
+    the rows as dicts (all columns as strings)."""
+    path = Path(path) if path else Path(lit_dir) / "screening" / "decisions.csv"
     if not path.exists():
         return []
+    frozen_versions = load_criteria_registry(lit_dir)   # None until a freeze is registered
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         cols = reader.fieldnames or []
@@ -1761,6 +1884,14 @@ def load_screening_decisions(lit_dir):
             errors.append(f"{where}: screener required")
         if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", r["date"]):
             errors.append(f"{where}: date must be YYYY-MM-DD")
+        cv = r["criteria_version"]
+        if cv and not CRITERIA_VERSION_FORMAT.fullmatch(cv):
+            errors.append(f"{where}: malformed criteria_version {cv!r}")
+        if frozen_versions is not None:
+            if not cv:
+                errors.append(f"{where}: criteria_version required once a frozen version is registered")
+            elif cv not in frozen_versions:
+                errors.append(f"{where}: criteria_version {cv!r} is not a registered frozen version")
         if r["rq_tags"] and not RQ_TAGS.fullmatch(r["rq_tags"]):
             errors.append(f"{where}: rq_tags must be like RQ1;RQ3")
         # checked on the value as written (before stripping), so padded tokens are reported, not fixed
