@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Task | SCREENING-PREREQ-DECISIONS-2 (2026-10-30; assistant draft) |
-| Version | **1.1 — FINAL DRAFT for researcher content approval (2026-11-11). NOT frozen. Not in force.** In the freeze commit this row becomes "**FROZEN** — approved <date>; effective <date>; freeze entry D-nnn. Screening also requires the D-035 §6 records and run authorisations." (D-104) |
+| Version | **FROZEN** — approved 2026-11-11; effective 2026-11-11; freeze entry D-110. Screening also requires the D-035 §6 records and run authorisations. |
 | `criteria_version` | `criteria_v1.1+protocol_v0.2` (D-103). It takes effect only through the freeze entry and the criteria registry (§11 steps 9 and 9a); until then it is not an effective version |
 | Replaces | `screening_criteria.md` v1.0 (2026-10-14, draft) **only when** the researcher approves and freezes this text as the pilot's `criteria_version` (D-035 record §6, condition 5). v1.0 is kept unchanged for traceability |
 | Companion | `screening_protocol_v0.2.md` (operational rules, pilot, audit trail) |

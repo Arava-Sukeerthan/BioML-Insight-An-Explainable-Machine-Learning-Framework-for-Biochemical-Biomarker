@@ -1,5 +1,7 @@
 # Screening Criteria
 
+> **SUPERSEDED** by `screening_criteria_v1.1.md` (frozen 2026-11-11, D-110); kept unchanged for traceability.
+
 | Field | Value |
 |---|---|
 | Task | LIT-001 (Stage A) |
