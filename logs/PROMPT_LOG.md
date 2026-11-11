@@ -888,3 +888,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Completed in the working tree: four tools, the validator and schema change, 64 tests; five corrections; D-085, D-086, D-087; Q-090. Tests: literature 281 OK, data protection 10 OK, NHANES 29 OK, query table PASS (2026-11-11). Open: Q-090, and everything before a real run (freeze, Q-085 to Q-089, D-074 (f), D-077 (6), `.gitignore` rule). Uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `4b56345`; uncommitted; not pushed |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### RUN-AUTH-Q090 (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | RUN-AUTH-Q090 (researcher prompt "Fix Run Authorisation Validation and Resolve Q-090") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Require the run-authorisation marker at the start of the Decision cell, add regression tests, and record the approved Q-090 convention. No run authorisation, real-data run, freeze, `.gitignore` change, commit or push |
+| Actual completion status | Completed in the working tree: anchored check; 10 new tests (Phase 1 module 74 OK; literature 291 OK; data protection 10 OK; NHANES 29 OK; query table PASS); D-088; Q-090 answered. Zero Decision cells begin with a marker. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `7f5b608`; uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |

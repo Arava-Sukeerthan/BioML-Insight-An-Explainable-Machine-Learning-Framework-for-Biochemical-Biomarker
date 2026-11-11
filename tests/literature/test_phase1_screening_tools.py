@@ -522,10 +522,10 @@ class RunAuthorisation(unittest.TestCase):
     def test_invented_malformed_or_unauthorising_references(self):
         cases = [("D-999", "D-074 (f)", "not a decision"), ("D-99", "D-074 (f)", "not a decision ID"),
                  ("", "D-074 (f)", "not a decision ID"), ("abc", "D-077 (6)", "not a decision ID"),
-                 ("D-901", "D-077 (6)", "does not state"), ("D-902", "D-074 (f)", "does not state"),
+                 ("D-901", "D-077 (6)", "does not begin with"), ("D-902", "D-074 (f)", "does not begin with"),
                  ("D-903", "D-074 (f)", "not an unconditional approval"),
                  ("D-904", "D-074 (f)", "not an unconditional approval"),
-                 ("D-905", "D-074 (f)", "does not state"), ("D-906", "D-077 (6)", "more than one")]
+                 ("D-905", "D-074 (f)", "does not begin with"), ("D-906", "D-077 (6)", "more than one")]
         for ref, clause, msg in cases:
             with self.assertRaisesRegex(pr.RunAuthorisationError, msg, msg=(ref, clause)):
                 pr.verify_run_authorisation(self.fx.lit, ref, clause)
@@ -752,6 +752,91 @@ class PilotSheetCli(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, "provenance sidecar"):
             self.run_cli()
         self.assertFalse(self.out.exists())
+
+
+
+# ------------------------------------------------------------------ Q-090 / D-088: anchored marker
+class RunAuthorisationMarkerAnchoring(unittest.TestCase):
+    """The Decision cell must BEGIN with the exact bold marker (D-088; answers Q-090)."""
+
+    M74 = "**Run authorisation under D-074 (f).**"
+    M77 = "**Run authorisation under D-077 (6).**"
+    BIND = " criteria_version = cv; inventory_sha256 = " + "a" * 64 + "; freeze entry = D-900; D-035 §6 record = D-899; single use"
+    STATUS = "**APPROVED** — run authorisation (single use)"
+
+    def setUp(self):
+        self.fx = FixtureDir()
+        self.addCleanup(self.fx.cleanup)
+        self.n = 910
+
+    def row(self, decision, status=None, cell_prefix=" ", cell_suffix=" "):
+        ref = f"D-{self.n}"
+        self.n += 1
+        with open(self.fx.log, "a", encoding="utf-8") as f:
+            f.write(f"|{' ' if ref else ''}{ref} | 2099-01-01 (TEST) |{cell_prefix}{decision}{cell_suffix}| "
+                    f"{status or self.STATUS} | r | researcher |\n")
+        return ref
+
+    def ok(self, ref, clause="D-074 (f)"):
+        return pr.verify_run_authorisation(self.fx.lit, ref, clause)
+
+    def refused(self, ref, clause="D-074 (f)", msg="refused"):
+        with self.assertRaisesRegex(pr.RunAuthorisationError, msg, msg=(ref, clause)):
+            pr.verify_run_authorisation(self.fx.lit, ref, clause)
+
+    def test_markers_are_the_approved_bold_sentences(self):
+        self.assertEqual(pr.RUN_AUTHORISATION_MARKERS, {"D-074 (f)": self.M74, "D-077 (6)": self.M77})
+
+    def test_marker_at_beginning_accepted(self):
+        self.assertEqual(self.ok(self.row(self.M74 + self.BIND)), "D-910")
+        self.assertEqual(self.ok(self.row(self.M77 + self.BIND), "D-077 (6)"), "D-911")
+
+    def test_surrounding_whitespace_ignored_explicitly(self):
+        self.assertTrue(self.ok(self.row(self.M74 + self.BIND, cell_prefix="    ", cell_suffix="   ")))
+        self.assertTrue(self.ok(self.row(self.M74 + self.BIND, cell_prefix="\t ")))
+
+    def test_marker_in_middle_or_at_end_rejected(self):
+        self.refused(self.row("Approved design." + " " + self.M74 + self.BIND), msg="does not begin with")
+        self.refused(self.row("Binds the run." + self.BIND + " " + self.M74), msg="does not begin with")
+
+    def test_q090_style_description_rejected(self):
+        text = (f"**Q-090: run-authorisation convention.** A run authorisation is a separate row whose Decision "
+                f"cell begins with {self.M74} or {self.M77}; status {self.STATUS}")
+        for status in ("**APPROVED — implementation decision**", "**APPROVED**", self.STATUS):
+            ref = self.row(text, status=status)
+            for clause in ("D-074 (f)", "D-077 (6)"):
+                self.refused(ref, clause)
+
+    def test_near_miss_markers_rejected(self):
+        for decision in ("Run authorisation under D-074 (f)." + self.BIND,          # not bold
+                         "**run authorisation under D-074 (f).**" + self.BIND,      # case
+                         "**Run authorisation under D-074 (f). **" + self.BIND,     # inner space
+                         "**Run authorisation under D-074 (f)**" + self.BIND,       # no full stop
+                         "> " + self.M74 + self.BIND,                                # leading character
+                         "x" + self.M74 + self.BIND):
+            self.refused(self.row(decision), msg="does not begin with")
+
+    def test_wrong_clause_rejected(self):
+        self.refused(self.row(self.M77 + self.BIND), "D-074 (f)", msg="does not begin with")
+        self.refused(self.row(self.M74 + self.BIND), "D-077 (6)", msg="does not begin with")
+
+    def test_conditional_and_in_principle_rejected(self):
+        for status in ("**APPROVED — CONDITIONAL (inactive)**", "**APPROVED IN PRINCIPLE**",
+                       "**APPROVED — implementation decision**", "PROPOSED", "PENDING"):
+            self.refused(self.row(self.M74 + self.BIND, status=status), msg="not an unconditional approval")
+
+    def test_duplicate_decision_rows_rejected(self):
+        with open(self.fx.log, "a", encoding="utf-8") as f:
+            for _ in range(2):
+                f.write(f"| D-950 | 2099-01-01 (TEST) | {self.M74}{self.BIND} | {self.STATUS} | r | researcher |\n")
+        self.refused("D-950", msg="more than one")
+
+    def test_real_decision_log_has_no_cell_beginning_with_a_marker(self):
+        log = REPO / "logs" / "DECISION_LOG.md"
+        starts = [line[:60] for line in log.read_text(encoding="utf-8").splitlines()
+                  if line.startswith("| D-") and len(line.split("|")) > 4
+                  and line.split("|")[3].strip().startswith(tuple(pr.RUN_AUTHORISATION_MARKERS.values()))]
+        self.assertEqual(starts, [])
 
 
 if __name__ == "__main__":

@@ -2301,3 +2301,37 @@ No real-data operation, freeze, commit or push.
 No `screening/decisions.csv`, Stage-0 row, pilot sample, pilot sheet or criteria registry exists.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `4b56345`; uncommitted; not pushed. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## RUN-AUTH-Q090 — 2026-11-11 — run-authorisation marker anchored to the start of the Decision cell; Q-090 resolved (D-088); no run authorisation created
+
+**Prompt**: researcher prompt "Fix Run Authorisation Validation and Resolve Q-090" (2026-11-11). Starting state verified: branch `claude/eloquent-mccarthy-bqtxr3-part1`, HEAD `7f5b608`, clean working tree.
+
+**Code** (`scripts/literature/pubrecords.py`):
+- `RUN_AUTHORISATION_MARKERS` are now the bold sentences approved in D-088, one per clause (D-074 (f), D-077 (6)).
+- `verify_run_authorisation`: the old check `marker not in decision` (marker anywhere in the cell) is replaced by `decision.strip().startswith(marker)`. Only the cell's surrounding whitespace is ignored; a marker in the middle or at the end of the cell is refused.
+- Unchanged: the D-ID format check, the decision-log existence check, the single-decision-row requirement, and the status-prefix check `**APPROVED**`, which refuses conditional, in-principle, proposed and pending decisions.
+
+**Tests** (`tests/literature/test_phase1_screening_tools.py`):
+- New class `RunAuthorisationMarkerAnchoring` (10 tests): marker at the start accepted; surrounding spaces and tabs ignored; marker in the middle or at the end refused; a Q-090-style description refused under three statuses and both clauses; near-miss markers refused (not bold, lower case, inner space, no full stop, leading `> `, leading character); wrong clause; conditional, in-principle, implementation-decision, proposed and pending statuses; duplicate decision rows; the real `DECISION_LOG.md` has no Decision cell beginning with a marker.
+- Updated: three expected refusal messages ("does not state" → "does not begin with"); the fixture helper and one sheet fixture now put the marker at the start of the cell. No test was removed, skipped or weakened.
+
+**Decision records**:
+- `logs/DECISION_LOG.md`: D-088 (Q-090 convention; **APPROVED — implementation decision**), with a status-history row. D-088 was checked as unused first. Its Decision cell begins with "**Q-090: run-authorisation convention.**", not with a marker. No run-authorisation row was created.
+- `research/reviews/unresolved_questions.md`: Q-090 answered → D-088.
+
+**Validation (actual runs, 2026-11-11 03:21:30–03:23:08 UTC)**:
+- focused run-authorisation tests 14 OK;
+- Phase 1 module 74 OK;
+- literature 291 OK;
+- data protection (strict) 10 OK;
+- NHANES 29 OK;
+- query table PASS (168 rows);
+- SHA-256 of `publications.jsonl`, `source_records.jsonl` and `paper_inventory.json` identical before and after;
+- Decision cells beginning with a marker: 0.
+- The whitespace checks after the log edits are reported in the task report.
+
+**Not machine-checked yet**: the exact status text `**APPROVED** — run authorisation (single use)` (the code checks the `**APPROVED**` prefix), and the D-088 (4) bindings (`criteria_version`, `inventory_sha256`, freeze entry, D-035 §6 entry, single use).
+
+**Unchanged**: data and inventory files; `.gitignore`; approved decisions; the drafts; PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17). No real-data run, screening output, registry, freeze or run authorisation.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `7f5b608`; uncommitted; not pushed.

@@ -705,3 +705,18 @@ One entry per researcher review session (~1 h/day).
   - commit and push of the Phase 1 work;
   - then the freeze path (D-084, content approval, Q-088) and the run gates (Q-085 to Q-089, D-074 (f), D-077 (6), the `.gitignore` rule).
 - **Recommended next step:** review the Phase 1 diff and authorise a local commit.
+
+## Day 29 — 2026-11-11 — RUN-AUTH-Q090
+- **Work completed:**
+  - the run-authorisation marker must now begin the Decision cell (surrounding whitespace ignored);
+  - 10 regression tests added;
+  - Q-090 resolved as D-088 (convention only).
+- **Important findings:**
+  - `[EVIDENCE]` all suites pass (Phase 1 module 74, literature 291, data protection 10, NHANES 29; query table PASS);
+  - `[EVIDENCE]` no Decision cell in `DECISION_LOG.md` begins with a marker, so no run is authorised;
+  - `[EVIDENCE]` the exact single-use status and the D-088 (4) bindings are not yet machine-checked.
+- **Decisions requiring review:**
+  - commit of this change;
+  - whether to enforce the exact status text and the bindings in code;
+  - then the freeze path and the run gates (unchanged).
+- **Recommended next step:** review the diff and authorise a local commit.

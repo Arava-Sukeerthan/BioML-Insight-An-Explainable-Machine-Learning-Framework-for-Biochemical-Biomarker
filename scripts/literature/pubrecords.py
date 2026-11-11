@@ -1749,15 +1749,18 @@ def decision_log_path(lit_dir):
     return Path(lit_dir).resolve().parents[1] / "logs" / "DECISION_LOG.md"
 
 
-# Run authorisations (Phase 1 correction 1). A run of the Stage-0 generator or the pilot sampler and
-# sheet needs a separate, explicit researcher authorisation (D-074 (f); D-077 (6)). A reference is
-# accepted only if it names a decision row of DECISION_LOG.md whose status cell starts with
-# "**APPROVED**" (not conditional, in principle or proposed) and whose decision text contains the
-# exact marker below. The marker is a technical convention proposed in Phase 1 for the researcher to
-# confirm (Q-090); no current decision carries it, so no run is authorised by this code.
+# Run authorisations (Phase 1 correction 1; convention approved as D-088, answering Q-090). A run of
+# the Stage-0 generator or the pilot sampler and sheet needs a separate, explicit researcher
+# authorisation (D-074 (f); D-077 (6)). A reference is accepted only if it names exactly one decision
+# row of DECISION_LOG.md whose status cell starts with "**APPROVED**" (not conditional, in principle
+# or proposed) and whose Decision cell BEGINS with the exact bold marker below. Only the cell's
+# surrounding whitespace is ignored (str.strip); the marker must be the first text of the cell, with
+# no other leading character. A marker anywhere else in the cell, such as in a decision that only
+# describes this convention, is not an authorisation. No current decision begins with a marker, so no
+# run is authorised by this code.
 RUN_AUTHORISATION_MARKERS = {
-    "D-074 (f)": "Run authorisation under D-074 (f)",
-    "D-077 (6)": "Run authorisation under D-077 (6)",
+    "D-074 (f)": "**Run authorisation under D-074 (f).**",
+    "D-077 (6)": "**Run authorisation under D-077 (6).**",
 }
 
 
@@ -1789,8 +1792,8 @@ def verify_run_authorisation(lit_dir, reference, clause, decision_log=None):
     decision, status = cells[3], cells[4].strip()
     if not status.startswith("**APPROVED**"):
         raise RunAuthorisationError(f"refused: {ref} is not an unconditional approval ({status[:60]!r})")
-    if marker not in decision:
-        raise RunAuthorisationError(f"refused: {ref} does not state {marker!r}")
+    if not decision.strip().startswith(marker):
+        raise RunAuthorisationError(f"refused: {ref} decision does not begin with {marker!r}")
     return ref
 
 
