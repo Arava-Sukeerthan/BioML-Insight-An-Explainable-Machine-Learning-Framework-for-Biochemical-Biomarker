@@ -1274,15 +1274,17 @@ class PilotAgreement(unittest.TestCase):
         self.assertTrue(pa.agreement(a, r2)["pass"])                       # 2 per code: still fewer than 3
         conflict = [dict(x, decision="exclude", reason_code="E2") if x["paper_id"] == "P0001" else x for x in r]
         self.assertFalse(pa.agreement(a, conflict)["pass"])
-        adj = [prow("P0001", "exclude", "E2", screener="researcher")]       # agreement on the exclusion (D-025)
+        adj = [prow("P0001", "exclude", "E2", screener=pa.ADJUDICATION_SCREENER)]       # agreement on the exclusion (D-025)
         res = pa.agreement(a, conflict, adjudication_rows=adj)
         self.assertTrue(res["pass"])
         self.assertEqual(res["adjudicated_decisions"], {"P0001": "exclude"})
-        restored = pa.agreement(a, conflict, adjudication_rows=[prow("P0001", "include", screener="researcher")])
+        restored = pa.agreement(a, conflict, adjudication_rows=[prow("P0001", "include", screener=pa.ADJUDICATION_SCREENER)])
         self.assertEqual(restored["unresolved_conflicts"], ["P0001"])        # a wrongful exclusion stays a failure
         self.assertFalse(restored["pass"])
         same = [prow("P0001", "include"), prow("P0002", "include")]
-        self.assertIsNone(pa.agreement(same, [dict(x, screener="researcher") for x in same])["pass"])  # kappa undefined
+        undefined = pa.agreement(same, [dict(x, screener="researcher") for x in same])
+        self.assertEqual((undefined["pass"], undefined["kappa_undefined"]), (False, True))   # D-098 (c): not passed
+        self.assertIn("NOT PASSED (kappa undefined)", pa.report_markdown(undefined))
 
     def test_inconsistent_inputs_rejected(self):
         a, r = self.rows()
@@ -1449,11 +1451,11 @@ class AdjudicationEvidence(unittest.TestCase):
         self.r = [prow("P0001", "exclude", "E2", screener="researcher"), prow("P0002", "exclude", "E2", screener="researcher")]
 
     def test_valid_adjudication_resolves(self):
-        res = pa.agreement(self.a, self.r, adjudication_rows=[prow("P0001", "exclude", "E2", screener="researcher")])
+        res = pa.agreement(self.a, self.r, adjudication_rows=[prow("P0001", "exclude", "E2", screener=pa.ADJUDICATION_SCREENER)])
         self.assertEqual((res["unresolved_conflicts"], res["adjudicated_decisions"]), ([], {"P0001": "exclude"}))
 
     def test_latest_row_is_the_agreed_decision(self):
-        rows = [prow("P0001", "exclude", "E2", screener="researcher"), prow("P0001", "include", screener="researcher")]
+        rows = [prow("P0001", "exclude", "E2", screener=pa.ADJUDICATION_SCREENER), prow("P0001", "include", screener=pa.ADJUDICATION_SCREENER)]
         res = pa.agreement(self.a, self.r, adjudication_rows=rows)
         self.assertEqual(res["adjudicated_decisions"], {"P0001": "include"})
         self.assertEqual(res["unresolved_conflicts"], ["P0001"])
@@ -1461,21 +1463,42 @@ class AdjudicationEvidence(unittest.TestCase):
     def test_only_agreement_on_the_exclusion_resolves(self):
         """D-025 (protocol v0.1 §7): "without adjudicated agreement on the exclusion"."""
         for decision, code, resolved in (("exclude", "E2", True), ("include", "", False), ("uncertain", "", False)):
-            row = prow("P0001", decision, code, screener="researcher")
+            row = prow("P0001", decision, code, screener=pa.ADJUDICATION_SCREENER)
             res = pa.agreement(self.a, self.r, adjudication_rows=[row])
             self.assertEqual(res["unresolved_conflicts"], [] if resolved else ["P0001"], msg=decision)
 
     def test_wrong_paper_stage_screener_or_decision_rejected(self):
-        bad = [(prow("P0009", "include", screener="researcher"), "not a pilot record"),
-               (prow("P0001", "include", screener="researcher", stage="full_text"), "stage"),
+        bad = [(prow("P0009", "include", screener=pa.ADJUDICATION_SCREENER), "not a pilot record"),
+               (prow("P0001", "include", screener=pa.ADJUDICATION_SCREENER, stage="full_text"), "stage"),
                (prow("P0001", "include"), "screener=researcher"),
-               (prow("P0001", "abstract_only", screener="researcher"), "not a pilot decision")]
+               (prow("P0001", "abstract_only", screener=pa.ADJUDICATION_SCREENER), "not a pilot decision"),
+               (prow("P0001", "exclude", "E2", screener="researcher"), "adjudication needs")]   # a researcher pilot row
         for row, msg in bad:
             with self.assertRaisesRegex(pa.PilotAgreementError, msg, msg=msg):
                 pa.agreement(self.a, self.r, adjudication_rows=[row])
 
+    def test_marker_and_pilot_screeners(self):
+        """D-098 (d): adjudication rows carry their own marker; pilot files carry their screener."""
+        self.assertEqual(pa.ADJUDICATION_SCREENER, "researcher:adjudication")
+        with self.assertRaisesRegex(pa.PilotAgreementError, "expected 'researcher'"):
+            pa.agreement(self.a, [dict(x, screener="assistant") for x in self.r])
+        with self.assertRaisesRegex(pa.PilotAgreementError, "expected 'assistant'"):
+            pa.agreement([dict(x, screener="researcher") for x in self.a], self.r)
+        # the researcher's own pilot file passed by mistake as the adjudication file is refused
+        with self.assertRaisesRegex(pa.PilotAgreementError, "adjudication needs"):
+            pa.agreement(self.a, self.r, adjudication_rows=self.r)
+
+    def test_agreed_exclusion_with_another_code_resolves(self):
+        """D-098 (b): agreement on the exclusion, whatever its code."""
+        res = pa.agreement(self.a, self.r, adjudication_rows=[prow("P0001", "exclude", "E3", screener=pa.ADJUDICATION_SCREENER)])
+        self.assertEqual(res["unresolved_conflicts"], [])
+
+    def test_include_exclude_disagreement_counts_toward_the_code(self):
+        """D-098 (a): the excluding screener's code counts as one disagreement."""
+        self.assertEqual(pa.agreement(self.a, self.r)["disagreements_per_code"], {"E2": 1})
+
     def test_adjudication_of_another_record_does_not_resolve(self):
-        res = pa.agreement(self.a, self.r, adjudication_rows=[prow("P0002", "exclude", "E2", screener="researcher")])
+        res = pa.agreement(self.a, self.r, adjudication_rows=[prow("P0002", "exclude", "E2", screener=pa.ADJUDICATION_SCREENER)])
         self.assertEqual(res["unresolved_conflicts"], ["P0001"])
         self.assertFalse(res["pass"])
 

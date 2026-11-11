@@ -928,3 +928,108 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Completed in the working tree: D-090, D-091, D-097 to D-100 updated with 10 status-history rows; D-101 and D-102 added; Q-088 and Q-091 to Q-095 updated; Q-096 added; protocol §7a; D-098 (b) aligned with D-025 in text and code. Tests: Phase 1 module 127 OK; literature 344 OK; data protection 10 OK; NHANES 29 OK; query table PASS. Uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `8d9bd79`; uncommitted; not pushed |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### B1-B6-APPROVALS (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | B1-B6-APPROVALS (researcher prompt "The researcher has approved B1–B6 according to the recommendations in the latest decision report") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Record B1–B6; implement the D-098 marker and undefined-κ rule; finalise D-097 and D-099; update D-102 with custodian appointment pending; finalise the identifier and the Q-088 wording; review the D-084 procedure; produce final drafts. No push, freeze, activation record, run authorisation, Stage 0, sampling, real data, stage or commit; Q-085, Q-096 and Q-092 (c) not resolved |
+| Actual completion status | Completed in the working tree: D-097, D-098, D-099 and D-102 updated; D-103 and D-104 added; register updated; code and 3 new tests; final drafts. Tests: Phase 1 module 130 OK; literature 347 OK; data protection 10 OK; NHANES 29 OK; query table PASS. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c6e1b14` (local; 1 commit ahead of the remote); uncommitted changes; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### AUDIT-DECISIONS (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | AUDIT-DECISIONS (researcher prompts "I have reviewed the final consistency and governance audit dated 2026-11-11" and "Researcher instructions — BioML-Insight governance update (2026-11-11)") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Apply the approved audit decisions (`proposed_changes_v2.py --with-q063`); keep D-108 PROPOSED; record R1 as the selected design (R2 fallback); prepare the D-102 R1 wording for review. No commit, push, merge, freeze, custodian appointment, blinding tools or real data |
+| Actual completion status | Completed in the working tree; tests reported in the task report. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c6e1b14` (local; 1 commit ahead of the remote); uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### GOVERNANCE-REVIEW-FIXES (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | GOVERNANCE-REVIEW-FIXES (researcher prompt "Apply the approved documentation corrections from the 2026-11-11 governance review, using Option Y for C2") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Apply C1, C2 (Option Y), C4, B-m1 to B-m4; documentation only; read-only consistency review |
+| Actual completion status | Completed in the working tree; checks and tests reported in the task report. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c6e1b14` (local; 1 commit ahead of the remote); uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### FINAL-PRE-FREEZE-AUDIT (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | FINAL-PRE-FREEZE-AUDIT (researcher prompt "We are moving BioML-Insight towards its document freeze…") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Consolidated final consistency audit of both drafts; Q-063 formatting fix; safe documentation corrections only; approval package A–H; synthetic-only verification |
+| Actual completion status | Completed in the working tree; checks and tests reported in the task report. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c6e1b14` (local; 1 commit ahead of the remote); uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### D1-D2-APPLIED (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | D1-D2-APPLIED (researcher prompt "We are approaching the document freeze for BioML-Insight") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Apply D1 and D2; leave D3; complete the final audit; prepare the final approval versions; update the approval package; verify |
+| Actual completion status | Completed in the working tree; tests reported in the task report. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c6e1b14` (local; 1 commit ahead of the remote); uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### PRE-FREEZE-GOVERNANCE-REVIEW (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | PRE-FREEZE-GOVERNANCE-REVIEW (researcher prompt "We need to complete a comprehensive pre-freeze governance review of the BioML-Insight research repository") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Resolve the remaining documentation inconsistencies (D-107, D-108, Q-063, Q-097, D-102, open questions, B1–B6 and D-105–D-109); full consistency audit; freeze-procedure review; approval package A–H; integrity checks |
+| Actual completion status | Completed in the working tree; tests reported in the task report. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c6e1b14` (local; 1 commit ahead of the remote); uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### FINAL-PRE-FREEZE-ISSUE-RESOLUTION (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | FINAL-PRE-FREEZE-ISSUE-RESOLUTION ("BIO-ML INSIGHT: FINAL PRE-FREEZE ISSUE RESOLUTION AND GOVERNANCE AUDIT") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Investigate and resolve the addressable documentation, provenance, sequencing and governance issues (A–H); audit report with 12 sections |
+| Actual completion status | Report written; mechanical corrections applied; tests run (report §10). Researcher decisions outstanding (report §11). Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c6e1b14` (1 ahead of the remote); uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed; open, not merged |
+
+### COMPLETION-BATCH-E (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | COMPLETION-BATCH-E ("We are moving to the completion stage. I do not want another audit cycle.") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Apply the six approved mechanical corrections; prepare the optional clarifications for decision; final approval package; one targeted verification |
+| Actual completion status | Completed in the working tree; verification results in the task report; uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c6e1b14` (1 ahead of the remote); not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed |
+
+### R-DECISIONS-APPLIED (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | R-DECISIONS-APPLIED ("We are proceeding toward the documentation freeze.") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Apply R1/R5 as limitations, R2, R7 (a), R8; present final texts, §11 and the F1–F5 sheet; one targeted verification |
+| Actual completion status | Completed in the working tree; uncommitted; awaiting content approval and freeze authorisation |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c6e1b14`; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed |
+
+### F1-F5-APPROVALS (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | F1-F5-APPROVALS (researcher prompt "I confirm the following researcher approvals" (2026-11-11)) |
+| Objective | Record the researcher's F1–F5 approvals; no execution |
+| Actual completion status | Recorded in the working tree; uncommitted; awaiting the approval date, freeze-execution and Git authorisations |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `c6e1b14`; not pushed |
+
+### F1-F5-APPROVAL-DATE (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | F1-F5-APPROVAL-DATE (researcher prompt "I confirm that the F1–F5 approval date is 2026-11-11" (2026-11-11)) |
+| Objective | Record the approval date; describe the freeze execution, the freeze commit, G1–G5 and the checks (no execution) |
+| Actual completion status | Date recorded; plan given in the task report; uncommitted |

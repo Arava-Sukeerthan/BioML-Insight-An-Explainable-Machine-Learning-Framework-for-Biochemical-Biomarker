@@ -13,13 +13,16 @@ Three utilities for the D-025 pilot, tested on synthetic fixtures only:
   disagreements per exclusion code; per-descriptor agreement. The thresholds are those approved in
   D-025 and are not changed here: kappa (3-level) >= 0.60; no record excluded by one screener and
   included by the other without adjudicated agreement; fewer than 3 disagreements on any single code.
-  The operational definitions used to evaluate them (what counts as a disagreement on a code, what
-  counts as adjudicated agreement, an undefined kappa) are D-098, APPROVED — PROVISIONAL (subject to
-  consistency with D-025; not final). Adjudication rows must be for a pilot paper, at
-  `title_abstract`, with `screener=researcher` and a pilot decision (include / exclude / uncertain);
-  the latest such row per paper is the agreed decision. An include/exclude conflict counts as
-  resolved only when the agreed decision is `exclude` ("adjudicated agreement on the exclusion",
-  D-025 as written in protocol v0.1 §7).
+  The operational definitions used to evaluate them are D-098 (approved 2026-11-11; inactive for
+  screening until D-035 record §6 is met): a disagreement on a code is a record for which exactly
+  one screener's primary exclusion code is that code (an include/exclude disagreement counts); an
+  include/exclude conflict counts as resolved only when the agreed adjudicated decision is `exclude`
+  ("adjudicated agreement on the exclusion", D-025 as written in protocol v0.1 §7), whatever its
+  code; an undefined kappa (chance agreement 1) is NOT PASSED. Pilot files are checked for their
+  screener (`assistant`, `researcher`); adjudication rows must carry the distinct marker
+  `screener=researcher:adjudication` (ADJUDICATION_SCREENER), be for a pilot paper at
+  `title_abstract`, and record a pilot decision; the latest such row per paper is the agreed
+  decision. A researcher pilot row can therefore never be read as an adjudication.
 * `queue`: the adjudication queue `screening/adjudication_queue.csv` (protocol v0.2 §5 item 4):
   every `uncertain`, every E12, every `needs_human=yes`, every possible-duplicate pair (all pairs of
   `records/dedup_review.csv`; a member without a decision is listed with an empty `stage`), and, for
@@ -48,6 +51,7 @@ DESCRIPTORS = ("rq_tags", "record_type", "biomarker_class", "dim_explainability"
 SET_VALUED = ("rq_tags", "scope_flags")
 KAPPA_THRESHOLD = 0.60            # D-025 pass criterion (unchanged)
 MAX_CODE_DISAGREEMENTS = 2        # D-025: "fewer than 3 disagreements on any single code" (unchanged)
+ADJUDICATION_SCREENER = "researcher:adjudication"   # D-098 (d): distinct marker for pilot adjudication rows
 TEMPLATE_COLUMNS = pr.SCREENING_REQUIRED + pr.SCREENING_OPTIONAL
 QUEUE_COLUMNS = ["paper_id", "stage", "reasons", "screeners"]
 
@@ -69,10 +73,14 @@ def cohen_kappa(a, b):
     return (po - pe) / (1 - pe)
 
 
-def pilot_rows(rows, label):
-    """{paper_id: row} for one screener's pilot file: title/abstract rows only, one per paper_id."""
+def pilot_rows(rows, label, screener=None):
+    """{paper_id: row} for one screener's pilot file: title/abstract rows only, one per paper_id,
+    each with the expected `screener` value when one is given."""
     out = {}
     for r in rows:
+        if screener is not None and r.get("screener") != screener:
+            raise PilotAgreementError(f"{label}: {r['paper_id']} has screener {r.get('screener')!r} "
+                                      f"(expected {screener!r})")
         if r["stage"] != "title_abstract":
             raise PilotAgreementError(f"{label}: {r['paper_id']} is not a title_abstract row")
         if r["decision"] not in DECISION_LEVELS:
@@ -94,7 +102,7 @@ def _pid_key(p):
 
 def adjudicated_decisions(adjudication_rows, pilot_ids):
     """{paper_id: agreed decision} from adjudication rows (M5). Every row must be a pilot record's
-    `title_abstract` row by `screener=researcher` with a pilot decision; otherwise nothing is
+    `title_abstract` row with `screener=researcher:adjudication` and a pilot decision; otherwise nothing is
     computed. The latest row per paper (append-only order) is the agreed decision."""
     agreed, problems = {}, []
     for r in adjudication_rows:
@@ -103,8 +111,8 @@ def adjudicated_decisions(adjudication_rows, pilot_ids):
             problems.append(f"{pid or '?'}: not a pilot record")
         elif r.get("stage") != "title_abstract":
             problems.append(f"{pid}: stage {r.get('stage')!r} (expected title_abstract)")
-        elif r.get("screener") != "researcher":
-            problems.append(f"{pid}: screener {r.get('screener')!r} (adjudication needs screener=researcher)")
+        elif r.get("screener") != ADJUDICATION_SCREENER:
+            problems.append(f"{pid}: screener {r.get('screener')!r} (adjudication needs screener={ADJUDICATION_SCREENER})")
         elif r.get("decision") not in DECISION_LEVELS:
             problems.append(f"{pid}: decision {r.get('decision')!r} is not a pilot decision")
         else:
@@ -116,7 +124,8 @@ def adjudicated_decisions(adjudication_rows, pilot_ids):
 
 def agreement(assistant_rows, researcher_rows, sample_ids=None, adjudication_rows=()):
     """Agreement metrics and the D-025 pass evaluation for the two pilot files."""
-    a, r = pilot_rows(assistant_rows, "assistant"), pilot_rows(researcher_rows, "researcher")
+    a = pilot_rows(assistant_rows, "assistant", screener="assistant")
+    r = pilot_rows(researcher_rows, "researcher", screener="researcher")
     if set(a) != set(r):
         raise PilotAgreementError(f"the two files cover different records: only assistant "
                                   f"{sorted(set(a) - set(r))}, only researcher {sorted(set(r) - set(a))}")
@@ -146,10 +155,8 @@ def agreement(assistant_rows, researcher_rows, sample_ids=None, adjudication_row
         descriptors[d] = {"n": len(both_desc), "agree": same,
                           "percent": None if not both_desc else round(100 * same / len(both_desc), 1)}
     max_code = max(per_code.values(), default=0)
-    if kappa3 is None:
-        passed = None      # kappa undefined: reported, not decided (Q-091)
-    else:
-        passed = kappa3 >= KAPPA_THRESHOLD and not unresolved and max_code <= MAX_CODE_DISAGREEMENTS
+    # D-098 (c): an undefined kappa cannot show kappa >= 0.60, so the pilot is NOT PASSED
+    passed = kappa3 is not None and kappa3 >= KAPPA_THRESHOLD and not unresolved and max_code <= MAX_CODE_DISAGREEMENTS
     return {
         "n": n,
         "three_level": {"percent_agreement": round(100 * sum(x == y for x, y in zip(da, dr)) / n, 1),
@@ -167,11 +174,13 @@ def agreement(assistant_rows, researcher_rows, sample_ids=None, adjudication_row
         "disagreement_ids": [p for p in ids if a[p]["decision"] != r[p]["decision"]
                              or code(a[p]) != code(r[p])],
         "pass": passed,
+        "kappa_undefined": kappa3 is None,
         "pass_rule": {"kappa_threshold": KAPPA_THRESHOLD, "max_disagreements_per_code": MAX_CODE_DISAGREEMENTS,
                       "per_code_definition": "records where exactly one screener's primary exclusion code is the "
-                                             "code (D-098, provisional)",
-                      "conflict_resolution": "an adjudication row by the researcher agreeing on the exclusion "
-                                             "(D-025; D-098 (b), provisional)"},
+                                             "code (D-098 (a))",
+                      "conflict_resolution": f"an adjudication row ({ADJUDICATION_SCREENER}) agreeing on the "
+                                             "exclusion, any code (D-025; D-098 (b))",
+                      "undefined_kappa": "not passed (D-098 (c))"},
     }
 
 
@@ -192,10 +201,10 @@ def report_markdown(result):
              "| Descriptor | Records (both include/uncertain) | Agree | % |", "|---|---|---|---|"]
     for d, v in result["descriptor_agreement"].items():
         lines.append(f"| `{d}` | {v['n']} | {v['agree']} | {'—' if v['percent'] is None else v['percent']} |")
-    verdict = {True: "PASSED", False: "NOT PASSED", None: "UNDETERMINED (kappa undefined; researcher decision)"}
-    lines += ["", f"**D-025 pass evaluation: {verdict[result['pass']]}** (kappa >= {KAPPA_THRESHOLD}; no unresolved "
+    verdict = "PASSED" if result["pass"] else ("NOT PASSED (kappa undefined)" if result["kappa_undefined"] else "NOT PASSED")
+    lines += ["", f"**D-025 pass evaluation: {verdict}** (kappa >= {KAPPA_THRESHOLD}; no unresolved "
               f"include/exclude conflict; at most {MAX_CODE_DISAGREEMENTS} disagreements on any single code), evaluated "
-              "with the operational definitions of D-098 (provisional; not final). The pilot result is decided "
+              "with the operational definitions of D-098. The pilot result is decided "
               "by the researcher; this computation does not approve it.", ""]
     return "\n".join(lines)
 

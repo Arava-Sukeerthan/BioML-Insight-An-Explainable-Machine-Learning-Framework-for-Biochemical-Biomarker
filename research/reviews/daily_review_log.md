@@ -787,3 +787,135 @@ One entry per researcher review session (~1 h/day).
   - D-099 steps (1)–(5) implementation;
   - commit of the package.
 - **Recommended next step:** review §7a, D-098 (b) and D-102; authorise a local commit.
+
+## Day 29 — 2026-11-11 — B1-B6-APPROVALS
+- **Work completed:**
+  - B1–B6 recorded (D-097, D-098, D-099, D-102 final; D-103, D-104 new);
+  - the D-098 marker and the undefined-κ rule implemented;
+  - final drafts of criteria v1.1 and protocol v0.2;
+  - §11 reviewed (registry step 9a added).
+- **Important findings:**
+  - `[EVIDENCE]` all suites pass (Phase 1 module 130, literature 347, data protection 10, NHANES 29; query table PASS);
+  - `[EVIDENCE]` no real data processed;
+  - `[EVIDENCE]` the §11 procedure did not mention the criteria registry; now step 9a.
+- **Decisions requiring review:**
+  - content approval of both texts;
+  - approval of the amended §11 procedure (D-084);
+  - commit of this change;
+  - after the freeze: Q-085, Q-096, Q-092 (c), custodian appointment.
+- **Recommended next step:** review both final drafts and approve the §11 procedure.
+
+## Day 29 — 2026-11-11 — AUDIT-DECISIONS
+- **Work completed:**
+  - A1 (when-in-doubt) and B1 (open-question list, Q-063 wording) applied;
+  - D-105 to D-109 recorded;
+  - D-108 kept PROPOSED;
+  - R1 recorded as the selected design;
+  - the D-102 (R1) wording prepared for review.
+- **Important findings:**
+  - `[EVIDENCE]` the inventory hash `b668dbde…d054` is verified by five methods;
+  - `[EVIDENCE]` the ignored record files' hashes are observed only (incomplete provenance);
+  - `[EVIDENCE]` no real data processed.
+- **Decisions requiring review:**
+  - the D-102 (R1) wording;
+  - D-108;
+  - Q-085, Q-096, Q-092 (c);
+  - content approval;
+  - the §11 procedure;
+  - the freeze-entry ID and dates;
+  - commit.
+- **Recommended next step:** review the D-102 (R1) wording and the freeze-readiness checklist.
+
+## Day 29 — 2026-11-11 — GOVERNANCE-REVIEW-FIXES
+- **Work completed:**
+  - inventory-before-condition-6 wording (C1);
+  - §7a step 5 marked [OPEN] pending the D-102 revision (Option Y);
+  - Q-097 added;
+  - Q-063 note aligned;
+  - D-107, D-106 and D-102 history rows;
+  - freeze list extended (D-108; D-102 revision).
+- **Important findings:** `[EVIDENCE]` documentation only; no data touched.
+- **Decisions requiring review:**
+  - content approval of both drafts;
+  - the §11 procedure;
+  - the freeze-entry ID and dates;
+  - commit;
+  - later: the D-102 revision with the C3 additions and the D-096 extension; Q-085, Q-096, Q-097, D-108.
+- **Recommended next step:** content approval and the §11 procedure.
+
+## Day 29 — 2026-11-11 — FINAL-PRE-FREEZE-AUDIT
+- **Work completed:**
+  - full consistency audit of criteria v1.1 and protocol v0.2;
+  - safe documentation corrections;
+  - Q-063 formatting fixed;
+  - approval package written.
+- **Important findings:**
+  - `[EVIDENCE]` no scientific contradiction;
+  - `[EVIDENCE]` outdated references corrected (Q-068 → D-064; Q-022 → D-065; decision ranges);
+  - `[EVIDENCE]` freeze readiness 9/14 (64 %); the remaining items are researcher approvals and execution steps.
+- **Decisions requiring review:**
+  - D1–D3 (optional wording);
+  - content approval (D4);
+  - the §11 procedure (D5);
+  - the freeze-entry ID and dates (D6);
+  - commits (D7).
+- **Recommended next step:** review the approval package; give D4–D7.
+
+## Day 29 — 2026-11-11 — D1-D2-APPLIED
+- **Work completed:** D1 and D2 applied; D3 left unchanged; final audit after the changes; approval package updated.
+- **Important findings:**
+  - `[EVIDENCE]` every D-ID and Q-ID in both texts resolves;
+  - `[EVIDENCE]` §7 and §7a no longer conflict;
+  - `[EVIDENCE]` §11 is internally consistent;
+  - `[EVIDENCE]` freeze readiness 9/14.
+- **Decisions requiring review:** D4 (content approval); D5 (§11); D6 (ID and dates); D7 (commits).
+- **Recommended next step:** content approval of the two final texts.
+
+## Day 29 — 2026-11-11 — PRE-FREEZE-GOVERNANCE-REVIEW
+- **Work completed:**
+  - Q-063 text corrected to D-010;
+  - D-107 described as approved in principle throughout;
+  - R2 named as the fallback;
+  - approval package rewritten.
+- **Important findings:**
+  - `[EVIDENCE]` the earlier Q-063 wording ("off-device backup outstanding") contradicted D-010; corrected, Q-063 still Open;
+  - `[EVIDENCE]` no scientific change;
+  - `[EVIDENCE]` no data touched.
+- **Decisions requiring review:**
+  - content approval of both texts;
+  - the §11 procedure;
+  - the D-107 position at the freeze;
+  - D-108;
+  - the freeze-entry ID and dates;
+  - Git authorisation.
+- **Recommended next step:** review the package (section H).
+
+## Day 29 — 2026-11-11 — FINAL-PRE-FREEZE-ISSUE-RESOLUTION
+- **Work completed:** the issue-resolution audit (`research/reviews/2026-11-11_FINAL-PRE-FREEZE-ISSUE-RESOLUTION.md`); three mechanical corrections.
+- **Important findings:**
+  - `[EVIDENCE]` The ignored-file provenance is strongly supported by uncommitted T2 scratch evidence but not verified (Q-097 open; D-107 partially verified).
+  - `[EVIDENCE]` The approval package gave the wrong D-099 (3)/(4) timing; corrected.
+  - `[RECOMMENDATION]` Approve D-108 with three additions.
+- **Decisions requiring review:** report §11.
+- **Recommended next step:** your review of report §11, then the freeze decisions.
+
+## Day 29 — 2026-11-11 — COMPLETION-BATCH-E
+- **Work completed:** Batch E (six mechanical corrections); the final approval package (sections H and I).
+- **Important findings:** none new; no audit performed.
+- **Decisions requiring review:**
+  - F1–F6 (freeze);
+  - R1, R2, R5, R7, R8 (apply, limitation only, or leave).
+- **Recommended next step:** your freeze and Git authorisation.
+
+## Day 29 — 2026-11-11 — R-DECISIONS-APPLIED
+- **Work completed:** R2, R7 (a) and R8 applied; R1 and R5 recorded as limitations; F5 proposed ID `D-110`.
+- **Decisions requiring review:** F1–F6.
+- **Recommended next step:** your content approval and freeze authorisation.
+
+## Day 29 — 2026-11-11 — F1-F5-APPROVALS
+- **Work completed:** researcher approvals F1–F5 recorded (documentation approval only).
+- **Outstanding:** the approval date; the freeze-execution authorisation; the Git authorisation (G1–G5).
+
+## Day 29 — 2026-11-11 — F1-F5-APPROVAL-DATE
+- **Work completed:** F1–F5 approval date 2026-11-11 recorded.
+- **Outstanding:** the freeze-execution authorisation; the Git authorisation (G1–G5).

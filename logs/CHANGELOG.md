@@ -2503,3 +2503,263 @@ No `screening/decisions.csv`, Stage-0 row, pilot sample, pilot sheet or criteria
 - The whitespace checks are reported in the task report.
 
 **Not done**: Q-085 not decided; no freeze, activation-condition record, run authorisation, real-data processing, stage, commit or push. The D-102 ignore rule and tool support were not implemented. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## B1-B6-APPROVALS — 2026-11-11 — researcher approvals B1–B6 recorded; D-098 marker and undefined-κ rule implemented; final drafts of criteria v1.1 and protocol v0.2 prepared for content approval (not a freeze)
+
+**Prompt**: researcher prompt "The researcher has approved B1–B6 according to the recommendations in the latest decision report" (2026-11-11). Baseline: commit `c6e1b14` (preparation package), clean working tree.
+
+**Decision records** (`logs/DECISION_LOG.md`; 6 status-history rows; replaced text preserved in the session log):
+- **D-097:** final (**APPROVED — implementation decision**).
+- **D-098:** final (**APPROVED — CONDITIONAL**, inactive; effective at the freeze):
+  - (a) exactly-one-screener code counting, include/exclude disagreements included;
+  - (b) only an adjudicated `exclude` resolves a conflict, whatever its code;
+  - (c) an undefined κ is not passed;
+  - (d) pilot adjudication marker `screener=researcher:adjudication`.
+- **D-099:** final (**APPROVED**). Steps (3) and (4) are authorised for implementation after the freeze and are required before the first authorised run.
+- **D-102:** approved (**APPROVED — CONDITIONAL**, inactive): salt line, independent custodian (encrypted copy or custodian-held file). Custodian appointment is pending.
+- **New D-103:** the identifier `criteria_v1.1+protocol_v0.2` (B1).
+- **New D-104:** the freeze-commit status wording and superseded note (B2; answers Q-088).
+
+**Register**:
+- Q-088, Q-091, Q-093 and Q-095 answered.
+- Q-092 partly answered; (c) open.
+- Q-085 and Q-096 unchanged (open).
+
+**Code**:
+- `pilot_agreement.py`:
+  - `ADJUDICATION_SCREENER = "researcher:adjudication"`; adjudication rows need it;
+  - pilot files are checked for `screener=assistant` and `screener=researcher`;
+  - an undefined κ gives `pass=False` and `kappa_undefined=True`, and the report reads "NOT PASSED (kappa undefined)".
+
+**Tests**:
+- 3 new: marker and pilot screeners; agreed exclusion with another code; include/exclude counting.
+- Adjudication fixtures now use the marker; the undefined-κ expectation changed to "not passed".
+
+**Documents** (final drafts for content approval; not frozen):
+- Protocol v0.2:
+  - `criteria_version` header row (D-103);
+  - Version row stating the D-104 freeze wording;
+  - §5 item 3 (the marker);
+  - §7 rows with the final D-097, D-098, D-099 and D-102 text, Q-092 (c) marked open;
+  - §7a final (salt, custodian, preconditions);
+  - §10 row 6 (Q-096 open);
+  - §11.
+- Criteria v1.1:
+  - header rows;
+  - §9;
+  - §11 reviewed under D-084: step 1 (decisions D-080 to D-104), step 2 (D-104 wording), step 5 (open questions at the freeze), step 6 (freeze-commit contents), step 8 (reserved ID), new step 9a (registry), step 10.
+- No exclusion rule, threshold, sample parameter or RQ changed.
+
+**Validation (actual runs, 2026-11-11 09:34:32–09:36:02 UTC)**:
+- Phase 1 module 130 OK;
+- literature 347 OK;
+- data protection (strict) 10 OK;
+- NHANES 29 OK;
+- query table PASS (168 rows);
+- ignored data-file hashes unchanged; data, scope, v1.0, v0.1 and `.gitignore` equal `c6e1b14`;
+- 87 decision IDs, none accepted as a run authorisation, no condition row.
+
+**Not done**: no freeze, activation record, run authorisation, Stage 0, sampling or real-data processing. Q-085, Q-092 (c) and Q-096 not decided. No stage, commit or push. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## AUDIT-DECISIONS — 2026-11-11 — researcher decisions on the final consistency audit applied (A1, B1 with Q-063, D-105 to D-109; D-108 kept PROPOSED; R1 selected for design)
+
+**Prompts**:
+- researcher prompt "I have reviewed the final consistency and governance audit dated 2026-11-11" (decisions);
+- researcher prompt "Researcher instructions — BioML-Insight governance update (2026-11-11)" (application of `proposed_changes_v2.py` with `--with-q063`).
+
+**Pre-checks**:
+- every replacement target was found exactly once in the working tree;
+- D-105 to D-109 were unused;
+- the three target files were backed up outside the repository (SHA-256 recorded), with automatic restore on failure.
+
+The script applied cleanly; no restore was needed. The uncommitted B1–B6 work was preserved.
+
+**Changes**:
+- `research/literature/screening_criteria_v1.1.md`:
+  - §4 when-in-doubt rule restored (D-105);
+  - §11 step 5 open-question list (D-106);
+  - two §9 rows.
+- `research/reviews/unresolved_questions.md`: Q-063 "Needed by" revised. It does not block the document freeze; the off-device backup comes before the fixed-inventory entry and the next rebuild; a verified restore comes first in any rebuild or provenance-check workspace. Q-063 stays **Open**.
+- `logs/DECISION_LOG.md`:
+  - D-105 (APPROVED); D-106 (APPROVED); D-107 (APPROVED IN PRINCIPLE, subject to verification; verified inventory hash vs observed ignored-file hashes with incomplete provenance); D-108 (**PROPOSED**); D-109 (APPROVED — design work only);
+  - status-history rows: D-025, D-093, D-097 (B2 deferred), D-102, D-105 to D-109, D-106 (Q-063 wording applied), D-109 (R1 selected, R2 fallback), D-108 (kept PROPOSED).
+
+**Not done**:
+- no fixed-inventory entry, activation-condition row, registry, run authorisation, Stage 0, draw, sheet, real screening or freeze;
+- no custodian appointed, no keys, no encryption, no blinding tools;
+- the D-102 (R1) revision is prepared for review only (not in the repository);
+- no stage, commit or push. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## GOVERNANCE-REVIEW-FIXES — 2026-11-11 — approved documentation corrections from the governance review (C1, C2 Option Y, C4, B-m1 to B-m4); documentation only
+
+**Prompt**: researcher prompt "Apply the approved documentation corrections from the 2026-11-11 governance review, using Option Y for C2" (2026-11-11).
+
+**Pre-checks**: every target matched exactly once; Q-097 unused; seven files backed up outside the repository, with automatic restore on failure. Applied cleanly; no restore was needed.
+
+**Changes**:
+- **Protocol v0.2:**
+  - §10 row 6 (d): the fixed-inventory entry comes before condition 6. It records the verified inventory hash and the observed hashes and provenance status of the ignored files. The condition-6 row refers to it by ID; the authorisations bind the same hash. D-108 is named as proposed, not approved.
+  - §1: the inventory is fixed before condition 6 (D-107) and recorded again at the draw (D-077 (5)).
+  - §7a: governing note (D-102 revision pending); precondition reworded (obsolete custody form removed); step 5 replaced by "[OPEN: revision of D-102 pending …]. The pilot cannot start until the revision is approved."
+  - §11: traceability row.
+- **Criteria v1.1:**
+  - §0: the inventory is fixed before condition 6 (D-107) and recorded again at the draw.
+  - §11 step 5: adds the proposal D-108 and the pending D-102 revision.
+  - §9: traceability row.
+- **Register:**
+  - Q-063 status note now covers rebuilds and provenance checks (still Open);
+  - new Q-097 (provenance method for the ignored record files; needed before the fixed-inventory entry; Open).
+- **Decision log:** status-history rows for D-107 (verification of `paper_inventory.json` completed; ignored-file provenance outstanding, Q-097), D-106 (list extended) and D-102 (revision pending in §7a; not revised). No status changed. D-108 remains PROPOSED.
+- The freeze-readiness checklist (outside the repository) was updated.
+
+**Not done**: no D-102 revision approved or implemented; no R1 or R2, custodian, keys, commitments or tools; no fixed-inventory entry, condition rows, registry, authorisations, Stage 0, draw or real-data screening; no data, raw-export, inventory or ignored-record change; no freeze, stage, commit or push. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## FINAL-PRE-FREEZE-AUDIT — 2026-11-11 — consolidated final consistency audit of criteria v1.1 and protocol v0.2; safe documentation corrections; approval package (documentation only; not a freeze)
+
+**Prompt**: researcher prompt "We are moving BioML-Insight towards its document freeze…" (2026-11-11).
+
+**Safe corrections** (wording fixed by approved decisions; target strings pre-checked; backups and automatic rollback):
+- **Register:** Q-063 punctuation ("…decision. Update 2026-11-11 (D-106): …"); status, restrictions and meaning unchanged; still Open.
+- **Criteria v1.1:**
+  - header decision range (to D-107 and D-109; D-108 a proposal);
+  - wording rule (where open items are listed);
+  - §11 steps 1, 5 and 10 (approved decision range; open proposals and pending items; the D-107 condition-6 (d) requirement);
+  - §9 row.
+- **Protocol v0.2:**
+  - header range;
+  - §2 paraphrased justification (D-089);
+  - §9 (Q-068 answered by D-064; no record verified after the authorised builds);
+  - §10 rows 5 and 6 (a) brought up to date;
+  - §11 (Q-022 answered by D-065; traceability row).
+
+**New**: `research/reviews/final_pre_freeze_approval_package_2026-11-11.md` (reviews, cross-document results, decisions D1–D10, freeze readiness 9/14, freeze-entry structure, commit sequence, approval checklist).
+
+**Not done**: no decision approved; no status cell changed; no freeze; no FROZEN status; no registry, fixed-inventory entry, condition rows or authorisations; no custodian, D-102, R1 or R2 implementation; no Stage 0, sampling or screening; no data change; no stage, commit or push. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## D1-D2-APPLIED — 2026-11-11 — D1 (Q-097 in protocol §10 and criteria §11 step 5) and D2 (protocol §7 D-102 details neutralised) applied; D3 left unchanged; approval package updated (documentation only; not a freeze)
+
+**Prompt**: researcher prompt "We are approaching the document freeze for BioML-Insight" (2026-11-11). D1 YES, D2 YES, D3 LEAVE. This is not content approval, freeze approval or Git authorisation.
+
+**Changes** (targets pre-checked; backups with automatic rollback):
+- **Protocol v0.2:**
+  - §10 row 6 (d) names Q-097;
+  - §7 Screeners and Outputs rows say "form and timing set by the revision of D-102 pending in §7a step 5" instead of the D-102 workflow details; D-101 kept;
+  - §11 row.
+- **Criteria v1.1:** §11 step 5 adds Q-097; §9 row.
+- **Decision log:** history rows on D-106 (Q-097 added to the list) and D-102 (§7 neutralised; revision pending). No status cell changed (D3).
+- **Package:** `final_pre_freeze_approval_package_2026-11-11.md` rewritten with the D1/D2 evidence, freeze readiness 9/14, exact freeze-entry fields, exact commit sequence and the approval checklist.
+
+**Not done**: no freeze, FROZEN status, freeze entry, registry, condition rows, authorisations or D-102 implementation; no data change; no stage, commit or push. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## PRE-FREEZE-GOVERNANCE-REVIEW — 2026-11-11 — comprehensive pre-freeze governance review; Q-063 wording corrected to D-010; D-107 described as approved in principle; approval package rewritten (documentation only; not a freeze)
+
+**Prompt**: researcher prompt "We need to complete a comprehensive pre-freeze governance review of the BioML-Insight research repository" (2026-11-11).
+
+**Baseline**: HEAD `c6e1b14`, 1 ahead of the remote, nothing staged; working-tree diff and file hashes captured before editing.
+
+**Corrections** (targets pre-checked; backups with automatic rollback):
+- **Q-063 register text:**
+  - What was wrong: the D-106 wording said the off-device backup was "outstanding" and had to be "established". This contradicted D-010 and the Q-011-OPTION-B record (a private Google Drive folder designated; Drive-copy hashes reported by the researcher as matching).
+  - Corrected to: the backup is designated, and its provenance (approval details; PRESERVED status; researcher-reported hashes) is what remains open, before the fixed-inventory entry and the next rebuild; a verified restore comes first in each new workspace.
+  - Q-063 stays **Open — partly addressed**.
+- **D-107:** described as "approved in principle, subject to verification" in criteria §0 and §11 steps 1 and 10, and in protocol §1 and §10 row 6; D-108 named as the proposed order.
+- **Protocol §7a step 5:** R2 named as the fallback (D-109, design only).
+- **Traceability:** criteria §9 and protocol §11 rows.
+- **Decision log:** a D-106 history row recording the Q-063 correction. No status cell changed.
+- **Package:** `final_pre_freeze_approval_package_2026-11-11.md` rewritten (sections A–H).
+
+**Not done**: no freeze, freeze entry, registry, activation rows, fixed-inventory entry or run authorisations; no Stage 0, sampling or screening; no custodian or D-102 implementation; no raw-export, inventory or records change; no stage, commit, push or merge. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## FINAL-PRE-FREEZE-ISSUE-RESOLUTION — 2026-11-11 — issue-resolution audit (D-107 provenance, D-108 sequence, D-102, open questions, custodian readiness, cross-document consistency, §11 audit); mechanical corrections only (not a freeze)
+
+**Prompt**: researcher prompt "BIO-ML INSIGHT: FINAL PRE-FREEZE ISSUE RESOLUTION AND GOVERNANCE AUDIT" (2026-11-11).
+
+**Added**: `research/reviews/2026-11-11_FINAL-PRE-FREEZE-ISSUE-RESOLUTION.md` (Sections 1–12).
+
+**Corrections** (each target matched exactly once):
+- criteria v1.1 §9: two status cells marked as the statuses at the time the row was written, with a pointer to the later statuses; original text kept; new traceability row.
+- Approval package §E: D-099 steps (3), (4) moved to "before step 4" (D-099: "required before the first authorised run"); follow-up note added at the top.
+- Register Q-097: evidence pointer added; still **Open**.
+
+**Findings**:
+- `[EVIDENCE]` The current `source_records.jsonl` equals the T2 pre-build hash (scratch, uncommitted).
+- `[EVIDENCE]` The current `publications.jsonl` equals the outputs of four earlier offline builds; no hash was recorded at T2.
+- D-107 is assessed as partially verified.
+- The Drive backup holds raw-export archives only.
+
+**Proposed, not applied** (P1–P5):
+- P1: a D-102 status-cell clarification;
+- P2: D-108 additions;
+- P3: protocol §10 row 6 (d), which depends on D-108;
+- P4: the revised D-102 (R1) text;
+- P5: a Q-097 answer.
+
+**Validation**: actual results are in the report §10 (130, 347, 10 and 29 tests OK; query check PASS; raw-export verify OK; whitespace checks exit 0; data hashes unchanged).
+
+**Not done**:
+- no freeze, freeze entry, registry, fixed-inventory entry, condition rows or authorisations;
+- no Stage 0, sample, sheet or screening;
+- no custodian, keys or D-102 implementation;
+- no rebuild; no record content read;
+- no decision-status change; protocol v0.2 and the decision log not changed;
+- no stage, commit, push or merge. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## COMPLETION-BATCH-E — 2026-11-11 — six researcher-approved mechanical corrections; final approval package prepared (not a freeze)
+
+**Prompt**: researcher prompt "We are moving to the completion stage. I do not want another audit cycle." (2026-11-11).
+
+**Applied** (one batch; each target matched exactly once; rollback copies kept outside the repository):
+1. Protocol §1: abstracts recoverable by an authorised rebuild from the raw exports.
+2. Criteria §4: a full-text `uncertain` is resolved through adjudication (protocol §5 items 3 and 4).
+3. Criteria §11: execution-order paragraph.
+4. Protocol §7a step 5: the independent-custodian requirement of D-102 (3); a D-096 extension needed under R1 (not decided); nothing implemented.
+5. Package §E: D-099 (3)/(4) before step 5 at the latest.
+6. Decision log: a D-102 history row; "(2026-11-11)" is the recorded approval date, not a freeze date.
+
+Traceability rows were added to criteria §9 and protocol §11. Package sections H (confirmation sheet) and I (R1, R2, R5, R7, R8 prepared, not applied) were rewritten.
+
+**Unchanged**:
+- statuses: D-107 in principle; Q-097 Open; D-108 PROPOSED; D-102 pending; D-084 in principle;
+- no rule, code, threshold or RQ changed.
+
+**Not done**: no freeze, entry, registry, condition rows, authorisations, screening, sampling, rebuild or Git operation. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## R-DECISIONS-APPLIED — 2026-11-11 — researcher decisions R1, R2, R5, R7 (a), R8 applied in one batch (not a freeze)
+
+**Prompt**: researcher prompt "We are proceeding toward the documentation freeze." (2026-11-11).
+
+**Applied**:
+- **R7 (a):** criteria I-C4 and §3 RQ6, and protocol §3: systematic and scoping reviews informing RQ6 are `review_lead` and may be tagged RQ6.
+- **R8:** criteria E2 and E3 carry the E1-style note (excluded only if every other RQ also fails, §4).
+- **R2:** `search_strategy.md` §1.2 RQ5 names probability calibration; the earlier wording is kept in the note; a change-history row added.
+- **R1 and R5:** recorded as limitations only, in the approval package §I (not in the criteria or protocol).
+- **Traceability:** rows added to criteria §9 and protocol §11.
+- **Package F5:** proposed freeze-entry ID `D-110`; dates left to the researcher.
+
+**Unchanged**: eligibility rules, codes, thresholds and RQ scope; D-107 in principle, Q-097 Open, D-108 PROPOSED, D-102 pending, D-084 in principle.
+
+**Not done**: no freeze, entry, registry, activation, screening, sampling or Git operation. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## F1-F5-APPROVALS — 2026-11-11 — researcher content approvals recorded (documentation approval only; not a freeze)
+
+**Prompt**: researcher prompt "I confirm the following researcher approvals" (2026-11-11).
+
+**Recorded**:
+- package §J (F1–F5 as given);
+- a D-084 status-history row (status cell unchanged).
+
+**Left unfilled**: the approval date (researcher text "[ENTER ACTUAL APPROVAL DATE]"; not entered by the assistant); the effective date (set at the freeze).
+
+**Verification**: the approved files are unchanged (SHA-256 `ff5ce20e…675d`, `836e26fd…7c30`).
+
+**Not done**: no freeze, freeze entry, registry, Git operation, screening, sampling, activation or real-data operation.
+
+## F1-F5-APPROVAL-DATE — 2026-11-11 — approval date recorded
+
+**Prompt**: researcher prompt "I confirm that the F1–F5 approval date is 2026-11-11" (2026-11-11).
+
+**Recorded**:
+- the approval date 2026-11-11 in package §J;
+- a new D-084 status-history row (status cell unchanged; the earlier F1-F5-APPROVALS row kept).
+
+**Not done**: no freeze, registry, Git operation or screening.
