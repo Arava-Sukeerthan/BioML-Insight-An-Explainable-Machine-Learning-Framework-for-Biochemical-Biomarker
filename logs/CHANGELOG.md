@@ -2763,3 +2763,21 @@ Traceability rows were added to criteria §9 and protocol §11. Package sections
 - a new D-084 status-history row (status cell unchanged; the earlier F1-F5-APPROVALS row kept).
 
 **Not done**: no freeze, registry, Git operation or screening.
+
+## FREEZE-EXECUTION — 2026-11-11 — criteria v1.1 and protocol v0.2 frozen (`criteria_v1.1+protocol_v0.2`, D-110, effective 2026-11-11)
+
+**Prompt**: researcher prompt "I have reviewed the final execution plan and provide the following decisions and authorisations" (2026-11-11). Freeze execution and Git steps G1–G5 authorised; target branch `claude/eloquent-mccarthy-bqtxr3-part1`; UTC dates; exact D-104 superseded wording.
+
+**Executed**:
+- **G1** `ceb08ba`: pre-freeze commit of the 23 authorised files.
+- **G2:** fast-forward push `8d9bd79..ceb08ba`.
+- **G3** `f4709d221fe9602263348205874d2a69a0d68cf9`: freeze commit, 4 files. The Version rows of v1.1/v0.2 are set to FROZEN (approved 2026-11-11; effective 2026-11-11; D-110), and SUPERSEDED notes added to v1.0/v0.1.
+- **G4** (this commit): D-110 freeze entry; 13 status-history rows (D-110, D-084, D-090/D-104, and D-073, D-074, D-075, D-076, D-080, D-089, D-093, D-098, D-101, D-102 taking effect at the freeze, still inactive for screening); `research/literature/criteria_registry.json`.
+
+**Frozen SHA-256**: criteria `8511be1b3b6a3c7d60407d7f02c89c2feea3152769f72506f57c49faaa3106d8`; protocol `f6304198fdfe7a381bf41b3e6773610d711d611703a608747ef53ae25de9c8fb`.
+
+**Checks**: all pre-execution checks passed (approved hashes, D-110 unused, remote `8d9bd79`, nothing staged, no registry, data hashes, tests). The registry loads and cross-checks against D-110.
+
+**Not done**: no D-035 §6 condition row, fixed-inventory entry, run authorisation, Stage 0, sampling, screening, extraction, pilot work, training or activation. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) updated in G5; not merged.
+
+**Test update (researcher Option A, 2026-11-11)**: in `tests/literature/test_phase1_screening_tools.py` only, the pre-freeze test `test_real_repository_has_no_registry` (failed by design after §11 step 9a) is replaced by `test_real_repository_registry_matches_freeze_entry_d110`. It uses the production loader, the exact identifier and the D-110 cross-check, and fails if the registry is missing, malformed, duplicated or inconsistent; mutation checks on temporary copies confirmed this (missing, altered hash, duplicated). No production code, other test, criteria, protocol or data changed.

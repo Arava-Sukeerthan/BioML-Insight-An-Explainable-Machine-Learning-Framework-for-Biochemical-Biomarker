@@ -326,8 +326,35 @@ class CriteriaRegistry(unittest.TestCase):
             self.assertNotRegex(bad, pat)
         self.assertNotIn("criteria_version", schema["required"])
 
-    def test_real_repository_has_no_registry(self):
-        self.assertFalse((REPO / "research/literature" / pr.CRITERIA_REGISTRY_FILE).exists())
+    def test_real_repository_registry_matches_freeze_entry_d110(self):
+        """Post-freeze check (criteria v1.1 §11 step 9a; freeze entry D-110, 2026-11-11). Replaces the
+        pre-freeze check that no registry existed. Fails if the real registry is missing, malformed,
+        duplicated or inconsistent with the D-110 row of the decision log."""
+        lit = REPO / "research" / "literature"
+        path = lit / pr.CRITERIA_REGISTRY_FILE
+        self.assertTrue(path.exists(), "criteria_registry.json missing after the freeze (D-110)")
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(set(raw), {"frozen_versions"})
+        self.assertEqual(len(raw["frozen_versions"]), 1, "exactly one registered frozen version expected")
+        # production loader: field formats and the decision-log cross-check (identifier, commit, both hashes)
+        entries = pr.load_criteria_registry_entries(lit)
+        self.assertEqual(set(entries), {"criteria_v1.1+protocol_v0.2"})
+        self.assertEqual(pr.load_criteria_registry(lit), frozenset({"criteria_v1.1+protocol_v0.2"}))
+        e = entries["criteria_v1.1+protocol_v0.2"]
+        self.assertEqual(e, raw["frozen_versions"][0])
+        self.assertEqual(e["decision_id"], "D-110")
+        self.assertEqual(e["criteria_path"], "research/literature/screening_criteria_v1.1.md")
+        self.assertEqual(e["protocol_path"], "research/literature/screening_protocol_v0.2.md")
+        rows = [line for line in (REPO / "logs" / "DECISION_LOG.md").read_text(encoding="utf-8").splitlines()
+                if line.startswith("| D-110 |")]
+        self.assertEqual(len(rows), 1, "D-110 must have exactly one decision row")
+        cells = [c.strip() for c in rows[0].split("|")]
+        self.assertTrue(cells[3].startswith("**Freeze of screening criteria v1.1 and screening protocol v0.2.**"))
+        self.assertEqual(cells[4], "**APPROVED** — freeze entry")
+        for key in ("criteria_version", "criteria_path", "protocol_path", "freeze_commit",
+                    "criteria_sha256", "protocol_sha256"):
+            self.assertIn(e[key], cells[3], f"D-110 does not state the registry's {key}")
+        self.assertIn(f"effective date {e['effective_date']}", cells[3])
 
 
 # ------------------------------------------------------------------ C: pilot sampler

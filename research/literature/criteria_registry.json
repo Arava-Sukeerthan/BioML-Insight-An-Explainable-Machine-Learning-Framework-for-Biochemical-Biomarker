@@ -1,0 +1,14 @@
+{
+  "frozen_versions": [
+    {
+      "criteria_version": "criteria_v1.1+protocol_v0.2",
+      "decision_id": "D-110",
+      "criteria_path": "research/literature/screening_criteria_v1.1.md",
+      "protocol_path": "research/literature/screening_protocol_v0.2.md",
+      "freeze_commit": "f4709d221fe9602263348205874d2a69a0d68cf9",
+      "criteria_sha256": "8511be1b3b6a3c7d60407d7f02c89c2feea3152769f72506f57c49faaa3106d8",
+      "protocol_sha256": "f6304198fdfe7a381bf41b3e6773610d711d611703a608747ef53ae25de9c8fb",
+      "effective_date": "2026-11-11"
+    }
+  ]
+}

@@ -1033,3 +1033,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Task ID / prompt ID | F1-F5-APPROVAL-DATE (researcher prompt "I confirm that the F1–F5 approval date is 2026-11-11" (2026-11-11)) |
 | Objective | Record the approval date; describe the freeze execution, the freeze commit, G1–G5 and the checks (no execution) |
 | Actual completion status | Date recorded; plan given in the task report; uncommitted |
+
+### FREEZE-EXECUTION (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | FREEZE-EXECUTION ("I have reviewed the final execution plan and provide the following decisions and authorisations") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Execute the approved §11 freeze and Git steps G1–G5 |
+| Actual completion status | G1 `ceb08ba`, G2 pushed, G3 `f4709d221fe9602263348205874d2a69a0d68cf9`, G4 freeze entry D-110 and registry; G5 push and PR description in the task report |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): open, not merged |

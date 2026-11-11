@@ -919,3 +919,8 @@ One entry per researcher review session (~1 h/day).
 ## Day 29 — 2026-11-11 — F1-F5-APPROVAL-DATE
 - **Work completed:** F1–F5 approval date 2026-11-11 recorded.
 - **Outstanding:** the freeze-execution authorisation; the Git authorisation (G1–G5).
+
+## Day 29 — 2026-11-11 — FREEZE-EXECUTION
+- **Work completed:** criteria v1.1 and protocol v0.2 frozen (`criteria_v1.1+protocol_v0.2`, D-110, effective 2026-11-11); registry created.
+- **Important findings:** `[EVIDENCE]` all pre- and post-execution checks are in the task report.
+- **Outstanding (activation):** Q-085, Q-096, Q-097, Q-063, D-108, the fixed-inventory entry, the six condition rows. **Screening stays inactive.**
