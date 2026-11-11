@@ -33,6 +33,7 @@ import itertools
 import json
 import os
 import re
+import subprocess
 import sys
 import tempfile
 import unicodedata
@@ -1911,12 +1912,23 @@ def authorisation_uses(lit_dir):
     """Entries of the append-only run-authorisation ledger. Each authorised write run appends a
     "started" entry before it writes and a "completed" entry after its outputs are in place (L5,
     pre-commit audit corrections). Fails closed on malformed or inconsistent content: unknown event,
-    "completed" without an earlier "started", or a repeated event for one authorisation and tool."""
+    "completed" without an earlier "started", or a repeated event for one authorisation and tool.
+
+    D-099 step (4): every entry carries `prev_sha256`, the SHA-256 of the ledger bytes before that
+    entry (the empty ledger for the first). A missing, edited, deleted or reordered line breaks the
+    chain and is refused. Editing or deleting the final entry is detected by D-099 step (3), the
+    comparison with the committed ledger at HEAD (check_ledger_matches_head)."""
     path = _ledger_path(lit_dir)
     if not path.exists():
         return []
-    uses, seen = [], set()
-    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+    raw = path.read_bytes()
+    if raw and not raw.endswith(b"\n"):
+        raise RunAuthorisationError(f"refused: {path.name} does not end with a newline (truncated or edited)")
+    uses, seen, offset = [], set(), 0
+    for n, braw in enumerate(raw.splitlines(keepends=True), start=1):
+        prefix_sha = hashlib.sha256(raw[:offset]).hexdigest()
+        offset += len(braw)
+        line = braw.decode("utf-8", errors="strict").rstrip("\n")
         try:
             e = json.loads(line)
         except ValueError:
@@ -1924,6 +1936,12 @@ def authorisation_uses(lit_dir):
         if not (isinstance(e, dict) and all(isinstance(e.get(k), str) and e.get(k)
                                             for k in ("authorization", "clause", "tool", "run_time_utc", "event"))):
             raise RunAuthorisationError(f"refused: {path.name} line {n} is malformed")
+        prev = e.get("prev_sha256")
+        if not (isinstance(prev, str) and re.fullmatch(r"[0-9a-f]{64}", prev)):
+            raise RunAuthorisationError(f"refused: {path.name} line {n} is malformed (missing prev_sha256, D-099 (4))")
+        if prev != prefix_sha:
+            raise RunAuthorisationError(f"refused: {path.name} line {n} breaks the hash chain (D-099 (4)): an "
+                                        "earlier line was edited, deleted or reordered")
         key = (e["authorization"], e["tool"])
         if e["event"] not in LEDGER_EVENTS:
             raise RunAuthorisationError(f"refused: {path.name} line {n} has unknown event {e['event']!r}")
@@ -1967,16 +1985,67 @@ def require_completed_use(lit_dir, reference, tool):
 
 
 def _append_ledger(lit_dir, entry):
+    """Append one entry, chained to the ledger content before it (D-099 step (4))."""
+    if "prev_sha256" in entry:
+        raise RunAuthorisationError("refused: prev_sha256 is set by the ledger, not by the caller")
+    authorisation_uses(lit_dir)                     # the existing chain must be intact before appending
     path = _ledger_path(lit_dir)
     path.parent.mkdir(parents=True, exist_ok=True)
+    before = path.read_bytes() if path.exists() else b""
+    entry = {**entry, "prev_sha256": hashlib.sha256(before).hexdigest()}
     with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(entry, sort_keys=True) + "\n")
         f.flush()
         os.fsync(f.fileno())
 
 
+def _git(args, cwd):
+    """Run a read-only local git command (bytes output); None if git is unavailable. No network."""
+    try:
+        return subprocess.run(["git", *args], cwd=str(cwd), capture_output=True, timeout=60)
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+def check_ledger_matches_head(lit_dir):
+    """D-099 step (3): before an authorised run, refuse unless the run-authorisation ledger in the
+    working tree equals its committed version at HEAD. Both absent (no run yet) is accepted. Fails
+    closed: no Git repository, git unavailable, no HEAD commit, a ledger that is not committed, a
+    committed ledger that was changed or deleted, or staged but uncommitted changes."""
+    path = _ledger_path(lit_dir)
+    where = Path(lit_dir).resolve()
+    top = _git(["rev-parse", "--show-toplevel"], where)
+    if top is None or top.returncode != 0 or not top.stdout.strip():
+        raise RunAuthorisationError("refused: the literature directory is not in a Git repository; the ledger "
+                                    "cannot be compared with HEAD (D-099 (3))")
+    root = Path(top.stdout.decode("utf-8").strip())
+    rel = path.resolve().relative_to(root.resolve()).as_posix()
+    head = _git(["rev-parse", "--verify", "--quiet", "HEAD"], root)
+    if head is None or head.returncode != 0:
+        raise RunAuthorisationError("refused: the repository has no HEAD commit (D-099 (3))")
+    at_head = _git(["cat-file", "-e", f"HEAD:{rel}"], root)
+    if at_head is None:
+        raise RunAuthorisationError("refused: git unavailable (D-099 (3))")
+    committed = at_head.returncode == 0
+    if not committed:
+        if path.exists():
+            raise RunAuthorisationError(f"refused: {path.name} exists but is not committed at HEAD; commit and push "
+                                        "the ledger after each authorised run before any further run (D-099 (1), (3))")
+        return
+    if not path.exists():
+        raise RunAuthorisationError(f"refused: {path.name} is committed at HEAD but missing from the working tree (D-099 (3))")
+    shown = _git(["show", f"HEAD:{rel}"], root)
+    if shown is None or shown.returncode != 0:
+        raise RunAuthorisationError("refused: the committed ledger cannot be read (D-099 (3))")
+    if shown.stdout != path.read_bytes():
+        raise RunAuthorisationError(f"refused: {path.name} differs from its committed version at HEAD; commit the "
+                                    "ledger after each authorised run, and never edit it (D-099 (1), (3))")
+
+
 def record_authorisation_start(lit_dir, reference, clause, tool, run_time_utc, details=None):
-    """Append a "started" entry before an authorised write (checks that the authorisation is unused)."""
+    """Append a "started" entry before an authorised write. Checks first that the ledger equals its
+    committed version at HEAD (D-099 (3)) and that the authorisation is unused."""
+    check_ledger_matches_head(lit_dir)
     check_authorisation_unused(lit_dir, reference, clause, tool)
     _append_ledger(lit_dir, {"authorization": reference, "clause": clause, "tool": tool, "event": "started",
                              "run_time_utc": run_time_utc, **(details or {})})

@@ -924,3 +924,12 @@ One entry per researcher review session (~1 h/day).
 - **Work completed:** criteria v1.1 and protocol v0.2 frozen (`criteria_v1.1+protocol_v0.2`, D-110, effective 2026-11-11); registry created.
 - **Important findings:** `[EVIDENCE]` all pre- and post-execution checks are in the task report.
 - **Outstanding (activation):** Q-085, Q-096, Q-097, Q-063, D-108, the fixed-inventory entry, the six condition rows. **Screening stays inactive.**
+
+## Day 29 — 2026-11-11 — POST-FREEZE-DECISIONS and D099-STEPS-3-4
+- **Work completed:**
+  - D-111 (Q-085), D-112 (Q-096) and D-113 (Q-097) recorded;
+  - D-108 approved with one refinement;
+  - D-099 steps (3) and (4) implemented with 18 synthetic tests (uncommitted).
+- **Important findings:** `[EVIDENCE]` 365 literature tests OK; mutation checks show each new protection is covered.
+- **Open:** Q-063 (approval date, wording, approver identity, PRESERVED decision).
+- **Next (researcher):** Git authorisation; then the fixed-inventory entry and the condition rows.

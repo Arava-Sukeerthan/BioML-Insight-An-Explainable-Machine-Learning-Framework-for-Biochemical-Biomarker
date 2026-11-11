@@ -20,6 +20,7 @@ import io
 import json
 import os
 import random
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -66,6 +67,20 @@ class FixtureDir:
         self.log = self.root / "logs" / "DECISION_LOG.md"
         self.log.write_text("| ID | Decision |\n|---|---|\n", encoding="utf-8")
         self._freeze_written = self._s6_written = False
+        # D-099 (3): the ledger is compared with its committed version, so the fixture is a Git repository
+        self._git("init", "-q")
+        self._git("config", "user.email", "fixture@example.invalid")
+        self._git("config", "user.name", "fixture")
+        self._git("config", "commit.gpgsign", "false")
+        self._git("commit", "-q", "--allow-empty", "-m", "fixture start")
+
+    def _git(self, *args):
+        subprocess.run(["git", *args], cwd=self.root, check=True, capture_output=True)
+
+    def commit(self, message="fixture commit"):
+        """Commit the whole fixture tree, as D-099 (1) requires after each authorised run."""
+        self._git("add", "-A")
+        self._git("commit", "-q", "--allow-empty", "-m", message)
 
     def cleanup(self):
         self._tmp.cleanup()
@@ -109,6 +124,7 @@ class FixtureDir:
         """A completed run in the ledger (started, then completed)."""
         pr.record_authorisation_start(self.lit, ref, clause, tool, "2099-01-01T00:00:00+00:00")
         pr.record_authorisation_completion(self.lit, ref, clause, tool, "2099-01-01T00:00:01+00:00")
+        self.commit(f"ledger after {tool} {ref}")                   # D-099 (1)
 
     def frozen(self):
         """Fixture freeze: decision row plus registry entry."""
@@ -1056,11 +1072,20 @@ class RunAuthorisationBindings(unittest.TestCase):
         path = self.fx.lit / pr.RUN_LEDGER_FILE
         base = {"authorization": "D-700", "clause": "D-074 (f)", "tool": "stage0", "run_time_utc": "t"}
         line = lambda **kw: json.dumps({**base, **kw}) + "\n"          # noqa: E731
-        for content in ("not json\n", json.dumps({"authorization": "D-700"}) + "\n", "[]\n",
-                        line(), line(event="finished"), line(event="completed"),
-                        line(event="started") + line(event="started")):
+
+        def chained(*entries):        # valid D-099 (4) hash chain, so the event checks themselves are reached
+            text = ""
+            for kw in entries:
+                text += line(prev_sha256=hashlib.sha256(text.encode("utf-8")).hexdigest(), **kw)
+            return text
+
+        for content, expected in (("not json\n", "not JSON"), (json.dumps({"authorization": "D-700"}) + "\n", "malformed"),
+                                  ("[]\n", "malformed"), (chained({}), "malformed"),
+                                  (chained({"event": "finished"}), "unknown event"),
+                                  (chained({"event": "completed"}), "inconsistent"),
+                                  (chained({"event": "started"}, {"event": "started"}), "inconsistent")):
             path.write_text(content, encoding="utf-8")
-            with self.assertRaisesRegex(pr.RunAuthorisationError, "malformed|not JSON|unknown event|inconsistent"):
+            with self.assertRaisesRegex(pr.RunAuthorisationError, expected):
                 pr.check_authorisation_unused(self.fx.lit, "D-700", "D-074 (f)", "stage0")
 
     def test_real_decision_log_holds_no_complete_authorisation(self):
@@ -1658,6 +1683,148 @@ class NoOverwriteOutputs(unittest.TestCase):
             case.run_cli(out=case.repo / "tracked" / "sheet.csv")
         self.assertEqual([e["tool"] for e in pr.authorisation_uses(case.fx.lit)], ["pilot_sample", "pilot_sample"])
         self.assertEqual(case.run_cli(), 0)                          # the authorisation is still usable
+
+
+class LedgerPersistence(unittest.TestCase):
+    """D-099 steps (3) and (4): ledger equal to its committed version at HEAD before each authorised
+    run, and a prev_sha256 hash chain across ledger entries. Synthetic fixtures in temporary Git
+    repositories only; no real ledger, record or authorisation is used."""
+
+    def setUp(self):
+        self.fx = FixtureDir()
+        self.addCleanup(self.fx.cleanup)
+        self.path = self.fx.lit / pr.RUN_LEDGER_FILE
+
+    def start(self, ref="D-911", tool="stage0", clause="D-074 (f)"):
+        pr.record_authorisation_start(self.fx.lit, ref, clause, tool, "2099-01-02T00:00:00+00:00")
+
+    def two_runs(self):
+        """Two completed runs, each committed (D-099 (1)): four chained ledger entries."""
+        self.fx.ledger_done("D-901", "D-077 (6)", "pilot_sample")
+        self.fx.ledger_done("D-901", "D-077 (6)", "pilot_sheet")
+        return self.path.read_text(encoding="utf-8").splitlines(keepends=True)
+
+    # ---- step (3): ledger versus HEAD
+    def test_no_ledger_yet_is_accepted(self):
+        self.start()
+        self.assertEqual([e["event"] for e in pr.authorisation_uses(self.fx.lit)], ["started"])
+
+    def test_committed_ledger_is_accepted(self):
+        self.two_runs()
+        self.start()
+        self.assertEqual(len(pr.authorisation_uses(self.fx.lit)), 5)
+
+    def test_uncommitted_change_is_refused(self):
+        lines = self.two_runs()
+        self.path.write_text("".join(lines[:-1]), encoding="utf-8")    # still a valid chain, but not HEAD
+        pr.authorisation_uses(self.fx.lit)
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "differs from its committed version at HEAD"):
+            self.start()
+
+    def test_untracked_ledger_is_refused(self):
+        pr.record_authorisation_start(self.fx.lit, "D-901", "D-077 (6)", "pilot_sample", "t")
+        pr.record_authorisation_completion(self.fx.lit, "D-901", "D-077 (6)", "pilot_sample", "t")
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "not committed at HEAD"):   # no commit after the run
+            self.start()
+
+    def test_staged_but_uncommitted_change_is_refused(self):
+        self.two_runs()
+        pr._append_ledger(self.fx.lit, {"authorization": "D-950", "clause": "D-074 (f)", "tool": "stage0",
+                                        "event": "started", "run_time_utc": "t"})
+        self.fx._git("add", "-A")
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "differs from its committed version"):
+            self.start()
+
+    def test_deleted_committed_ledger_is_refused(self):
+        self.two_runs()
+        self.path.unlink()
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "missing from the working tree"):
+            self.start()
+
+    def test_not_a_git_repository_is_refused(self):
+        shutil.rmtree(self.fx.root / ".git")
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "not in a Git repository"):
+            self.start()
+        self.assertFalse(self.path.exists())                         # refused before anything was written
+
+    def test_edited_final_entry_is_caught_by_head_check(self):
+        lines = self.two_runs()
+        lines[-1] = lines[-1].replace("2099-01-01T00:00:01+00:00", "2099-01-01T00:00:09+00:00")
+        self.path.write_text("".join(lines), encoding="utf-8")
+        pr.authorisation_uses(self.fx.lit)                           # the chain alone cannot see the last line
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "differs from its committed version"):
+            self.start()
+
+    def test_tool_refuses_before_writing_when_ledger_uncommitted(self):
+        case = FrameOnlyAndDraw("test_frame_only_valid_frame_no_draw_no_output")
+        case.setUp()
+        self.addCleanup(case.doCleanups)
+        case.authorise_draw()
+        case.fx.commit()
+        pr._append_ledger(case.fx.lit, {"authorization": "D-960", "clause": "D-074 (f)", "tool": "stage0",
+                                        "event": "started", "run_time_utc": "t"})   # uncommitted ledger change
+        with self.assertRaisesRegex(SystemExit, "differs from its committed version|not committed at HEAD"):
+            case.cli("--authorization", "D-902", "--write")
+        self.assertEqual(case.screening_files(), ["run_authorisation_ledger.jsonl"])   # no sample, no sidecar
+        self.assertEqual([e["authorization"] for e in pr.authorisation_uses(case.fx.lit)], ["D-960"])
+
+    # ---- step (4): hash chain
+    def test_chain_links_each_entry_to_the_bytes_before_it(self):
+        lines = self.two_runs()
+        text = ""
+        for raw in lines:
+            self.assertEqual(json.loads(raw)["prev_sha256"], hashlib.sha256(text.encode("utf-8")).hexdigest())
+            text += raw
+
+    def test_edited_earlier_line_breaks_the_chain(self):
+        lines = self.two_runs()
+        lines[1] = lines[1].replace("2099-01-01T00:00:01+00:00", "2099-01-01T00:00:02+00:00")
+        self.path.write_text("".join(lines), encoding="utf-8")
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "breaks the hash chain"):
+            pr.authorisation_uses(self.fx.lit)
+
+    def test_deleted_line_breaks_the_chain(self):
+        lines = self.two_runs()
+        self.path.write_text("".join(lines[:1] + lines[2:]), encoding="utf-8")
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "breaks the hash chain"):
+            pr.authorisation_uses(self.fx.lit)
+
+    def test_reordered_lines_break_the_chain(self):
+        lines = self.two_runs()
+        self.path.write_text("".join([lines[0], lines[2], lines[1], lines[3]]), encoding="utf-8")
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "breaks the hash chain"):
+            pr.authorisation_uses(self.fx.lit)
+
+    def test_missing_prev_sha256_is_refused(self):
+        lines = self.two_runs()
+        e = json.loads(lines[2])
+        del e["prev_sha256"]
+        lines[2] = json.dumps(e, sort_keys=True) + "\n"
+        self.path.write_text("".join(lines), encoding="utf-8")
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "missing prev_sha256"):
+            pr.authorisation_uses(self.fx.lit)
+
+    def test_truncated_ledger_is_refused(self):
+        lines = self.two_runs()
+        self.path.write_text("".join(lines)[:-1], encoding="utf-8")          # final newline removed
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "does not end with a newline"):
+            pr.authorisation_uses(self.fx.lit)
+
+    def test_caller_cannot_set_prev_sha256(self):
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "set by the ledger"):
+            pr.record_authorisation_start(self.fx.lit, "D-911", "D-074 (f)", "stage0", "t",
+                                          details={"prev_sha256": "0" * 64})
+        self.assertFalse(self.path.exists())
+
+    def test_append_refused_on_broken_chain(self):
+        lines = self.two_runs()
+        self.path.write_text("".join([lines[1], lines[0], lines[2], lines[3]]), encoding="utf-8")
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "breaks the hash chain"):
+            pr._append_ledger(self.fx.lit, {"authorization": "D-970", "clause": "D-074 (f)", "tool": "stage0",
+                                            "event": "started", "run_time_utc": "t"})
+
+    def test_real_repository_has_no_ledger(self):
+        self.assertFalse((REPO / "research" / "literature" / pr.RUN_LEDGER_FILE).exists())
 
 
 if __name__ == "__main__":

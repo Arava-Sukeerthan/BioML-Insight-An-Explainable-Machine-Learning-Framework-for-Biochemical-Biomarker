@@ -1043,3 +1043,13 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | G1 `ceb08ba`, G2 pushed, G3 `f4709d221fe9602263348205874d2a69a0d68cf9`, G4 freeze entry D-110 and registry; G5 push and PR description in the task report |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): open, not merged |
+
+### POST-FREEZE-DECISIONS and D099-STEPS-3-4 (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | POST-FREEZE-DECISIONS ("We have reviewed the post-freeze researcher decision brief"); D099-STEPS-3-4; records authorised by "The D-099 steps (3) and (4) implementation has been completed…" |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Implement D-099 steps (3) and (4) with synthetic tests; record D-111–D-113 and the D-108 approval; logs |
+| Actual completion status | Implemented and verified in the working tree; recorded; **uncommitted** (Git operation awaiting authorisation) |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `2d2c742` |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed; open, not merged |

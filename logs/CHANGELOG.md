@@ -2781,3 +2781,41 @@ Traceability rows were added to criteria §9 and protocol §11. Package sections
 **Not done**: no D-035 §6 condition row, fixed-inventory entry, run authorisation, Stage 0, sampling, screening, extraction, pilot work, training or activation. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) updated in G5; not merged.
 
 **Test update (researcher Option A, 2026-11-11)**: in `tests/literature/test_phase1_screening_tools.py` only, the pre-freeze test `test_real_repository_has_no_registry` (failed by design after §11 step 9a) is replaced by `test_real_repository_registry_matches_freeze_entry_d110`. It uses the production loader, the exact identifier and the D-110 cross-check, and fails if the registry is missing, malformed, duplicated or inconsistent; mutation checks on temporary copies confirmed this (missing, altered hash, duplicated). No production code, other test, criteria, protocol or data changed.
+
+## POST-FREEZE-DECISIONS and D099-STEPS-3-4 — 2026-11-11 — researcher decisions recorded (D-111–D-113; D-108 approved); D-099 steps (3) and (4) implemented (uncommitted)
+
+**Prompts**:
+- "We have reviewed the post-freeze researcher decision brief" (decisions; D-099 implementation authorised);
+- "The D-099 steps (3) and (4) implementation has been completed in the working tree and verified successfully" (records authorised).
+
+**Decisions recorded** (`logs/DECISION_LOG.md`; register updated):
+- **D-111 (Q-085, option A):** condition 3 satisfied for screening. D-027 (b) and D-024's remaining extraction fields are excluded and must be resolved before full-text extraction.
+- **D-112 (Q-096, yes):** item (a) includes the Stage B tools and the D-098 code. The condition-6 row is recorded only after D-099 steps (3) and (4) are implemented, verified and committed.
+- **D-113 (Q-097, option C):** observed hashes; provenance "Consistent with the T2 build; not verified by a committed hash."; stop rule if the draw sidecar hashes differ from the fixed-inventory entry (procedural, not in code).
+- **D-108:** PROPOSED → APPROVED with one refinement (a new fixed-inventory entry whenever the inventory hash or either ignored-file hash changes). The earlier status text is kept in the cell and in the session log.
+- **History rows:** D-111–D-113, D-108, D-093 (order amended by D-108), D-107 (no status change), D-099 (implementation, no status change).
+
+**D-099 steps (3) and (4)** (code verified before this documentation; files unchanged by it):
+- `scripts/literature/pubrecords.py`:
+  - `check_ledger_matches_head` (step 3), called first in `record_authorisation_start`;
+  - `prev_sha256` hash chain written by `_append_ledger` and verified by `authorisation_uses` (step 4);
+  - `_git` helper (local, read-only).
+- `tests/literature/test_phase1_screening_tools.py`:
+  - fixtures use temporary Git repositories and commit after each simulated run (D-099 (1));
+  - `test_malformed_ledger_fails_closed` made chain-aware with case-specific messages (strengthened);
+  - new class `LedgerPersistence` (18 tests).
+- **Tests** (15:45:23Z–15:46:39Z): literature 365 OK; data protection 10 OK; NHANES 29 OK; query table PASS 168.
+- **Mutation checks:**
+  - baseline 0/19 failing;
+  - HEAD check removed: 7/19 failing;
+  - chain verification removed: 7/19;
+  - writer without `prev_sha256`: 16/19;
+  - restored: 0/19.
+
+**Unchanged**:
+- the frozen criteria v1.1 and protocol v0.2 (D-110);
+- research data;
+- Q-063 (open);
+- D-107 status.
+
+**Not done**: no fixed-inventory entry, condition rows, run authorisations, Stage 0, screening, sampling, extraction, pilot work, dataset access or model work; no stage, commit or push. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
