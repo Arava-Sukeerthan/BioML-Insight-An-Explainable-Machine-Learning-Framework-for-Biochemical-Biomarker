@@ -14,21 +14,33 @@ Approved Phase 1 defaults: C2 a JSON sidecar holds the script identity and run m
 draw stops unless the recomputed frame and stratum counts equal the F1 record exactly; C4 the frame
 is not changed for unresolved duplicate pairs, whose members are reported if drawn.
 
-Drawing the real sample needs, separately: the freeze, the D-035 record §6 conditions and the
-D-077 (6) authorisation. The command-line entry point refuses to run without a registered frozen
+Drawing the real sample needs, separately: the freeze, the D-035 record §6 conditions, the Stage-0
+rows (written before the draw, D-093) and the D-077 (6) authorisation. The command-line entry point refuses to run without a registered frozen
 version and an authorisation verified against DECISION_LOG.md.
 
 Phase 1 corrections (researcher authorisation 2026-11-11): the frame uses the shared checked Stage-0
 guards (stage0.check_types: A1 union guard, A2 unsupported-variant stop), so an unsupported type is
 never silently treated as an ordinary record; the run authorisation is verified; the sidecar records
 the SHA-256 of publications.jsonl and source_records.jsonl.
+
+Stage B preparation (D-095, researcher authorisation 2026-11-11): the frame must also equal the
+committed D-044 scope snapshot minus the seven approved Stage-0 records (identity, not only counts;
+P17); `--frame-only` validates the frame without drawing or writing anything (P15); the D-077 (6)
+authorisation must be complete, bound to the inventory used, and unused (P16; single-use ledger).
+
+Pre-commit audit corrections (researcher authorisation 2026-11-11): before drawing, decisions.csv must
+hold exactly the seven approved Stage-0 rows with their approved codes (M2, D-093); a --write run holds
+the run lock, writes each output without ever overwriting (temporary file, then hard link), and
+records "started" before and "completed" after its outputs (L5).
 """
 from __future__ import annotations
 
 import argparse
+import collections
 import csv
 import datetime as dt
 import hashlib
+import io
 import json
 import random
 import subprocess
@@ -47,6 +59,16 @@ ALLOCATION = {"F": 8, "D": 7, "C": 7, "E": 7, "A": 8, "Q": 7, "B": 8, "untagged"
 APPROVED_FRAME_SIZE = 1463
 APPROVED_STRATUM_SIZES = {"B": 623, "A": 365, "untagged": 173, "F": 120, "C": 93, "E": 68, "D": 13, "Q": 8}
 SAMPLE_COLUMNS = ["paper_id", "stratum", "seed", "inventory_sha256", "sampling_script"]
+# P17 (Stage B preparation, D-095): frame identity. The frame must equal the committed D-044 scope
+# snapshot (1,470 IDs; scope/D-044_scope_snapshot.md) minus the seven Stage-0 records of the
+# F1-PILOT-FRAME status-history row of D-063 (P0028, P0099, P0113, P0624, P0830 -> E5; P0931, P0939
+# -> E7). Counts alone are not enough.
+SCOPE_SNAPSHOT_RELPATH = "scope/D-044_scope_paper_ids.csv"
+APPROVED_SCOPE_SNAPSHOT_SHA256 = "a5d4851f764ad0843115740d85e8f6e2bed1596883bf11cc22c63fbf631253ea"
+APPROVED_SCOPE_SIZE = 1470
+APPROVED_STAGE0_CODES = {"P0028": "E5", "P0099": "E5", "P0113": "E5", "P0624": "E5", "P0830": "E5",
+                         "P0931": "E7", "P0939": "E7"}
+APPROVED_STAGE0_IDS = tuple(APPROVED_STAGE0_CODES)
 SCRIPT_RELPATH = "scripts/literature/pilot_sample.py"
 assert sum(ALLOCATION.values()) == SAMPLE_SIZE
 
@@ -91,6 +113,104 @@ def verify_frame(frame, expected_size=APPROVED_FRAME_SIZE, expected_strata=None)
         raise PilotSampleError(f"frame mismatch: total {total} (expected {expected_size}); "
                                f"strata (found, expected): {diffs}")
     return sizes
+
+
+def load_scope_snapshot(path, expected_sha256=APPROVED_SCOPE_SNAPSHOT_SHA256):
+    """Paper IDs of the committed D-044 scope snapshot; the file must match its recorded SHA-256."""
+    path = Path(path)
+    if not path.exists():
+        raise PilotSampleError(f"scope snapshot {path} not found")
+    if expected_sha256 is not None and hashlib.sha256(path.read_bytes()).hexdigest() != expected_sha256:
+        raise PilotSampleError(f"scope snapshot {path.name} does not match its recorded SHA-256")
+    with open(path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        if "paper_id" not in (reader.fieldnames or []):
+            raise PilotSampleError(f"scope snapshot {path.name} has no paper_id column")
+        ids = [r["paper_id"] for r in reader]
+    bad = [p for p in ids if not stage0._valid_id(p or "")]
+    if bad:
+        raise PilotSampleError(f"scope snapshot {path.name} has malformed paper_ids: {bad[:5]}")
+    return ids
+
+
+def _id_key(p):
+    return int(p[1:])
+
+
+def verify_frame_identity(frame, snapshot_ids, stage0_ids=APPROVED_STAGE0_IDS, expected_scope_size=APPROVED_SCOPE_SIZE):
+    """P17: stop unless the frame's paper IDs equal the snapshot minus the approved Stage-0 IDs,
+    with no ID duplicated in the frame or the snapshot. Returns the frame size."""
+    flat = [p for s in frame for p in frame[s]]
+    counts = collections.Counter(flat)
+    dup = sorted((p for p, n in counts.items() if n > 1), key=_id_key)
+    if dup:
+        raise PilotSampleError(f"frame identity: paper_ids duplicated in the frame: {dup[:10]} ({len(dup)})")
+    snap = list(snapshot_ids)
+    snap_dup = sorted((p for p, n in collections.Counter(snap).items() if n > 1), key=_id_key)
+    if snap_dup:
+        raise PilotSampleError(f"frame identity: paper_ids duplicated in the scope snapshot: {snap_dup[:10]}")
+    if expected_scope_size is not None and len(snap) != expected_scope_size:
+        raise PilotSampleError(f"frame identity: scope snapshot has {len(snap)} IDs (expected {expected_scope_size})")
+    s0 = set(stage0_ids)
+    if s0 - set(snap):
+        raise PilotSampleError(f"frame identity: Stage-0 IDs not in the scope snapshot: {sorted(s0 - set(snap))}")
+    expected = set(snap) - s0
+    missing = sorted(expected - counts.keys(), key=_id_key)
+    extra = sorted(counts.keys() - expected, key=_id_key)
+    if missing or extra:
+        raise PilotSampleError(f"frame identity mismatch: missing {missing[:10]} ({len(missing)}); "
+                               f"additional {extra[:10]} ({len(extra)})")
+    return len(flat)
+
+
+def verify_stage0_rows(decision_rows, stage0_codes=None):
+    """M2 (D-093: Stage-0 rows are written before the pilot draw): stop unless decisions.csv holds
+    exactly one `rule:stage0` title/abstract row for each approved Stage-0 record, each an `exclude`
+    with the approved code, and no `rule:stage0` row for any other record."""
+    stage0_codes = APPROVED_STAGE0_CODES if stage0_codes is None else stage0_codes
+    rows = [r for r in decision_rows if r.get("screener") == "rule:stage0"]
+    by_id = collections.defaultdict(list)
+    for r in rows:
+        by_id[r["paper_id"]].append(r)
+    problems = []
+    missing = sorted(set(stage0_codes) - set(by_id), key=_id_key)
+    extra = sorted(set(by_id) - set(stage0_codes), key=_id_key)
+    if missing:
+        problems.append(f"missing Stage-0 rows for {missing}")
+    if extra:
+        problems.append(f"Stage-0 rows for records outside the approved list: {extra}")
+    for pid, rs in sorted(by_id.items(), key=lambda kv: _id_key(kv[0])):
+        if pid not in stage0_codes:
+            continue
+        if len(rs) != 1:
+            problems.append(f"{pid}: {len(rs)} Stage-0 rows (expected 1)")
+            continue
+        r = rs[0]
+        if (r["stage"], r["decision"], r["reason_code"]) != ("title_abstract", "exclude", stage0_codes[pid]):
+            problems.append(f"{pid}: Stage-0 row is {r['stage']}/{r['decision']}/{r['reason_code']} "
+                            f"(expected title_abstract/exclude/{stage0_codes[pid]})")
+    if problems:
+        raise PilotSampleError("Stage-0 rows do not match the approved exclusions (D-093): " + "; ".join(problems))
+    return len(rows)
+
+
+def frame_only(lit, expected_inventory_sha256):
+    """P15: validate the sampling frame (count, strata and identity) without drawing or writing.
+    Running it on the real inventory is a real-data operation and needs the researcher's explicit
+    authorisation (governance; not enforced here because nothing is drawn or written)."""
+    records = stage0.load_inventory(lit, expected_inventory_sha256)
+    union, input_hashes = stage0.load_member_union(lit)
+    try:
+        frame = build_frame(records, union)
+        snapshot = load_scope_snapshot(lit / SCOPE_SNAPSHOT_RELPATH, APPROVED_SCOPE_SNAPSHOT_SHA256)
+        size = verify_frame_identity(frame, snapshot, APPROVED_STAGE0_IDS, APPROVED_SCOPE_SIZE)
+        sizes = verify_frame(frame, APPROVED_FRAME_SIZE, APPROVED_STRATUM_SIZES)
+    except PilotSampleError as e:
+        raise SystemExit(f"frame check failed: {e}") from None
+    return {"mode": "frame_only", "frame_valid": True, "frame_size": size, "stratum_sizes": sizes,
+            "identity": "equals D-044 snapshot minus the approved Stage-0 IDs",
+            "inventory_sha256": expected_inventory_sha256, **input_hashes,
+            "drawn": False, "written": False}
 
 
 def draw(frame, allocation=None, seed=SEED):
@@ -146,42 +266,75 @@ def read_dedup_pairs(path):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--lit-dir", required=True)
-    ap.add_argument("--authorization", required=True, help="DECISION_LOG ID recording the D-077 (6) authorisation")
+    ap.add_argument("--authorization", help="DECISION_LOG ID recording the D-077 (6) authorisation (draw)")
     ap.add_argument("--expected-inventory-sha256", required=True)
     ap.add_argument("--write", action="store_true")
+    ap.add_argument("--frame-only", action="store_true",
+                    help="validate the frame only (P15): no draw, no output file, no authorisation consumed")
     a = ap.parse_args(argv)
     lit = Path(a.lit_dir)
+    if a.frame_only:
+        if a.write or a.authorization:
+            ap.error("--frame-only takes neither --write nor --authorization")
+        print(json.dumps(frame_only(lit, a.expected_inventory_sha256), indent=1))
+        return 0
+    if not a.authorization:
+        ap.error("--authorization is required unless --frame-only is given")
     try:
-        auth = pr.verify_run_authorisation(lit, a.authorization, "D-077 (6)")
+        auth = pr.verify_run_authorisation(lit, a.authorization, "D-077 (6)",
+                                           inventory_sha256=a.expected_inventory_sha256)
+        if a.write:
+            with pr.run_lock(lit):
+                pr.check_authorisation_unused(lit, auth, "D-077 (6)", "pilot_sample")
+                meta = _draw_run(lit, a, auth)
+        else:
+            meta = _draw_run(lit, a, auth)
     except pr.RunAuthorisationError as e:
         raise SystemExit(str(e)) from None
+    print(json.dumps({k: meta[k] for k in ("sample_size", "frame_size", "duplicate_pairs_in_sample")}, indent=1))
+    return 0
+
+
+def _now():
+    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+
+
+def _draw_run(lit, a, auth):
+    """The draw proper; for --write it runs inside the run lock (L5)."""
     if not pr.load_criteria_registry(lit):
         raise SystemExit("refused: no registered frozen criteria version (freeze required)")
     records = stage0.load_inventory(lit, a.expected_inventory_sha256)
     union, input_hashes = stage0.load_member_union(lit)
     frame = build_frame(records, union)
-    sizes = verify_frame(frame)
+    snapshot = load_scope_snapshot(lit / SCOPE_SNAPSHOT_RELPATH, APPROVED_SCOPE_SNAPSHOT_SHA256)
+    verify_frame_identity(frame, snapshot, APPROVED_STAGE0_IDS, APPROVED_SCOPE_SIZE)
+    sizes = verify_frame(frame, APPROVED_FRAME_SIZE, APPROVED_STRATUM_SIZES)
+    verify_stage0_rows(pr.load_screening_decisions(lit), APPROVED_STAGE0_CODES)
     selected = draw(frame)
     dups = duplicate_pairs_in_sample([p for p, _ in selected], read_dedup_pairs(lit / "records" / "dedup_review.csv"))
     script = Path(__file__).resolve()
     commit = subprocess.run(["git", "-C", str(script.parent), "rev-parse", "HEAD"], capture_output=True,
                             text=True).stdout.strip()
     meta = sidecar(selected, a.expected_inventory_sha256, auth, sizes, dups, commit,
-                   hashlib.sha256(script.read_bytes()).hexdigest(),
-                   dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), input_hashes)
+                   hashlib.sha256(script.read_bytes()).hexdigest(), _now(), input_hashes)
     if a.write:
         out = lit / "screening" / "pilot_sample.csv"
         side = out.with_suffix(".provenance.json")
         if out.exists() or side.exists():
             raise SystemExit(f"refused: {out} or its sidecar already exists (append-only audit trail)")
-        out.parent.mkdir(parents=True, exist_ok=True)
-        with open(out, "w", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=SAMPLE_COLUMNS)
-            w.writeheader()
-            w.writerows(sample_rows(selected, a.expected_inventory_sha256))
-        side.write_text(json.dumps(meta, indent=1) + "\n", encoding="utf-8")
-    print(json.dumps({k: meta[k] for k in ("sample_size", "frame_size", "duplicate_pairs_in_sample")}, indent=1))
-    return 0
+        buf = io.StringIO(newline="")
+        w = csv.DictWriter(buf, fieldnames=SAMPLE_COLUMNS, lineterminator="\r\n")
+        w.writeheader()
+        w.writerows(sample_rows(selected, a.expected_inventory_sha256))
+        details = {"inventory_sha256": a.expected_inventory_sha256, "output": "screening/pilot_sample.csv"}
+        pr.record_authorisation_start(lit, auth, "D-077 (6)", "pilot_sample", _now(), details)
+        try:
+            pr.write_new_file_atomically(out, buf.getvalue())
+            pr.write_new_file_atomically(side, json.dumps(meta, indent=1) + "\n")
+        except FileExistsError:
+            raise SystemExit(f"refused: {out} or its sidecar appeared during the run; nothing was overwritten") from None
+        pr.record_authorisation_completion(lit, auth, "D-077 (6)", "pilot_sample", _now(), details)
+    return meta
 
 
 if __name__ == "__main__":

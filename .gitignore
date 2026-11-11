@@ -89,3 +89,14 @@ research/literature/preservation/archive/
 /outputs/**/*.7[zZ]
 /outputs/**/*.[bB][zZ]2
 /outputs/**/*.[xX][zZ]
+
+# Stage B screening (D-096; Phase 1 design default D3, deferred rule D4; researcher approval 2026-11-11).
+# The repository is PUBLIC. The blinded researcher pilot sheet contains abstracts (D-010) and is exchanged
+# privately with the researcher, never committed (D-096). Temporary files of atomic writes are never committed.
+# Screening decisions, the pilot sample and its provenance sidecar, the pilot decision files, the pilot report,
+# the adjudication queue, the run-authorisation ledger and criteria_registry.json contain no abstracts
+# (D-089: paraphrased justifications only) and stay trackable as the audit trail.
+research/literature/screening/pilot_sheet_researcher.csv
+research/literature/screening/*_sheet_*.csv
+research/literature/screening/.*.tmp
+research/literature/screening/*.tmp

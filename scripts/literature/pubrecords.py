@@ -22,6 +22,7 @@ Standard library only (plus optional jsonschema for schema validation).
 from __future__ import annotations
 
 import argparse
+import contextlib
 import csv
 import datetime as dt
 import difflib
@@ -33,6 +34,7 @@ import json
 import os
 import re
 import sys
+import tempfile
 import unicodedata
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -1749,28 +1751,92 @@ def decision_log_path(lit_dir):
     return Path(lit_dir).resolve().parents[1] / "logs" / "DECISION_LOG.md"
 
 
-# Run authorisations (Phase 1 correction 1; convention approved as D-088, answering Q-090). A run of
-# the Stage-0 generator or the pilot sampler and sheet needs a separate, explicit researcher
-# authorisation (D-074 (f); D-077 (6)). A reference is accepted only if it names exactly one decision
-# row of DECISION_LOG.md whose status cell starts with "**APPROVED**" (not conditional, in principle
-# or proposed) and whose Decision cell BEGINS with the exact bold marker below. Only the cell's
-# surrounding whitespace is ignored (str.strip); the marker must be the first text of the cell, with
-# no other leading character. A marker anywhere else in the cell, such as in a decision that only
-# describes this convention, is not an authorisation. No current decision begins with a marker, so no
-# run is authorised by this code.
+# Run authorisations (Phase 1 correction 1; convention D-088, answering Q-090; hardened in the
+# Stage B preparation under D-095). A run of the Stage-0 generator or of the pilot sampler and sheet
+# needs a separate, explicit researcher authorisation (D-074 (f); D-077 (6)). A reference is accepted
+# only if it names exactly one decision row of DECISION_LOG.md such that:
+# * its Decision cell BEGINS with the exact bold marker below (only the cell's surrounding whitespace
+#   is ignored; a marker anywhere else, e.g. in a decision that describes this convention, is not an
+#   authorisation);
+# * its Status cell reads exactly RUN_AUTHORISATION_STATUS (D-088 (3)); conditional, in-principle,
+#   implementation, proposed or other statuses are refused;
+# * its Decision text binds the run (D-088 (4)) with each of these fields exactly once, separated by
+#   semicolons (backticks are ignored; format = D-097, APPROVED — PROVISIONAL, final review pending):
+#       criteria_version: <id>; inventory_sha256: <64 hex>; freeze_entry: D-nnn;
+#       d035_s6_records: D-nnn, D-nnn, D-nnn, D-nnn, D-nnn, D-nnn; single_use: yes
+# * the freeze entry is one approved decision row and the registered criteria version names it
+#   (criteria_registry.json); the six D-035 record §6 rows (one per condition, D-092) are distinct
+#   approved decision rows whose Decision cell begins with "**D-035 §6 condition N recorded as met.**"
+#   (wording = D-097, APPROVED — PROVISIONAL, final review pending)
+#   and contains that sentence once, covering N = 1 to 6 (a decision that only mentions a condition
+#   is not a condition record);
+# * when the calling tool passes them, the run's inventory SHA-256 and criteria version equal the
+#   bound values.
+# Single use (D-088 (4)) is enforced by an append-only ledger: each tool may use an authorisation
+# once (D-074 (f): the Stage-0 generator; D-077 (6): one draw and one sheet). No current decision
+# begins with a marker, so no run is authorised by this code.
 RUN_AUTHORISATION_MARKERS = {
     "D-074 (f)": "**Run authorisation under D-074 (f).**",
     "D-077 (6)": "**Run authorisation under D-077 (6).**",
 }
+RUN_AUTHORISATION_STATUS = "**APPROVED** — run authorisation (single use)"
+RUN_AUTHORISATION_TOOLS = {"D-074 (f)": ("stage0",), "D-077 (6)": ("pilot_sample", "pilot_sheet")}
+RUN_LEDGER_FILE = "screening/run_authorisation_ledger.jsonl"
+_BINDING_PATTERNS = {
+    "criteria_version": r"([A-Za-z0-9][A-Za-z0-9._+-]*)",
+    "inventory_sha256": r"([0-9a-f]{64})",
+    "freeze_entry": r"(D-\d{3})",
+    "d035_s6_records": r"(D-\d{3}(?:\s*,\s*D-\d{3})*)",
+    "single_use": r"(yes)",
+}
+_S6_CONDITION = re.compile(r"\*\*D-035 §6 condition ([1-6]) recorded as met\.\*\*")
 
 
 class RunAuthorisationError(ValueError):
     """A run-authorisation reference is missing, invented or does not authorise this run."""
 
 
-def verify_run_authorisation(lit_dir, reference, clause, decision_log=None):
-    """Return the reference if DECISION_LOG.md records it as an approved run authorisation for
-    `clause` (a key of RUN_AUTHORISATION_MARKERS); raise RunAuthorisationError otherwise."""
+def _decision_rows(log_lines, ref):
+    return [line for line in log_lines if re.match(rf"\| {re.escape(ref)} \| 20\d\d-", line)]
+
+
+def _one_decision_row(log_lines, ref, log_name, role="authorisation"):
+    """Return (decision cell, status cell) of the single decision row of `ref`."""
+    rows = _decision_rows(log_lines, ref)
+    if not rows:
+        raise RunAuthorisationError(f"refused: {ref} ({role}) is not a decision in {log_name}")
+    if len(rows) > 1:
+        raise RunAuthorisationError(f"refused: {ref} ({role}) has more than one decision row in {log_name}")
+    cells = rows[0].split("|")
+    if len(cells) < 5:
+        raise RunAuthorisationError(f"refused: {ref} ({role}) decision row is malformed")
+    return cells[3], cells[4].strip()
+
+
+def parse_run_authorisation_bindings(decision_text):
+    """Parse the D-088 (4) bindings of a run-authorisation Decision cell; raise on any problem."""
+    text = decision_text.replace("`", "")
+    out = {}
+    for key, pat in _BINDING_PATTERNS.items():
+        n = len(re.findall(rf"(?<![\w-]){key}\s*:", text))
+        if n != 1:
+            raise RunAuthorisationError(f"refused: binding {key!r} must appear exactly once (found {n})")
+        m = re.search(rf"(?<![\w-]){key}\s*:\s*{pat}\s*(?:;|$)", text)
+        if not m:
+            raise RunAuthorisationError(f"refused: binding {key!r} is malformed")
+        out[key] = m.group(1)
+    records = [x.strip() for x in out["d035_s6_records"].split(",")]
+    if len(records) != 6 or len(set(records)) != 6:
+        raise RunAuthorisationError("refused: d035_s6_records must name six distinct decision IDs (D-092)")
+    out["d035_s6_records"] = records
+    return out
+
+
+def verify_run_authorisation(lit_dir, reference, clause, decision_log=None, *, inventory_sha256=None,
+                             criteria_version=None):
+    """Return the reference if DECISION_LOG.md records it as a complete, approved run authorisation
+    for `clause` (a key of RUN_AUTHORISATION_MARKERS) that matches this run; raise
+    RunAuthorisationError otherwise. Single use is checked separately (check_authorisation_unused)."""
     marker = RUN_AUTHORISATION_MARKERS.get(clause)
     if marker is None:
         raise RunAuthorisationError(f"unknown authorisation clause {clause!r}")
@@ -1780,25 +1846,214 @@ def verify_run_authorisation(lit_dir, reference, clause, decision_log=None):
     log_path = Path(decision_log) if decision_log else decision_log_path(lit_dir)
     if not log_path.exists():
         raise RunAuthorisationError(f"refused: decision log {log_path} not found")
-    rows = [line for line in log_path.read_text(encoding="utf-8").splitlines()
-            if re.match(rf"\| {re.escape(ref)} \| 20\d\d-", line)]
+    lines = log_path.read_text(encoding="utf-8").splitlines()
+    rows = _decision_rows(lines, ref)
     if not rows:
         raise RunAuthorisationError(f"refused: {ref} is not a decision in {log_path.name}")
     if len(rows) > 1:
         raise RunAuthorisationError(f"refused: {ref} has more than one decision row in {log_path.name}")
-    cells = rows[0].split("|")
-    if len(cells) < 5:
-        raise RunAuthorisationError(f"refused: {ref} decision row is malformed")
-    decision, status = cells[3], cells[4].strip()
+    decision, status = _one_decision_row(lines, ref, log_path.name)
     if not status.startswith("**APPROVED**"):
         raise RunAuthorisationError(f"refused: {ref} is not an unconditional approval ({status[:60]!r})")
     if not decision.strip().startswith(marker):
         raise RunAuthorisationError(f"refused: {ref} decision does not begin with {marker!r}")
+    if status != RUN_AUTHORISATION_STATUS:
+        raise RunAuthorisationError(f"refused: {ref} status is not exactly {RUN_AUTHORISATION_STATUS!r} "
+                                    f"(found {status[:60]!r})")
+    b = parse_run_authorisation_bindings(decision.strip()[len(marker):])
+    bound = [b["freeze_entry"], *b["d035_s6_records"]]
+    if ref in bound or b["freeze_entry"] in b["d035_s6_records"]:
+        raise RunAuthorisationError("refused: the authorisation, the freeze entry and the six §6 records "
+                                    "must be distinct decisions")
+    _, fz_status = _one_decision_row(lines, b["freeze_entry"], log_path.name, "freeze entry")
+    if not fz_status.startswith("**APPROVED**"):
+        raise RunAuthorisationError(f"refused: freeze entry {b['freeze_entry']} is not approved")
+    conditions = []
+    for d in b["d035_s6_records"]:
+        text, st = _one_decision_row(lines, d, log_path.name, "D-035 §6 record")
+        if not st.startswith("**APPROVED**"):
+            raise RunAuthorisationError(f"refused: D-035 §6 record {d} is not approved")
+        found = _S6_CONDITION.findall(text)
+        if len(found) != 1 or not _S6_CONDITION.match(text.strip()):
+            raise RunAuthorisationError(f"refused: D-035 §6 record {d} must begin with exactly one "
+                                        f"'**D-035 §6 condition N recorded as met.**' (found {found})")
+        conditions.append(found[0])
+    if sorted(conditions) != ["1", "2", "3", "4", "5", "6"]:
+        raise RunAuthorisationError(f"refused: the six §6 records cover conditions {sorted(conditions)}, "
+                                    "not 1 to 6 once each")
+    try:
+        entries = load_criteria_registry_entries(lit_dir, decision_log=log_path)
+    except CriteriaRegistryError as e:
+        raise RunAuthorisationError(f"refused: {e}") from None
+    entry = (entries or {}).get(b["criteria_version"])
+    if entry is None:
+        raise RunAuthorisationError(f"refused: bound criteria_version {b['criteria_version']!r} is not a "
+                                    "registered frozen version (freeze required)")
+    if entry["decision_id"] != b["freeze_entry"]:
+        raise RunAuthorisationError(f"refused: freeze entry {b['freeze_entry']} does not match the registry "
+                                    f"({entry['decision_id']}) for {b['criteria_version']!r}")
+    if inventory_sha256 is not None and inventory_sha256 != b["inventory_sha256"]:
+        raise RunAuthorisationError("refused: the run's inventory SHA-256 differs from the bound inventory_sha256")
+    if criteria_version is not None and criteria_version != b["criteria_version"]:
+        raise RunAuthorisationError("refused: the run's criteria_version differs from the bound criteria_version")
     return ref
 
 
+LEDGER_EVENTS = ("started", "completed")
+RUN_LOCK_FILE = "screening/.run_lock.tmp"   # ignored by Git (D-096 rule for *.tmp)
+
+
+def _ledger_path(lit_dir):
+    return Path(lit_dir) / RUN_LEDGER_FILE
+
+
+def authorisation_uses(lit_dir):
+    """Entries of the append-only run-authorisation ledger. Each authorised write run appends a
+    "started" entry before it writes and a "completed" entry after its outputs are in place (L5,
+    pre-commit audit corrections). Fails closed on malformed or inconsistent content: unknown event,
+    "completed" without an earlier "started", or a repeated event for one authorisation and tool."""
+    path = _ledger_path(lit_dir)
+    if not path.exists():
+        return []
+    uses, seen = [], set()
+    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        try:
+            e = json.loads(line)
+        except ValueError:
+            raise RunAuthorisationError(f"refused: {path.name} line {n} is not JSON") from None
+        if not (isinstance(e, dict) and all(isinstance(e.get(k), str) and e.get(k)
+                                            for k in ("authorization", "clause", "tool", "run_time_utc", "event"))):
+            raise RunAuthorisationError(f"refused: {path.name} line {n} is malformed")
+        key = (e["authorization"], e["tool"])
+        if e["event"] not in LEDGER_EVENTS:
+            raise RunAuthorisationError(f"refused: {path.name} line {n} has unknown event {e['event']!r}")
+        if (key, e["event"]) in seen:
+            raise RunAuthorisationError(f"refused: {path.name} line {n} repeats {e['event']} for {key} (inconsistent)")
+        if e["event"] == "completed" and (key, "started") not in seen:
+            raise RunAuthorisationError(f"refused: {path.name} line {n} completes a run that never started (inconsistent)")
+        seen.add((key, e["event"]))
+        uses.append(e)
+    return uses
+
+
+def check_authorisation_unused(lit_dir, reference, clause, tool):
+    """Single use (D-088 (4)): refuse if `tool` already started a run with this authorisation
+    (completed, or interrupted: an interrupted run also consumes it, fail closed), or if the
+    authorisation was used under another clause."""
+    if tool not in RUN_AUTHORISATION_TOOLS.get(clause, ()):
+        raise RunAuthorisationError(f"refused: tool {tool!r} cannot use a {clause} authorisation")
+    uses = authorisation_uses(lit_dir)
+    for e in uses:
+        if e["authorization"] != reference:
+            continue
+        if e["clause"] != clause:
+            raise RunAuthorisationError(f"refused: {reference} was already used under {e['clause']} (single use)")
+        if e["tool"] == tool:
+            done = any(x["authorization"] == reference and x["tool"] == tool and x["event"] == "completed"
+                       for x in uses)
+            if done:
+                raise RunAuthorisationError(f"refused: {reference} was already used by {tool} on "
+                                            f"{e['run_time_utc']} (single use)")
+            raise RunAuthorisationError(f"refused: a {tool} run with {reference} started on {e['run_time_utc']} "
+                                        "and never completed (interrupted); the authorisation is consumed "
+                                        "(single use) and the outputs must be inspected")
+
+
+def require_completed_use(lit_dir, reference, tool):
+    """Refuse unless `tool` completed a run with this authorisation (e.g. the draw before the sheet)."""
+    if not any(e["authorization"] == reference and e["tool"] == tool and e["event"] == "completed"
+               for e in authorisation_uses(lit_dir)):
+        raise RunAuthorisationError(f"refused: no completed {tool} run with {reference} in {Path(RUN_LEDGER_FILE).name}")
+
+
+def _append_ledger(lit_dir, entry):
+    path = _ledger_path(lit_dir)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(entry, sort_keys=True) + "\n")
+        f.flush()
+        os.fsync(f.fileno())
+
+
+def record_authorisation_start(lit_dir, reference, clause, tool, run_time_utc, details=None):
+    """Append a "started" entry before an authorised write (checks that the authorisation is unused)."""
+    check_authorisation_unused(lit_dir, reference, clause, tool)
+    _append_ledger(lit_dir, {"authorization": reference, "clause": clause, "tool": tool, "event": "started",
+                             "run_time_utc": run_time_utc, **(details or {})})
+
+
+def record_authorisation_completion(lit_dir, reference, clause, tool, run_time_utc, details=None):
+    """Append a "completed" entry once the run's outputs are in place."""
+    uses = authorisation_uses(lit_dir)
+    started = any(e["authorization"] == reference and e["tool"] == tool and e["event"] == "started" for e in uses)
+    done = any(e["authorization"] == reference and e["tool"] == tool and e["event"] == "completed" for e in uses)
+    if not started or done:
+        raise RunAuthorisationError(f"refused: cannot complete {tool} with {reference} (ledger: started={started}, "
+                                    f"completed={done})")
+    _append_ledger(lit_dir, {"authorization": reference, "clause": clause, "tool": tool, "event": "completed",
+                             "run_time_utc": run_time_utc, **(details or {})})
+
+
+@contextlib.contextmanager
+def run_lock(lit_dir):
+    """Exclusive lock for authorised write runs in one literature directory (L5). Created with
+    O_EXCL, so a second concurrent run is refused; removed when the run ends normally or by an
+    exception. A lock left by a killed process is never removed automatically: the run is treated as
+    interrupted and must be inspected by hand."""
+    path = Path(lit_dir) / RUN_LOCK_FILE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+    except FileExistsError:
+        raise RunAuthorisationError(f"refused: {path} exists: another authorised run is in progress, or an "
+                                    "earlier run was interrupted (inspect the outputs and the ledger, then "
+                                    "remove the lock by hand)") from None
+    try:
+        os.write(fd, json.dumps({"pid": os.getpid(),
+                                 "time_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}).encode())
+        os.close(fd)
+        yield path
+    finally:
+        try:
+            path.unlink()
+        except FileNotFoundError:
+            pass
+
+
+def write_new_file_atomically(path, text, check=None):
+    """Create `path` with `text` without ever overwriting an existing file (L5): the content is
+    written to a temporary file in the same directory, flushed, optionally checked with `check(tmp)`,
+    and then hard-linked to `path`, which fails if `path` already exists. The temporary file is
+    always removed. Raises FileExistsError if `path` exists."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix=f".{path.stem}.", suffix=".tmp", dir=path.parent)
+    try:
+        if check is not None:
+            check(Path(tmp))                     # e.g. the temporary path must also be ignored by Git
+        with os.fdopen(fd, "w", newline="", encoding="utf-8") as f:
+            fd = None
+            f.write(text)
+            f.flush()
+            os.fsync(f.fileno())
+        os.link(tmp, path)
+    finally:
+        if fd is not None:
+            os.close(fd)
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+    return path
+
+
 def load_criteria_registry(lit_dir, decision_log=None):
-    """Return the frozenset of registered frozen criteria versions, or None when no registry exists.
+    """Return the frozenset of registered frozen criteria versions, or None when no registry exists
+    (see load_criteria_registry_entries)."""
+    entries = load_criteria_registry_entries(lit_dir, decision_log)
+    return None if entries is None else frozenset(entries)
+
+
+def load_criteria_registry_entries(lit_dir, decision_log=None):
+    """Return {criteria_version: registry entry}, or None when no registry exists.
 
     The registry is cross-checked against the decision log: each entry's decision ID must have a
     row in DECISION_LOG.md that states the identifier, the freeze commit and both SHA-256 values.
@@ -1841,7 +2096,7 @@ def load_criteria_registry(lit_dir, decision_log=None):
         if absent:
             raise CriteriaRegistryError(f"{where}: {e['decision_id']} in {log_path.name} does not state {absent}")
         versions[cv] = e
-    return frozenset(versions)
+    return versions
 
 
 def load_screening_decisions(lit_dir, path=None):

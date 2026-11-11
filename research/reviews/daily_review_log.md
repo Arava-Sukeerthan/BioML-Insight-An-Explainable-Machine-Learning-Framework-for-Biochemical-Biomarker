@@ -720,3 +720,70 @@ One entry per researcher review session (~1 h/day).
   - whether to enforce the exact status text and the bindings in code;
   - then the freeze path and the run gates (unchanged).
 - **Recommended next step:** review the diff and authorise a local commit.
+
+## Day 29 — 2026-11-11 — STAGE-B-PREPARATION
+- **Work completed:**
+  - the drafts refreshed for the Phase 1 tools;
+  - frame-only mode and frame identity check;
+  - hardened run authorisation with a single-use ledger;
+  - pilot agreement, template and adjudication-queue tools;
+  - assistant pilot procedure;
+  - D4 ignore rules;
+  - D-089 to D-096 recorded.
+- **Important findings:**
+  - `[EVIDENCE]` all suites pass (Phase 1 module 107, literature 324, data protection 10, NHANES 29; query table PASS);
+  - `[EVIDENCE]` no real data processed; inventory and records unchanged;
+  - `[EVIDENCE]` the real decision log contains no run authorisation and no §6 condition record;
+  - `[HYPOTHESIS]` the "superseded when ready" reading (at the freeze) and the pass-rule definitions need the researcher's confirmation (D-090; Q-091).
+- **Decisions requiring review:**
+  - Q-085;
+  - Q-088 (status wording);
+  - Q-091;
+  - Q-092;
+  - review of the diff and a commit;
+  - then content approval and the freeze.
+- **Recommended next step:** review the diff; decide Q-085, Q-091 and Q-092; authorise a local commit.
+
+## Day 29 — 2026-11-11 — STAGE-B-AUDIT-CORRECTIONS
+- **Work completed:**
+  - corrections for the pre-commit audit findings L1, L2, L3, M2, M4, M5 and L5;
+  - proposals for H1 (D-099) and M1 (D-100);
+  - Q-093 to Q-095 opened.
+- **Important findings:**
+  - `[EVIDENCE]` all suites pass (Phase 1 module 126, literature 343, data protection 10, NHANES 29; query table PASS);
+  - `[EVIDENCE]` no real data processed;
+  - `[EVIDENCE]` the approved rows D-092, D-094 and D-095 no longer contain assistant conventions; those are PROPOSED D-097 and D-098;
+  - `[HYPOTHESIS]` the run-safety behaviour (an interrupted run consumes its authorisation) is a conservative default awaiting Q-093.
+- **Decisions requiring review:**
+  - Q-085;
+  - Q-088 (status wording);
+  - Q-091 (D-098);
+  - Q-092 (D-097);
+  - Q-093 (D-099);
+  - Q-094 (D-100);
+  - Q-095;
+  - the D-090 reading;
+  - commit of the package.
+- **Recommended next step:** review the diff and the proposals; authorise a local commit.
+
+## Day 29 — 2026-11-11 — GOVERNANCE-RECONCILIATION
+- **Work completed:**
+  - the researcher's preferences recorded: D-090 timing; D-097, D-098 and D-099 provisional; D-100 Option A; D-101 blinding requirement;
+  - D-102 hash-first workflow proposed;
+  - protocol v0.2 §7a;
+  - Q-096 added.
+- **Important findings:**
+  - `[EVIDENCE]` D-098 (b) as proposed was broader than D-025; it is aligned in text and code;
+  - `[EVIDENCE]` protocol v0.2 had shortened the D-025 pass wording; restored;
+  - `[EVIDENCE]` all suites pass (Phase 1 module 127, literature 344, data protection 10, NHANES 29; query table PASS);
+  - `[EVIDENCE]` no real data processed.
+- **Decisions requiring review:**
+  - Q-085;
+  - Q-088 (status wording);
+  - final confirmation of D-097, D-098 and D-099;
+  - Q-092 (c);
+  - D-102 (Q-095) and its open points;
+  - Q-096;
+  - D-099 steps (1)–(5) implementation;
+  - commit of the package.
+- **Recommended next step:** review §7a, D-098 (b) and D-102; authorise a local commit.

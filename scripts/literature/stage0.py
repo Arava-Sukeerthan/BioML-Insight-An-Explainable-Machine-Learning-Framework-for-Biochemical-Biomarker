@@ -19,7 +19,8 @@ Interpretation applied (D-082 base rule): a record qualifies under D-074 (b) onl
 least one Stage-0 E5 type; a record with only keep-but-not-used types gets no row.
 
 Running against the real inventory needs, separately: a frozen criteria version (criteria v1.1 §11),
-the D-035 record §6 conditions, Q-089 (timing) and the D-074 (f) authorisation. The command-line
+the D-035 record §6 conditions and the D-074 (f) authorisation; Stage-0 rows are written before the
+pilot draw (D-093, answering Q-089). The command-line
 entry point refuses to run without a registered frozen version, an authorisation verified against
 DECISION_LOG.md (pubrecords.verify_run_authorisation) and a matching inventory SHA-256. Writes are
 atomic: the combined file is validated before it replaces screening/decisions.csv.
@@ -28,6 +29,16 @@ Phase 1 corrections (researcher authorisation 2026-11-11): verified run authoris
 shared checked Stage-0 guards (check_types), applied to D-044 in-scope records and reused by the
 pilot sampler; SHA-256 of publications.jsonl and source_records.jsonl in the run report; run_date
 validated as a real calendar date.
+
+Stage B preparation (D-093, D-095; researcher authorisation 2026-11-11): Stage-0 rows are written
+before the pilot draw (D-093, answering Q-089). The D-074 (f) authorisation must be complete, bound
+to the inventory SHA-256 and criteria version of the run, and unused; a --write run records its use
+in screening/run_authorisation_ledger.jsonl, and a second write with the same authorisation is
+refused (single use, D-088 (4)). Dry runs consume nothing.
+
+Pre-commit audit corrections (researcher authorisation 2026-11-11): a --write run holds an exclusive
+run lock and records "started" before and "completed" after the write; an interrupted run consumes
+the authorisation (fail closed) and leaves its "started" entry as evidence.
 """
 from __future__ import annotations
 
@@ -273,9 +284,23 @@ def main(argv=None):
     a = ap.parse_args(argv)
     lit = Path(a.lit_dir)
     try:
-        auth = pr.verify_run_authorisation(lit, a.authorization, "D-074 (f)")
+        auth = pr.verify_run_authorisation(lit, a.authorization, "D-074 (f)",
+                                           inventory_sha256=a.expected_inventory_sha256,
+                                           criteria_version=a.criteria_version)
+        if a.write:
+            with pr.run_lock(lit):
+                pr.check_authorisation_unused(lit, auth, "D-074 (f)", "stage0")
+                report = _run(lit, a, auth)
+        else:
+            report = _run(lit, a, auth)
     except pr.RunAuthorisationError as e:
         raise SystemExit(str(e)) from None
+    print(json.dumps(report, indent=1))
+    return 0
+
+
+def _run(lit, a, auth):
+    """The Stage-0 run proper; for --write it runs inside the run lock (L5)."""
     frozen = pr.load_criteria_registry(lit)
     if frozen is None or a.criteria_version not in frozen:
         raise SystemExit("refused: criteria_version is not a registered frozen version")
@@ -285,11 +310,19 @@ def main(argv=None):
     rows, report = generate_rows(records, union, utc_run_date(), a.criteria_version, existing)
     report.update({"inventory_sha256": a.expected_inventory_sha256, **input_hashes, "authorization": auth,
                    "criteria_version": a.criteria_version, "new_rows": len(rows), "written": False})
-    if a.write and rows:
-        write_rows_atomically(lit, rows)
-        report["written"] = True
-    print(json.dumps(report, indent=1))
-    return 0
+    if a.write:
+        details = {"inventory_sha256": a.expected_inventory_sha256, "criteria_version": a.criteria_version}
+        pr.record_authorisation_start(lit, auth, "D-074 (f)", "stage0", _now(), details)
+        if rows:
+            write_rows_atomically(lit, rows)
+            report["written"] = True
+        pr.record_authorisation_completion(lit, auth, "D-074 (f)", "stage0", _now(),
+                                           {**details, "new_rows": str(len(rows))})
+    return report
+
+
+def _now():
+    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 
 
 if __name__ == "__main__":

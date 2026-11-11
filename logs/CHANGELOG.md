@@ -2335,3 +2335,171 @@ No `screening/decisions.csv`, Stage-0 row, pilot sample, pilot sheet or criteria
 **Unchanged**: data and inventory files; `.gitignore`; approved decisions; the drafts; PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17). No real-data run, screening output, registry, freeze or run authorisation.
 
 **Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `7f5b608`; uncommitted; not pushed.
+
+## STAGE-B-PREPARATION — 2026-11-11 — Stage B preparation package: documentation refresh, frame-only and identity checks, hardened run authorisation, pilot follow-on tools, D4 ignore rules, decisions D-089 to D-096 (synthetic fixtures only; not a freeze)
+
+**Prompt**: researcher prompt "Proceed with the approved BioML-Insight Stage B preparation work" (2026-11-11). Starting state: branch `claude/eloquent-mccarthy-bqtxr3-part1`, HEAD `8d9bd79`, clean working tree, in sync with the remote.
+
+**Code**:
+- `scripts/literature/pubrecords.py` (P16):
+  - `verify_run_authorisation` now requires:
+    - the exact status `**APPROVED** — run authorisation (single use)`;
+    - the D-088 (4) bindings in the D-095 syntax (`criteria_version`, `inventory_sha256`, `freeze_entry`, six `d035_s6_records`, `single_use: yes`), each exactly once;
+    - one approved decision row for the freeze entry, matching the registry entry of the bound version;
+    - six distinct approved §6 rows, each beginning with "**D-035 §6 condition N recorded as met.**", covering 1–6;
+    - when the tool passes them, equality with the run's inventory SHA-256 and `criteria_version`.
+  - New single-use ledger `screening/run_authorisation_ledger.jsonl` (`check_authorisation_unused`, `record_authorisation_use`): one Stage-0 write per D-074 (f) authorisation; one draw and one sheet per D-077 (6) authorisation; fail closed on malformed content.
+  - `load_criteria_registry_entries` added; `load_criteria_registry` is unchanged in behaviour.
+- `stage0.py`, `pilot_sample.py`, `pilot_sheet.py`: pass the run's inputs to the check and use the ledger. Dry runs consume nothing.
+- `pilot_sample.py`:
+  - P17: `load_scope_snapshot` (recorded SHA-256 `a5d4851f…53ea`) and `verify_frame_identity` (frame = snapshot minus the seven F1 Stage-0 IDs; missing, additional and duplicated IDs refused), run before any draw.
+  - P15: `--frame-only` validates count, strata and identity with no draw, no output and no authorisation.
+- New `scripts/literature/pilot_agreement.py` (P18): Cohen's κ and agreement measures with the D-025 pass evaluation (thresholds unchanged); the researcher decision template (paper IDs only); the adjudication-queue builder.
+- `.gitignore` (D4, D-096): ignores the blinded sheet, `*_sheet_*.csv` and `*.tmp` under `research/literature/screening/`. The audit-trail files stay trackable.
+
+**Tests**:
+- `tests/literature/test_phase1_screening_tools.py`: 33 new tests (P16 bindings and ledger 12, plus 1 Stage-0 binding test in an existing class; P17 identity 5; P15 frame-only and synthetic draw 5; P18 agreement, template and queue 10). Two existing tests were renamed (see below).
+- Existing fixtures updated to write complete authorisations, because the checks are stricter.
+- Three existing expectations changed:
+  - a second Stage-0 `--write` is now refused (single use), where it was previously an idempotent rewrite; the dry-run idempotence is still tested;
+  - a changed inventory is now refused by the inventory binding check, before the provenance check;
+  - the default sheet path is now ignored (D4).
+- The fixture freeze entry is D-999, so the "invented ID" case uses D-977.
+- No test was skipped or removed.
+- `tests/data_protection/test_data_protection.py`: the ignored and trackable screening paths were added.
+- Mutation check: disabling the exact-status check, the ledger or the identity check makes 1, 4 and 3 tests fail respectively.
+
+**Documents**:
+- `screening_criteria_v1.1.md` and `screening_protocol_v0.2.md` (P1), still DRAFT:
+  - the Phase 1 tools and the hardened checks are reflected;
+  - stale "not yet enforced" and "no committed script" statements are corrected;
+  - paraphrase-only justifications (D-089);
+  - Stage-0 timing (D-093);
+  - superseded notes at the freeze (D-090);
+  - condition-6 list and recording form (D-091, D-092);
+  - agreement computation and operational definitions (D-094; Q-091 open);
+  - private sheet exchange (D-096).
+  - **No inclusion or exclusion rule, research question, scope definition or threshold changed.**
+- New `research/literature/pilot_procedure_assistant.md` (DRAFT, D-094).
+
+**Decision records**:
+- `logs/DECISION_LOG.md`: D-089 to D-096 with status-history rows (IDs checked as unused first).
+- `research/reviews/unresolved_questions.md`:
+  - Q-086, Q-087 and Q-089 answered;
+  - Q-088 still partly open;
+  - Q-091 and Q-092 added;
+  - Q-085 unchanged (evidence in the session log; not decided).
+
+**Validation (actual runs, 2026-11-11 04:28:22–04:30:04 UTC)**:
+- Phase 1 module 107 OK;
+- literature 324 OK;
+- data protection (strict) 10 OK;
+- NHANES 29 OK;
+- query table PASS (168 rows);
+- SHA-256 of `publications.jsonl`, `source_records.jsonl` and `paper_inventory.json` unchanged; inventory, records, scope and raw exports equal HEAD;
+- no `screening/` directory and no `criteria_registry.json`.
+- The whitespace checks after the log edits are reported in the task report.
+
+**Not done**: no real-data run (the frame-only check included), Stage-0 run, pilot sample or sheet, screening output, run authorisation, freeze, or D-035 §6 record. No commit or push. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+**Branch / commit / PR**: `claude/eloquent-mccarthy-bqtxr3-part1` at `8d9bd79`; uncommitted.
+
+## STAGE-B-AUDIT-CORRECTIONS — 2026-11-11 — corrections to the uncommitted Stage B preparation package after the pre-commit audit (PASS WITH ISSUES); proposals D-097 to D-100; Q-093 to Q-095 (synthetic fixtures only; not a freeze)
+
+**Prompt**: researcher prompt "The final audit returned PASS WITH ISSUES. Implement the necessary corrections before the first commit" (2026-11-11). Starting state: branch `claude/eloquent-mccarthy-bqtxr3-part1`, HEAD `8d9bd79`, the 17 uncommitted files of STAGE-B-PREPARATION, nothing staged.
+
+**Findings addressed**:
+- **M2 (D-093 enforced):** `pilot_sample.verify_stage0_rows`. Before drawing, `decisions.csv` must hold exactly one `rule:stage0` title/abstract `exclude` row per approved Stage-0 record, with its F1 code (P0028, P0099, P0113, P0624, P0830 → E5; P0931, P0939 → E7), and no other `rule:stage0` row.
+- **M5:** an include/exclude conflict is resolved only by a separate adjudication row for the same pilot paper, at `title_abstract`, with `screener=researcher` and a pilot decision. Any other adjudication row is refused. The latest row is the agreed decision.
+- **L3:** the adjudication queue lists every pair in `dedup_review.csv`; a member without a decision is listed with an empty stage.
+- **L5:**
+  - an exclusive run lock (`screening/.run_lock.tmp`, created with `O_EXCL`; never removed automatically after a crash);
+  - "started" and "completed" ledger events, with a consistency check;
+  - an interrupted run consumes its authorisation (fail closed);
+  - outputs are written without overwriting (temporary file, `fsync`, hard link). The sheet's temporary file must itself be ignored by Git;
+  - the sheet requires a completed draw with the same authorisation;
+  - a sheet path that is not ignored is refused before the authorisation is consumed.
+- **M4:**
+  - D-092, D-094 and D-095 no longer present assistant conventions as researcher decisions. The removed sentences are preserved verbatim in the session log, and status-history rows record the correction.
+  - The conventions are recorded as **PROPOSED** D-097 (run-authorisation formats; Q-092) and D-098 (pass-rule operational definitions; Q-091).
+- **H1:** procedure proposed as **PROPOSED** D-099, with Q-093 opened. Steps (1)–(5) are not implemented.
+- **M1:** two options proposed as **PROPOSED** D-100, with Q-094 opened.
+- **M3** is not decided; it is registered as Q-095, and procedure §4 is marked [OPEN].
+- **L1:** the Q-088 status cell rewritten as one consistent statement.
+- **L2:**
+  - `stage0.py` and `pilot_sample.py` docstrings corrected;
+  - criteria v1.1 §11 step 1 now lists D-085 to D-096 and excludes proposals;
+  - protocol v0.2 §10 heading date corrected.
+
+**Tests**:
+- 19 new tests: Stage-0 rows 4; adjudication evidence 4; lock, interruption and ledger 6; no-overwrite and sheet 5.
+- Existing fixtures and expectations were updated for the ledger events, the completed draw before a sheet, the Stage-0 rows before a draw, the adjudication rows, and all duplicate pairs in the queue. No test was skipped or removed.
+- Mutation check: disabling the Stage-0 row check, the adjudication screener check, the lock's `O_EXCL`, or "an interrupted run consumes the authorisation" makes 2, 1, 3 and 1 tests fail respectively. The source was restored and compared byte for byte.
+
+**Validation (actual runs, 2026-11-11 08:42:24–08:44:01 UTC)**:
+- Phase 1 module 126 OK;
+- literature 343 OK;
+- data protection (strict) 10 OK;
+- NHANES 29 OK;
+- query table PASS (168 rows);
+- SHA-256 of `publications.jsonl`, `source_records.jsonl` and `paper_inventory.json` unchanged; inventory, records, scope, raw exports, v1.0 and v0.1 equal HEAD;
+- no `screening/` directory.
+- The whitespace checks after the log edits are reported in the task report.
+
+**Not done**: no real-data run, Stage-0 run, pilot sample or sheet, run authorisation, activation-condition record or freeze. Q-085, Q-088, Q-091 and Q-092 not decided; H1, M1 and M3 not decided. No commit, stage or push. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## GOVERNANCE-RECONCILIATION — 2026-11-11 — researcher preferences on D-090 and Q-091 to Q-095 recorded; provisional decisions marked as provisional; assistant procedure integrated into protocol v0.2 §7a; hash-first workflow proposed (not a freeze)
+
+**Prompt**: researcher prompt "Prepare the final governance reconciliation" (2026-11-11). Starting state: branch `claude/eloquent-mccarthy-bqtxr3-part1`, HEAD `8d9bd79`, the 18 uncommitted files of the Stage B package, nothing staged.
+
+**Decision records** (`logs/DECISION_LOG.md`; 10 status-history rows; replaced text preserved in the session log):
+- **D-090:** the timing is now the researcher's confirmation (superseded notes at the formal freeze), not the assistant's reading.
+- **D-091:** the approved list is unchanged; the scope of item (a) is stated as open (new Q-096).
+- **D-097:** PROPOSED → **APPROVED — PROVISIONAL**, subject to final review.
+- **D-098:** PROPOSED → **APPROVED — PROVISIONAL**, subject to consistency with D-025. Consistency check:
+  - (a) is consistent;
+  - (b) as proposed was broader than D-025 ("without adjudicated agreement on the exclusion") and is aligned: only an adjudicated `exclude` resolves an include/exclude conflict;
+  - (c) is not covered by D-025; no pass is reported without κ ≥ 0.60.
+- **D-099:** PROPOSED → **APPROVED — PROVISIONAL**, including the rule that an interrupted run consumes its authorisation. Steps (1)–(5) are not implemented.
+- **D-100:** PROPOSED → **APPROVED**, Option A.
+- **New D-101:** **APPROVED — CONDITIONAL (inactive)** — the assistant's pilot decisions are not exposed before the researcher's independent screening is complete.
+- **New D-102:** **PROPOSED** — the hash-first workflow.
+- Cross-references in D-092, D-094 and D-095 updated; a note added to the D-097–D-100 section introduction.
+- No provisional row is marked as finally approved. None starts with the `**APPROVED**` prefix that the tools require for a freeze entry or a condition record.
+
+**Register**:
+- Q-088: D-090 timing confirmed; final status wording still open.
+- Q-091, Q-092, Q-093: provisionally answered (not final).
+- Q-094: answered (Option A).
+- Q-095: partly answered (D-101), with the workflow proposed in D-102.
+- New Q-096: scope of D-091 item (a).
+- Q-085 unchanged.
+
+**Documents**:
+- Protocol v0.2:
+  - new §7a, the assistant pilot procedure (Option A), with the D-101 requirement and the D-102 workflow marked PROPOSED;
+  - the §7 "Pass" row restores the D-025 wording ("agreement on the exclusion"; "≥ 3 disagreements on one code"), which v0.2 had shortened;
+  - D-097 to D-099 marked provisional; outputs, §10 and §11 updated.
+- `pilot_procedure_assistant.md` reduced to a pointer to §7a.
+- Criteria v1.1: header, the D-090 timing in §11 step 2, §11 step 1 (provisional decisions and proposals), §9.
+- No exclusion rule, threshold, sample parameter or RQ changed.
+
+**Code**:
+- `pilot_agreement.py`: an include/exclude conflict is resolved only by an adjudicated `exclude` (D-025; D-098 (b)); docstrings and report text say provisional.
+- `pubrecords.py`: comments only.
+
+**Tests**:
+- 1 new test (`test_only_agreement_on_the_exclusion_resolves`).
+- 2 tests updated for the D-025 rule: an adjudicated `include` now leaves the conflict unresolved.
+
+**Validation (actual runs, 2026-11-11 08:56:30–08:58:03 UTC)**:
+- Phase 1 module 127 OK;
+- literature 344 OK;
+- data protection (strict) 10 OK;
+- NHANES 29 OK;
+- query table PASS (168 rows);
+- ignored data-file hashes unchanged; inventory, records, scope, raw exports, v1.0 and v0.1 equal HEAD;
+- `.gitignore` unchanged in this task; no `screening/` directory.
+- The whitespace checks are reported in the task report.
+
+**Not done**: Q-085 not decided; no freeze, activation-condition record, run authorisation, real-data processing, stage, commit or push. The D-102 ignore rule and tool support were not implemented. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.

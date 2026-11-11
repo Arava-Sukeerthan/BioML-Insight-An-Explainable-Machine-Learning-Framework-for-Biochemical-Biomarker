@@ -22,12 +22,23 @@ otherwise. Researcher screening responses are recorded separately in pilot_decis
 Phase 1 corrections (researcher authorisation 2026-11-11): the run authorisation is verified
 against DECISION_LOG.md; before a sheet is built, the pilot sample, its provenance sidecar and the
 current inventory must agree.
+
+Stage B preparation (D-095, D-096; researcher authorisation 2026-11-11): the D-077 (6) authorisation
+must be complete, bound to the current inventory, and not yet used for a sheet (single-use ledger);
+the default sheet path is ignored by Git (D4 rule, D-096) and the sheet is exchanged privately with
+the researcher, never committed.
+
+Pre-commit audit corrections (researcher authorisation 2026-11-11): the sheet run holds the run lock,
+requires a completed draw with the same authorisation, records "started" and "completed" in the
+ledger, and writes the sheet without ever overwriting (an ignored temporary file, then a hard link).
 """
 from __future__ import annotations
 
 import argparse
 import csv
+import datetime as dt
 import hashlib
+import io
 import json
 import re
 import subprocess
@@ -146,11 +157,14 @@ def verify_sample_provenance(sample_rows, sidecar, inventory_sha256, authorizati
         raise PilotSheetError("refused: " + "; ".join(problems))
 
 
-def write_sheet(rows, out_path, sample_ids, authorization, lit_dir=None, decision_log=None):
+def write_sheet(rows, out_path, sample_ids, authorization, lit_dir=None, decision_log=None, inventory_sha256=None):
     if lit_dir is None and decision_log is None:
         raise PilotSheetError("refused: no decision log to verify the D-077 (6) authorisation")
+    if lit_dir is None:
+        raise PilotSheetError("refused: no literature directory to check the criteria registry")
     try:
-        pr.verify_run_authorisation(lit_dir or ".", authorization, "D-077 (6)", decision_log=decision_log)
+        pr.verify_run_authorisation(lit_dir, authorization, "D-077 (6)", decision_log=decision_log,
+                                    inventory_sha256=inventory_sha256)
     except pr.RunAuthorisationError as e:
         raise PilotSheetError(str(e)) from None
     if not path_is_git_ignored(out_path):
@@ -159,13 +173,21 @@ def write_sheet(rows, out_path, sample_ids, authorization, lit_dir=None, decisio
     out = Path(out_path)
     if out.exists():
         raise PilotSheetError(f"refused: {out} already exists")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with open(out, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=ALLOWED_COLUMNS, extrasaction="raise")
-        w.writeheader()
-        w.writerows(rows)
-    with open(out, newline="", encoding="utf-8") as f:
-        check_columns(next(csv.reader(f)))
+    buf = io.StringIO(newline="")
+    w = csv.DictWriter(buf, fieldnames=ALLOWED_COLUMNS, extrasaction="raise")
+    w.writeheader()
+    w.writerows(rows)
+    check_columns(next(csv.reader(io.StringIO(buf.getvalue(), newline=""))))
+
+    def tmp_must_be_ignored(tmp):
+        # L5: the abstracts are first written to a temporary file next to the sheet; it must be ignored too
+        if not path_is_git_ignored(tmp):
+            raise PilotSheetError(f"refused: temporary file {tmp.name} would not be ignored by Git")
+
+    try:
+        pr.write_new_file_atomically(out, buf.getvalue(), check=tmp_must_be_ignored)
+    except FileExistsError:
+        raise PilotSheetError(f"refused: {out} already exists") from None
     return out
 
 
@@ -177,10 +199,24 @@ def main(argv=None):
     ap.add_argument("--out", default=None, help=f"default: <lit-dir>/{DEFAULT_SHEET}")
     a = ap.parse_args(argv)
     lit = Path(a.lit_dir)
+    inv_path = lit / "paper_inventory.json"
+    if not inv_path.exists():
+        raise SystemExit(f"refused: {inv_path} not found")
+    inv_sha = hashlib.sha256(inv_path.read_bytes()).hexdigest()
     try:
-        auth = pr.verify_run_authorisation(lit, a.authorization, "D-077 (6)")
+        auth = pr.verify_run_authorisation(lit, a.authorization, "D-077 (6)", inventory_sha256=inv_sha)
+        with pr.run_lock(lit):
+            pr.check_authorisation_unused(lit, auth, "D-077 (6)", "pilot_sheet")
+            pr.require_completed_use(lit, auth, "pilot_sample")          # the draw comes first (L5)
+            out, n = _sheet_run(lit, a, auth, inv_sha)
     except pr.RunAuthorisationError as e:
         raise SystemExit(str(e)) from None
+    print(f"wrote {out} ({n} rows)")
+    return 0
+
+
+def _sheet_run(lit, a, auth, inv_sha):
+    """The sheet run proper, inside the run lock (L5)."""
     sample_path = lit / "screening" / "pilot_sample.csv"
     side_path = sample_path.with_suffix(".provenance.json")
     if not sample_path.exists() or not side_path.exists():
@@ -189,7 +225,6 @@ def main(argv=None):
         sample_rows = list(csv.DictReader(f))
     try:
         sidecar = json.loads(side_path.read_text(encoding="utf-8"))
-        inv_sha = hashlib.sha256((lit / "paper_inventory.json").read_bytes()).hexdigest()
         verify_sample_provenance(sample_rows, sidecar, inv_sha, auth)
     except (ValueError, OSError) as e:
         raise SystemExit(str(e)) from None
@@ -204,11 +239,23 @@ def main(argv=None):
     status = json.loads(Path(a.abstract_status).read_text(encoding="utf-8")) if a.abstract_status else {}
     try:
         rows = build_rows(sample_ids, pubs, status)
-        out = write_sheet(rows, Path(a.out) if a.out else lit / DEFAULT_SHEET, sample_ids, auth, lit_dir=lit)
     except PilotSheetError as e:
         raise SystemExit(str(e)) from None
-    print(f"wrote {out} ({len(rows)} rows)")
-    return 0
+    out_path = Path(a.out) if a.out else lit / DEFAULT_SHEET
+    if out_path.exists() or not path_is_git_ignored(out_path):     # checked before the authorisation is consumed
+        raise SystemExit(f"refused: {out_path} exists or is not ignored by Git")
+    details = {"inventory_sha256": inv_sha, "rows": str(len(rows))}
+    pr.record_authorisation_start(lit, auth, "D-077 (6)", "pilot_sheet", _now(), details)
+    try:
+        out = write_sheet(rows, out_path, sample_ids, auth, lit_dir=lit, inventory_sha256=inv_sha)
+    except PilotSheetError as e:
+        raise SystemExit(str(e)) from None
+    pr.record_authorisation_completion(lit, auth, "D-077 (6)", "pilot_sheet", _now(), details)
+    return out, len(rows)
+
+
+def _now():
+    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 
 
 if __name__ == "__main__":

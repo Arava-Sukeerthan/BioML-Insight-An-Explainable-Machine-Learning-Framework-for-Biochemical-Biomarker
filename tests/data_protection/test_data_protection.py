@@ -89,6 +89,10 @@ SHOULD_BE_IGNORED = [
     "data/export.zip", "data/derived/analytic.csv.gz", "data/raw/nhanes/bundle.tar",
     "data/participants.xlsx", "data/manifest/scratch.XLS", "outputs/aggregate/bundle.zip",
     "outputs/report.tar.gz",
+    # Stage B screening (D-096): the blinded researcher sheet (contains abstracts) and temporary files
+    "research/literature/screening/pilot_sheet_researcher.csv",
+    "research/literature/screening/pilot2_sheet_researcher.csv",
+    "research/literature/screening/.decisions.x1y2.csv.tmp", "research/literature/screening/partial.tmp",
 ]
 
 SHOULD_NOT_BE_IGNORED = [
@@ -102,6 +106,14 @@ SHOULD_NOT_BE_IGNORED = [
     "research/literature/schemas/paper_inventory.schema.json", "research/literature/raw_exports/MANIFEST.csv",
     "tests/data_protection/test_data_protection.py", "tests/data_protection/identifier_allowlist.txt",
     "docs/figures/calibration.pdf", "research/reviews/notes.xlsx",
+    # Stage B screening audit trail (D-096; no abstracts, D-089): must stay trackable
+    "research/literature/screening/decisions.csv", "research/literature/screening/pilot_sample.csv",
+    "research/literature/screening/pilot_sample.provenance.json",
+    "research/literature/screening/pilot_decisions_assistant.csv",
+    "research/literature/screening/pilot_decisions_researcher.csv",
+    "research/literature/screening/pilot_report.md", "research/literature/screening/adjudication_queue.csv",
+    "research/literature/screening/run_authorisation_ledger.jsonl",
+    "research/literature/criteria_registry.json",
 ]
 
 

@@ -898,3 +898,33 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Completed in the working tree: anchored check; 10 new tests (Phase 1 module 74 OK; literature 291 OK; data protection 10 OK; NHANES 29 OK; query table PASS); D-088; Q-090 answered. Zero Decision cells begin with a marker. Uncommitted |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `7f5b608`; uncommitted; not pushed |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### STAGE-B-PREPARATION (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | STAGE-B-PREPARATION (researcher prompt "Proceed with the approved BioML-Insight Stage B preparation work") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | P1 documentation refresh; P15 frame-only validation; P16 authorisation hardening; P17 frame identity; P18 pilot follow-on tools; D4 ignore rules; record the approved decisions (P2, P3, Q-086, Q-087, Q-089, P19, agreement and blinding clarification); report the Q-085 evidence without deciding it. No real data, freeze, run authorisation, D-035 §6 record, commit or push |
+| Actual completion status | Completed in the working tree: code, 33 new tests, two documents refreshed, one procedure document, D-089 to D-096, register updated (Q-091 and Q-092 added). Tests: Phase 1 module 107 OK; literature 324 OK; data protection 10 OK; NHANES 29 OK; query table PASS. Open: Q-085, Q-088 (status wording), Q-091, Q-092, content approval, freeze, §6 records, authorisations. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `8d9bd79`; uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### STAGE-B-AUDIT-CORRECTIONS (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | STAGE-B-AUDIT-CORRECTIONS (researcher prompt "The final audit returned PASS WITH ISSUES. Implement the necessary corrections before the first commit") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Correct L1, L2, M2, M5, L3, M4 and L5; propose procedures for H1 and M1. No real data, run authorisation, activation record, freeze, decision on Q-085, Q-088, Q-091, Q-092, H1, M1 or M3, and no commit, stage or push |
+| Actual completion status | Completed in the working tree: code corrections with 19 new tests (Phase 1 module 126 OK; literature 343 OK; data protection 10 OK; NHANES 29 OK; query table PASS); D-092, D-094 and D-095 corrected with history rows; PROPOSED D-097 to D-100; Q-093 to Q-095 opened. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `8d9bd79`; uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
+
+### GOVERNANCE-RECONCILIATION (2026-11-11)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | GOVERNANCE-RECONCILIATION (researcher prompt "Prepare the final governance reconciliation") |
+| Prompt date | 2026-11-11 (Day 29) |
+| Objective | Record the researcher's preferences (D-090; Q-091 to Q-095); reconcile D-090 and D-091; integrate the assistant procedure into protocol v0.2 (Option A); propose a hash-first blinding workflow; keep provisional decisions provisional; update the register and traceability; preserve history. Q-085 not decided; no freeze, activation record, real-data operation, stage, commit or push |
+| Actual completion status | Completed in the working tree: D-090, D-091, D-097 to D-100 updated with 10 status-history rows; D-101 and D-102 added; Q-088 and Q-091 to Q-095 updated; Q-096 added; protocol §7a; D-098 (b) aligned with D-025 in text and code. Tests: Phase 1 module 127 OK; literature 344 OK; data protection 10 OK; NHANES 29 OK; query table PASS. Uncommitted |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `8d9bd79`; uncommitted; not pushed |
+| Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed by this task; open, not merged |
