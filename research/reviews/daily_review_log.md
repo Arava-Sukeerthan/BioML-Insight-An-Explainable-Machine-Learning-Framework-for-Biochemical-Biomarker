@@ -1072,3 +1072,7 @@ One entry per researcher review session (~1 h/day).
 - `[EVIDENCE]` Stage 0 ran once under D-121: 7 exclusions (E5 5, E7 2); 1,463 records await title/abstract screening.
 - `[EVIDENCE]` Two live-state tests failed after Stage 0; corrected in tests only (fixture refusal tests + a real flow-count reconciliation).
 - `[OPEN]` Q-101: the RQ5 completeness gate reports "complete" before screening; a production fix needs approval.
+
+## 2026-11-12 — EXEC-SCAFFOLD-21 (Q-101)
+- `[EVIDENCE]` The RQ5 completeness gate now requires complete title/abstract screening of the whole D-044 scope and a complete review of the routed records. Incomplete output is bannered as not usable for D-016.
+- `[OPEN]` Q-102: `to_markdown` robustness to a missing `verification_status`.

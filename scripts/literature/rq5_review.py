@@ -1,6 +1,6 @@
 """RQ5 closest-prior-art matrix from VALIDATED full-text screening decisions (D-031 to D-038).
 
-Status: READY, NOT RUN (no screening exists). Input for the Stage D gate and D-016. It never assigns a
+Status: READY. Input for the Stage D gate and D-016. It never assigns a
 status: coverage groups come from pubrecords.derive_rq5_coverage_group on the CONFIRMED (full-text)
 component statuses only (D-035); title/abstract statuses are never counted (D-034, D-035 G2).
 
@@ -11,13 +11,25 @@ Output (identifiers and statuses only; no titles, abstracts or quotations):
     the latest full-text row), and the overlap with this project's planned framework components;
   * a verification queue: `qualified` and `near_rq5` records not yet researcher-verified, and records
     whose group is provisional;
-  * counts per group. Only subgroup (a) may be described as covering all five components (D-038 (2)).
+  * counts per group. Only subgroup (a) may be described as covering all five components (D-038 (2));
+  * completeness (Q-101, 2026-11-12), reported as three separate statuses:
+      - title/abstract screening complete: every record in the D-044 screening scope has a title/abstract
+        decision (Stage-0 or manual), i.e. none awaits screening; counts come from
+        flow_diagram.flow_counts (validated and reconciled with the scope);
+      - RQ5 evidence review of the records routed so far complete: every record routed toward RQ5 has a
+        confirmed full-text component assessment and no matrix record awaits researcher verification.
+        While screening is incomplete, routing is not final, so this status alone never means the RQ5
+        review is complete;
+      - review complete = both. Only then may the output be used as completed RQ5 evidence for D-016.
+    Without screening counts (e.g. summarise() called without them) completeness is never claimed
+    (fail closed). While incomplete, the output begins with an INCOMPLETE banner.
 The planned framework (protocol v1.0 candidate §11.2) covers classification, calibration, uncertainty
 and explainability; feature selection is not a framework component. The overlap column is a
 descriptive comparison for the gap matrix, not a novelty judgement (CLAUDE.md rule 14).
 
 Usage: python3 -I scripts/literature/rq5_review.py [--lit-dir research/literature] [--decisions PATH]
-Refuses (exit 2) without a decisions file or on any invalid row.
+Refuses (exit 2) without a decisions file, on a file without decision rows, on any invalid row, or when
+the decisions do not reconcile with the D-044 scope (the flow_diagram.flow_counts checks).
 """
 from __future__ import annotations
 
@@ -28,6 +40,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import pubrecords as pr  # noqa: E402
+import flow_diagram as fd  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 COMPONENTS = list(pr.RQ5_COMPONENT_FIELDS)
@@ -94,17 +107,36 @@ def pending_assessment(decision_rows):
     return sorted(pid for pid in routed if not (ev.get(pid) or {}).get("confirmed"))
 
 
-def summarise(rows, pending=()):
+def screening_status(flow):
+    """Title/abstract screening status of the whole D-044 scope from flow_diagram.flow_counts output.
+    Complete only if the scope is non-empty and no in-scope record awaits title/abstract screening."""
+    if flow is None:
+        return {"scope": None, "stage0_excluded": None, "ta_screened": None, "awaiting_ta": None,
+                "complete": False}
+    scope, awaiting = int(flow["scope"]), int(flow["awaiting_ta"])
+    return {"scope": scope, "stage0_excluded": int(flow["stage0_excluded"]), "ta_screened": int(flow["ta_screened"]),
+            "awaiting_ta": awaiting, "complete": scope > 0 and awaiting == 0}
+
+
+def summarise(rows, pending=(), screening=None):
+    """screening: flow_diagram.flow_counts output for the same decisions. Without it the review is never
+    reported complete (fail closed, Q-101)."""
     counts = {g: sum(r["group"] == g for r in rows) for g in GROUP_ORDER}
     queue = [r["paper_id"] for r in rows if (r["group"] in ("qualified", "near_rq5") and not r["researcher_verified"])
              or r["provisional"]]
+    scr = screening_status(screening)
+    # RQ5 evidence review: no routed record unassessed and no matrix record awaiting researcher
+    # verification (D-035, D-038). Screening: no in-scope record awaiting title/abstract screening.
+    # Contribution wording (D-016) needs both (CLAUDE.md rule 14; Q-101).
+    routed_complete = not pending and not queue
     return {"counts": counts, "verification_queue": sorted(set(queue)),
             "all_five_components": [r["paper_id"] for r in rows if r["d038_subgroup"].startswith("a")],
             "not_citable": [r["paper_id"] for r in rows if not r["citable"]],
             "pending_full_text_assessment": list(pending),
-            # contribution wording (D-016) is not supported while any routed record is unassessed or
-            # any matrix record awaits researcher verification (D-035, D-038; CLAUDE.md rule 14)
-            "review_complete": not pending and not queue}
+            "screening": scr,
+            "screening_complete": scr["complete"],
+            "rq5_routed_records_complete": routed_complete,
+            "review_complete": scr["complete"] and routed_complete}
 
 
 def to_markdown(rows, summary):
@@ -118,7 +150,20 @@ def to_markdown(rows, summary):
             r["bibliographic_status"] + ("" if r["citable"] else " (not citable)"),
             r["planned_components_covered"]]) + " |")
     s = summary
-    return ("\n".join(lines) + f"\n\nCounts: {json.dumps(s['counts'])}. Researcher verification queue: "
+    scr = s["screening"]
+    if scr["scope"] is None:
+        scr_text = "Title/abstract screening: status not available (completeness not assessed)"
+    else:
+        scr_text = (f"Title/abstract screening: {scr['awaiting_ta']} of {scr['scope']} in-scope record(s) awaiting "
+                    f"screening (Stage-0 excluded {scr['stage0_excluded']}; screened {scr['ta_screened']})")
+    banner = "" if s["review_complete"] else (
+        "**INCOMPLETE — this RQ5 output is not completed evidence and must not be used for D-016 or any "
+        "contribution or novelty wording.**\n\n")
+    return (banner + "\n".join(lines) + f"\n\n{scr_text}. "
+            f"Screening complete: {'yes' if s['screening_complete'] else 'no'}. "
+            f"RQ5 evidence review of the records routed so far: {'complete' if s['rq5_routed_records_complete'] else 'incomplete'}"
+            f"{'' if s['screening_complete'] else ' (routing is not final until title/abstract screening is complete)'}."
+            f"\n\nCounts: {json.dumps(s['counts'])}. Researcher verification queue: "
             f"{len(s['verification_queue'])} record(s). Not citable (not D-064 verified): {len(s['not_citable'])}. "
             f"Routed records without a full-text assessment: {len(s['pending_full_text_assessment'])}. "
             f"Review complete: {'yes' if s['review_complete'] else 'NO — no contribution or novelty wording is supported yet'}. "
@@ -137,12 +182,13 @@ def main(argv=None):
         if not path.exists():
             raise RQ5Error(f"{path} does not exist: no screening has been recorded")
         decisions = pr.load_screening_decisions(lit, path)
+        flow = fd.flow_counts(lit, path)                    # scope, reconciliation; refuses an empty file
         rows = matrix(decisions, load_bibliographic_status(lit))
         pending = pending_assessment(decisions)
-    except (RQ5Error, ValueError) as e:
+    except (RQ5Error, ValueError) as e:                  # FlowError is a ValueError
         print(f"refused: {e}", file=sys.stderr)
         return 2
-    print(to_markdown(rows, summarise(rows, pending)))
+    print(to_markdown(rows, summarise(rows, pending, flow)))
     return 0
 
 

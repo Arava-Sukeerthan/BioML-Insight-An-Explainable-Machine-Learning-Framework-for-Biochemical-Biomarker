@@ -1184,3 +1184,12 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Stage 0 done (7 rows). Two post-ledger failures fixed in tests only. Q-101 (RQ5 completeness gate) raised, not fixed |
 | Validation | All suites pass after the correction (411/10/39/71; query table PASS) |
 | PR | None created or changed (PR #17 untouched) |
+
+### EXEC-SCAFFOLD-21 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-21 (researcher prompts "I approve a narrowly scoped Q-101 production fix" and "I approve committing and pushing the Q-101 fix" (2026-11-12)) |
+| Objective | Fix the RQ5 completeness gate (Q-101) with regression tests; document; commit and push only if all checks pass |
+| Actual completion status | Fix and 7 tests implemented; diff reviewed by the researcher; Q-101 answered; Q-102 raised (open) |
+| Validation | Full `run_checks.sh` before the commit (results in the CHANGELOG and the final report) |
+| PR | None created or changed (PR #17 untouched) |

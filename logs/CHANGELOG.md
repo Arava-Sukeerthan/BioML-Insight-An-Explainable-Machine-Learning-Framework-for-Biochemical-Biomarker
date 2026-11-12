@@ -3346,3 +3346,20 @@ Findings:
   - Literature suite 410 → 411.
 - **Not added:** a real-repository RQ5 test. On the real repository the tool reports "Review complete: yes" with 0 records although 1,463 records await screening. A truthful test would fail, and fixing it needs a production change, so it is recorded as **Q-101** (open) and not changed.
 - **Checks after the correction:** literature 411, data protection 10, NHANES 39, models 71, query table PASS.
+
+## 2026-11-12 — Q-101 fixed: RQ5 completeness gate (researcher approval, EXEC-SCAFFOLD-21)
+- **Defect:** `rq5_review.summarise()` set `review_complete = not pending and not queue`. It ignored the screening inventory, so after Stage 0 it reported "Review complete: yes" with 1,463 of 1,470 in-scope records awaiting title/abstract screening. It also defaulted to complete without screening information, and an empty decisions file passed.
+- **Fix** (`scripts/literature/rq5_review.py`):
+  - the screening status comes from `flow_diagram.flow_counts` (validated, scope-reconciled);
+  - three separate statuses: screening complete, RQ5 evidence review of the records routed so far (with "routing is not final" while screening is incomplete), and review complete = both;
+  - `summarise()` without screening counts fails closed;
+  - the CLI refuses an empty decisions file or decisions that do not reconcile with the scope (exit 2);
+  - incomplete output begins with an INCOMPLETE banner ("must not be used for D-016 or any contribution or novelty wording").
+- **Tests** (`tests/literature/test_rq5_review.py`), 7 new:
+  - empty inventory; records awaiting screening; partially screened; fully screened with incomplete RQ5 review (unassessed and unverified); genuinely complete; no screening counts (fail closed);
+  - a state-independent read-only real-repository test.
+  - Against the previous code all 7 fail (6 errors from the missing statuses; 1 behavioural failure: the empty file was accepted).
+- **Unchanged:** research question, outcome, predictor groups, validation design, RQ5 routing rules, criteria, protocol, inventory, ledger, `decisions.csv`.
+- **Raised:** Q-102 (open), `to_markdown` fails on an inventory record without `verification_status`. Not fixed under Q-101; the current inventory is unaffected.
+- **Checks:** see the commit entry below.
+- **Checks before the commit** (`sh scripts/run_checks.sh`): literature 418 OK, data protection 10 OK, NHANES 39 OK, models 71 OK, query table PASS (168 rows); `git diff --check` clean.

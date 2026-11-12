@@ -229,3 +229,10 @@ Declared before any result, and applied only by your decision at the D-019 freez
 - Tests-only correction in the two files (see CHANGELOG).
 - A draft real-repository RQ5 test of mine contained a conditional that would have hidden the completeness-gate problem. It was removed, not committed, and the problem was recorded as Q-101.
 - All suites pass (411/10/39/71; query table PASS).
+
+## EXEC-SCAFFOLD-21 (Q-101 fix, researcher-approved)
+- Inspected `summarise()`; defect as recorded in Q-101.
+- Implemented the three-status completeness gate using `flow_diagram.flow_counts`; INCOMPLETE banner; fail closed without screening counts.
+- First fixture run: 3 errors from my fixture inventory lacking `verification_status`. That exposed the `to_markdown` weakness, recorded as Q-102 and not fixed; the fixture was corrected.
+- 7 new tests fail on the previous code (checked in a scratch copy, deleted).
+- The diff reported to the researcher (SHA-256 prefix `4dc42074`) is identical to the committed code diff.
