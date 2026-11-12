@@ -3320,3 +3320,16 @@ Findings:
 - **Branch:** `claude/eloquent-mccarthy-bqtxr3-part1`; pushed normally (fast-forward `a0af2ad..4262e1f`, no force).
 - **Validation before staging:** `run_checks.sh` all passed (literature 392, data protection 10, NHANES 39, models 71, query table 168); staged set = approved list (64).
 - **Not done:** A1, Stage 0, R15, data operations, PR #17 change.
+
+## 2026-11-12 — A1 recorded (researcher approval, EXEC-SCAFFOLD-18)
+- **Decision rows:** D-114 to D-121 recorded in `logs/DECISION_LOG.md` as presented in `research/reviews/2026-11-12_A1-PREPARATION.md`, including the optional D-120 clause (state at `2246ca7`; literature tests 392 OK). Eight status-history rows were added.
+- **Q-063:** answered with wording A (not PRESERVED); the WhatsApp details were confirmed unavailable. Recorded in `unresolved_questions.md`.
+- **Conditions 1, 2 and 4:** recorded as met at decision level; the underlying decisions (D-036; D-055/D-061; D-060/D-068) remain APPROVED — CONDITIONAL.
+- **Authorisation check:** `pubrecords.verify_run_authorisation('D-121', 'D-074 (f)', inventory b668dbde…, criteria_v1.1+protocol_v0.2)` accepted.
+- **Not done:** pilot, A2, R15, data operations, frozen-file change. The Stage-0 run follows in a separate dedicated commit (D-099 (1)).
+
+## 2026-11-12 — Activation-state safeguard tests (researcher approval, Option 1; EXEC-SCAFFOLD-19)
+- **Applied** `activation_tests.patch` (SHA-256 prefix `af0e39ec`) to `tests/literature/test_phase1_screening_tools.py` only. No production code changed.
+- **Removed** four live-state tests (`test_real_decision_log_holds_no_run_authorisation`, `test_real_decision_log_has_no_cell_beginning_with_a_marker`, `test_real_decision_log_holds_no_complete_authorisation`, `test_real_repository_has_no_ledger`).
+- **Added** `audit_run_authorisations` and `ActivationStateAudit` (22 tests): fixture tests of the pre-activation and activated states, plus one real-repository test that accepts exactly the two permitted states (activated = D-121 alone with its A1 bindings and a ledger that is chained, single-use and equal to HEAD).
+- Literature suite 392 → 410. The isolated-copy results are recorded in the proposal; the real-repository results follow.

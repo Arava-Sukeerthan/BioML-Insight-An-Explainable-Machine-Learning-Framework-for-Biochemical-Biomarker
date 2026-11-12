@@ -1167,3 +1167,11 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Validation | `run_checks.sh` before staging |
 | PR | None created or changed (PR #17 untouched) |
 | A5 result (follow-up) | Commit `4262e1f` pushed normally to `claude/eloquent-mccarthy-bqtxr3-part1` (`a0af2ad..4262e1f`); 64 paths; checks all passed before staging |
+
+### EXEC-SCAFFOLD-18 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-18 (researcher prompt "A1 APPROVAL: 1. Q-063: I select wording A …" (2026-11-12)) |
+| Objective | Record D-114 to D-121 and Q-063; A1 commit and push; one Stage-0 dry run; a write only on an exact match; D-099 dedicated commit; usage records |
+| Actual completion status | A1 recorded; see the later entries for the Stage-0 outcome |
+| PR | None created or changed (PR #17 untouched) |

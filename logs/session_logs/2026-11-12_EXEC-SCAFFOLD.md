@@ -201,3 +201,22 @@ Declared before any result, and applied only by your decision at the D-019 freez
 - Verified tree == approved 64 paths (diff empty; 0 staged; HEAD = origin = `a0af2ad`).
 - Applied C-1 to C-5 (each replacement asserted to match once).
 - Ran checks, then performed the four A5 operations. Results are recorded in the follow-up commit.
+
+## EXEC-SCAFFOLD-17 (A1 preparation; nothing recorded)
+- Wrote `research/reviews/2026-11-12_A1-PREPARATION.md`. It records the researcher confirmations R-a, R-b and R-c.
+- Verified: remote = `2246ca7`; IDs D-114 to D-122 unused; hashes; raw exports.
+- Stage-0 dry run in a disposable copy with the drafted rows: in_scope 1470, E5 5, E7 2, new_rows 7. The real repository correctly refuses without D-121.
+- No decision-log change, no repository Stage-0 run, no Git operation.
+
+## EXEC-SCAFFOLD-18 (A1 recording and Stage 0, researcher-approved)
+- Inserted D-114 to D-121 after D-113 (each edit asserted to match once; IDs confirmed unused) and 8 status-history rows. Q-063 answered with wording A.
+- `verify_run_authorisation` accepted D-121.
+- **STOPPED before the A1 commit.** `run_checks.sh`: literature 3 FAIL (389 of 392 pass). The failures are the pre-activation guard tests in `tests/literature/test_phase1_screening_tools.py`:
+  - `test_real_decision_log_holds_no_run_authorisation` (line 638);
+  - `test_real_decision_log_holds_no_complete_authorisation` (line 1091; it also asserts that no ledger exists);
+  - `test_real_decision_log_has_no_cell_beginning_with_a_marker` (line 955).
+- They assert that the real decision log contains no run authorisation, so recording D-121 necessarily fails them.
+- No commit, push, Stage-0 dry run or write was performed. The recorded rows remain uncommitted, awaiting the researcher's decision.
+
+## EXEC-SCAFFOLD-19 (researcher approved Option 1)
+- Applied the activation-state test patch; the file equals the proposal version (`cmp`). Only the four approved tests were removed; 22 added.

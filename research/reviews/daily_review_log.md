@@ -1058,3 +1058,12 @@ One entry per researcher review session (~1 h/day).
 - `[EVIDENCE]` The three review files contain no credentials, email addresses, phone numbers or abstract text.
 - `[EVIDENCE]` Stage 0 has no clean-tree requirement; D-099 (3) checks only the ledger against HEAD. A5 before A1 is the recommended order, not a technical prerequisite (earlier wording corrected).
 - `[RECOMMENDATION]` Corrections C-1 to C-5 to the decision sheet; not applied.
+
+## 2026-11-12 — EXEC-SCAFFOLD-17 (A1 preparation)
+- `[EVIDENCE]` The researcher confirmed: the WhatsApp details are unavailable; rows 1, 2 and 4 are met at decision level; ready in principle for one Stage-0 run.
+- `[EVIDENCE]` Dry run reproduced at `2246ca7` (disposable copy).
+- `[OPEN]` Q-063 wording not chosen; D-114 to D-121 not approved.
+
+## 2026-11-12 — EXEC-SCAFFOLD-18 (A1)
+- `[EVIDENCE]` D-114 to D-121 recorded; Q-063 answered (wording A).
+- `[EVIDENCE]` All six D-035 §6 conditions recorded as met (rows 1, 2 and 4 at decision level).

@@ -11,7 +11,9 @@ Pre-commit audit corrections (2026-11-11): Stage-0 rows before the draw (M2); ad
 all duplicate pairs in the queue (L3); run lock, ledger events, interrupted runs, no-overwrite outputs (L5).
 No test reads the real inventory, the scope-snapshot CSV or the publications file, or writes inside
 the repository; tests read the real DECISION_LOG.md and D-044_scope_snapshot.md (governance
-documents) to confirm that no run authorisation exists and that the frame constants match the record.
+documents) to confirm that the real repository is in one of the two permitted activation states
+(ActivationStateAudit: no run authorisation and no ledger, or D-121 alone with its approved bindings and
+a consistent ledger) and that the frame constants match the record.
 """
 import contextlib
 import csv
@@ -20,6 +22,7 @@ import io
 import json
 import os
 import random
+import re
 import shutil
 import subprocess
 import sys
@@ -635,17 +638,8 @@ class RunAuthorisation(unittest.TestCase):
         with self.assertRaisesRegex(pr.RunAuthorisationError, "not found"):
             pr.verify_run_authorisation(self.fx.lit, "D-901", "D-074 (f)")
 
-    def test_real_decision_log_holds_no_run_authorisation(self):
-        """No existing decision (including D-074, D-077, D-080 to D-087) authorises a real run."""
-        log = REPO / "logs" / "DECISION_LOG.md"
-        ids = sorted({line.split("|")[1].strip() for line in log.read_text(encoding="utf-8").splitlines()
-                      if line.startswith("| D-")})
-        for must in ("D-074", "D-077", "D-084"):
-            self.assertIn(must, ids)          # the parse found the decision table
-        for ref in ids:
-            for clause in pr.RUN_AUTHORISATION_MARKERS:
-                with self.assertRaises(pr.RunAuthorisationError, msg=(ref, clause)):
-                    pr.verify_run_authorisation(REPO / "research" / "literature", ref, clause)
+    # The former test_real_decision_log_holds_no_run_authorisation is replaced by
+    # ActivationStateAudit (fixture tests of both states + one state-independent real-repository test).
 
 
 class Stage0Corrections(unittest.TestCase):
@@ -952,12 +946,8 @@ class RunAuthorisationMarkerAnchoring(unittest.TestCase):
                 f.write(f"| D-950 | 2099-01-01 (TEST) | {self.M74}{self.BIND} | {self.STATUS} | r | researcher |\n")
         self.refused("D-950", msg="more than one")
 
-    def test_real_decision_log_has_no_cell_beginning_with_a_marker(self):
-        log = REPO / "logs" / "DECISION_LOG.md"
-        starts = [line[:60] for line in log.read_text(encoding="utf-8").splitlines()
-                  if line.startswith("| D-") and len(line.split("|")) > 4
-                  and line.split("|")[3].strip().startswith(tuple(pr.RUN_AUTHORISATION_MARKERS.values()))]
-        self.assertEqual(starts, [])
+    # The former test_real_decision_log_has_no_cell_beginning_with_a_marker is replaced by
+    # ActivationStateAudit: every marker row must be an allowed, valid authorisation.
 
 
 # ------------------------------------------------------------------ Stage B preparation (D-095): P16
@@ -1088,11 +1078,9 @@ class RunAuthorisationBindings(unittest.TestCase):
             with self.assertRaisesRegex(pr.RunAuthorisationError, expected):
                 pr.check_authorisation_unused(self.fx.lit, "D-700", "D-074 (f)", "stage0")
 
-    def test_real_decision_log_holds_no_complete_authorisation(self):
-        log = (REPO / "logs" / "DECISION_LOG.md").read_text(encoding="utf-8")
-        self.assertNotIn(pr.RUN_AUTHORISATION_STATUS, [l.split("|")[4].strip() for l in log.splitlines()
-                                                         if l.startswith("| D-") and len(l.split("|")) > 5])
-        self.assertFalse((REPO / "research/literature" / pr.RUN_LEDGER_FILE).exists())
+    # The former test_real_decision_log_holds_no_complete_authorisation is replaced by
+    # ActivationStateAudit: every exact-status row must be an allowed, valid authorisation, and the
+    # ledger may hold only allowed authorisations, used at most once, chained and equal to HEAD.
 
 
 # ------------------------------------------------------------------ P17: frame identity
@@ -1823,8 +1811,265 @@ class LedgerPersistence(unittest.TestCase):
             pr._append_ledger(self.fx.lit, {"authorization": "D-970", "clause": "D-074 (f)", "tool": "stage0",
                                             "event": "started", "run_time_utc": "t"})
 
-    def test_real_repository_has_no_ledger(self):
-        self.assertFalse((REPO / "research" / "literature" / pr.RUN_LEDGER_FILE).exists())
+    # The former test_real_repository_has_no_ledger is replaced by ActivationStateAudit (a ledger is
+    # permitted only in the activated state, only for D-121 by stage0, chained and equal to HEAD).
+
+
+# ------------------------------------------------------------------ activation-state audit (A1, 2026-11-12)
+# The only run authorisation the real decision log may ever hold in the activated state: D-121 as approved
+# by the researcher on 2026-11-12 (A1). Any further authorisation (e.g. D-122 for the pilot draw) must be
+# added here by a separately approved change, together with its decision row.
+APPROVED_ACTIVATION = {
+    "D-121": {"clause": "D-074 (f)", "tools": ("stage0",),
+              "inventory_sha256": "b668dbde42473baa49ac1f02f89f900e94e39159c82efb8175ba125fef06d054",
+              "criteria_version": "criteria_v1.1+protocol_v0.2", "freeze_entry": "D-110",
+              "d035_s6_records": ["D-115", "D-116", "D-117", "D-118", "D-119", "D-120"]},
+}
+PRE_ACTIVATION = {}
+
+
+def audit_run_authorisations(lit_dir, log_path, allowed, require_head=True):
+    """Problems (empty list = consistent) for one permitted state `allowed` ({} = pre-activation).
+
+    Decision log: the set of rows that (a) begin with a run-authorisation marker, (b) carry the exact
+    run-authorisation status, and (c) pass verify_run_authorisation for some clause must each equal
+    set(allowed); each allowed row must be valid for exactly its clause, match the run inputs, and bind
+    exactly the approved freeze entry and six §6 records. Ledger (if present): the D-099 (4) hash chain
+    and event consistency hold (authorisation_uses, which also refuses a repeated start or completion of
+    one authorisation and tool: single use), every entry names an allowed authorisation with its clause
+    and tool (so a ledger in the pre-activation state is a problem), and, if require_head, the ledger equals its version at HEAD
+    (D-099 (3))."""
+    problems = []
+    lines = Path(log_path).read_text(encoding="utf-8").splitlines()
+    rows = [l for l in lines if re.match(r"\| D-\d{3} \| 20\d\d-", l)]
+    cells = {}
+    for l in rows:
+        c = l.split("|")
+        cells.setdefault(c[1].strip(), []).append(c)
+    markers = tuple(pr.RUN_AUTHORISATION_MARKERS.values())
+    marker_rows = {r for r, cs in cells.items() if any(len(c) > 4 and c[3].strip().startswith(markers) for c in cs)}
+    status_rows = {r for r, cs in cells.items() if any(len(c) > 5 and c[4].strip() == pr.RUN_AUTHORISATION_STATUS
+                                                      for c in cs)}
+    valid = {}
+    for ref in sorted(cells):
+        for clause in pr.RUN_AUTHORISATION_MARKERS:
+            try:
+                pr.verify_run_authorisation(lit_dir, ref, clause, decision_log=log_path)
+                valid.setdefault(ref, []).append(clause)
+            except pr.RunAuthorisationError:
+                pass
+    expected = set(allowed)
+    for name, found in (("valid run authorisations", set(valid)), ("rows beginning with a marker", marker_rows),
+                        ("rows with the run-authorisation status", status_rows)):
+        if found != expected:
+            problems.append(f"{name}: {sorted(found)} (expected {sorted(expected)})")
+    for ref, spec in allowed.items():
+        if valid.get(ref) != [spec["clause"]]:
+            problems.append(f"{ref}: valid for {valid.get(ref)} (expected [{spec['clause']!r}])")
+            continue
+        try:
+            pr.verify_run_authorisation(lit_dir, ref, spec["clause"], decision_log=log_path,
+                                        inventory_sha256=spec["inventory_sha256"],
+                                        criteria_version=spec["criteria_version"])
+        except pr.RunAuthorisationError as e:
+            problems.append(f"{ref}: {e}")
+        decision = cells[ref][0][3].strip()[len(pr.RUN_AUTHORISATION_MARKERS[spec["clause"]]):]
+        b = pr.parse_run_authorisation_bindings(decision)
+        for key in ("freeze_entry", "d035_s6_records"):
+            if b[key] != spec[key]:
+                problems.append(f"{ref}: {key} {b[key]} (approved {spec[key]})")
+    if (Path(lit_dir) / pr.RUN_LEDGER_FILE).exists():
+        try:
+            uses = pr.authorisation_uses(lit_dir)
+        except pr.RunAuthorisationError as e:
+            problems.append(f"ledger: {e}")
+            uses = []
+        for e in uses:
+            spec = allowed.get(e["authorization"])
+            if spec is None:
+                problems.append(f"ledger: {e['authorization']} is not an allowed authorisation in this state")
+            elif e["clause"] != spec["clause"] or e["tool"] not in spec["tools"]:
+                problems.append(f"ledger: {e['authorization']} used under {e['clause']} by {e['tool']}")
+        if require_head:
+            try:
+                pr.check_ledger_matches_head(lit_dir)
+            except pr.RunAuthorisationError as e:
+                problems.append(f"ledger: {e}")
+    return problems
+
+
+class ActivationStateAudit(unittest.TestCase):
+    """Both activation states, tested on isolated fixtures (synthetic IDs D-921..), plus one real-repository
+    test that accepts exactly the two permitted states and nothing else."""
+
+    POLICY = {"D-921": {"clause": "D-074 (f)", "tools": ("stage0",), "inventory_sha256": INV,
+                        "criteria_version": VERSION, "freeze_entry": FREEZE_ID, "d035_s6_records": list(S6_IDS)}}
+
+    def setUp(self):
+        self.fx = FixtureDir()
+        self.addCleanup(self.fx.cleanup)
+        self.fx.frozen()
+        self.fx.base()
+        self.fx.commit("fixture decision log")
+
+    def audit(self, allowed, require_head=True):
+        return audit_run_authorisations(self.fx.lit, self.fx.log, allowed, require_head=require_head)
+
+    def activate(self, ref="D-921", **kw):
+        self.fx.add_auth(ref, "D-074 (f)", **kw)
+
+    def assertFlags(self, allowed, needle, **kw):
+        problems = self.audit(allowed, **kw)
+        self.assertTrue(any(needle in p for p in problems), msg=problems)
+
+    # ---- 1. pre-activation state
+    def test_pre_activation_clean_state_accepted(self):
+        self.assertEqual(self.audit(PRE_ACTIVATION), [])
+        self.assertFlags(self.POLICY, "valid run authorisations")      # the activated state is not met
+
+    def test_pre_activation_rejects_any_valid_authorisation(self):
+        self.activate()
+        self.assertFlags(PRE_ACTIVATION, "valid run authorisations: ['D-921']")
+
+    def test_pre_activation_rejects_marker_or_status_rows_even_if_invalid(self):
+        self.fx.row("D-930", "**Run authorisation under D-074 (f).** no bindings")            # marker, invalid
+        self.assertFlags(PRE_ACTIVATION, "rows beginning with a marker: ['D-930']")
+        self.fx.row("D-931", "text", status=pr.RUN_AUTHORISATION_STATUS)                       # status, no marker
+        self.assertFlags(PRE_ACTIVATION, "rows with the run-authorisation status: ['D-931']")
+
+    def test_pre_activation_rejects_any_ledger(self):
+        self.activate()
+        self.fx.ledger_done("D-921", "D-074 (f)", "stage0")
+        self.assertFlags(PRE_ACTIVATION, "not an allowed authorisation")
+
+    # ---- 2. activated state: exactly the approved authorisation
+    def test_activated_exact_authorisation_accepted(self):
+        self.activate()
+        self.assertEqual(self.audit(self.POLICY), [])
+        self.assertNotEqual(self.audit(PRE_ACTIVATION), [])              # the two states are exclusive
+
+    def test_activated_rejects_absent_authorisation(self):
+        self.assertFlags(self.POLICY, "valid run authorisations: [] (expected ['D-921'])")
+
+    def test_activated_rejects_wrong_inventory_binding(self):
+        self.activate(inventory_sha256="e" * 64)
+        self.assertFlags(self.POLICY, "inventory SHA-256 differs")
+
+    def test_activated_rejects_wrong_or_unregistered_criteria_version(self):
+        self.activate(criteria_version="criteria_vX.Y+protocol_vX.W")      # not a registered frozen version
+        self.assertFlags(self.POLICY, "valid run authorisations: []")
+
+    def test_activated_rejects_wrong_section6_or_freeze_bindings(self):
+        self.activate(binding=bindings(s6=list(reversed(S6_IDS))))          # valid, but not the approved list
+        self.assertFlags(self.POLICY, "d035_s6_records")
+        other = FixtureDir()
+        self.addCleanup(other.cleanup)
+        other.frozen()
+        other.base()
+        other.add_auth("D-921", "D-074 (f)", binding=bindings(freeze="D-998"))   # unknown freeze entry
+        problems = audit_run_authorisations(other.lit, other.log, self.POLICY)
+        self.assertTrue(any("valid run authorisations: []" in p for p in problems), msg=problems)
+
+    def test_activated_rejects_invalid_or_malformed_authorisation(self):
+        self.fx.add_auth("D-921", "D-074 (f)", binding=" criteria_version: x")              # incomplete bindings
+        self.assertFlags(self.POLICY, "valid run authorisations: []")
+
+    def test_activated_rejects_wrong_clause(self):
+        self.fx.add_auth("D-921", "D-077 (6)")
+        self.assertFlags(self.POLICY, "valid for ['D-077 (6)']")
+
+    def test_activated_rejects_a_second_valid_authorisation(self):
+        self.activate()
+        self.activate("D-922")
+        self.assertFlags(self.POLICY, "valid run authorisations: ['D-921', 'D-922']")
+
+    def test_activated_rejects_conditional_status_copy(self):
+        self.activate()
+        self.fx.add_auth("D-923", "D-074 (f)", status="**APPROVED — CONDITIONAL (inactive)**")
+        self.assertFlags(self.POLICY, "rows beginning with a marker: ['D-921', 'D-923']")
+
+    # ---- 3. ledger integrity, HEAD consistency and single use
+    def test_single_committed_use_accepted(self):
+        self.activate()
+        self.fx.ledger_done("D-921", "D-074 (f)", "stage0")
+        self.assertEqual(self.audit(self.POLICY), [])
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "already used.*single use"):
+            pr.check_authorisation_unused(self.fx.lit, "D-921", "D-074 (f)", "stage0")
+
+    def test_interrupted_use_is_a_permitted_state_but_consumes_the_authorisation(self):
+        self.activate()
+        pr.record_authorisation_start(self.fx.lit, "D-921", "D-074 (f)", "stage0", "2099-01-01T00:00:00+00:00")
+        self.fx.commit("ledger after interrupted run")
+        self.assertEqual(self.audit(self.POLICY), [])
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "never completed"):
+            pr.check_authorisation_unused(self.fx.lit, "D-921", "D-074 (f)", "stage0")
+
+    def test_duplicate_use_rejected(self):
+        self.activate()
+        self.fx.ledger_done("D-921", "D-074 (f)", "stage0")
+        entry = {"authorization": "D-921", "clause": "D-074 (f)", "tool": "stage0", "event": "started",
+                 "run_time_utc": "2099-01-02T00:00:00+00:00"}
+        with self.assertRaisesRegex(pr.RunAuthorisationError, "already used.*single use"):       # tool refuses
+            pr.record_authorisation_start(self.fx.lit, "D-921", "D-074 (f)", "stage0", entry["run_time_utc"])
+        pr._append_ledger(self.fx.lit, dict(entry))   # low-level append bypassing the tool: a chained 2nd use
+        self.fx.commit("second use written below the tool")
+        self.assertFlags(self.POLICY, "repeats started")
+
+    def test_ledger_entry_for_unapproved_authorisation_rejected(self):
+        self.activate()
+        self.activate("D-922")
+        self.fx.ledger_done("D-922", "D-074 (f)", "stage0")
+        self.assertFlags(self.POLICY, "D-922 is not an allowed authorisation")
+
+    def test_ledger_entry_with_wrong_clause_or_tool_rejected(self):
+        self.activate()
+        pr._append_ledger(self.fx.lit, {"authorization": "D-921", "clause": "D-077 (6)", "tool": "pilot_sample",
+                                        "event": "started", "run_time_utc": "2099-01-02T00:00:00+00:00"})
+        self.fx.commit("misused")
+        self.assertFlags(self.POLICY, "used under D-077 (6) by pilot_sample")
+
+    def test_broken_hash_chain_rejected(self):
+        self.activate()
+        self.fx.ledger_done("D-921", "D-074 (f)", "stage0")
+        path = self.fx.lit / pr.RUN_LEDGER_FILE
+        lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
+        lines[0] = lines[0].replace("2099-01-01T00:00:00+00:00", "2099-01-01T00:00:05+00:00")
+        path.write_text("".join(lines), encoding="utf-8")
+        self.fx.commit("edited")
+        self.assertFlags(self.POLICY, "breaks the hash chain")
+
+    def test_uncommitted_or_divergent_ledger_rejected_when_head_required(self):
+        self.activate()
+        pr.record_authorisation_start(self.fx.lit, "D-921", "D-074 (f)", "stage0", "2099-01-01T00:00:00+00:00")
+        pr.record_authorisation_completion(self.fx.lit, "D-921", "D-074 (f)", "stage0", "2099-01-01T00:00:01+00:00")
+        self.assertFlags(self.POLICY, "not committed at HEAD")                       # D-099 (1), (3)
+        self.assertEqual(self.audit(self.POLICY, require_head=False), [])
+        self.fx.commit("ledger")
+        path = self.fx.lit / pr.RUN_LEDGER_FILE
+        path.write_text(path.read_text(encoding="utf-8")[:-1], encoding="utf-8")       # truncated after commit
+        self.assertFlags(self.POLICY, "ledger")
+
+    # ---- policy constant and the real repository (state-independent)
+    def test_approved_activation_constant_is_the_a1_approval(self):
+        self.assertEqual(list(APPROVED_ACTIVATION), ["D-121"])
+        spec = APPROVED_ACTIVATION["D-121"]
+        self.assertEqual((spec["clause"], spec["tools"], spec["freeze_entry"], spec["criteria_version"]),
+                         ("D-074 (f)", ("stage0",), "D-110", "criteria_v1.1+protocol_v0.2"))
+        self.assertEqual(spec["inventory_sha256"], "b668dbde42473baa49ac1f02f89f900e94e39159c82efb8175ba125fef06d054")
+        self.assertEqual(spec["d035_s6_records"], [f"D-{n}" for n in range(115, 121)])
+
+    def test_real_repository_is_in_a_permitted_activation_state(self):
+        """Accepts exactly two states of the real repository and refuses every other: (a) pre-activation,
+        no run authorisation and no ledger; (b) activated, D-121 alone with its approved bindings, and a
+        ledger (if any) that holds only D-121 by stage0, used at most once, chained and equal to HEAD."""
+        lit, log = REPO / "research" / "literature", REPO / "logs" / "DECISION_LOG.md"
+        ids = {l.split("|")[1].strip() for l in log.read_text(encoding="utf-8").splitlines() if l.startswith("| D-")}
+        for must in ("D-074", "D-077", "D-084", "D-110"):
+            self.assertIn(must, ids)                                      # the parse found the decision table
+        pre = audit_run_authorisations(lit, log, PRE_ACTIVATION)
+        act = audit_run_authorisations(lit, log, APPROVED_ACTIVATION)
+        self.assertTrue(pre == [] or act == [],
+                        msg=f"neither permitted state holds; pre-activation: {pre}; activated: {act}")
 
 
 if __name__ == "__main__":
