@@ -99,3 +99,20 @@ The proxy status endpoint reported the proxy enabled and not selective. Its only
 **Inconsistency found (recorded as Q-068, not resolved).** `verification_report.md` states that the 14 `verified` records used "a web-search result whose URL carried the same DOI or PMCID and whose title did not conflict" as the second source, with agreement on title and identifier only. `collection_workflow.md` §4.3 ("≥ 2 distinct sources agree") allows this. `search_strategy.md` §7 and `research_plan.md` §6 require agreement on title, first author, year, venue and identifier, and give Consensus, arXiv or PMCID full text as example second sources. Web search is not named there as a second source.
 
 **Not done**: no Consensus call (out of quota until 2026-11-01 per LIT-005; a probe would be an unregistered search); no PubMed, PMC, alphaXiv or web-search call; no change to `verification_status`; no rebuild.
+
+## Addendum — 2026-11-12: CDC and second-source host re-check (protocol candidate C6)
+Run 2026-11-12 from 07:18:41Z. HTTP **HEAD** requests only: no file body was downloaded, no participant-level data were read, and nothing was written under `data/`.
+
+| Host / request | Result |
+|---|---|
+| `wwwn.cdc.gov/nchs/nhanes/Default.aspx`, `www.cdc.gov/nchs/nhanes/index.html` | reachable (HTTP 200) |
+| The 32 data files in protocol v0.1 Appendix A, at `wwwn.cdc.gov/Nchs/Data/Nhanes/Public/{2017,2021}/DataFiles/<file>.xpt` | **all reachable (HTTP 200)**. Each `Content-Length` **equals** the byte count recorded on 2026-10-24 (32/32) `[EVIDENCE: HEAD headers]` |
+| Old-style path `wwwn.cdc.gov/Nchs/Nhanes/2017-2018/DEMO_J.XPT` | HTTP 200, but `text/html` (20,905 bytes): a web page, not a data file. Not one of the project's files; noted only so that path is not used |
+| `api.crossref.org` | **blocked** (proxy CONNECT 403) |
+| `eutils.ncbi.nlm.nih.gov` | **blocked** (proxy CONNECT 403) |
+
+What this shows and does not show:
+- The row "`wwwn.cdc.gov` blocked" (2026-10-14) is outdated. The host was evidently reachable when the files were downloaded on 2026-10-24, and is reachable again now.
+- Matching byte counts are consistent with unchanged files but do **not** prove it. The SHA-256 values can only be re-checked by downloading the files, which needs the researcher's download authorisation (`build_dataset.load_period_files` checks them). The local manifest `data/raw/nhanes/MANIFEST_local.csv` and the files do **not** exist in this container.
+- No substitute or unverified data source was used or considered.
+- Crossref and E-utilities remain blocked, so D-064 verification through `fetch_crossref.py` cannot run from this container (see the D-064 export probe, session log 2026-11-12).

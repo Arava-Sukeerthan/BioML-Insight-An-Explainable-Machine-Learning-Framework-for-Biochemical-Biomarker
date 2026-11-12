@@ -1053,3 +1053,116 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Implemented and verified in the working tree; recorded; **uncommitted** (Git operation awaiting authorisation) |
 | Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `2d2c742` |
 | Pull request | PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17): not changed; open, not merged |
+
+### EXEC-SCAFFOLD (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD (researcher prompt "PROJECT: BioML-Insight. ABSOLUTE PROJECT DEADLINE: 27 NOVEMBER 2026" (2026-11-12)) |
+| Prompt date | 2026-11-12 (Day 30) |
+| Objective | Implement the permitted preprocessing and experiment scaffolding with synthetic tests; prepare the approvals for the fixed 2026-11-27 deadline |
+| Actual completion status | Implemented and tested (synthetic only); uncommitted; approvals pending |
+| Branch | `claude/eloquent-mccarthy-bqtxr3-part1` at `a0af2ad`; not pushed |
+
+### EXEC-SCAFFOLD-2 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-2 (researcher prompt "Continue BioML-Insight from the current repository state and the 2026-11-12 execution report" (2026-11-12)) |
+| Objective | Consolidated approval request; continue permitted scaffolding; prepare the post-approval stage |
+| Actual completion status | Done in the working tree; uncommitted; awaiting A1–A6 |
+
+### EXEC-SCAFFOLD-3 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-3 (researcher prompt "Continue BioML-Insight from the current repository state. You are responsible for deciding the technical implementation steps" (2026-11-12)) |
+| Objective | Permitted implementation (report, calibration export, dataset CLI); protocol v1.0 candidate; literature-methods draft; evidence status for A1–A6 |
+| Actual completion status | Done in the working tree; uncommitted; decisions pending |
+
+### EXEC-SCAFFOLD-4 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-4 (researcher prompt "Continue BioML-Insight from the current repository state. You are responsible for deciding and implementing the next technically appropriate steps" (2026-11-12)) |
+| Objective | Remaining manuscript sections; literature-methods consistency; harness cleanup; D-064 export probe; CDC re-check; protocol v1.0 consistency review; A1–A6 decision sheet; deadline plan |
+| Actual completion status | Done in the working tree; uncommitted (A5 not approved); decisions pending |
+| Validation | `run_checks.sh` all passed (literature 365, data protection 10, NHANES 39, models 68, query table 168); hashes 5/5 unchanged |
+| PR | None created or changed |
+
+### EXEC-SCAFFOLD-5 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-5 (researcher prompt "Continue the BioML-Insight project from the current repository state. You are responsible for technical execution, implementation, testing, documentation…" (2026-11-12)) |
+| Objective | Analysis-plan appendix; table and figure templates; flow-diagram generator; v1.0 candidate; manuscript consistency; prediction-scale and reproducibility audit; Q-098/099/100/054 investigation; consolidated decision sheet; critical path |
+| Actual completion status | Done in the working tree; uncommitted (A5 not approved); decisions pending |
+| Validation | `run_checks.sh` all passed (literature 378, data protection 10, NHANES 39, models 70, query table 168); hashes unchanged |
+| PR | None created or changed |
+
+### EXEC-SCAFFOLD-6 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-6 (researcher prompt "Continue BioML-Insight from the current repository state… Prioritise the critical path" (2026-11-12)) |
+| Objective | Stage-0 and pilot readiness; Q-098, Q-099, Q-100, Q-054 and D-064 solutions; experimental prerequisites; Git scope; latest-feasible schedule |
+| Actual completion status | Done in the working tree; uncommitted (A5 not approved); decisions pending |
+| Validation | `run_checks.sh` all passed (literature 381, data protection 10, NHANES 39, models 70, query table 168) |
+| PR | None created or changed |
+
+### EXEC-SCAFFOLD-7 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-7 (researcher prompt "Continue BioML-Insight… moving from preparation towards actual research execution" (2026-11-12)) |
+| Objective | Execution readiness; screening expansion and RQ5 tools; environment and Rule S scripts; download check; approval template; Git scope; critical path |
+| Actual completion status | Done in the working tree; uncommitted (A5 not approved) |
+| Validation | `run_checks.sh` all passed (literature 391, data protection 10, NHANES 39, models 70, query table 168); synthetic harness 4 skipped (gated) |
+| PR | None created or changed |
+
+### EXEC-SCAFFOLD-8 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-8 (researcher prompt "Continue BioML-Insight… Highest priority: AB-7 candidate reference verification" (2026-11-12)) |
+| Objective | AB-7 reference pre-verification; RQ5 readiness; A5 reconciliation; custodian/S1–S2 status; schedule |
+| Actual completion status | Done in the working tree; uncommitted; AB-7 not met |
+| Validation | `run_checks.sh` all passed (literature 392, data protection 10, NHANES 39, models 70, query table 168) |
+| PR | None created or changed |
+
+### EXEC-SCAFFOLD-9 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-9 (researcher prompt "Continue BioML-Insight from the latest November 12 report… high-quality, scientifically defensible research manuscript" (2026-11-12)) |
+| Objective | A5 reconciliation; AB-7 full-text verification; CR-08 source note; closest-prior-art evidence; readiness table; approval register; schedule |
+| Actual completion status | Done in the working tree; uncommitted; AB-7 not complete |
+| Validation | `run_checks.sh` all passed (literature 392, data protection 10, NHANES 39, models 70, query table 168) |
+| PR | None created or changed |
+
+### EXEC-SCAFFOLD-10 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-10 (researcher prompt "Continue BioML-Insight from the latest November 12 report… establish a defensible scientific contribution" (2026-11-12)) |
+| Objective | Prior-art evidence; CR-02/CR-03; methods references; R14; ADA; contribution options; readiness; schedule |
+| Actual completion status | Done in the working tree; uncommitted; D-016 and AB-7 open |
+| Validation | `run_checks.sh` all passed (literature 392, data protection 10, NHANES 39, models 71, query table 168) |
+| PR | None created or changed |
+
+### EXEC-SCAFFOLD-11 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-11 (researcher prompt "We are continuing BioML-Insight on November 12, 2026 … next research-evidence and decision-readiness review" (2026-11-12)) |
+| Objective | Contribution options; CR-02/03 matrix; stability metrics; R14; R15; Q-061; Option C design; method references; schedule; decision sheet |
+| Actual completion status | Review written; uncommitted; no decision taken |
+| Validation | `run_checks.sh` all passed (literature 392, data protection 10, NHANES 39, models 71, query table 168) |
+| PR | None created or changed |
+
+### EXEC-SCAFFOLD-12 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-12 (researcher prompt "prepare technical corrections and evidence for researcher decisions" (2026-11-12)) |
+| Objective | R15 patch proposal + tests; Q-052; Option C; CR-02/03 access; R14 packet; references; stability note; Q-061; schedule; decision sheet |
+| Actual completion status | Document and unapplied patch written; uncommitted; no decision taken |
+| Validation | See CHANGELOG / final report (`run_checks.sh`) |
+| PR | None created or changed |
+
+### EXEC-SCAFFOLD-16 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-16 (researcher prompt "I explicitly approve A5 for the 64-path scope … including corrections C-1 through C-5" (2026-11-12)) |
+| Objective | Apply C-1 to C-5; stage exactly 64 paths; commit; push (no force); follow-up hash commit |
+| Actual completion status | See the follow-up entry below for the hashes and push result |
+| Validation | `run_checks.sh` before staging |
+| PR | None created or changed (PR #17 untouched) |

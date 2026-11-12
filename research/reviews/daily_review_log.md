@@ -933,3 +933,128 @@ One entry per researcher review session (~1 h/day).
 - **Important findings:** `[EVIDENCE]` 365 literature tests OK; mutation checks show each new protection is covered.
 - **Open:** Q-063 (approval date, wording, approver identity, PRESERVED decision).
 - **Next (researcher):** Git authorisation; then the fixed-inventory entry and the condition rows.
+
+## Day 30 — 2026-11-12 — EXEC-SCAFFOLD
+- **Work completed:** NHANES assembly and experiment-harness scaffolding (metrics, calibration, conformal, splits, equal-budget tuning, in-fold preprocessing, logging); 53 new synthetic tests; the proposed environment pins.
+- **Important findings:**
+  - `[EVIDENCE]` all suites pass;
+  - classifier training (even on synthetic data) still needs a D-040 Rule S authorisation;
+  - the packages for BL-1–BL-6 and F2 are not installed (D-002);
+  - the draft protocol's threshold rule "smallest threshold giving sensitivity >= 0.80" is ambiguous; it is implemented as the largest such threshold and flagged.
+- **Next:** the researcher's approvals (screening batch, pilot, D-002, Rule S, Git).
+
+## Day 30 — 2026-11-12 — EXEC-SCAFFOLD-2
+- **Work completed:**
+  - consolidated approval request (A1–A6);
+  - dry run of D-121 against the real checker: the draft was refused, then corrected and accepted;
+  - F5 stability, survey and comparison modules with 9 tests.
+- **Next:** the researcher's decisions on A1–A6.
+
+## Day 30 — 2026-11-12 — EXEC-SCAFFOLD-3
+- **Work completed:** report and calibration export; dataset CLI; protocol v1.0 freeze candidate; literature-methods draft; A1–A6 evidence status.
+- **Important findings:**
+  - `[EVIDENCE]` PRESERVED for Q-063 would rest on researcher-reported facts only; a truthful alternative wording is proposed.
+  - Rule S applied to the baseline harness is a scope extension of D-040.
+  - The A6 citation sentence conflicts with D-064 unless captured as source records.
+  - The pins resolve, with one pre-release and one 206.6 MB GPU dependency.
+- **Next:** the researcher's decisions (A1 wording, A2 custodian, A3 / Q-048, A4 route, A5, A6 / D-064 route, Q-054).
+
+## Day 30 — 2026-11-12 — EXEC-SCAFFOLD-4
+- **Work completed:** harness correction and cleanup; protocol consistency review (R1–R9); manuscript introduction, experimental methods and reproducibility sections; literature-methods scope fix; D-064 export probe; CDC re-check; decision sheet A1–A6.
+- **Important findings:**
+  - `[EVIDENCE]` The internal M7 metrics used a threshold from a different probability scale. Corrected and tested.
+  - `[EVIDENCE]` Fitting the calibrator and the conformal quantiles on the same D-cal keeps the conformal guarantee for Platt with slope > 0 (identical sets), and isotonic is conservative.
+  - `[EVIDENCE]` Crossref exports cannot verify any record while the year field is undecided (Q-098), and a researcher-exported response is indistinguishable from a script retrieval (Q-099).
+  - `[EVIDENCE]` All 32 NHANES files are reachable, with matching byte counts (HEAD only).
+  - `[OPEN]` The Q3 reference estimate (Q-100).
+- **Next:** the researcher's decisions on A1–A6, Q-098 and Q-099.
+
+## Day 30 — 2026-11-12 — EXEC-SCAFFOLD-5
+- **Work completed:** flow-diagram generator; Crossref export checker; v1.0 assembled candidate; analysis-plan appendix and templates; manuscript corrections; prediction-scale fix; guard hardening; Q-098/099/100/054 analysis; decision sheet and schedule.
+- **Important findings:**
+  - `[EVIDENCE]` The Crossref `issued` year conflicts with PubMed for online-first articles. A null `date-parts` refuses the whole build.
+  - `[EVIDENCE]` The uncalibrated Q3 reference can invert the sign of a calibration change (synthetic).
+  - `[EVIDENCE]` 10 of 12 candidate references are not in the inventory, and AB-7 needs them verified before training.
+  - `[EVIDENCE]` Two manuscript factual errors corrected: the pair count and a hash abbreviation.
+- **Next:** the researcher's A1, A2 and A5, then A3, A4, A6, Q-098, Q-099, Q-100 and Q-054.
+
+## Day 30 — 2026-11-12 — EXEC-SCAFFOLD-6
+- **Work completed:** Stage-0 dry run and pilot frame check (scratch copy); D-122 drafted and accepted by the checker; Q-098 patch prepared and tested; Q-099 registration step; execution sheet with latest-feasible dates.
+- **Important findings:**
+  - `[EVIDENCE]` Stage 0 is ready: 7 rows, matching the approved expectation.
+  - `[EVIDENCE]` The pilot frame is valid at 1,463 records.
+  - `[EVIDENCE]` The Q-098 empty-date behaviour is deliberate fail-closed, not a defect.
+  - `[EVIDENCE]` The committed NHANES offline safeguard rules out a network downloader in `scripts/nhanes/`; the download is a `curl` command plus the existing hash check.
+  - `[OPEN]` The NLM terms on sharing abstracts could not be read from this environment.
+- **Next:** A1 + A5 + a named custodian (C1–C6, S1/S2).
+
+## Day 30 — 2026-11-12 — EXEC-SCAFFOLD-7
+- **Work completed:** readiness re-verified; expansion and RQ5 tools; environment install script (dry run clean); gated Rule S test; limitations section; approval template and runbook.
+- **Important findings:**
+  - `[EVIDENCE]` Stage 0, the frame and both authorisations reproduce exactly.
+  - `[EVIDENCE]` `xgboost-cpu` + `wrapt 2.5.2` resolve to 28 packages, with no pre-release and no GPU library.
+  - `[OPEN]` The frozen texts do not fix the expansion batch order or the audit sampling rule (parameters await a decision with Q-084).
+- **Next:** Part 1 of the approval template (A1, A5, custodian).
+
+## Day 30 — 2026-11-12 — EXEC-SCAFFOLD-8
+- **Work completed:** AB-7 candidate-reference pre-verification (12 candidates, 16 items); RQ5 tool citability marking and completeness gate; A5 reconciled at 59 paths.
+- **Important findings:**
+  - `[EVIDENCE]` 14 items identified with bibliographic records; CR-09 and CR-10 unresolved; 0 `verified`. **AB-7 not met.**
+  - `[EVIDENCE]` CR-03 is already P3005 (in scope); its abstract does not support the "LR comparator" claim.
+  - `[OPEN]` The ADA 2026 thresholds are still unverified (Q-061).
+- **Next:** A1, A5 and the custodian; the ADA PDF from the researcher (Q-061).
+
+## Day 30 — 2026-11-12 — EXEC-SCAFFOLD-9
+- **Work completed:** AB-7 second pass with verification levels (8 full text, 5 abstract, 2 metadata, 2 unverified); CR-08 source note; prior-art matrix; approval register; readiness table; schedule.
+- **Important findings:**
+  - `[EVIDENCE]` CR-02 uses the same outcome and validates on NHANES 2021–2023. Temporal validation is not a novelty for this outcome.
+  - `[EVIDENCE]` Mondrian conformal prediction is already applied in a type 2 diabetes complication study.
+  - `[EVIDENCE]` The ICI smoother does not follow a cited specification (R14).
+  - `[OPEN]` ADA thresholds (Q-061).
+  - **R-1 approaching** (zero slack).
+- **Next:** Part 1 approvals, a custodian, and the ADA PDF by 11-13.
+
+## Day 30 — 2026-11-12 — EXEC-SCAFFOLD-10
+- **Work completed:** prior-art evidence table (11 studies); 22 stability hits triaged; methods references; R14 record; R15 survey-domain fix; three contribution options.
+- **Important findings:**
+  - `[EVIDENCE]` Temporal validation on NHANES 2021–2023 for this outcome already exists (CR-02).
+  - `[EVIDENCE]` The laboratory increment over FINDRISC was small and non-significant in one internal study.
+  - `[EVIDENCE]` SHAP refit stability has applied precedent (qualitative).
+  - `[EVIDENCE]` Mondrian conformal prediction is used with genetic predictors in type 2 diabetes.
+  - `[OPEN]` CR-02, CR-03 and ADA full texts are inaccessible; Platt and Holm sources not located.
+- **Next:** A1, A5, a custodian, the ADA PDF, and the CR-02/CR-03 PDFs.
+
+## Day 30 — 2026-11-12 — EXEC-SCAFFOLD-11
+- **Work completed:** evidence and decision-readiness review (10 deliverables).
+- **Important findings:**
+  - `[EVIDENCE]` Krishna et al. (*TMLR* 2024) define top-k feature agreement, rank and pairwise agreement and Spearman rank correlation for explanations, **between methods**; refit and temporal use is an adaptation.
+  - `[EVIDENCE]` R15 defects D1 and D2 (reported, not fixed).
+  - `[AB]` Holm, Platt and Efron sources at abstract level.
+  - `[OPEN]` CR-02, CR-03 and ADA full texts.
+- **Next:** A1, A5, a custodian, Q-061, and the CR-02/CR-03 PDFs.
+
+## 2026-11-12 — EXEC-SCAFFOLD-12
+- `[EVIDENCE]` CDC/NCHS tutorial: the variance design uses all non-zero-weight records plus a domain indicator; df = PSUs − strata.
+- `[EVIDENCE]` R source (GitHub mirror): `lowess` f = 2/3, iter = 3; `loess` span 0.75, degree 2, surface "interpolate".
+- `[EVIDENCE]` Hanley & McNeil 1982 (abstract): AUC = probability of correct ranking = the Wilcoxon quantity.
+- `[RECOMMENDATION]` Apply the R15 patch after approval.
+- `[OPEN]` Q-052 reference implementation; Platt year/venue; ADA primary text; CR-02/CR-03 full texts.
+
+## 2026-11-12 — EXEC-SCAFFOLD-13 (focused decision-readiness review)
+- `[EVIDENCE]` The A5 61-path list matches the working tree exactly. Three new review paths (the CORRECTIONS file, the R15 patch, this review) lie outside it; the current count is 64.
+- `[EVIDENCE]` Decision-sheet §7 still says "59 paths" (stale; §0 and §3 say 61). Noted, not edited.
+- `[EVIDENCE]` R15 patch in scratch: no change for positive-weight designs (max difference 0.0); 73 OK with the patch.
+- `[OPEN]` inf x and NaN strata/PSU codes remain unvalidated.
+- `[OPEN]` No trigger met; R-1 approaching.
+
+## 2026-11-12 — EXEC-SCAFFOLD-14 (pre-A5 reconciliation)
+- `[EVIDENCE]` Exact 64-path scope listed.
+- `[EVIDENCE]` 82 log file references checked. All resolve to scoped or tracked files except 10 deliberate mentions: ignored records, absent or withdrawn files, scratch scripts, a URL.
+- `[EVIDENCE]` The only live stale "59 paths" is decision-sheet line 252; a correction was proposed, not applied.
+- `[OPEN]` R15 tests do not assert −inf or the newly accepted NaN-x/zero-weight case.
+
+## 2026-11-12 — EXEC-SCAFFOLD-15 (A5 authorisation package)
+- `[EVIDENCE]` Scope 6 + 58 = 64, equal to the working tree.
+- `[EVIDENCE]` The three review files contain no credentials, email addresses, phone numbers or abstract text.
+- `[EVIDENCE]` Stage 0 has no clean-tree requirement; D-099 (3) checks only the ledger against HEAD. A5 before A1 is the recommended order, not a technical prerequisite (earlier wording corrected).
+- `[RECOMMENDATION]` Corrections C-1 to C-5 to the decision sheet; not applied.

@@ -2819,3 +2819,498 @@ Traceability rows were added to criteria §9 and protocol §11. Package sections
 - D-107 status.
 
 **Not done**: no fixed-inventory entry, condition rows, run authorisations, Stage 0, screening, sampling, extraction, pilot work, dataset access or model work; no stage, commit or push. PR #17 (https://github.com/Arava-Sukeerthan/BioML-Insight-An-Explainable-Machine-Learning-Framework-for-Biochemical-Biomarker/pull/17) not changed.
+
+## EXEC-SCAFFOLD — 2026-11-12 — NHANES assembly and experiment harness scaffolding (synthetic tests only; uncommitted)
+
+**Prompt**: researcher prompt "PROJECT: BioML-Insight. ABSOLUTE PROJECT DEADLINE: 27 NOVEMBER 2026" (2026-11-12).
+
+**Permission basis**:
+- D-042 (2): code scaffolding without fitting a model to real data.
+- No classifier is fitted, even on synthetic data, because D-040 Rule S requires an approved test plan and per-run authorisation.
+
+**Added**:
+- `scripts/nhanes/build_dataset.py`: assembly, E0–E8 through the shared `safeguards.eligibility_cascade`, outcomes (primary, S-01, S-02, S-03, S-15a), groups A (21), C (6) and B (27), BP means, TRIG mapping, harmonisation S-08/S-09b (S-09b ratio recomputation blocked by Q-046), and a real-file loader that requires an authorisation reference.
+- `scripts/models/`:
+  - `glm.py`, `metrics.py` (M1–M10), `calibration.py` (Platt, isotonic), `conformal.py` (Mondrian, alpha = 0.10);
+  - `splits.py`, `tuning.py` (equal budget of 40), `preprocess.py` (in-fold F1), `stats.py`;
+  - `models.py` (BL-1–BL-6 and F2 interfaces; non-learning stub), `harness.py`, `reproducibility.py`, `synthetic.py`;
+  - `experiment_config_draft.json` (draft search spaces), `README.md`.
+- `environment/requirements-proposed.txt` and `README.md`: D-002 proposal; nothing installed.
+- Tests: `tests/models/` (43) and `tests/nhanes/test_build_dataset.py` (10).
+
+**Modified**: `scripts/run_checks.sh` (adds the `tests/models` suite).
+
+**Tests**: `sh scripts/run_checks.sh` passed: literature 365, data protection 10, NHANES 39, models 43, query table 168 rows. Mutation checks: 5 of 5 detected.
+
+**Not done**:
+- no real data, no download, no classifier training;
+- no screening, sampling or Stage 0;
+- no decision-log change; no commit or push.
+
+## EXEC-SCAFFOLD-2 — 2026-11-12 — consolidated approval request; D-121 draft corrected by dry run; F5, survey and comparison scaffolding (synthetic tests; uncommitted)
+
+**Prompt**: researcher prompt "Continue BioML-Insight from the current repository state and the 2026-11-12 execution report" (2026-11-12).
+
+**Added**:
+- `research/reviews/2026-11-12_CONSOLIDATED-APPROVAL-REQUEST.md`: A1–A6 with their exact wording, consequences, facts to verify, and Appendix A (draft rows D-114 to D-121). Nothing approved or recorded.
+- `scripts/models/explain.py`: F5 stability measures (Spearman, rank stability, top-k overlap, sign agreement); attribution itself needs `shap`.
+- `scripts/models/survey.py`: Taylor-linearised weighted mean and SE; SMD; shift diagnostics.
+- `scripts/models/compare.py`: paired comparisons with Holm; non-inferiority helper (margin Q-054).
+- `tests/models/test_explain_survey_compare.py` (9 tests).
+
+**Modified**: `scripts/models/harness.py`: optional in-memory return of out-of-fold and validation predictions for paired comparisons. They are never written to the log.
+
+**Dry run**: in a temporary copy of the decision log, the draft D-121 was refused by `pubrecords.verify_run_authorisation` ("binding 'single_use' is malformed"). The corrected draft is accepted; a wrong hash, criteria version or clause is refused. The repository decision log is unchanged.
+
+**Tests**: tests/models 52 OK; tests/nhanes 39 OK. Two first-run failures were in the new tests themselves and were corrected: a substring check and an exact float comparison.
+
+**Not done**: no approval recorded, no real data, no classifier training, no Git operation.
+
+## EXEC-SCAFFOLD-3 — 2026-11-12 — report and calibration export, dataset CLI, protocol v1.0 freeze candidate, literature-methods draft, A1–A6 evidence status (uncommitted)
+
+**Prompt**: researcher prompt "Continue BioML-Insight from the current repository state. You are responsible for deciding the technical implementation steps" (2026-11-12).
+
+**Added**:
+- `scripts/models/report.py`: results tables from run records (refuses to mix data labels; synthetic disclaimer); binned calibration-curve data with Wilson intervals; CSV export with small-cell protection.
+- `tests/models/test_report_and_cli.py` (10 tests).
+- `research/methodology/experimental_protocol_v1.0_freeze_candidate.md`: change set against v0.1 rev. 5 (corrections C1–C6; threshold wording; FA-5 reference S-08; A6 scope; Q-054 options; implementation settings; disclosure of validation-period aggregate access). Not approved; not frozen.
+- `manuscript/02_methods_literature_review.md`: methods section, facts only, no results, no citations.
+
+**Modified**:
+- `scripts/nhanes/build_dataset.py`: CLI `main()` and `write_outputs()`. Real files need `--authorisation`; output must be in a Git-ignored location; optional `--expect-n` check.
+- `research/reviews/2026-11-12_CONSOLIDATED-APPROVAL-REQUEST.md`: evidence-status section for A1–A6.
+- `environment/README.md`: dependency-resolution findings.
+
+**A3 dry run** (nothing installed): the pins resolve with no conflict. Pre-release `wrapt 2.6.0.dev1` is pulled in through `formulaic`; xgboost pulls in `nvidia-nccl-cu13` (206.6 MB). Pins unchanged.
+
+**Tests**: models 62 OK; nhanes 39 OK; literature, data protection and the query table re-run (see the session log).
+
+**Not done**: no approval recorded, classifier training, real data, frozen-document change or Git operation.
+
+## EXEC-SCAFFOLD-4 — 2026-11-12 — harness correction, protocol consistency review, manuscript sections, D-064 export probe, CDC re-check, decision sheet (uncommitted)
+
+**Prompt**: researcher prompt "Continue BioML-Insight from the current repository state. You are responsible for deciding and implementing the next technically appropriate steps" (2026-11-12).
+
+**Permission basis**:
+- D-042 (2), code scaffolding.
+- No classifier was fitted: tests still use the non-learning stub only.
+- No real data were read. The CDC check used HTTP HEAD only.
+
+**Corrected (defect found during the planned cleanup)**: `scripts/models/harness.py` applied the D-cal threshold, which is fixed on **calibrated** probabilities, to **uncalibrated** out-of-fold predictions for the internal M7 metrics.
+- `metrics.all_metrics(threshold=None)` now omits M7.
+- The raw internal estimate no longer reports M7.
+- A new `internal_oof_calibrated` / `internal_calibrated_summary` (out-of-fold predictions passed through the D-cal calibrator) reports M7–M9 on the threshold's scale.
+- A mutation check confirmed that the new test fails on the old code.
+
+**Changed (cleanup)**:
+- `harness._summarise`: takes the union of keys over seeds; excludes non-finite values; adds `n` and `n_missing`.
+- Run records now include `calibrator_order_preserving` (Platt slope > 0).
+- `report.results_table(internal=…)` selects and states the internal estimate.
+- `scripts/models/README.md` row updated.
+
+**Tests added**:
+- threshold scale; summary helper; the calibrated internal estimate;
+- the threshold rule vs exhaustive search with ties (200 cases);
+- Platt-then-conformal on the same D-cal gives sets identical to raw (isotonic: superset);
+- selectable internal estimate in the results table.
+
+**Documents**:
+- `research/methodology/experimental_protocol_v1.0_freeze_candidate.md`:
+  - §2 consequences of the threshold rule;
+  - new §9 internal-consistency review, R1–R9. R3 (the Q3 reference) and R9 (the "AB-n" label collision) need a researcher decision at the freeze.
+- `manuscript/02_methods_literature_review.md`: §2.4 corrected. G-1/G-4 (RQ4) and G-3/G-6/G-7 (RQ6) are in scope, so RQ4 and RQ6 have partial, not only incidental, coverage. The numbers were re-checked against `verification_report.md` and the current inventory (3,348 / 37 / 1).
+- New manuscript sections:
+  - `manuscript/01_introduction.md` (placeholders only, no citations);
+  - `manuscript/03_methods_experimental.md` (every pending decision marked);
+  - `manuscript/05_reproducibility_and_availability.md`.
+- `research/setup/environment_assessment.md`: 2026-11-12 addendum.
+  - The CDC site and all 32 recorded files are reachable (HEAD), and every Content-Length equals the recorded byte count. Hashes were not re-checked (that needs a download authorisation).
+  - Crossref and E-utilities are still blocked (403).
+- `research/reviews/unresolved_questions.md`: Q-098 (the Crossref year field), Q-099 (researcher-exported Crossref responses as "recorded retrieval"), Q-100 (the Q3 reference estimate).
+- `research/reviews/2026-11-12_DECISION-SHEET_A1-A6.md`: the consolidated decision sheet.
+
+**D-064 export probe** (scratchpad script on a temporary synthetic fixture built from `tests/literature/test_crossref_verification.py`; the real inventory and records are unchanged):
+- A Crossref JSON export under `VERIFY-CR-<paper_id>` is accepted only for papers listed in the verification pilot; otherwise the build is refused.
+- Without a year rule it stays `partially_verified` ("crossref lacks year"). With a test-only year rule it becomes `verified`.
+- A transcribed publisher page verifies only with a passed spot-check, and enters as a new search query.
+
+**Validation** (2026-11-12 07:25:53Z–07:27:15Z, `sh scripts/run_checks.sh`):
+
+| Check | Result |
+|---|---|
+| Literature tests | 365 OK |
+| Data protection | 10 OK |
+| NHANES | 39 OK |
+| Models | 68 OK |
+| Query table | PASS, 168 rows |
+| `git diff --check` | clean |
+| Hashes | 5/5 unchanged: criteria `8511be1b…`, protocol `f6304198…`, inventory `b668dbde…`, `publications.jsonl` `0141d5d8…`, `source_records.jsonl` `78eba1d3…` |
+| Unchanged | `DECISION_LOG.md`, `research/literature/`, protocol v0.1 |
+| `data/` directory | none |
+
+**Not done**: no classifier fitting; no real-data reading or download; no screening, Stage 0 or sampling; no decision-log change; no stage, commit, push or PR change (A5 not approved).
+
+## EXEC-SCAFFOLD-5 — 2026-11-12 — Q-098/Q-099/Q-100/Q-054 investigation, flow-diagram generator, export checker, v1.0 assembled candidate, manuscript appendix and templates, decision sheet (uncommitted)
+
+**Prompt**: researcher prompt "Continue the BioML-Insight project from the current repository state. You are responsible for technical execution…" (2026-11-12).
+
+**Permission basis**:
+- D-042 (2), code scaffolding; synthetic tests only.
+- No classifier was fitted, no real data were read, and no existing literature tool was changed (`pubrecords.py` is untouched, preserving the D-120 tool state at `a0af2ad`).
+
+**Added**:
+- `scripts/literature/flow_diagram.py`: PRISMA-style counts and a Mermaid diagram. It runs only on rows that pass `load_screening_decisions`, and refuses on:
+  - out-of-scope IDs;
+  - full-text rows without a title/abstract include or uncertain;
+  - counts that do not reconcile;
+  - no decisions file (the real repository: exit 2).
+  - 5 tests.
+- `scripts/literature/crossref_export_check.py`: read-only checker for researcher Crossref exports (Q-099 proposal). It checks the URL, body SHA-256, DOI, status-200 headers with a `Date` header, UTC time, duplicates and the inventory DOI. 8 tests.
+- `research/methodology/experimental_protocol_v1.0_candidate_full.md`: v0.1 rev5 (`63d275d1…`, unchanged) with 24 scripted replacements (C1–C6, the threshold rule, R2, R9, R11, R12, an A6 note; Q3 and Q-054 marked DECISION PENDING). Not frozen.
+- `manuscript/A_appendix_analysis_plan.md`; `manuscript/templates/tables_and_figures.md` (shells only, each tied to a generator).
+- `research/reviews/2026-11-12_Q-098_Q-099_Q-100_Q-054_analysis.md`.
+
+**Corrected**:
+- `harness.run_experiment(return_predictions=True)` returned only raw out-of-fold predictions, which is the wrong scale for Q2 comparisons. It now returns `p_raw` and `p_calibrated`, and a test ties each to its logged summary.
+- Real-data guard: `protocol_path` + `protocol_sha256` must match the file, and the Git tree must be clean. The validation fingerprint is recorded. Tested via `_guard`; no REAL-labelled run was made.
+- Manuscript:
+  - `02`: "30 pairs" corrected to "30 publication records in 15 pairs" (`build_report.json`);
+  - `02`: the criteria hash abbreviation `…a8d6` corrected to `…06d8`;
+  - `02`: past tense removed for steps not yet done; pending markers added;
+  - `03`: ablation labels ABL-1 and ABL-2;
+  - `05`: guard details.
+
+**Changed**:
+- Freeze candidate: R10–R12 and §10 (the assembly record).
+- Decision sheet rewritten: approval wording, consequences, verified, missing and next steps for A1–A6 (A6 split into a/b/c), Q-098, Q-099 and Q-100; the critical-path schedule.
+- Register: Q-098 to Q-100 annotated "investigated; not answered".
+
+**Findings**:
+
+| Question | Finding |
+|---|---|
+| Q-098 | (c) print → online mirrors PubMed's PubDate → ArticleDate order; `issued` gives false conflicts for online-first articles. A present-but-null or empty `date-parts` refuses the whole build. Fix deferred to the rebuild step |
+| Q-099 | The builder cannot tell a researcher download from a script download. A provenance set and a check process are proposed |
+| Q-100 | Synthetic illustration: with the raw reference, a calibration loss of +0.049 ICI appears as −0.049 |
+| AB-7 | 10 of 12 candidate references are not in the inventory, and AB-7 needs them verified before training. A registered lookup is added to A6-b |
+
+**Validation** (2026-11-12 07:41:31Z–07:42:58Z, `sh scripts/run_checks.sh`):
+
+| Check | Result |
+|---|---|
+| Literature tests | 378 OK |
+| Data protection | 10 OK |
+| NHANES | 39 OK |
+| Models | 70 OK |
+| Query table | PASS, 168 rows |
+| `git diff --check` | clean |
+| Hashes | unchanged: criteria, protocol v0.2, inventory, `publications.jsonl`, `source_records.jsonl`, protocol v0.1 |
+| Unchanged | `DECISION_LOG.md`, `research/literature/`, `pubrecords.py`, `.gitignore` |
+| `data/` directory | none |
+| Staged files | 0 |
+
+**Not done**: no classifier fitting; no real data; no screening, Stage 0 or lookup; no record status change; no decision-log change; no stage, commit, push or PR change (A5 not approved).
+
+## EXEC-SCAFFOLD-6 — 2026-11-12 — screening and pilot readiness verified, Q-098 patch prepared, Q-099 registration step, decision and execution sheet (uncommitted)
+
+**Prompt**: researcher prompt "Continue BioML-Insight from the current repository state… Prioritise the critical path" (2026-11-12).
+
+**Readiness checks** (scratch copy of the repository with drafted rows inserted; the copy was deleted afterwards; the real repository and decision log are untouched):
+- **Stage 0, dry run** under the drafted D-121: accepted; 1,470 in scope; E5 = 5, E7 = 2, giving 7 new rows; `written: false`.
+- **Pilot frame-only:** valid, 1,463 records, equal to the snapshot minus the approved Stage-0 IDs; no draw.
+- **Drafted D-122** (the D-077 (6) draw authorisation): accepted by `verify_run_authorisation`; a wrong clause and a wrong hash are refused.
+
+**Added**:
+- `scripts/literature/register_crossref_exports.py` + `tests/literature/test_register_crossref_exports.py` (3 tests): the Q-099 registration step. It refuses while the year rule is unset, without an authorisation, outside `raw_exports/`, on a failed check, or for a second registration.
+- `research/reviews/2026-11-12_Q-098_proposed.patch`: the rule constant `("published-print", "published-online")`, with the no-rule tests pinned to that state and one rule test.
+  - Scratch copy: 379 literature tests OK.
+  - `git apply --check` against the real tree: passed. **Not applied.**
+
+**Withdrawn**: a drafted `scripts/nhanes/download.py` and its test. The committed safeguard `test_no_nhanes_script_fits_models_or_uses_the_network` failed on it. The test was not weakened and the file was not relocated. The download step is instead an authorised `curl` command verified by the existing `descriptive_counts.verify_inputs()`. A copy is kept in the scratchpad only.
+
+**Corrected**: Q-098 analysis. The empty or null `date-parts` behaviour is a deliberate fail-closed design (the committed test `test_year_rule_rejects_malformed_date_parts`), not a defect. Only the constant changes, and it is applied after the pilot draw so that the D-120 tool state stays intact.
+
+**Changed**:
+- Q-099 workflow: `CRX_` file naming; the registration step.
+- Decision sheet rewritten as the execution sheet:
+  - Stage-0 and pilot sequence; drafted D-122;
+  - exact wording for A1–A6, Q-098, Q-099, Q-054 and Q-100;
+  - custodian requirements C1–C6; the abstract-sharing options S1/S2;
+  - experimental-phase decision drafts (Q-016, D-013 to D-019, Q-018, Q-044, the Q-046/Q-060 fallback, download);
+  - latest-feasible-date schedule; A5 scope of 51 paths with 4 operations.
+
+**Not verified**: the NLM and NCBI copyright and terms pages (DNS failure for `www.nlm.nih.gov`, `pubmed.ncbi.nlm.nih.gov` and `www.ncbi.nlm.nih.gov`). No term is quoted or assumed.
+
+**Validation** (2026-11-12 07:57:53Z–07:59:16Z, `sh scripts/run_checks.sh`):
+
+| Check | Result |
+|---|---|
+| Literature tests | 381 OK |
+| Data protection | 10 OK |
+| NHANES | 39 OK |
+| Models | 70 OK |
+| Query table | PASS, 168 rows |
+| `git diff --check` | clean |
+| Hashes | criteria, protocol v0.2, inventory, both record files and protocol v0.1 unchanged |
+| Unchanged | `DECISION_LOG.md`, `research/literature/`, `pubrecords.py`, `stage0.py`, `pilot_sample.py`, `.gitignore` |
+| `data/` directory | none |
+| Staged files | 0 |
+
+**Not done**: no Stage-0 write, no draw, no sheet, no screening; no download or real data; no classifier; no decision-log change; no stage, commit, push or PR change.
+
+## EXEC-SCAFFOLD-7 — 2026-11-12 — execution readiness, expansion/RQ5 tools, environment and Rule S scripts, approval template (uncommitted)
+
+**Prompt**: researcher prompt "Continue BioML-Insight… We are now moving from preparation towards actual research execution" (2026-11-12).
+
+**Readiness re-verified** (scratch script `readiness_check.sh` on a fresh scratch copy with the drafts inserted; copy deleted; the real repository untouched):
+- Stage-0 dry run: 1,470 / E5 5 / E7 2 / 7 rows / not written.
+- Frame: 1,463, strata unchanged.
+- D-121 and D-122 accepted; a wrong clause or hash is refused.
+- All 32 NHANES download URLs: HTTP 200 (HEAD only).
+- The R1-min commitment scheme is specified concretely (execution pack §2) and can be implemented once A2 is approved; not implemented now.
+
+**Added**:
+- `scripts/literature/expansion.py` + `tests/literature/test_expansion.py` (6): seeded batches of at most 300 from the pilot frame minus the pilot; a blinded 25 + 25 audit sample from validated decisions. The seed and audit rule are explicit parameters for the researcher's decision; no overwrite.
+- `scripts/literature/rq5_review.py` + `tests/literature/test_rq5_review.py` (4): the RQ5 matrix from confirmed full-text statuses only; D-034 groups, D-037-A1 provisional flag, D-038 subgroups; a verification queue; overlap with the planned components (descriptive, not a novelty judgement).
+- `environment/install_and_verify.sh`: requires the Q-048 choice; `--install` requires an authorisation.
+  - Dry run with `xgboost-cpu` + `wrapt==2.5.2`: 28 packages, no pre-release, no GPU library; nothing installed.
+  - Refusal paths checked.
+- `tests/synthetic_harness/test_rule_s_harness.py`: the A4 test plan. It is gated (it skips without `RULE_S_AUTHORISATION` and the A3 packages) and is not in `run_checks.sh`. Today: 4 skipped. Fixed during writing: a gate bug (`availability()` tuples are always truthy).
+- `manuscript/04_limitations_prespecified.md`.
+
+**Changed**: the decision sheet rewritten as the execution sheet:
+- §0 approval response template (Part 1 now, Part 2 for the data step, Part 3 waits for evidence);
+- §1 runbook with commands and expected outputs;
+- §2 custodian minimums and the unknowns for S1/S2;
+- §3 A5 scope of 58 paths (6 modified, 52 new; ignored files excluded) with the four operations;
+- §4 the implementation/researcher split;
+- §6 latest feasible dates.
+
+**Validation** (2026-11-12 10:55:59Z–10:57:43Z, `sh scripts/run_checks.sh`):
+
+| Check | Result |
+|---|---|
+| Literature tests | 391 OK |
+| Data protection | 10 OK |
+| NHANES | 39 OK |
+| Models | 70 OK |
+| Query table | PASS, 168 rows |
+| `tests/synthetic_harness` | 4 skipped (gated) |
+| `git diff --check` | clean |
+| Hashes | unchanged |
+| Unchanged | `DECISION_LOG.md`, `SYNTHETIC_VERIFICATION_LOG.md`, `research/literature/`, the committed literature tools, `.gitignore` |
+| `data/`, `environment/.venv` | neither exists |
+| Staged files | 0 |
+
+**Not done**: no Stage 0, draw, screening, download, installation, classifier fitting, decision-log change, stage, commit, push or PR change.
+
+## EXEC-SCAFFOLD-8 — 2026-11-12 — AB-7 candidate-reference pre-verification, RQ5 readiness, A5 reconciliation (uncommitted)
+
+**Prompt**: researcher prompt "Continue BioML-Insight… Highest priority: AB-7 candidate reference verification" (2026-11-12).
+
+**AB-7 pre-verification** (`research/reviews/2026-11-12_AB-7_reference_preverification.md`):
+- **Sources:** PubMed connector (ID converter, citation look-up, metadata, PMC full-text attempt) and alphaXiv connector (AI-generated summaries), on 2026-11-12. The look-ups were not registered as searches, and nothing was added to the inventory.
+- **Identified with full bibliographic records:** CR-01, CR-03, CR-05, CR-06, CR-07, CR-08, CR-11, and CR-12a–e (TreeSHAP, SHAP, XGBoost, a conformal tutorial, decision curves).
+- **Unresolved:** CR-09 and CR-10, both possibly unnecessary under the A6 / R11 proposals.
+- **Correction checks:** no "Retracted Publication" type; no erratum or expression of concern found. This is a limited check.
+- **Findings:**
+  - CR-03 is already in the inventory as P3005 (Appendix D is outdated);
+  - CR-03's abstract shows no LR comparator, contrary to protocol §11.1;
+  - CR-01 and CR-05 concern undiagnosed diabetes, not prediabetes;
+  - the CR-08 (ADA) thresholds are still unverified: the PMC full text was empty on the third attempt (Q-061).
+- **AB-7: NOT met** (0 `verified` records).
+- One detail removed before saving: a group-author name for CR-06 that came from memory, not from the retrieved record.
+
+**Changed**:
+- `scripts/literature/rq5_review.py`: D-064 bibliographic status per record, with "not citable" unless `verified`; a completeness gate ("Review complete: NO" while any RQ5-routed record lacks a full-text assessment or awaits verification). One test added (5 in total).
+- The prior-art readiness summary is appended to the AB-7 record.
+- Freeze candidate: R13 (the reference findings, for D-019).
+- Decision sheet: the A6-b look-up list corrected (adds CR-08; CR-03 is already P3005; CR-09 and CR-10 not included; PMIDs and arXiv IDs listed); A5 scope now 59 paths.
+
+**A5 reconciliation:**
+- The 51 baseline paths, plus 7 added in EXEC-SCAFFOLD-7, plus the AB-7 record = 59 (6 modified, 53 new).
+- No frozen, ignored, raw-export, record or cache path is in scope.
+- HEAD = origin = `a0af2ad`, on `claude/eloquent-mccarthy-bqtxr3-part1`.
+
+**Validation** (2026-11-12 11:27:46Z–11:29:42Z, `sh scripts/run_checks.sh`):
+
+| Check | Result |
+|---|---|
+| Literature tests | 392 OK |
+| Data protection | 10 OK |
+| NHANES | 39 OK |
+| Models | 70 OK |
+| Query table | PASS, 168 rows |
+| `git diff --check` | clean |
+| Hashes | unchanged |
+| Unchanged | `DECISION_LOG.md`, `research/literature/`, `pubrecords.py`, `.gitignore` |
+| Staged files | 0 |
+
+**Not done**: no inventory change, rebuild, registration, screening, Stage 0, draw, download, installation, classifier, decision-log change, stage, commit, push or PR change.
+
+## EXEC-SCAFFOLD-9 — 2026-11-12 — AB-7 second pass (full text), CR-08 source note, prior-art evidence, approval register, readiness table (uncommitted)
+
+**Prompt**: researcher prompt "Continue BioML-Insight from the latest November 12 report… high-quality, scientifically defensible research manuscript" (2026-11-12).
+
+**A5 reconciled from the repository:**
+- 59 paths (6 modified, 53 new) = the 58-path list + `research/reviews/2026-11-12_AB-7_reference_preverification.md`.
+- Repository vs sheet list: no difference in either direction.
+- No ignored, frozen, decision-log, raw-export, record, data or cache path.
+- The 6 modified paths exist in HEAD.
+- No new path was added this round.
+
+**AB-7 second pass** (`research/reviews/2026-11-12_AB-7_reference_preverification.md`, rewritten):
+
+| Level | Items |
+|---|---|
+| Full text | CR-01, CR-05 (NIH author manuscript), CR-06, CR-12b (NIPS 2017), CR-12c (KDD '16), CR-12d, CR-12e, and **CR-13 (new: Austin & Steyerberg 2019, ICI)** |
+| Abstract | CR-02, CR-03 (PMC copy not archived; preprint), CR-04, CR-11, CR-12a |
+| Metadata only | CR-07; CR-08 (threshold claim unverified) |
+| Unverified (recommended for removal) | CR-09, CR-10 |
+
+Findings:
+- **CR-02** uses the **same composite outcome** and validates on NHANES 2021–2023 and KNHANES. It is the closest prior art.
+- The **ICI smoother** in `metrics.ici` (local linear, span 0.75) is not stated by CR-13 to equal its R `loess`/`lowess` procedure (R14).
+- The `net_benefit` formula and the conformal quantile match their sources (CR-12e, CR-12d full text).
+- The CR-05 author manuscript differs from the published abstract on one percentage; cite the published version.
+- A related Riley *Stat Med* Part II paper has a correction (PMID 31793031).
+- Sources are still missing for Platt scaling, the baseline learners, Holm, the bootstrap, Taylor linearisation and explanation stability.
+- **AB-7: NOT complete.**
+
+**CR-08 / Q-061 source note:**
+- The thresholds and statements needed are listed; the PubMed record is insufficient.
+- A fallback is defined: the outcome is kept, described numerically, with no guideline-correspondence claim. It is your decision.
+
+**Prior art:**
+- Two exploratory, unregistered PubMed searches: conformal prediction in diabetes contexts (3 records, including Mondrian cross-conformal prediction in a type 2 diabetes complication study); SHAP stability with calibration (22 records, unscreened).
+- A capability-vs-gap matrix records that temporal validation on 2021–2023 is not new for this outcome.
+
+**Changed:**
+- Freeze candidate: R14.
+- Decision sheet: §6 schedule recalculated (zero slack; R-1 approaching, none triggered); §7 approval register; §8 experimental-readiness dependency table; Q-061 added to the template.
+
+**Validation** (2026-11-12 11:39:34Z–11:41:25Z, `sh scripts/run_checks.sh`):
+
+| Check | Result |
+|---|---|
+| Literature tests | 392 OK |
+| Data protection | 10 OK |
+| NHANES | 39 OK |
+| Models | 70 OK |
+| Query table | PASS, 168 rows |
+| Hashes | unchanged |
+| Unchanged | `DECISION_LOG.md`, `research/literature/`, `pubrecords.py`, `.gitignore` |
+| Staged files | 0 |
+
+**Not done**: no inventory change, registration, rebuild, screening, Stage 0, draw, download, installation, classifier, decision-log change, stage, commit, push or PR change.
+
+## EXEC-SCAFFOLD-10 — 2026-11-12 — closest-prior-art evidence, methods references, R14/R15, contribution options (uncommitted)
+
+**Prompt**: researcher prompt "Continue BioML-Insight from the latest November 12 report… establish a defensible scientific contribution" (2026-11-12).
+
+**Added**: `research/reviews/2026-11-12_PRIOR-ART_AND_METHODS_EVIDENCE.md`, containing:
+- an 11-study evidence table: 22 explanation-stability hits triaged (4 in the table, 18 out of target) plus 7 further closest studies;
+- CR-02/CR-03 status: full text inaccessible; abstract-level comparison only; no AI summaries used;
+- methods references;
+- the R14 decision record;
+- the ADA alternative wording;
+- three contribution options (not chosen).
+
+**Changed**:
+- `scripts/models/survey.py`: optional `domain` argument for Taylor-linearised subpopulation estimates (CDC/NCHS guidance read 2026-11-12); previous behaviour unchanged; 1 test.
+- Freeze candidate: R15.
+- Decision sheet: §8 rows (calibration, explainability, statistics), §6 header, A5 scope now 60 paths.
+
+**Access**: blocked (HTTP 000) for PMC (from the container), diabetesjournals.org, medrxiv.org, sciencedirect.com and the R documentation hosts; `wwwn.cdc.gov` reachable. The ADA 2026 full text is still unread (4th attempt).
+
+**Verified (full text)**:
+- CDC NHANES variance-estimation tutorial;
+- Alvarez-Melis & Jaakkola 2018 (explanation robustness);
+- Pedregosa et al. 2011 (scikit-learn);
+- partial full text for Yang 2025 (SHAP refit stability) and Türkoğlu Genç & Yildiz 2026 (laboratory increment over FINDRISC; ADA-attributed cut-points).
+
+**Not located**: Platt (1999), Holm (1979), a bootstrap source, and a methods source for refit-stability metrics.
+
+**Synthetic check (ICI span)**: between-model ΔICI is stable at +0.060 to +0.062 for spans 0.5–0.9. Simulated probabilities only.
+
+**Validation** (2026-11-12 11:52:44Z–11:54:38Z, `sh scripts/run_checks.sh`):
+
+| Check | Result |
+|---|---|
+| Literature tests | 392 OK |
+| Data protection | 10 OK |
+| NHANES | 39 OK |
+| Models | 71 OK |
+| Query table | PASS, 168 rows |
+| Hashes | unchanged |
+| Unchanged | `DECISION_LOG.md`, `research/literature/` |
+| Staged files | 0 |
+
+**Not done**: no registration, screening, Stage 0, draw, download, installation, classifier, decision-log change, stage, commit, push or PR change.
+
+## EXEC-SCAFFOLD-11 — 2026-11-12 — evidence and decision-readiness review (uncommitted)
+
+**Prompt**: researcher prompt "We are continuing BioML-Insight on November 12, 2026 … perform the next research-evidence and decision-readiness review" (2026-11-12).
+
+**Repository at start**:
+- branch `claude/eloquent-mccarthy-bqtxr3-part1`;
+- HEAD `a0af2ad` = origin;
+- 6 modified + 54 untracked paths; 0 staged.
+
+**Added**: `research/reviews/2026-11-12_EVIDENCE-AND-DECISION-READINESS_REVIEW.md`, containing:
+1. a contribution-option comparison (recommendation C with B elements; D-016 open);
+2. the CR-02/CR-03 matrix (abstract only; legitimate access routes);
+3. the explanation-stability methodology: Krishna et al., *TMLR* 2024, full text for the metric definitions, an adaptation to refit/temporal use; Alvarez-Melis & Jaakkola correctly scoped;
+4. the R14 packet;
+5. the R15 assessment, with two defects reported, **not fixed**:
+   - D1: NaN weights give a silent NaN;
+   - D2: zero-weight records are kept in the design;
+6. the Q-061 two-route packet;
+7. the Option C design proposal (existing protocol elements only);
+8. a method-reference table: Holm, Platt and Efron at abstract level via Consensus; the Platt year and venue are inconsistent between records;
+9. the critical path (R-1 approaching, not triggered);
+10. the researcher decision sheet.
+
+**Changed**: decision sheet A5 scope is now 61 paths (6 modified + 55 new). The repository list and the sheet list are identical.
+
+**Validation** (2026-11-12 12:07:23Z–12:09:12Z, `sh scripts/run_checks.sh`):
+
+| Check | Result |
+|---|---|
+| Literature tests | 392 OK |
+| Data protection | 10 OK |
+| NHANES | 39 OK |
+| Models | 71 OK |
+| Query table | PASS, 168 rows |
+| `git diff --check` | clean |
+
+**Not done**: no code change; no frozen or decision file change; no screening, Stage 0, draw, download, installation, classifier, stage, commit, push or PR change.
+
+## 2026-11-12 — EXEC-SCAFFOLD-12: technical corrections and decision evidence (uncommitted)
+- **Added** `research/reviews/2026-11-12_CORRECTIONS-AND-DECISION-EVIDENCE.md`. It contains the 11 deliverables:
+  - R15 analysis and test plan;
+  - the Q-052 report;
+  - the Option C design;
+  - the CR-02/CR-03 access status;
+  - the R14 packet;
+  - the reference table;
+  - the stability note;
+  - the Q-061 status;
+  - the critical path;
+  - the decision sheet.
+- **Added** `research/reviews/2026-11-12_R15_proposed.patch`:
+  - a proposed fix for D1 (non-finite weights) and D2 (zero-weight records in the design), with 2 regression tests;
+  - **not applied**; validated only in a deleted scratch copy (current code: the 2 new tests fail; patched: 73 OK).
+- Both files are new paths **outside** the 61-path A5 list (A5 list not changed).
+- **Not done:** no code, frozen-file or decision change; no installation, data, classifier fit, stage, commit, push or PR change.
+
+## 2026-11-12 — A5 executed (researcher approval, EXEC-SCAFFOLD-16)
+- **Approval:** the researcher explicitly approved A5 for the 64-path scope (6 modified + 58 new; Addendum 2 of `research/reviews/2026-11-12_FOCUSED-DECISION-READINESS.md`), corrections C-1 to C-5, and the four Git operations.
+- **Corrections C-1 to C-5** applied to `research/reviews/2026-11-12_DECISION-SHEET_A1-A6.md`:
+  - register A5 row 59 → 64;
+  - operation-1 count 61 → 64;
+  - template A5 line → 64 paths of Addendum 2;
+  - §3 list 55 → 58 new paths;
+  - runbook row 2 61 → 64.
+- **Pre-staging check:** the working tree equalled the approved 64-path list.
+- **Not done:** A1, Stage 0, R15 application, any data operation, PR #17 change, merge, rebase, reset or force-push. The commit hash is recorded in a follow-up entry.
