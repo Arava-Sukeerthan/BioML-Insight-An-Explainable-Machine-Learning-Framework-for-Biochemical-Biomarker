@@ -1,5 +1,7 @@
 """Tests for scripts/literature/flow_diagram.py. SYNTHETIC decision rows in temporary directories only;
-no screening decision exists in the repository and none is written."""
+nothing is written. Refusal without screening is tested on isolated temporary directories. One test
+reads the real screening/decisions.csv (Stage 0 under D-121, 2026-11-12) and checks that the real
+flow counts reconcile with that run; it reads, never writes."""
 import contextlib
 import csv
 import io
@@ -93,10 +95,27 @@ class FlowDiagram(unittest.TestCase):
         with self.assertRaisesRegex(FD.FlowError, "without a title/abstract include"):
             FD.flow_counts(self.lit)
 
-    def test_real_repository_has_no_screening_yet(self):
-        # the real repository holds no decisions file; the generator must refuse, not draw zeros
-        with self.assertRaises(FD.FlowError):
-            FD.flow_counts(REPO / "research" / "literature")
+    def test_refuses_without_decisions_file_or_rows_in_isolated_directory(self):
+        # replaces the former real-repository check (no decisions file before Stage 0): without screening
+        # the generator must refuse, never draw zeros; isolated temporary directory, independent of the repo
+        (self.lit / "screening").mkdir()
+        with self.assertRaisesRegex(FD.FlowError, "does not exist: no screening has been recorded"):
+            FD.flow_counts(self.lit)
+        with open(self.lit / "screening" / "decisions.csv", "w", newline="") as f:
+            csv.DictWriter(f, fieldnames=pr.SCREENING_REQUIRED + pr.SCREENING_OPTIONAL).writeheader()
+        with self.assertRaisesRegex(FD.FlowError, "has no decision rows"):
+            FD.flow_counts(self.lit)
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(FD.main(["--lit-dir", str(self.lit)]), 2)
+
+    def test_real_repository_reconciles_with_the_stage0_run(self):
+        # Stage 0 ran once under D-121 (single use, consumed): 1,470 in scope, 7 excluded (E5 5, E7 2).
+        # These Stage-0 figures are permanent; later screening may only move records out of awaiting_ta.
+        c = FD.flow_counts(REPO / "research" / "literature")
+        self.assertEqual((c["scope"], c["stage0_excluded"], c["stage0_by_code"]), (1470, 7, {"E5": 5, "E7": 2}))
+        self.assertEqual(c["criteria_versions"], ["criteria_v1.1+protocol_v0.2"])
+        self.assertEqual(c["stage0_excluded"] + c["ta_screened"] + c["awaiting_ta"], c["scope"])
+        self.assertEqual(c["awaiting_ta"], 1463 - c["ta_screened"])    # 1,463 before any title/abstract screening
 
 
 if __name__ == "__main__":

@@ -220,3 +220,12 @@ Declared before any result, and applied only by your decision at the D-019 freez
 
 ## EXEC-SCAFFOLD-19 (researcher approved Option 1)
 - Applied the activation-state test patch; the file equals the proposal version (`cmp`). Only the four approved tests were removed; 22 added.
+- A1 commit `dea6042`.
+- Stage-0 dry run exact match; write OK; dedicated commit `6079ced`.
+- **D-099 (5): ledger SHA-256 after the run = `6842e24493145a504fa00bd45f34e5a4c79cf5ac36d441265cf067f448f3a650`**; `decisions.csv` SHA-256 `3550838b237c43bcb175e1d38b36acb8e048f7df6f66324ec63b3ed3afbaad7b`.
+- Post-ledger checks: 2 literature failures (live-state tests in `test_flow_diagram.py` and `test_rq5_review.py`); push withheld; reported.
+
+## EXEC-SCAFFOLD-20 (researcher approved the fixture-based fix)
+- Tests-only correction in the two files (see CHANGELOG).
+- A draft real-repository RQ5 test of mine contained a conditional that would have hidden the completeness-gate problem. It was removed, not committed, and the problem was recorded as Q-101.
+- All suites pass (411/10/39/71; query table PASS).

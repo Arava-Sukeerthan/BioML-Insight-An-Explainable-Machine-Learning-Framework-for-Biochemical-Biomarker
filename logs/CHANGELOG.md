@@ -3333,3 +3333,16 @@ Findings:
 - **Removed** four live-state tests (`test_real_decision_log_holds_no_run_authorisation`, `test_real_decision_log_has_no_cell_beginning_with_a_marker`, `test_real_decision_log_holds_no_complete_authorisation`, `test_real_repository_has_no_ledger`).
 - **Added** `audit_run_authorisations` and `ActivationStateAudit` (22 tests): fixture tests of the pre-activation and activated states, plus one real-repository test that accepts exactly the two permitted states (activated = D-121 alone with its A1 bindings and a ledger that is chained, single-use and equal to HEAD).
 - Literature suite 392 → 410. The isolated-copy results are recorded in the proposal; the real-repository results follow.
+
+## 2026-11-12 — Stage 0 executed; post-Stage-0 test correction (EXEC-SCAFFOLD-19/20)
+- **A1 commit** `dea6042` (local until this push): D-114 to D-121, Q-063 (wording A), activation-state tests.
+- **Stage-0 dry run** under D-121 matched exactly: in_scope 1470, E5 5, E7 2, new_rows 7, written false. Hashes matched D-114.
+- **Stage-0 write:** written true; 7 rows (E5 5: errata/editorials; E7 2: retracted publications). Only `screening/decisions.csv` and the ledger were created.
+- **D-099 (1) dedicated commit:** `6079ced` (ledger + `decisions.csv` only). Ledger SHA-256 `6842e24493145a504fa00bd45f34e5a4c79cf5ac36d441265cf067f448f3a650`. D-121 is consumed.
+- **Initial post-ledger checks FAILED** (literature 2 failures, 389/410 before the fix; push withheld): `test_flow_diagram.FlowDiagram.test_real_repository_has_no_screening_yet` and `test_rq5_review.RQ5Matrix.test_cli_refuses_without_screening`. Both asserted that the real repository had no decisions file, which stopped being true at Stage 0. My isolated-copy simulation had created only a ledger, so these two tests were not exercised in the proposal.
+- **Correction** (researcher-approved, tests only; no production code, data, ledger or `decisions.csv` changed):
+  - flow diagram: the refusal check is moved to an isolated temporary directory (no file → "does not exist"; header only → "has no decision rows"; CLI exit 2). A real-repository reconciliation test was added: scope 1470, Stage-0 excluded 7 (E5 5, E7 2), criteria version, and scope = Stage-0 + screened + awaiting (1,463 awaiting before title/abstract screening).
+  - RQ5: the CLI refusal check is moved to an isolated temporary directory (exit 2 with reason).
+  - Literature suite 410 → 411.
+- **Not added:** a real-repository RQ5 test. On the real repository the tool reports "Review complete: yes" with 0 records although 1,463 records await screening. A truthful test would fail, and fixing it needs a production change, so it is recorded as **Q-101** (open) and not changed.
+- **Checks after the correction:** literature 411, data protection 10, NHANES 39, models 71, query table PASS.

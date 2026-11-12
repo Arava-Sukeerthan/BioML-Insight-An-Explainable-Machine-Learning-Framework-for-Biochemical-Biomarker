@@ -1067,3 +1067,8 @@ One entry per researcher review session (~1 h/day).
 ## 2026-11-12 — EXEC-SCAFFOLD-18 (A1)
 - `[EVIDENCE]` D-114 to D-121 recorded; Q-063 answered (wording A).
 - `[EVIDENCE]` All six D-035 §6 conditions recorded as met (rows 1, 2 and 4 at decision level).
+
+## 2026-11-12 — EXEC-SCAFFOLD-19/20 (Stage 0)
+- `[EVIDENCE]` Stage 0 ran once under D-121: 7 exclusions (E5 5, E7 2); 1,463 records await title/abstract screening.
+- `[EVIDENCE]` Two live-state tests failed after Stage 0; corrected in tests only (fixture refusal tests + a real flow-count reconciliation).
+- `[OPEN]` Q-101: the RQ5 completeness gate reports "complete" before screening; a production fix needs approval.

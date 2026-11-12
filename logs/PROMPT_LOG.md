@@ -1175,3 +1175,12 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Objective | Record D-114 to D-121 and Q-063; A1 commit and push; one Stage-0 dry run; a write only on an exact match; D-099 dedicated commit; usage records |
 | Actual completion status | A1 recorded; see the later entries for the Stage-0 outcome |
 | PR | None created or changed (PR #17 untouched) |
+
+### EXEC-SCAFFOLD-19/20 (2026-11-12)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-19 (researcher prompt "I approve Option 1: apply the activation-state test proposal") and EXEC-SCAFFOLD-20 ("I approve Option 1: apply the fixture-based test fix for the two post-Stage-0 failures") (2026-11-12) |
+| Objective | Apply the activation tests; A1 commit; Stage-0 dry run and write; D-099 commit; post-Stage-0 test correction; push only if all checks pass |
+| Actual completion status | Stage 0 done (7 rows). Two post-ledger failures fixed in tests only. Q-101 (RQ5 completeness gate) raised, not fixed |
+| Validation | All suites pass after the correction (411/10/39/71; query table PASS) |
+| PR | None created or changed (PR #17 untouched) |

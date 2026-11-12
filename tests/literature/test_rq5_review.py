@@ -1,7 +1,9 @@
-"""Tests for scripts/literature/rq5_review.py. SYNTHETIC decision rows only; nothing is written."""
+"""Tests for scripts/literature/rq5_review.py. SYNTHETIC decision rows only; nothing is written. Refusal
+without screening is tested on an isolated temporary directory."""
 import contextlib
 import io
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -66,8 +68,13 @@ class RQ5Matrix(unittest.TestCase):
             RV.matrix([row("P0001", "title_abstract", "include"), ft("P0001", "yes", "yes", "", "yes", "yes")])
 
     def test_cli_refuses_without_screening(self):
-        with contextlib.redirect_stderr(io.StringIO()):
-            self.assertEqual(RV.main(["--lit-dir", str(REPO / "research" / "literature")]), 2)
+        # isolated temporary directory without screening/decisions.csv (replaces the former real-repository
+        # check, which held only before Stage 0); refusal is exit code 2 with a reason, never an empty matrix
+        with tempfile.TemporaryDirectory() as tmp:
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.assertEqual(RV.main(["--lit-dir", tmp]), 2)
+            self.assertIn("no screening has been recorded", err.getvalue())
 
 
 if __name__ == "__main__":
