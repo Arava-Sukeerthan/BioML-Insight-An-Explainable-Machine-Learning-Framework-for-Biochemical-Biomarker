@@ -3314,3 +3314,9 @@ Findings:
   - runbook row 2 61 → 64.
 - **Pre-staging check:** the working tree equalled the approved 64-path list.
 - **Not done:** A1, Stage 0, R15 application, any data operation, PR #17 change, merge, rebase, reset or force-push. The commit hash is recorded in a follow-up entry.
+
+## 2026-11-12 — A5 commit recorded (EXEC-SCAFFOLD-16 follow-up)
+- **A5 commit:** `4262e1f` (64 files: 6 modified + 58 new).
+- **Branch:** `claude/eloquent-mccarthy-bqtxr3-part1`; pushed normally (fast-forward `a0af2ad..4262e1f`, no force).
+- **Validation before staging:** `run_checks.sh` all passed (literature 392, data protection 10, NHANES 39, models 71, query table 168); staged set = approved list (64).
+- **Not done:** A1, Stage 0, R15, data operations, PR #17 change.

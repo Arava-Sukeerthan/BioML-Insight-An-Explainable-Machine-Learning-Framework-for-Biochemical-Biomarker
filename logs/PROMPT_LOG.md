@@ -1166,3 +1166,4 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | See the follow-up entry below for the hashes and push result |
 | Validation | `run_checks.sh` before staging |
 | PR | None created or changed (PR #17 untouched) |
+| A5 result (follow-up) | Commit `4262e1f` pushed normally to `claude/eloquent-mccarthy-bqtxr3-part1` (`a0af2ad..4262e1f`); 64 paths; checks all passed before staging |
