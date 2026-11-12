@@ -20,6 +20,11 @@ predictions are interpretable and their reliability is reported honestly. Whethe
 combination is new, and whether it is useful, are open questions for the literature review
 (Stages B–D). They are not assumptions.
 
+**Ambition.** The project aims at an original, rigorous and reproducible contribution suitable
+for submission to a reputable, selective journal of an established scholarly publisher. Journal
+acceptance is an aspiration, not a guaranteed outcome. The target journal (D-020) is pending and
+will be chosen on the completed contribution, its evidence and its fit.
+
 ## Provisional research question `[OPEN]`
 > To what extent can a classification framework for metabolic disorders based on biochemical
 > biomarkers combine (i) explanation of its predictions, (ii) calibrated probabilities and

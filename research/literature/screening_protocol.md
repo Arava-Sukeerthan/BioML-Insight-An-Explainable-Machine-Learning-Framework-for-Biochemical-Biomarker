@@ -1,5 +1,7 @@
 # Title/Abstract Screening Protocol (pilot and main screening)
 
+> **SUPERSEDED** by `screening_protocol_v0.2.md` (frozen 2026-11-11, D-110); kept unchanged for traceability.
+
 | Field | Value |
 |---|---|
 | Task | LIT-004-PREPARATION (2026-10-23) |
