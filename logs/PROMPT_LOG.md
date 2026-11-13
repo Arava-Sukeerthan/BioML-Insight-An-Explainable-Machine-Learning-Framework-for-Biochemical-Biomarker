@@ -1193,3 +1193,12 @@ From BIO-001 each entry also has a detailed block below the table (deliverables,
 | Actual completion status | Fix and 7 tests implemented; diff reviewed by the researcher; Q-101 answered; Q-102 raised (open) |
 | Validation | Full `run_checks.sh` before the commit (results in the CHANGELOG and the final report) |
 | PR | None created or changed (PR #17 untouched) |
+
+### EXEC-SCAFFOLD-22 to 25 (2026-11-12/13)
+| Field | Value |
+|---|---|
+| Task ID / prompt ID | EXEC-SCAFFOLD-22 (A2 custodian preparation), -23 (R2-solo preparation), -24 (consistency review, manuscript statement), -25 (researcher prompt "I explicitly approve the following researcher decisions: 1. D-123 … 2. D-124 …" (2026-11-13)) |
+| Objective | Replace the custodian route by the single-researcher pilot workflow; prepare the tool, tests and prompt; record D-123 and D-124; local Commit 1 of the approved ten files |
+| Actual completion status | D-123 and D-124 approved and recorded (decision log uncommitted, outside the Commit 1 scope); Commit 1 created locally; **not pushed**; D-122 not recorded; pilot not started |
+| Validation | Full `run_checks.sh` before the commit (session log) |
+| PR | None created or changed (PR #17 untouched) |

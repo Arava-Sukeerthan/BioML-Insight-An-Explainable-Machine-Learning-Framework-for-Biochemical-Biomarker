@@ -236,3 +236,31 @@ Declared before any result, and applied only by your decision at the D-019 freez
 - First fixture run: 3 errors from my fixture inventory lacking `verification_status`. That exposed the `to_markdown` weakness, recorded as Q-102 and not fixed; the fixture was corrected.
 - 7 new tests fail on the previous code (checked in a scratch copy, deleted).
 - The diff reported to the researcher (SHA-256 prefix `4dc42074`) is identical to the committed code diff.
+
+## EXEC-SCAFFOLD-22 (A2 preparation; no decision, no contact, no commit)
+- Wrote `research/reviews/2026-11-12_A2-CUSTODIAN-PACKAGE.md`: C1–C6 with evidence; invitation, responsibilities, checklist and acceptance template (placeholders only); S1/S2 comparison; pilot readiness checklist; deadline; Q-102 proposal.
+- NLM/NCBI/PubMed policy pages: container CONNECT 403; the server-side fetch fails DNS. Nothing quoted.
+- The "execution pack §2" R1-min text cited earlier is not in the repository (gap noted).
+- Q-102 patch tested in a scratch copy (deleted): 4 of the 5 new tests fail or error on the current code; full suite with the patch OK (literature 423). Saved as `research/reviews/2026-11-12_Q-102_proposed.patch`, not applied.
+
+## EXEC-SCAFFOLD-23 (R2-solo preparation; researcher direction 2026-11-12; nothing recorded or committed)
+- Wrote `scripts/literature/pilot_commitment.py` (make/verify/order; stdlib only) and `tests/literature/test_pilot_commitment.py` (11 synthetic tests; first run: 2 errors from a bug in my test helper, fixed; then 11 OK).
+- Wrote `research/literature/pilot_assistant_prompt.md` (fixed start prompt; draft) and `research/reviews/2026-11-12_R2-SOLO-AMENDMENT-DRAFTS.md` (D-123, D-124, D-122 drafts, limitation statement, Windows Python check).
+- D-122 text dry-run accepted by `verify_run_authorisation` in a disposable copy (wrong clause and wrong hash refused); repository unchanged.
+- Q-084 marked "proposed" (not answered) in `unresolved_questions.md`.
+- Syntax checks: the tool and its imports parse as Python 3.8. Runtime tested only on Python 3.13 in this container; this says nothing about the researcher's computer.
+- No draw, sheet, salt, commitment, pilot, Q-102 application or Git operation.
+
+## EXEC-SCAFFOLD-24 (2026-11-12/13; R2-solo consistency review and manuscript statement; nothing recorded or committed)
+- Canonical screening path confirmed as `research/literature/screening/`; the prompt and drafts were corrected to full paths and exact commands; backup wording made honest (not technically enforced).
+- D-122 activation-test patch prepared outside the repository (not applied); scratch full suite with it: literature 431.
+- Manuscript limitation statement corrected on the researcher's instruction: "pre-specified, frozen criteria" (no formal preregistration: `search_strategy.md` line 36), "the researcher and AI assistant separately screened", backup sentence aligned with D-123 (b).
+- No draw, sheet, salt, commitment, screening, Q-102 or Git operation.
+
+## EXEC-SCAFFOLD-25 (2026-11-13; researcher approved D-123, D-124 and the prompt; local Commit 1 only)
+- Prompt set to its approved form; SHA-256 `df077ac6…fc76`, equal to the hash the researcher approved.
+- D-123 and D-124 inserted after D-121 with the approval quotation; five status-history rows (D-123, D-124, D-102, D-109, D-008/Q-084). Neither row is accepted as a run authorisation; D-122 absent; D-121 still valid.
+- Q-084 marked answered; the manuscript statement date set to 2026-11-13; A2 package marked superseded.
+- `logs/DECISION_LOG.md` is modified but **not** part of Commit 1 (outside the approved ten-file scope).
+- Checks before the commit (this container, with the decision-log rows in the working tree): literature 429 OK, data protection 10 OK, NHANES 39 OK, models 71 OK, query table PASS (168 rows); `git diff --check` clean.
+- No push, no D-122, no activation patch, no draw, sheet, salt, commitment or screening.

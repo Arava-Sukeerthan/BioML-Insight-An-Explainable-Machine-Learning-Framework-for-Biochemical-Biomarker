@@ -1076,3 +1076,17 @@ One entry per researcher review session (~1 h/day).
 ## 2026-11-12 — EXEC-SCAFFOLD-21 (Q-101)
 - `[EVIDENCE]` The RQ5 completeness gate now requires complete title/abstract screening of the whole D-044 scope and a complete review of the routed records. Incomplete output is bannered as not usable for D-016.
 - `[OPEN]` Q-102: `to_markdown` robustness to a missing `verification_status`.
+
+## 2026-11-12 — EXEC-SCAFFOLD-22 (A2 preparation)
+- `[EVIDENCE]` None of C1–C6 is satisfied; no custodian named.
+- `[OPEN]` S1/S2 source terms are unreadable from this environment; verification is external.
+- `[RECOMMENDATION]` Q-102 patch prepared (not applied). A3/A4/Part 2 should run in parallel with the custodian search.
+
+## 2026-11-12 — EXEC-SCAFFOLD-23 (R2-solo preparation)
+- `[EVIDENCE]` Commitment tool and 11 synthetic tests pass; the D-122 draft is accepted by the authorisation checker (dry run).
+- `[OPEN]` Researcher to confirm Python 3 on their own computer; D-123/D-124/D-122 approvals; channel.
+
+## 2026-11-13 — EXEC-SCAFFOLD-25 (R2-solo decisions)
+- `[EVIDENCE]` D-123 and D-124 approved by the researcher and recorded; Q-084 answered.
+- `[EVIDENCE]` The fixed prompt's SHA-256 equals the approved value.
+- `[OPEN]` D-122 (draw authorisation), the activation-test update, every push, and the researcher's local Windows test of the tool.

@@ -3363,3 +3363,19 @@ Findings:
 - **Raised:** Q-102 (open), `to_markdown` fails on an inventory record without `verification_status`. Not fixed under Q-101; the current inventory is unaffected.
 - **Checks:** see the commit entry below.
 - **Checks before the commit** (`sh scripts/run_checks.sh`): literature 418 OK, data protection 10 OK, NHANES 39 OK, models 71 OK, query table PASS (168 rows); `git diff --check` clean.
+
+## 2026-11-13 — R2-solo amendment: D-123 and D-124 approved; pilot commitment tool, tests and fixed prompt (EXEC-SCAFFOLD-25)
+- **Researcher decisions (approved 2026-11-13):**
+  - **D-123** revises D-102: single-researcher pilot workflow (researcher screens first and commits a salted SHA-256 commitment; a fresh assistant session screens second from a fixed prompt; both files are disclosed and verified afterwards). Clause (3), the independent custodian, is withdrawn. The stated limitations and the backup undertaking are accepted.
+  - **D-124** revises D-109: the R1 and R2-with-escrow designs are withdrawn; the tool, its synthetic tests, the fixed prompt and a test-only activation update are approved.
+  - **Q-084** answered: the D-008 blind audit takes place after the first two expansion batches.
+  - **Every Git push requires the researcher's separate, explicit approval immediately before it.** Nothing in this entry was pushed.
+- **Added:**
+  - `scripts/literature/pilot_commitment.py` (`make`, `verify`, `order`; standard library only).
+  - `tests/literature/test_pilot_commitment.py` (11 synthetic tests).
+  - `research/literature/pilot_assistant_prompt.md` (approved form; SHA-256 `df077ac642034493576dd761cdf26be85c6dd0b3ff0812a91deb2cab2149fc76`).
+  - `research/reviews/2026-11-12_R2-SOLO-AMENDMENT-DRAFTS.md` (final decision rows, manuscript limitation statement, Windows procedure).
+  - `research/reviews/2026-11-12_A2-CUSTODIAN-PACKAGE.md` (kept as a superseded historical record; no custodian was appointed or contacted).
+- **Recorded in the working tree, not in this commit:** the D-123 and D-124 rows and five status-history rows in `logs/DECISION_LOG.md`. The file was outside the approved ten-file scope of this commit and is committed in the next authorised step.
+- **Not done:** D-122 is not approved, recorded or active; the activation-test update is not applied; no draw, sheet, salt, commitment or screening; Q-102 not applied (its proposed patch is not in this commit); no frozen or governance file changed; no push.
+- **Checks before the commit** (`sh scripts/run_checks.sh`, this container only): see the session log entry EXEC-SCAFFOLD-25. The tool has not been tested on the researcher's Windows computer by the assistant.
