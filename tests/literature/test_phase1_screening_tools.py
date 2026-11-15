@@ -1816,16 +1816,53 @@ class LedgerPersistence(unittest.TestCase):
 
 
 # ------------------------------------------------------------------ activation-state audit (A1, 2026-11-12)
-# The only run authorisation the real decision log may ever hold in the activated state: D-121 as approved
-# by the researcher on 2026-11-12 (A1). Any further authorisation (e.g. D-122 for the pilot draw) must be
-# added here by a separately approved change, together with its decision row.
+# Run authorisations the real decision log may hold. A1 (2026-11-12): D-121 (Stage 0). Pilot draw (R2-solo):
+# D-122 (D-077 (6); pilot_sample, then one pilot_sheet), recorded only on the researcher's separate approval.
+# Any further authorisation must be added here by a separately approved change, together with its decision row.
 APPROVED_ACTIVATION = {
     "D-121": {"clause": "D-074 (f)", "tools": ("stage0",),
               "inventory_sha256": "b668dbde42473baa49ac1f02f89f900e94e39159c82efb8175ba125fef06d054",
               "criteria_version": "criteria_v1.1+protocol_v0.2", "freeze_entry": "D-110",
               "d035_s6_records": ["D-115", "D-116", "D-117", "D-118", "D-119", "D-120"]},
 }
+PILOT_DRAW_ACTIVATION = {
+    **APPROVED_ACTIVATION,
+    "D-122": {"clause": "D-077 (6)", "tools": ("pilot_sample", "pilot_sheet"),
+              "inventory_sha256": "b668dbde42473baa49ac1f02f89f900e94e39159c82efb8175ba125fef06d054",
+              "criteria_version": "criteria_v1.1+protocol_v0.2", "freeze_entry": "D-110",
+              "d035_s6_records": ["D-115", "D-116", "D-117", "D-118", "D-119", "D-120"]},
+}
 PRE_ACTIVATION = {}
+PERMITTED_STATES = {"pre-activation": PRE_ACTIVATION, "Stage-0 activation (D-121)": APPROVED_ACTIVATION,
+                    "pilot-draw activation (D-121 + D-122)": PILOT_DRAW_ACTIVATION}
+PROMPT_RELPATH = "research/literature/pilot_assistant_prompt.md"
+_PROMPT_BINDING = re.compile(r"pilot_assistant_prompt\.md`\s+SHA-256\s+([0-9a-f]{64})(?![0-9a-fA-F])")
+
+
+def d122_prompt_binding_problems(log_path, prompt_path):
+    """Problems (empty list = consistent) with the binding of the fixed assistant prompt in D-122: if the
+    decision log holds a D-122 row, it must be the only one, and its Decision cell must state, in the form
+    "`research/literature/pilot_assistant_prompt.md` SHA-256 <64 lowercase hex>", the SHA-256 of the bytes
+    of the prompt file as it is now. Without a D-122 row there is nothing to check."""
+    rows = [l for l in Path(log_path).read_text(encoding="utf-8").splitlines() if re.match(r"\| D-122 \| 20\d\d-", l)]
+    if not rows:
+        return []
+    if len(rows) != 1:
+        return [f"D-122 has {len(rows)} decision rows"]
+    cells = rows[0].split("|")
+    decision = cells[3] if len(cells) > 3 else ""
+    if PROMPT_RELPATH not in decision:
+        return ["D-122 does not name the prompt file"]
+    try:
+        actual = hashlib.sha256(Path(prompt_path).read_bytes()).hexdigest()
+    except OSError:
+        return ["the prompt file named in D-122 cannot be read"]
+    stated = _PROMPT_BINDING.findall(decision)
+    if len(stated) != 1:
+        return [f"D-122 states the prompt SHA-256 {len(stated)} times in the required form (expected once)"]
+    if stated[0] != actual:
+        return [f"the prompt SHA-256 in D-122 ({stated[0][:12]}…) differs from the prompt file ({actual[:12]}…)"]
+    return []
 
 
 def audit_run_authorisations(lit_dir, log_path, allowed, require_head=True):
@@ -2057,19 +2094,101 @@ class ActivationStateAudit(unittest.TestCase):
                          ("D-074 (f)", ("stage0",), "D-110", "criteria_v1.1+protocol_v0.2"))
         self.assertEqual(spec["inventory_sha256"], "b668dbde42473baa49ac1f02f89f900e94e39159c82efb8175ba125fef06d054")
         self.assertEqual(spec["d035_s6_records"], [f"D-{n}" for n in range(115, 121)])
+        self.assertEqual(list(PILOT_DRAW_ACTIVATION), ["D-121", "D-122"])
+        self.assertEqual(PILOT_DRAW_ACTIVATION["D-121"], spec)                        # D-121 unchanged
+        d122 = PILOT_DRAW_ACTIVATION["D-122"]
+        self.assertEqual((d122["clause"], d122["tools"]), ("D-077 (6)", ("pilot_sample", "pilot_sheet")))
+        for key in ("inventory_sha256", "criteria_version", "freeze_entry", "d035_s6_records"):
+            self.assertEqual(d122[key], spec[key], msg=key)                           # same bindings as D-121
+
+    # ---- D-122 binds the committed prompt (hardening added to the D-122 activation)
+    def _binding_case(self, prompt_bytes, rows):
+        with tempfile.TemporaryDirectory() as d:
+            log, prompt = Path(d) / "DECISION_LOG.md", Path(d) / "prompt.md"
+            log.write_text("| ID | Decision |\n" + "".join(r + "\n" for r in rows), encoding="utf-8")
+            prompt.write_bytes(prompt_bytes)
+            return d122_prompt_binding_problems(log, prompt)
+
+    @staticmethod
+    def _d122_row(stated, extra=""):
+        return (f"| D-122 | 2099-01-01 (TEST) | **Run authorisation under D-077 (6).** inventory_sha256: {'d' * 64}; "
+                f"assistant start prompt `{PROMPT_RELPATH}` SHA-256 {stated}{extra} | **APPROVED** | r | researcher |")
+
+    def test_d122_prompt_binding_without_a_d122_row_is_nothing_to_check(self):
+        self.assertEqual(self._binding_case(b"x", ["| D-121 | 2099-01-01 (TEST) | other |"]), [])
+
+    def test_d122_prompt_binding_accepts_the_matching_hash(self):
+        data = b"fixed prompt bytes\n"
+        self.assertEqual(self._binding_case(data, [self._d122_row(hashlib.sha256(data).hexdigest())]), [])
+
+    def test_d122_prompt_binding_rejects_wrong_old_missing_or_malformed_hashes(self):
+        data, other = b"new prompt\n", b"old prompt\n"
+        good, old = hashlib.sha256(data).hexdigest(), hashlib.sha256(other).hexdigest()
+        cases = {"hash of an older prompt": self._d122_row(old),
+                 "inventory hash instead": self._d122_row("d" * 64),
+                 "uppercase hash": self._d122_row(good.upper()),
+                 "truncated hash": self._d122_row(good[:63]),
+                 "hash with trailing hex": self._d122_row(good + "0")}
+        for name, row in cases.items():
+            self.assertNotEqual(self._binding_case(data, [row]), [], msg=name)
+        no_hash = (f"| D-122 | 2099-01-01 (TEST) | **Run authorisation under D-077 (6).** prompt `{PROMPT_RELPATH}` "
+                   "| **APPROVED** | r | researcher |")
+        self.assertNotEqual(self._binding_case(data, [no_hash]), [])
+        no_file = "| D-122 | 2099-01-01 (TEST) | **Run authorisation under D-077 (6).** nothing | **APPROVED** | r | researcher |"
+        self.assertNotEqual(self._binding_case(data, [no_file]), [])
+        self.assertNotEqual(self._binding_case(data, [self._d122_row(good, extra=f" and again `{PROMPT_RELPATH}` SHA-256 {good}")]), [])
+
+    def test_d122_prompt_binding_rejects_duplicate_rows_and_an_unreadable_prompt(self):
+        data = b"p\n"
+        row = self._d122_row(hashlib.sha256(data).hexdigest())
+        self.assertNotEqual(self._binding_case(data, [row, row]), [])
+        with tempfile.TemporaryDirectory() as d:
+            log = Path(d) / "DECISION_LOG.md"
+            log.write_text(row + "\n", encoding="utf-8")
+            self.assertNotEqual(d122_prompt_binding_problems(log, Path(d) / "absent.md"), [])
+
+    def test_real_repository_d122_binds_the_committed_prompt(self):
+        """State-independent: while no D-122 row exists this is vacuous; once D-122 is recorded, its stated
+        prompt SHA-256 must equal the SHA-256 of research/literature/pilot_assistant_prompt.md as it is now."""
+        problems = d122_prompt_binding_problems(REPO / "logs" / "DECISION_LOG.md", REPO / PROMPT_RELPATH)
+        self.assertEqual(problems, [])
+
+    def test_two_authorisation_state_on_fixtures(self):
+        policy = {**self.POLICY, "D-922": {**self.POLICY["D-921"], "clause": "D-077 (6)",
+                                           "tools": ("pilot_sample", "pilot_sheet")}}
+        self.activate()
+        self.assertFlags(policy, "valid run authorisations: ['D-921'] (expected ['D-921', 'D-922'])")
+        self.fx.add_auth("D-922", "D-077 (6)")
+        self.assertEqual(self.audit(policy), [])
+        self.assertFlags(self.POLICY, "D-922")                     # the Stage-0-only state no longer holds
+        self.fx.ledger_done("D-921", "D-074 (f)", "stage0")
+        self.fx.ledger_done("D-922", "D-077 (6)", "pilot_sample")
+        self.fx.ledger_done("D-922", "D-077 (6)", "pilot_sheet")
+        self.assertEqual(self.audit(policy), [])
+        pr._append_ledger(self.fx.lit, {"authorization": "D-922", "clause": "D-077 (6)", "tool": "stage0",
+                                        "event": "started", "run_time_utc": "2099-01-03T00:00:00+00:00"})
+        self.fx.commit("misuse")
+        self.assertFlags(policy, "used under D-077 (6) by stage0")
+
+    def test_pilot_draw_without_stage0_authorisation_is_not_permitted(self):
+        self.fx.add_auth("D-922", "D-077 (6)")
+        for name, state in (("stage0", self.POLICY),
+                            ("both", {**self.POLICY, "D-922": {**self.POLICY["D-921"], "clause": "D-077 (6)",
+                                                               "tools": ("pilot_sample", "pilot_sheet")}})):
+            self.assertNotEqual(self.audit(state), [], msg=name)
+        self.assertNotEqual(self.audit(PRE_ACTIVATION), [])
 
     def test_real_repository_is_in_a_permitted_activation_state(self):
-        """Accepts exactly two states of the real repository and refuses every other: (a) pre-activation,
-        no run authorisation and no ledger; (b) activated, D-121 alone with its approved bindings, and a
-        ledger (if any) that holds only D-121 by stage0, used at most once, chained and equal to HEAD."""
+        """Accepts exactly the PERMITTED_STATES of the real repository and refuses every other: (a)
+        pre-activation, no run authorisation and no ledger; (b) D-121 alone with its approved bindings;
+        (c) D-121 and D-122 with their approved bindings. In (b) and (c) the ledger (if any) holds only
+        allowed authorisations and tools, each used at most once, chained and equal to HEAD."""
         lit, log = REPO / "research" / "literature", REPO / "logs" / "DECISION_LOG.md"
         ids = {l.split("|")[1].strip() for l in log.read_text(encoding="utf-8").splitlines() if l.startswith("| D-")}
         for must in ("D-074", "D-077", "D-084", "D-110"):
             self.assertIn(must, ids)                                      # the parse found the decision table
-        pre = audit_run_authorisations(lit, log, PRE_ACTIVATION)
-        act = audit_run_authorisations(lit, log, APPROVED_ACTIVATION)
-        self.assertTrue(pre == [] or act == [],
-                        msg=f"neither permitted state holds; pre-activation: {pre}; activated: {act}")
+        results = {name: audit_run_authorisations(lit, log, state) for name, state in PERMITTED_STATES.items()}
+        self.assertTrue(any(r == [] for r in results.values()), msg=f"no permitted state holds: {results}")
 
 
 if __name__ == "__main__":
