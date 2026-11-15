@@ -1,0 +1,16 @@
+{
+ "authorization": "D-122",
+ "columns": [
+  "paper_id",
+  "title",
+  "abstract",
+  "abstract_status",
+  "year",
+  "venue",
+  "types"
+ ],
+ "generated_utc": "2026-11-15T14:55:57+00:00",
+ "rows": 60,
+ "sha256": "7f0ea79e7bc1a85427753d5fb6fda5b37a1f28bcab4e6f3d067d4c810316c44f",
+ "size_bytes": 143459
+}

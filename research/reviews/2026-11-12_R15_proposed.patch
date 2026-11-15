@@ -1,0 +1,62 @@
+--- a/scripts/models/survey.py
++++ b/scripts/models/survey.py
+@@ -29,8 +29,20 @@
+     d = np.ones(x.shape, dtype=bool) if domain is None else np.asarray(domain).astype(bool)
+     if d.shape != x.shape:
+         raise ValueError("domain must have the same length as x")
+-    if (w < 0).any() or np.isnan(x[d]).any() or w[d].sum() <= 0:
+-        raise ValueError("x must be complete in the domain and weights non-negative with a positive domain sum")
++    # D1: a missing or infinite survey weight is invalid input anywhere in the design (in or out of
++    # the domain); it is never treated as a legitimate missing observation.
++    if not np.isfinite(w).all():
++        raise ValueError("survey weights must be finite (missing or infinite weights are invalid input)")
++    if (w < 0).any():
++        raise ValueError("survey weights must be non-negative")
++    # D2: the variance design consists of the records with a NON-ZERO weight (NCHS NHANES tutorial:
++    # "all observations with a non-zero value for your weight variable, as well as an indicator" for
++    # the subpopulation). Zero-weight records are removed from the design here; the domain itself is
++    # still handled by the indicator d, never by filtering on the domain.
++    keep = w > 0
++    x, w, strata, psu, d = x[keep], w[keep], strata[keep], psu[keep], d[keep]
++    if np.isnan(x[d]).any() or w[d].sum() <= 0:
++        raise ValueError("x must be complete in the domain and the domain must have a positive weight sum")
+     xd = np.where(d, x, 0.0)
+     wd = np.where(d, w, 0.0)
+     W = wd.sum()
+--- a/tests/models/test_explain_survey_compare.py
++++ b/tests/models/test_explain_survey_compare.py
+@@ -64,6 +64,34 @@
+         with self.assertRaises(ValueError):
+             SV.weighted_mean_taylor([1, 0], [1, 1], [1, 1], [1, 1])
+ 
++    def test_r15_d1_nonfinite_weights_rejected(self):
++        x = np.array([1.0, 2.0, 3.0, 4.0]); strata = np.array([1, 1, 1, 1]); psu = np.array([1, 1, 2, 2])
++        for bad in (np.nan, np.inf):
++            for i, dom in ((0, None), (3, np.array([1, 1, 1, 0]))):          # in-domain and outside-domain
++                w = np.ones(4); w[i] = bad
++                with self.assertRaisesRegex(ValueError, "finite"):
++                    SV.weighted_mean_taylor(x, w, strata, psu, domain=dom)
++        # NaN x OUTSIDE the domain is a legitimate missing observation and stays allowed
++        r = SV.weighted_mean_taylor(np.array([1.0, 2.0, 3.0, np.nan]), np.ones(4), strata, psu,
++                                    domain=np.array([1, 1, 1, 0]))
++        self.assertTrue(np.isfinite(r["se"]))
++
++    def test_r15_d2_zero_weight_records_are_not_part_of_the_design(self):
++        rng = np.random.default_rng(1)
++        n = 200; strata = np.repeat([1, 2], 100); psu = np.tile(np.repeat([1, 2], 50), 2)
++        w = rng.uniform(0.5, 2, n); x = rng.normal(0, 1, n); dom = rng.random(n) < 0.5
++        ref = SV.weighted_mean_taylor(np.where(dom, x, np.nan), w, strata, psu, domain=dom)
++        # add a third PSU in stratum 1 consisting only of zero-weight records (in and out of domain)
++        s2 = np.r_[strata, [1] * 10]; p2 = np.r_[psu, [3] * 10]; w2 = np.r_[w, [0.0] * 10]
++        x2 = np.r_[x, [5.0] * 10]; d2 = np.r_[dom, [True] * 5 + [False] * 5]
++        r2 = SV.weighted_mean_taylor(np.where(d2, x2, np.nan), w2, s2, p2, domain=d2)
++        self.assertAlmostEqual(r2["estimate"], ref["estimate"])
++        self.assertAlmostEqual(r2["se"], ref["se"])                         # zero-weight PSU not counted
++        # a stratum whose second PSU has only zero weights is a single-PSU stratum and must raise
++        w3 = w.copy(); w3[(strata == 2) & (psu == 2)] = 0.0
++        with self.assertRaisesRegex(ValueError, "single PSU"):
++            SV.weighted_mean_taylor(np.where(dom, x, np.nan), w3, strata, psu, domain=dom)
++
+     def test_domain_estimation_uses_all_psus(self):
+         rng = np.random.default_rng(8)
+         n = 400

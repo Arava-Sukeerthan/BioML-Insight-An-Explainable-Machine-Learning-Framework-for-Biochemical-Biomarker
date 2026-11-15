@@ -25,10 +25,10 @@ framework.
 | RQ2 | Which explainability techniques are used to interpret biomedical and metabolomics classifiers, and how are they evaluated? | Application + methodological studies |
 | RQ3 | How are probability calibration and uncertainty estimation handled in biomedical ML? | Methodological papers + domain applications |
 | RQ4 | How are external validation and cross-cohort generalization (dataset shift) addressed? | External-validation studies + methodological papers |
-| RQ5 | Which existing frameworks combine biomarker selection, classification, explainability, and uncertainty estimation? | Closest prior art (critical for any novelty claim) |
+| RQ5 | Which existing frameworks combine biomarker/feature selection, classification, explainability, probability calibration and uncertainty estimation? | Closest prior art (critical for any novelty claim) |
 | RQ6 | Which methodological limitations are reported, and what research opportunities follow? | Meta-research, reviews, appraisal of included studies |
 
-> *Note (2026-10-24):* the RQ5 question above omits probability calibration. Under D-031 (approved with conditions, inactive) RQ5 has five components, calibration and uncertainty separate. The wording is to be aligned when criteria v1.1 is written.
+> *Note (2026-10-24):* the RQ5 question above omits probability calibration. Under D-031 (approved with conditions, inactive) RQ5 has five components, calibration and uncertainty separate. The wording is to be aligned when criteria v1.1 is written. *Aligned 2026-11-11 (researcher decision R2): the RQ5 question now names probability calibration as a separate component, matching D-031 and criteria v1.1 §3; the earlier wording was "Which existing frameworks combine biomarker selection, classification, explainability, and uncertainty estimation?".*
 
 ### 1.3 Structured literature review vs. formally systematic review
 | Feature | Formally systematic review (e.g., PRISMA 2020 compliant) | This project (as currently resourced) |
@@ -439,3 +439,4 @@ claiming PRISMA compliance for a systematic review.
 | 1.0.1 | 2026-10-14 | LIT-002: schema path updated (`schemas/`); pointer to `collection_workflow.md` added; §9 task labels updated (LIT-002 became the workflow task). No change to queries or criteria | Pending |
 | 1.0.1 (note) | 2026-10-23 | LIT-004-WORKFLOW-FIXES: implementation note under §6.2 (screening file name and columns as implemented; D-027 proposed). Text, queries and criteria unchanged; no version bump | Pending |
 | 1.0.1 (note) | 2026-10-24 | Q-041-DECISIONS: inactive RQ5 notes under §1.2 and §8.3 (D-031–D-035). Text, queries and criteria unchanged; no version bump | Pending |
+| 1.0.1 (note) | 2026-11-11 | R2 (researcher decision, researcher prompt "We are proceeding toward the documentation freeze." (2026-11-11)): RQ5 question in §1.2 aligned with D-031 (probability calibration named as a separate component); earlier wording kept in the §1.2 note. Queries and criteria unchanged; no version bump | Pending |

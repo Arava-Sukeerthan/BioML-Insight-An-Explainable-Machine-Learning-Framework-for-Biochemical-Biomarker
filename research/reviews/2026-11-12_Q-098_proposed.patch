@@ -1,0 +1,80 @@
+diff --git a/scripts/literature/pubrecords.py b/scripts/literature/pubrecords.py
+index 4643759..ff132d3 100644
+--- a/scripts/literature/pubrecords.py
++++ b/scripts/literature/pubrecords.py
+@@ -61,7 +61,9 @@ CROSSREF_SOURCE_ROUTE = "crossref_api"     # source-record route
+ # "published-print"; "issued"; "published-print" then "published-online"). Until it is decided the
+ # Crossref year stays empty, so a Crossref record is "insufficient" on the year and cannot by itself
+ # make a publication `verified` (D-064 (5), (7)). Set only by a recorded decision.
+-CROSSREF_YEAR_FIELDS = None
++CROSSREF_YEAR_FIELDS = ("published-print", "published-online")   # Q-098, decided <DECISION ID>: print, then
++# online, mirroring PubMed PubDate -> ArticleDate; `issued` is not used (online-first conflicts). A present
++# field with an empty or null date stays malformed (fail-closed): such a response is rejected at intake.
+ MANIFEST_COLS = ["raw_file", "sha256", "query_id", "source", "route", "endpoint_or_tool",
+                  "request_json", "retrieved_at", "n_items", "transcribed", "transcription_check",
+                  "notes"]
+diff --git a/tests/literature/test_crossref_robustness.py b/tests/literature/test_crossref_robustness.py
+index 60b6bc7..0b23a88 100644
+--- a/tests/literature/test_crossref_robustness.py
++++ b/tests/literature/test_crossref_robustness.py
+@@ -87,7 +87,8 @@ class TestParserShapes(unittest.TestCase):
+             with self.subTest(v=v), self.assertRaises(ValueError):
+                 pr.crossref_year({"published-print": v}, ("published-print",))
+         self.assertEqual(pr.crossref_year({"published-print": {"date-parts": [[2021, 5]]}}, ("published-print",)), 2021)
+-        self.assertIsNone(pr.crossref_year({"published-print": "junk"}))      # no rule decided: not read
++        with mock.patch.object(pr, "CROSSREF_YEAR_FIELDS", None):
++            self.assertIsNone(pr.crossref_year({"published-print": "junk"}))  # no rule decided: not read
+ 
+     def test_fetcher_reports_wrong_shapes_and_truncation_as_malformed(self):
+         cases = [body(override={"title": "SYNTHETIC string title"}), body(override={"title": 5}),
+@@ -185,6 +186,11 @@ class TestNoYearRuleAndConflicts(unittest.TestCase):
+     """A5: without a year rule Crossref can never verify, but its conflicts still give needs_review
+     (D-064 A4). The behaviour is documented and tested, not changed (changing it would be a decision)."""
+ 
++    def setUp(self):
++        patcher = mock.patch.object(pr, "CROSSREF_YEAR_FIELDS", None)   # the no-rule state stays tested
++        patcher.start()
++        self.addCleanup(patcher.stop)
++
+     def build_with(self, **kw):
+         fx = CrossrefFixture()
+         self.addCleanup(fx.tmp.cleanup)
+diff --git a/tests/literature/test_crossref_verification.py b/tests/literature/test_crossref_verification.py
+index 5e71caa..050a671 100644
+--- a/tests/literature/test_crossref_verification.py
++++ b/tests/literature/test_crossref_verification.py
+@@ -249,12 +249,23 @@ class TestPlanAndFetch(unittest.TestCase):
+ 
+ 
+ class TestParser(unittest.TestCase):
+-    def test_year_is_empty_until_the_rule_is_decided(self):
+-        self.assertIsNone(pr.CROSSREF_YEAR_FIELDS)
++    def test_year_is_empty_without_a_rule(self):
+         msg = json.loads(crossref_body("10.0000/cr.1", "T", "Alpha", "J", year=2021))["message"]
+-        self.assertIsNone(pr.parse_crossref_work(msg)["year"])
++        with mock.patch.object(pr, "CROSSREF_YEAR_FIELDS", None):
++            self.assertIsNone(pr.parse_crossref_work(msg)["year"])
+         self.assertEqual(pr.crossref_year(msg, ("published-print",)), 2021)
+ 
++    def test_q098_rule(self):
++        D = lambda *p: {"date-parts": [list(p)]}
++        self.assertEqual(pr.CROSSREF_YEAR_FIELDS, ("published-print", "published-online"))
++        self.assertEqual(pr.crossref_year({"published-print": D(2021, 1), "published-online": D(2020, 12),
++                                           "issued": D(2020, 12)}), 2021)          # online-first: print wins
++        self.assertEqual(pr.crossref_year({"published-online": D(2022, 3), "issued": D(2022, 3)}), 2022)
++        self.assertIsNone(pr.crossref_year({"issued": D(2019)}))                   # issued is never used
++        for empty in ({"date-parts": [[]]}, {"date-parts": [[None]]}):                # fail-closed at intake
++            with self.assertRaises(ValueError):
++                pr.crossref_year({"published-print": empty, "published-online": D(2020)})
++
+     def test_first_author_by_sequence_and_markup_stripped(self):
+         msg = {"DOI": "10.0000/cr.1", "title": ["SYNTHETIC <i>marked</i> title"], "container-title": ["J"],
+                "author": [{"family": "Zeta", "sequence": "additional"}, {"family": "Alpha", "sequence": "first"}]}
+@@ -313,6 +324,7 @@ class TestBuildSafeguards(unittest.TestCase):
+     def test_base_fixture_starts_partially_verified(self):
+         self.assertEqual(self.base[self.p1]["verification_status"], "partially_verified")
+ 
++    @mock.patch.object(pr, "CROSSREF_YEAR_FIELDS", None)
+     def test_without_a_year_rule_crossref_cannot_verify(self):
+         self.fx.pilot([self.p1])
+         self.fx.add_crossref(self.p1, "10.0000/cr.1", self.agreeing())

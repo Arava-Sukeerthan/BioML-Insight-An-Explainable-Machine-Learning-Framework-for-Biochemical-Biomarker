@@ -1,0 +1,16 @@
+# PROPOSED environment pins for D-002 (status: PROPOSED; NOT approved, NOT installed, NOT tested).
+# Versions = latest on PyPI per `pip index versions` on 2026-11-12. Installation needs researcher
+# authorisation (D-002; D-040 (6)). After approval: install into a fresh virtual environment, run all
+# test suites, then freeze the exact versions with hashes into requirements.lock (pip download + hash).
+# Interpreter: CPython 3.13.x (container on 2026-11-12: 3.13.17; recorded 2026-10-14: 3.13.16).
+numpy==2.5.3          # present
+pandas==3.0.5         # present
+scipy==1.18.1         # missing
+scikit-learn==1.9.1   # missing: BL-1, BL-2, BL-4, BL-5, BL-6
+xgboost==3.4.1        # missing: BL-3 and F2 (Q-048: XGBoost proposed over LightGBM)
+shap==0.54.1          # missing: F5 TreeSHAP
+statsmodels==0.15.0   # missing: survey-weighted descriptive estimates (Q-052)
+matplotlib==3.11.2    # missing: calibration curves and figures
+# Not proposed: lightgbm (one boosting library suffices, Q-048), mapie (conformal implemented and
+# tested in scripts/models/conformal.py), pyreadstat (pandas.read_sas reads XPT), interpret (only if
+# BL-6 becomes an explainable boosting machine, Q-049; k-NN proposed instead).

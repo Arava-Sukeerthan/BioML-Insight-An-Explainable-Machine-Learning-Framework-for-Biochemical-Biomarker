@@ -41,6 +41,23 @@ def write_json(lit, name, provenance, response):
     return name
 
 
+# synthetic second source agreeing with PMID 900000001 on every D-064 required field
+CROSSREF_COHORT_ONE = {"title": "SYNTHETIC classifier of metabolic markers in cohort one",
+                       "authors": ["Alpha, Test"], "year": 2021, "journal": "Synthetic Journal A",
+                       "doi": "10.0000/test.1", "url": "https://api.crossref.example/works/10.0000/test.1"}
+
+
+def add_second_source(fx, qid, source, records):
+    """Register a transcribed synthetic second-source file (D-064 tests)."""
+    with open(fx.lit / "search_queries.csv", "a", newline="") as f:
+        csv.DictWriter(f, fieldnames=["query_id", "row_type", "source", "query_string"]).writerow(
+            {"query_id": qid, "row_type": "planned", "source": source, "query_string": f"synthetic {qid}"})
+    name = f"{qid}_{source}.json"
+    fx.reg(write_json(fx.lit, name, {}, {"records": records}), qid, source, "structured_transcription",
+           len(records))
+    return name
+
+
 class Fixture:
     """Builds a temporary literature directory with synthetic raw exports."""
 
@@ -287,11 +304,33 @@ class TestBuild(unittest.TestCase):
         self.assertTrue(all(r["abstract_available"] in ("True", "False") for r in rows))
 
     def test_spot_check_upgrades_verification(self):
+        # D-064: the spot-check still decides whether the transcribed PubMed record can count; the
+        # second source must be independent by recorded provenance (synthetic Crossref record with a
+        # passed transcription check) and agree on every required field
+        add_second_source(self.fx, "Q-TEST-CR", "crossref", [CROSSREF_COHORT_ONE])
+        pr.set_transcription_check(self.fx.lit, "Q-TEST-CR_crossref.json", "passed", "synthetic test")
+        pr.build(self.fx.lit, today="2026-10-15")
+        (p,) = [x for x in self.load() if x["title"] and "cohort one" in x["title"]]
+        self.assertEqual(p["verification_status"], "partially_verified")   # PubMed not yet spot-checked
         for name in ("Q-TEST-A_search_00.json", "META_batch_000.json"):
             pr.set_transcription_check(self.fx.lit, name, "passed", "synthetic test")
         pr.build(self.fx.lit, today="2026-10-15")
         (p,) = [x for x in self.load() if x["title"] and "cohort one" in x["title"]]
         self.assertEqual(p["verification_status"], "verified")
+
+    def test_consensus_without_underlying_source_does_not_verify(self):
+        for name in ("Q-TEST-A_search_00.json", "META_batch_000.json"):
+            pr.set_transcription_check(self.fx.lit, name, "passed", "synthetic test")
+        report = pr.build(self.fx.lit, today="2026-10-15")
+        (p,) = [x for x in self.load() if x["title"] and "cohort one" in x["title"]]
+        self.assertEqual(p["verification_status"], "partially_verified")
+        self.assertTrue(p["verification_note"].startswith("no qualifying independent second source"))
+        # the Consensus journal variant stays a recorded, non-blocking conflict (all-member rule unchanged)
+        self.assertTrue(any(c["field"] == "journal" for c in p["metadata_conflicts"]))
+        (row,) = [r for r in report["verification_second_sources"]["publications"]
+                  if r["paper_id"] == p["paper_id"]]
+        (cand,) = [c for c in row["candidates"] if c["source"] == "consensus"]
+        self.assertEqual((cand["independence"], cand["eligible"]), ("undetermined", False))
 
     def _check_page(self, name, pmids, total=3):
         self.fx.reg(write_json(self.fx.lit, name, {}, {"pmids": pmids, "total_count": total}),
@@ -317,6 +356,267 @@ class TestBuild(unittest.TestCase):
         self.assertEqual((detail["only_original"], detail["only_refetch"]), (["900000002"], ["900000012"]))
         row = [r for r in pr.read_manifest(self.fx.lit) if r["raw_file"] == "Q-TEST-A_search_00.json"][0]
         self.assertEqual(row["transcription_check"], "failed")
+
+
+def member(source, srid, transcribed=False, check="not_applicable", url=None, original=None, **meta):
+    """Synthetic source record for D-064 helper tests."""
+    m = pr._empty_meta()
+    m.update({"source": source, "source_record_id": srid, "transcribed": transcribed,
+              "transcription_check": check, "metadata_missing": False, "source_url": url, "search_timestamp": "",
+              "original": original or {}, "route": "structured_transcription" if transcribed else "pubmed_connector"})
+    m.update(meta)
+    return m
+
+
+PUBMED_A = dict(title="SYNTHETIC record", authors=[{"last_name": "Alpha", "fore_name": "Test"}],
+                year=2021, journal="Synthetic Journal A", pmid="900000001", doi="10.0000/test.1")
+
+
+class TestD064Helpers(unittest.TestCase):
+    """D-064 (Q-068) comparison and independence rules on synthetic source records."""
+
+    def test_venue_normalisation_is_deterministic_and_keeps_abbreviations_apart(self):
+        self.assertEqual(pr.normalize_venue("Journal of  Synthetic & Test-Studies."),
+                         pr.normalize_venue("journal of synthetic and test studies"))
+        self.assertEqual(pr.normalize_venue("Revista Sintética"), pr.normalize_venue("REVISTA SINTETICA"))
+        self.assertNotEqual(pr.normalize_venue("Synth J"), pr.normalize_venue("Synthetic Journal"))
+        self.assertEqual(pr.normalize_venue(None), "")
+        self.assertEqual(pr.normalize_venue("A & B: C"), pr.normalize_venue("A & B: C"))
+
+    def test_first_author_rules(self):
+        p = lambda last, fore="X": [{"last_name": last, "fore_name": fore}]  # noqa: E731
+        coll = lambda name: [{"collective_name": name}]                    # noqa: E731
+        self.assertEqual(pr.compare_first_author(p("Smith", "J"), p("Smith", "John"))[0], "agree")
+        self.assertEqual(pr.compare_first_author(p("García-López"), p("Garcia Lopez"))[0], "agree")
+        out, why = pr.compare_first_author(p("van der Berg"), p("Berg", "Jan van der"))
+        self.assertEqual(out, "review")
+        self.assertTrue(why.startswith(pr.FIRST_AUTHOR_UNRELIABLE))
+        transcribed = pr.parse_transcribed_record({"authors": ["Ana García López"]})["authors"]
+        self.assertEqual(pr.compare_first_author(p("García López", "Ana"), transcribed)[0], "review")
+        self.assertEqual(pr.compare_first_author(coll("Synthetic Consortium"), p("Alpha"))[0], "review")
+        self.assertEqual(pr.compare_first_author(coll("Synthetic Consortium"),
+                                                 coll("SYNTHETIC consortium"))[0], "agree")
+        self.assertEqual(pr.compare_first_author([], p("Alpha"))[0], "missing")
+        self.assertEqual(pr.compare_first_author(p("Alpha"), p("Gamma"))[0], "conflict")
+
+    def test_identifiers_compared_by_type(self):
+        a = {"pmid": "900000001", "doi": "10.0000/test.1"}
+        self.assertEqual(pr.compare_identifiers(a, {"doi": "10.0000/test.1"})[0], "agree")
+        self.assertEqual(pr.compare_identifiers(a, {"pmcid": "PMC9000001"})[0], "missing")
+        self.assertEqual(pr.compare_identifiers(a, {"pmid": "900000001", "doi": "10.0000/test.2"})[0],
+                         "conflict")
+
+    def test_missing_is_not_a_conflict(self):
+        auth = member("pubmed", "SR-a", **PUBMED_A)
+        web = member("web", "SR-w", title="SYNTHETIC record", doi="10.0000/test.1")
+        out = pr.compare_required_fields(auth, web)
+        self.assertEqual({f: o for f, (o, _) in out.items()},
+                         {"title": "agree", "first_author": "missing", "year": "missing",
+                          "venue": "missing", "identifier": "agree"})
+
+    def test_independence_table(self):
+        auth = member("pubmed", "SR-a", **PUBMED_A)
+        full = dict(PUBMED_A)
+        cases = [
+            (member("web", "SR-1", url="https://link.example/10.0000/test.1",
+                    original={"identifiers_parsed_from_url": True}, title="SYNTHETIC record",
+                    doi="10.0000/test.1"), "not_independent"),                            # URL-only
+            (member("web", "SR-2", url="https://pubmed.ncbi.nlm.nih.gov/900000001/", **full),
+             "not_independent"),                                                          # same record
+            (member("europepmc", "SR-3", transcribed=True, check="passed", original={"source": "MED"}, **full),
+             "not_independent"),                                                          # MED copy
+            (member("web", "SR-4", url="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9000001/", **full),
+             "undetermined"),                                                             # PMC default
+            (member("consensus", "SR-5", transcribed=True, check="passed", **full), "undetermined"),
+            (member("web", "SR-6", url="https://other.example/x", **full), "undetermined"),  # unclassified
+            (member("crossref", "SR-7", transcribed=True, check="not_done", **full), "undetermined"),
+            (member("crossref", "SR-8", transcribed=True, check="passed", **full), "independent"),
+            (member("publisher_site", "SR-9", transcribed=True, check="passed",
+                    url="https://publisher.example/article/1", **full), "independent"),
+        ]
+        for cand, expected in cases:
+            with self.subTest(cand["source_record_id"]):
+                self.assertEqual(pr.source_independence(auth, cand)[0], expected)
+
+    def test_recorded_provenance_requires_retrieval_route_or_passed_check(self):
+        f = pr._recorded_provenance
+        # non-transcribed with a recorded retrieval route (routes A and B)
+        self.assertTrue(f(member("pubmed", "SR-r1", route="pubmed_connector")))
+        self.assertTrue(f(member("pubmed", "SR-r2", route="eutils_api")))
+        # non-transcribed with a missing or unrecognised route
+        self.assertFalse(f(member("crossref", "SR-r3", route="structured_transcription")))
+        self.assertFalse(f(member("crossref", "SR-r4", route="")))
+        self.assertFalse(f(member("crossref", "SR-r5", route="unknown_route")))
+        # transcribed: only a passed spot-check counts
+        self.assertTrue(f(member("crossref", "SR-r6", transcribed=True, check="passed")))
+        self.assertFalse(f(member("crossref", "SR-r7", transcribed=True, check="not_done")))
+        self.assertFalse(f(member("crossref", "SR-r8", transcribed=True, check="failed")))
+        # effect on independence: an unchecked, non-transcribed Crossref record is not independent
+        auth = member("pubmed", "SR-a", **PUBMED_A)
+        cr = member("crossref", "SR-r9", route="structured_transcription", **dict(PUBMED_A))
+        self.assertEqual(pr.source_independence(auth, cr)[0], "undetermined")
+
+    def test_crossref_publisher_pair_is_undetermined(self):
+        # D-064 (10) classifies Crossref and publisher records only as pairs with PubMed; any other
+        # pair is unclassified -> undetermined, even with full fields and checked transcriptions
+        full = dict(PUBMED_A, pmid=None)
+        cr = member("crossref", "SR-c", transcribed=True, check="passed",
+                    url="https://api.crossref.example/works/10.0000/test.1", **full)
+        ps = member("publisher_site", "SR-p", transcribed=True, check="passed",
+                    url="https://publisher.example/article/1", **full)
+        value, basis = pr.source_independence(cr, ps)
+        self.assertEqual(value, "undetermined")
+        self.assertIn("unclassified", basis)
+        status, note = pr.auto_verification([cr, ps], [])
+        self.assertEqual(status, "partially_verified")
+        self.assertIn("independence undetermined", note)
+
+    def test_two_urls_for_the_same_crossref_record_not_independent(self):
+        full = dict(PUBMED_A, pmid=None)
+        cr = member("crossref", "SR-c1", transcribed=True, check="passed",
+                    url="https://api.crossref.example/works/10.0000/test.1", **full)
+        cr2 = member("crossref", "SR-c2", transcribed=True, check="passed",
+                     url="https://search.crossref.example/?q=10.0000/test.1", **full)
+        self.assertEqual(pr.source_independence(cr, cr2)[0], "not_independent")
+        # a DOI-resolver URL row carrying only title and URL-parsed DOI is URL-only corroboration
+        doi_row = member("web", "SR-d", url="https://doi.org/10.0000/test.1", title="SYNTHETIC record",
+                         doi="10.0000/test.1", original={"identifiers_parsed_from_url": True})
+        self.assertEqual(pr.source_independence(cr, doi_row)[0], "not_independent")
+
+    def test_same_arxiv_record_via_other_url_not_independent(self):
+        arx = member("arxiv", "SR-x", transcribed=True, check="passed", title="SYNTHETIC preprint",
+                     authors=[{"last_name": "Alpha"}], year=2026, journal="Synthetic Venue",
+                     arxiv_id="2601.00001")
+        web = member("web", "SR-y", url="https://arxiv.org/abs/2601.00001", title="SYNTHETIC preprint",
+                     authors=[{"last_name": "Alpha"}], year=2026, journal="Synthetic Venue",
+                     arxiv_id="2601.00001")
+        value, basis = pr.source_independence(arx, web)
+        self.assertEqual(value, "not_independent")
+        self.assertIn("arxiv", basis)
+        status, _ = pr.auto_verification([arx, web], [])
+        self.assertNotEqual(status, "verified")
+
+
+class TestD064Build(unittest.TestCase):
+    """D-064 (Q-068) status assignment through a full synthetic build."""
+
+    def setUp(self):
+        self.fx = Fixture()
+        self.fx.standard()
+        for name in ("Q-TEST-A_search_00.json", "META_batch_000.json"):
+            pr.set_transcription_check(self.fx.lit, name, "passed", "synthetic test")
+
+    def build(self):
+        report = pr.build(self.fx.lit, today="2026-10-15")
+        with open(self.fx.lit / "records" / "publications.jsonl") as f:
+            pubs = [json.loads(line) for line in f]
+        return report, pubs
+
+    def cohort_one(self, pubs):
+        # PMID and DOI: the standard fixture also holds a Consensus record that claims PMID
+        # 900000001 with a different DOI (identifier conflict, kept as a separate publication)
+        (p,) = [x for x in pubs if x["pmid"] == "900000001" and x["doi"] == "10.0000/test.1"]
+        return p
+
+    def add_checked(self, qid, source, records):
+        name = add_second_source(self.fx, qid, source, records)
+        pr.set_transcription_check(self.fx.lit, name, "passed", "synthetic test")
+
+    def test_web_row_without_required_fields_does_not_verify(self):
+        add_second_source(self.fx, "Q-TEST-WS", "web", [{
+            "title": "SYNTHETIC explainable model for lipid profiles in adults", "doi": "10.0000/test.2",
+            "url": "https://link.example/article/10.0000/test.2", "identifiers_parsed_from_url": True}])
+        report, pubs = self.build()
+        (p,) = [x for x in pubs if x["doi"] == "10.0000/test.2"]
+        self.assertEqual(p["verification_status"], "partially_verified")
+        (row,) = [r for r in report["verification_second_sources"]["publications"] if r["paper_id"] == p["paper_id"]]
+        (cand,) = [c for c in row["candidates"] if c["source"] == "web"]
+        self.assertEqual(cand["independence"], "not_independent")
+        self.assertIn("URL-only", cand["independence_basis"])
+
+    def test_full_agreement_with_independent_source_verifies(self):
+        self.add_checked("Q-TEST-CR", "crossref", [CROSSREF_COHORT_ONE])
+        _, pubs = self.build()
+        p = self.cohort_one(pubs)
+        self.assertEqual(p["verification_status"], "verified")
+        self.assertIn("crossref", p["verification_note"])
+
+    def test_unchecked_transcribed_second_source_is_not_eligible(self):
+        name = add_second_source(self.fx, "Q-TEST-CR", "crossref", [CROSSREF_COHORT_ONE])
+        _, pubs = self.build()
+        self.assertEqual(self.cohort_one(pubs)["verification_status"], "partially_verified")
+        pr.set_transcription_check(self.fx.lit, name, "passed", "synthetic test")
+        _, pubs = self.build()
+        self.assertEqual(self.cohort_one(pubs)["verification_status"], "verified")
+
+    def test_first_author_conflict_needs_review(self):
+        self.add_checked("Q-TEST-CR", "crossref", [dict(CROSSREF_COHORT_ONE, authors=["Omega, Test"])])
+        _, pubs = self.build()
+        p = self.cohort_one(pubs)
+        self.assertEqual(p["verification_status"], "needs_review")
+        self.assertIn("first_author", p["verification_note"])
+
+    def test_unreliable_first_author_needs_review_with_uncertainty_reason(self):
+        self.add_checked("Q-TEST-CR", "crossref", [dict(CROSSREF_COHORT_ONE, authors=["van Alpha, Test"])])
+        _, pubs = self.build()
+        p = self.cohort_one(pubs)
+        self.assertEqual(p["verification_status"], "needs_review")
+        self.assertTrue(p["verification_note"].startswith(pr.FIRST_AUTHOR_UNRELIABLE))
+        self.assertNotIn("conflict with independent second source", p["verification_note"])
+
+    def test_abbreviated_venue_without_mapping_needs_review(self):
+        self.add_checked("Q-TEST-CR", "crossref", [dict(CROSSREF_COHORT_ONE, journal="Synth J")])
+        _, pubs = self.build()
+        p = self.cohort_one(pubs)
+        self.assertEqual(p["verification_status"], "needs_review")
+        self.assertIn("venue", p["verification_note"])
+
+    def test_year_mismatch_needs_review(self):
+        self.add_checked("Q-TEST-CR", "crossref", [dict(CROSSREF_COHORT_ONE, year=2020)])
+        _, pubs = self.build()
+        self.assertEqual(self.cohort_one(pubs)["verification_status"], "needs_review")
+
+    def test_conflict_is_not_outvoted_by_an_agreeing_source(self):
+        self.add_checked("Q-TEST-CR", "crossref", [CROSSREF_COHORT_ONE])
+        self.add_checked("Q-TEST-PS", "publisher_site", [dict(
+            CROSSREF_COHORT_ONE, authors=["Omega, Test"], url="https://publisher.example/article/1")])
+        _, pubs = self.build()
+        self.assertEqual(self.cohort_one(pubs)["verification_status"], "needs_review")
+
+    def test_preprint_and_published_version_not_cross_verified(self):
+        self.add_checked("Q-TEST-AX", "arxiv", [dict(
+            CROSSREF_COHORT_ONE, year=2020, doi=None, journal=None, arxiv_id="2601.00001",
+            url="https://arxiv.org/abs/2601.00001")])
+        _, pubs = self.build()
+        self.assertEqual(self.cohort_one(pubs)["verification_status"], "partially_verified")
+        (pre,) = [x for x in pubs if x["arxiv_id"] == "2601.00001"]
+        self.assertNotEqual(pre["paper_id"], self.cohort_one(pubs)["paper_id"])
+        self.assertEqual(pre["verification_status"], "partially_verified")
+
+    def test_status_changes_reported_between_builds(self):
+        report, pubs = self.build()
+        self.assertFalse(report["verification_status_changes"]["previous_build_available"])
+        self.add_checked("Q-TEST-CR", "crossref", [CROSSREF_COHORT_ONE])
+        report, pubs = self.build()
+        changes = report["verification_status_changes"]
+        self.assertTrue(changes["previous_build_available"])
+        self.assertEqual([(c["paper_id"], c["previous"], c["current"]) for c in changes["changed"]],
+                         [(self.cohort_one(pubs)["paper_id"], "partially_verified", "verified")])
+        self.assertEqual(report["verification_second_sources"]["rule"], "D-064")
+
+    def test_verification_report_shows_second_source_evaluation(self):
+        import shutil
+        import make_literature_reports as mlr
+        shutil.copytree(REPO / "research" / "literature" / "schemas", self.fx.lit / "schemas")
+        self.add_checked("Q-TEST-CR", "crossref", [CROSSREF_COHORT_ONE])
+        self.build()
+        self.build()
+        mlr.main(["--lit-dir", str(self.fx.lit)])
+        text = (self.fx.lit / "verification_report.md").read_text()
+        self.assertIn("Rule D-064", text)
+        self.assertIn("## Second-source evaluation (D-064; report-level only)", text)
+        self.assertIn("## Verification status changes since the previous build", text)
+        self.assertNotIn("Agreement covers title and identifier only", text)
 
 
 class FakeTransport:

@@ -1,0 +1,35 @@
+{
+ "sampling_script": "scripts/literature/pilot_sample.py",
+ "script_commit": "c68d6bd11a9e8eb7d4960651d7cf6909e8e355e4",
+ "script_sha256": "8265dacaac6928953b1911600726ff69929a6c4d19b4bac47cecf67abd29bc00",
+ "publications_jsonl_sha256": "0141d5d8734ef9e5fd30c3add62ec468f3b088edc79ec3062f8b3acd9b9dd192",
+ "source_records_jsonl_sha256": "78eba1d36cc791a9cb4bc9b9cc07b8512d5e12945630c4f9b7d29bfd2d379460",
+ "run_time_utc": "2026-11-15T14:00:33+00:00",
+ "authorization": "D-122",
+ "inventory_sha256": "b668dbde42473baa49ac1f02f89f900e94e39159c82efb8175ba125fef06d054",
+ "seed": 4004,
+ "sample_size": 60,
+ "allocation": {
+  "F": 8,
+  "D": 7,
+  "C": 7,
+  "E": 7,
+  "A": 8,
+  "Q": 7,
+  "B": 8,
+  "untagged": 8
+ },
+ "frame_size": 1463,
+ "stratum_sizes": {
+  "F": 120,
+  "D": 13,
+  "C": 93,
+  "E": 68,
+  "A": 365,
+  "Q": 8,
+  "B": 623,
+  "untagged": 173
+ },
+ "method": "D-077 random-key selection",
+ "duplicate_pairs_in_sample": []
+}

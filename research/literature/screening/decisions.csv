@@ -1,0 +1,8 @@
+paper_id,stage,decision,reason_code,screener,date,justification,criteria_version
+P0028,title_abstract,exclude,E5,rule:stage0,2026-11-12,Stage 0 (D-074 (b)): source publication types = Published Erratum; E5,criteria_v1.1+protocol_v0.2
+P0099,title_abstract,exclude,E5,rule:stage0,2026-11-12,Stage 0 (D-074 (b)): source publication types = Editorial; E5,criteria_v1.1+protocol_v0.2
+P0113,title_abstract,exclude,E5,rule:stage0,2026-11-12,Stage 0 (D-074 (b)): source publication types = Published Erratum; E5,criteria_v1.1+protocol_v0.2
+P0624,title_abstract,exclude,E5,rule:stage0,2026-11-12,Stage 0 (D-074 (b)): source publication types = Editorial; E5,criteria_v1.1+protocol_v0.2
+P0830,title_abstract,exclude,E5,rule:stage0,2026-11-12,Stage 0 (D-074 (b)): source publication types = Editorial; E5,criteria_v1.1+protocol_v0.2
+P0931,title_abstract,exclude,E7,rule:stage0,2026-11-12,"Stage 0 (D-074 (a)): source publication types = Journal Article;Research Support, Non-U.S. Gov't;Retracted Publication; E7",criteria_v1.1+protocol_v0.2
+P0939,title_abstract,exclude,E7,rule:stage0,2026-11-12,Stage 0 (D-074 (a)): source publication types = Journal Article;Retracted Publication; E7,criteria_v1.1+protocol_v0.2

@@ -120,6 +120,26 @@ found all 5 planted near-duplicates. A theoretical recall limit remains: pairs t
 judged very unlikely for titles.
 
 ### 4.3 Automatic verification status (`search_strategy.md` §7)
+
+#### 4.3.1 Approved policy (D-064, 2026-10-30) — implementation pending
+D-064 (answers Q-068) is **approved but not yet implemented**. The current build still applies the rules in §4.3.2; D-064 takes effect only at the next build after its implementation and tests are separately authorised (Steps B and C). No verification status has changed because of D-064.
+
+| Element | Rule (D-064) |
+|---|---|
+| Authoritative source | PubMed, Europe PMC, Crossref or arXiv record with a persistent identifier, meeting the existing transcription and verification requirements (§2.1; D-012, D-023) |
+| Second-source eligibility | Another source record of the same publication that is (a) classified `independent` of the authoritative source **from recorded provenance**, and (b) if manually transcribed, from a raw file whose transcription spot-check `passed`. A passed local spot-check shows transcription fidelity, not the correctness of the external source |
+| Independence classification | `independent` / `not_independent` / `undetermined`; only `independent` qualifies. Same underlying repository or record, and URL-only corroboration (title plus URL-parsed identifier without author, year, venue), are `not_independent`; Europe PMC `MED` vs PubMed is `not_independent`; PubMed vs PMC is `undetermined` by default; Crossref or publisher records are `independent` only with recorded retrieval or checked-transcription provenance; Consensus and unclassified pairs are `undetermined`. Never inferred from different domain names alone or from a matching identifier |
+| Required fields | Title, first author, publication year, venue, persistent identifier, compared deterministically (title normalisation; first-author surname key; exact year; venue normalised for Unicode, case, punctuation, ampersands and whitespace, with abbreviations equal to full titles only through an explicit recorded mapping) |
+| Identifiers | Compared by type (PMID, DOI, PMCID, arXiv ID): at least one type shared and matching; every shared type must agree; a mismatch is a conflict; no shared type = insufficient |
+| Missing fields | A required field absent in either source = insufficient evidence for `verified`; reported as missing, never as a conflict |
+| Conflicts | A disagreement in a required field with **any eligible** second source → `needs_review`, even if another eligible source agrees. An unresolvable first-author comparison → `needs_review` with a reason such as "first-author comparison not reliable" (A5), distinct from a confirmed mismatch |
+| `verified` | At least one eligible second source with all required fields present and agreeing, at least one shared matching identifier type, and no eligible source in conflict or needing review |
+| Years | Exact match; online-first vs print discrepancies via the existing review and override procedure (`verification_overrides.csv`) |
+| Versions | Preprint and published version stay separate records unless the existing approved deduplication procedure decides otherwise; verification is never transferred between them; a second arXiv/alphaXiv URL for the same arXiv record is not independent |
+| Reporting | Independence classifications and eligibility reasons are reported at report level only (A6); no publication-record schema field is added by D-064 |
+| Unchanged | Existing conflict and deduplication rules for other merged members |
+
+#### 4.3.2 Rules applied by the current build (pre-D-064; in force until the D-064 implementation is built)
 | Status | Rule |
 |---|---|
 | `needs_review` | Conflicting title, year, DOI or PMID among merged sources |
@@ -127,6 +147,8 @@ judged very unlikely for titles.
 | `partially_verified` | One authoritative source only, or the authoritative record is transcribed and not yet spot-checked |
 | `unverified` | No authoritative record with a persistent identifier (e.g., Consensus- or web-only), or no metadata |
 | `failed` | Manual only, via `verification_overrides.csv` |
+
+Under these rules a web-search row carrying only a title and a URL-parsed identifier can act as the second source; D-064 removes that once implemented.
 
 `verified` here means that the bibliographic metadata is confirmed. It says nothing about the
 paper's scientific content. Claims extracted from a paper are checked separately against its
